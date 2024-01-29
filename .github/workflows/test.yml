@@ -75,49 +75,6 @@ jobs:
     - name: Run tests with redis
       run: lein test :redis
 
-# FIXME: smoke test is currently too unstable
-#
-#  smoketest:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#    - uses: actions/checkout@v4
-#    - uses: actions/cache@v4
-#      with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
-#
-#    - name: Start Redis
-#      uses: supercharge/redis-github-action@1.4.0
-#      with:
-#        redis-version: 6.2
-#
-#    - name: Smoketest
-#      env:
-#        CLIENTS_INFO_PATH: ${{ secrets.CLIENTS_INFO_PATH }}
-#        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-#        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-#        GATEWAY_PASSWORD: ${{ secrets.GATEWAY_PASSWORD }}
-#        GATEWAY_ROOT_URL: ${{ secrets.GATEWAY_ROOT_URL }}
-#        GATEWAY_USER: ${{ secrets.GATEWAY_USER }}
-#        KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
-#        KEYSTORE_JKS_B64: ${{ secrets.KEYSTORE_JKS_B64 }}
-#        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-#        RIO_RECIPIENT_OIN: ${{ secrets.RIO_RECIPIENT_OIN }}
-#        RIO_ROOT_URL: ${{ secrets.RIO_ROOT_URL }}
-#        RIO_SENDER_OIN: ${{ secrets.RIO_SENDER_OIN }}
-#        SURF_CONEXT_CLIENT_ID: ${{ secrets.SURF_CONEXT_CLIENT_ID }}
-#        SURF_CONEXT_CLIENT_SECRET: ${{ secrets.SURF_CONEXT_CLIENT_SECRET }}
-#        SURF_CONEXT_INTROSPECTION_ENDPOINT: ${{ secrets.SURF_CONEXT_INTROSPECTION_ENDPOINT }}
-#        TOKEN_ENDPOINT: ${{ secrets.TOKEN_ENDPOINT }}
-#        TRUSTSTORE_JKS_B64: ${{ secrets.TRUSTSTORE_JKS_B64 }}
-#        TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
-#
-#        TRUSTSTORE: truststore.jks
-#        KEYSTORE: keystore.jks
-#      run: |
-#        echo "$KEYSTORE_JKS_B64" | base64 -d > keystore.jks
-#        echo "$TRUSTSTORE_JKS_B64" | base64 -d > truststore.jks
-#        ./smoketest.sh
-
   specs:
     runs-on: ubuntu-latest
 
