@@ -149,16 +149,25 @@
 
 (def keys-with-optional-secret-files (vals key-value-pairs-with-optional-secret-files))
 
-(defn- load-secret-from-file [config k]
-  (let [file-key-node (keyword (str (name (last k)) "-file"))
-        root-key-path (pop k)
-        file-key-path (conj root-key-path file-key-node)
+(defn- load-secret-from-file [config k]                     ; k [:gateway-credentials :password]
+  (let [file-key-node (keyword (str (name (last k)) "-file")) ; :password-file
+        root-key-path (pop k)                               ; [:gateway-credentials]
+        file-key-path (conj root-key-path file-key-node)    ; [:gateway-credentials :password-file]
         path (get-in config file-key-path)                  ; File path to secret
+        old-value (get-in config k)
         config (update-in config root-key-path dissoc file-key-node)] ; Remove -file key from config
     (if (nil? path)
       config
       (if (.exists (io/file path))
-        (assoc-in config k (str/trim (slurp path)))           ; Overwrite config with secret from file
+        (let [new-value (str/trim (slurp path))]
+          (when (and (some? old-value)
+                     (not= old-value new-value))
+            (throw (ex-info (str "both classic and file value detected for " file-key-node " but value not equal\nold:"
+                                 (prn-str old-value)
+                                 "\nnew:"
+                                 (prn-str new-value))
+                            {:old old-value :new new-value})))
+          (assoc-in config k new-value))                    ; Overwrite config with secret from file
         (throw (ex-info (str "ENV var contains filename that does not exist: " path) {:filename path, :env-path k}))))))
 
 (defn- validate-required-secrets [config]
