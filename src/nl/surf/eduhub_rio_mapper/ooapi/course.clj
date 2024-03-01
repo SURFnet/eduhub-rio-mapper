@@ -59,9 +59,9 @@
                    ::Course/courseId
                    ::common/duration
                    ::Course/educationSpecification
-                   ::Course/name
                    ::Course/validFrom]
           :opt-un [::Course/abbreviation
                    ::Course/description
                    ::Course/link
+                   ::Course/name
                    ::Course/teachingLanguage]))

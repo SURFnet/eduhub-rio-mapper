@@ -86,7 +86,6 @@
   (s/keys :req-un [::Program/programId
                    ::Program/consumers
                    ::Program/educationSpecification
-                   ::Program/name
                    ::Program/validFrom]
           :opt-un [::Program/abbreviation
                    ::Program/admissionRequirements
@@ -98,6 +97,7 @@
                    ::Program/enrollment
                    ::Program/link
                    ::Program/modeOfStudy
+                   ::Program/name
                    ::Program/organization
                    ::Program/parent
                    ::Program/qualificationAwarded
