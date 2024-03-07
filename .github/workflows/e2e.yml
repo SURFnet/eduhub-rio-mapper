@@ -17,18 +17,25 @@ jobs:
       with:
         redis-version: 6.2
 
+    - name: Setup certificate stores
+      env:
+        KEYSTORE_JKS_B64: ${{ secrets.KEYSTORE_JKS_B64 }}
+        TRUSTSTORE_JKS_B64: ${{ secrets.TRUSTSTORE_JKS_B64 }}
+      run: |
+        echo "$KEYSTORE_JKS_B64" | base64 -d > keystore.jks
+        echo "$TRUSTSTORE_JKS_B64" | base64 -d > truststore.jks
+
     - name: Run tests
       env:
+        CLIENTS_INFO_PATH: ${{ secrets.CLIENTS_INFO_PATH }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        CLIENTS_INFO_PATH: ${{ secrets.CLIENTS_INFO_PATH }}
         GATEWAY_PASSWORD: ${{ secrets.GATEWAY_PASSWORD }}
         GATEWAY_ROOT_URL: ${{ secrets.GATEWAY_ROOT_URL }}
         GATEWAY_USER: ${{ secrets.GATEWAY_USER }}
+        KEYSTORE: keystore.jks
         KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
-        KEYSTORE_JKS_B64: ${{ secrets.KEYSTORE_JKS_B64 }}
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        KEYSTORE: test/keystore.jks
         OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
         OS_CONTAINER_NAME: ${{ secrets.OS_CONTAINER_NAME }}
         OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
@@ -38,11 +45,11 @@ jobs:
         RIO_RECIPIENT_OIN: ${{ secrets.RIO_RECIPIENT_OIN }}
         RIO_SENDER_OIN: ${{ secrets.RIO_SENDER_OIN }}
         RIO_UPDATE_URL: ${{ secrets.RIO_UPDATE_URL }}
+        STORE_HTTP_REQUESTS: true
         SURF_CONEXT_CLIENT_ID: ${{ secrets.SURF_CONEXT_CLIENT_ID }}
         SURF_CONEXT_CLIENT_SECRET: ${{ secrets.SURF_CONEXT_CLIENT_SECRET }}
         SURF_CONEXT_INTROSPECTION_ENDPOINT: ${{ secrets.SURF_CONEXT_INTROSPECTION_ENDPOINT }}
         TOKEN_ENDPOINT: ${{ secrets.TOKEN_ENDPOINT }}
-        TRUSTSTORE_JKS_B64: ${{ secrets.TRUSTSTORE_JKS_B64 }}
-        TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
         TRUSTSTORE: truststore.jks
+        TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
       run: lein test :e2e
