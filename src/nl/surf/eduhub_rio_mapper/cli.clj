@@ -149,25 +149,37 @@
 
 (def keys-with-optional-secret-files (vals key-value-pairs-with-optional-secret-files))
 
+(defn dissoc-in
+  "Return nested map with path removed"
+  [m ks]
+  (let [path (butlast ks)
+        node (last ks)]
+    (if (empty? path)
+      (dissoc m node)
+      (update-in m path dissoc node))))
+
 (defn- load-secret-from-file [config k]                     ; k [:gateway-credentials :password]
   (let [file-key-node (keyword (str (name (last k)) "-file")) ; :password-file
         root-key-path (pop k)                               ; [:gateway-credentials]
         file-key-path (conj root-key-path file-key-node)    ; [:gateway-credentials :password-file]
         path (get-in config file-key-path)                  ; File path to secret
         old-value (get-in config k)
-        config (update-in config root-key-path dissoc file-key-node)] ; Remove -file key from config
+        config (dissoc-in config file-key-path)] ; Remove -file key from config
     (if (nil? path)
       config
       (if (.exists (io/file path))
         (let [new-value (str/trim (slurp path))]
           (when (and (some? old-value)
-                     (not= old-value new-value))
+                     (or (not= old-value new-value)
+                         (not= (char-array old-value) (char-array new-value))))
             (throw (ex-info (str "both classic and file value detected for " file-key-node " but value not equal\nold:"
                                  (prn-str old-value)
                                  "\nnew:"
                                  (prn-str new-value))
                             {:old old-value :new new-value})))
-          (assoc-in config k new-value))                    ; Overwrite config with secret from file
+          (do
+            (println (str "New secret read from file. Name: " k ", secret: " new-value ", length:" (count new-value)))
+            (assoc-in config k new-value))) ; Overwrite config with secret from file
         (throw (ex-info (str "ENV var contains filename that does not exist: " path) {:filename path, :env-path k}))))))
 
 (defn- validate-required-secrets [config]
@@ -186,27 +198,28 @@
 (defn make-config
   []
   {:post [(some? (-> % :rio-config :credentials :certificate))]}
-  (let [[{:keys [clients-info-config
-                 keystore
-                 keystore-pass
-                 keystore-alias
-                 trust-store
-                 trust-store-pass] :as config}
-         errs] (envopts/opts env opts-spec)]
+  (let [[config errs] (envopts/opts env opts-spec)]
 
     (when errs
       (.println *err* "Configuration error")
       (.println *err* (envopts/errs-description errs))
       (System/exit 1))
-    (-> (reduce load-secret-from-file config keys-with-optional-secret-files)
-        (validate-required-secrets)
-        (assoc-in [:rio-config :credentials]
-                  (keystore/credentials keystore
-                                        keystore-pass
-                                        keystore-alias
-                                        trust-store
-                                        trust-store-pass))
-        (assoc :clients (clients-info/read-clients-data clients-info-config)))))
+    (let [{:keys [clients-info-config
+                  keystore
+                  keystore-pass
+                  keystore-alias
+                  trust-store
+                  trust-store-pass] :as cfg}
+          (reduce load-secret-from-file config keys-with-optional-secret-files)]
+      (-> cfg
+          (validate-required-secrets)
+          (assoc-in [:rio-config :credentials]
+                    (keystore/credentials keystore
+                                          keystore-pass
+                                          keystore-alias
+                                          trust-store
+                                          trust-store-pass))
+          (assoc :clients (clients-info/read-clients-data clients-info-config))))))
 
 (defn parse-getter-args [[type id & [pagina]]]
   {:pre [type id (string? type)]}
