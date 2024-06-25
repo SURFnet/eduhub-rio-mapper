@@ -2,10 +2,10 @@ name: Check if RIO queue is up or down
 
 on:
   schedule:
-    - cron: '6 7-18 * * 1-5' # every hour on weekdays during working hours. Code will to a timezone check.
+    - cron: '6 7-18 * * 1-5' # every hour on weekdays during working hours. Code will do a timezone check.
 
 jobs:
-  riotest:
+  rio_queue:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
           TRUSTSTORE_JKS_B64: ${{ secrets.TRUSTSTORE_JKS_B64 }}
         run: |
           echo "$KEYSTORE_JKS_B64" | base64 -d > keystore.jks
-          echo "$TRUSTSTORE_JKS_B64" | base64 -d > truststore.jks          
+          echo "$TRUSTSTORE_JKS_B64" | base64 -d > truststore.jks
 
       - name: Check rio queue status
         env:
@@ -47,6 +47,7 @@ jobs:
           RIO_SENDER_OIN: ${{ secrets.RIO_SENDER_OIN }}
           RIO_RETRY_ATTEMPTS_SECONDS: '5,10,15'
           RIO_UPDATE_URL: ${{ secrets.RIO_UPDATE_URL }}
+          SLACK_URL: ${{ secrets.SLACK_URL }}
           STORE_HTTP_REQUESTS: true
           SURF_CONEXT_CLIENT_ID: ${{ secrets.SURF_CONEXT_CLIENT_ID }}
           SURF_CONEXT_CLIENT_SECRET: ${{ secrets.SURF_CONEXT_CLIENT_SECRET }}
@@ -54,4 +55,20 @@ jobs:
           TOKEN_ENDPOINT: ${{ secrets.TOKEN_ENDPOINT }}
           TRUSTSTORE: truststore.jks
           TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
-        run: lein mapper test-rio rio-mapper-dev.jomco.nl cron
+        id: test_rio
+        run: |
+          lein mapper test-rio rio-mapper-dev.jomco.nl cron
+          echo "ERROR_STATUS=$?" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+      - name: Notify ok
+        if: ${{ steps.test_rio.outputs.ERROR_STATUS == 0 }}
+        run: |
+          curl -q -H "Content-Type: application/json" -X POST -d '{"text": "RIO Queue is UP"}' {{ $secrets.SLACK_URL }}
+      - name: Notify queue down
+        if: ${{ steps.test_rio.outputs.ERROR_STATUS == -1 }}
+        run: |
+          curl -q -H "Content-Type: application/json" -X POST -d '{"text": "RIO Queue is DOWN"}' {{ $secrets.SLACK_URL }}
+      - name: Notify error
+        if: ${{ steps.test_rio.outputs.ERROR_STATUS == -2 }}
+        run: |
+          curl -q -H "Content-Type: application/json" -X POST -d '{"text": "Error while checking RIO Queue"}' {{ $secrets.SLACK_URL }}
