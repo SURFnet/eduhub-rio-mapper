@@ -20,3 +20,5 @@ pom.xml.asc
 /keystore.jks
 /.envrc
 .github/
+/.envrc-docker
+/opentelemetry-javaagent.jar
