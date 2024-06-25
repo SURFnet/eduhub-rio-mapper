@@ -14,6 +14,7 @@ services:
     volumes:
       - ./dev-infra/prometheus.yml:/etc/prometheus/prometheus.yml
   worker:
+    platform: "linux/amd64"
     build: .
     env_file:
       - .envrc # read environment from local direnv settings
@@ -33,6 +34,7 @@ services:
     ports:
       - "9465:9464"
   api:
+    platform: "linux/amd64"
     build: .
     env_file:
       - .envrc # read environment from local direnv settings
