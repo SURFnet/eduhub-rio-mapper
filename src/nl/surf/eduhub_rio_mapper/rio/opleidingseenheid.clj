@@ -42,10 +42,10 @@
   (fn [pk]
     (case pk
       :begindatum validFrom
-      :internationaleNaam (ooapi-utils/get-localized-value-exclusive name ["en"])
-      :naamKort abbreviation
-      :naamLang (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
-      :omschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"])
+      :internationaleNaam (ooapi-utils/get-localized-value-exclusive name ["en"] :maxlen 225)
+      :naamKort (ooapi-utils/truncate abbreviation 40)
+      :naamLang (ooapi-utils/get-localized-value name ["nl-NL" "nl"] :maxlen 225)
+      :omschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"] :maxlen 3000)
       :studielast (if (= "VARIANT" (soort-mapping eduspec)) nil (:value studyLoad))
       :studielasteenheid (rio-helper/ooapi-mapping "studielasteenheid" (:studyLoadUnit studyLoad))
       :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))

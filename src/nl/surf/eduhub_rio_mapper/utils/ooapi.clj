@@ -12,6 +12,12 @@
        true
        (catch IllegalArgumentException _ false)))
 
+(defn truncate [s n]
+  {:pre [(and (integer? n) (pos? n))]}
+  (if (string? s)
+    (subs s 0 (min (count s) n))
+    s))
+
 (defn level-sector-map-to-rio?
   "True if we can map the given level and sector to RIO."
   [{:keys [level sector educationSpecificationType]}]
@@ -22,23 +28,30 @@
   "Get localized value from LanguageTypedString.
 
   The provided locales are tried in order. There is no fallback"
-  [attr & [locales]]
+  ([attr locales]
   (->> locales
        (keep (fn [locale]
                (some #(when (string/starts-with? (% :language) locale)
                         (% :value))
                      attr)))
        first))
+  ([attr locales key value]
+   {:pre [(= key :maxlen)]}
+     (-> (get-localized-value-exclusive attr locales)
+         (truncate value))))
 
 (defn get-localized-value
   "Get localized value from LanguageTypedString.
 
   The provided locales are tried in order. If none found, fall back to
   English (international).  If still none found take the first."
-  [attr & [locales]]
-  (or
+  ([attr locales] (or
     (get-localized-value-exclusive attr (concat locales ["en"]))
     (-> attr first :value)))
+  ([attr locales key value]
+   {:pre [(= key :maxlen)]}
+   (-> (get-localized-value attr locales)
+       (truncate value))))
 
 (defn ooapi-to-periods [{:keys [timelineOverrides] :as ooapi} entity-key]
   (as-> timelineOverrides $
