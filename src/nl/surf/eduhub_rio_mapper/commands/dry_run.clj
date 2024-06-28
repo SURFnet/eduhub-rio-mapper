@@ -79,7 +79,7 @@
     {:begindatum                    (:validFrom current-period),
      :naamLang                      (ooapi-utils/get-localized-value (:name current-period) dutch-locales),
      :naamKort                      (:abbreviation current-period),
-     :internationaleNaam            (ooapi-utils/get-localized-value (:name current-period)),
+     :internationaleNaam            (ooapi-utils/get-localized-value (:name current-period) []),
      :omschrijving                  (ooapi-utils/get-localized-value (:description current-period) dutch-locales),
      :eigenOpleidingseenheidSleutel (:educationSpecificationId eduspec)}))
 
@@ -98,7 +98,7 @@
                                        (ooapi-utils/get-localized-value dutch-locales))
      :eigenNaamInternationaal      (-> current-period
                                        :name
-                                       (ooapi-utils/get-localized-value))
+                                       (ooapi-utils/get-localized-value []))
      :eigenOmschrijving            (-> current-period
                                        :description
                                        (ooapi-utils/get-localized-value dutch-locales))

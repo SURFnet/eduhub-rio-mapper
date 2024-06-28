@@ -54,7 +54,7 @@
    "privateProgram" "aangebodenParticuliereOpleiding"})
 
 (def ^:private mapping-course-program->aangeboden-opleiding
-  {:buitenlandsePartner [:foreignPartners true]
+  {:buitenlandsePartner [#(ooapi-utils/truncate (:foreignPartners %) 250) true]
    :eersteInstroomDatum [:firstStartDate false]
    :onderwijsaanbiedercode [:educationOffererCode true]
    :onderwijslocatiecode [:educationLocationCode true]
@@ -67,7 +67,7 @@
    :deelnemersplaatsen :maxNumberStudents
    :einddatum :endDate
    :eindeAanmeldperiode :enrollEndDate
-   :toelichtingVereisteToestemming :explanationRequiredPermission})
+   :toelichtingVereisteToestemming #(-> % :explanationRequiredPermission (ooapi-utils/truncate 3000))})
 
 (defn- course-program-timeline-override-adapter
   [{:keys [name description validFrom abbreviation link consumers] :as _periode}]
@@ -76,14 +76,14 @@
     (fn [pk]
       (case pk
         :begindatum validFrom
-        :buitenlandsePartner foreignPartners
+        :buitenlandsePartner (ooapi-utils/truncate foreignPartners 250)
         :deficientie (rio-helper/ooapi-mapping "deficientie" deficiency)
-        :eigenNaamAangebodenOpleiding (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
-        :eigenNaamInternationaal (ooapi-utils/get-localized-value-exclusive name ["en"])
-        :eigenNaamKort abbreviation
-        :eigenOmschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"])
+        :eigenNaamAangebodenOpleiding (ooapi-utils/get-localized-value name ["nl-NL" "nl"] :maxlen 225)
+        :eigenNaamInternationaal (ooapi-utils/get-localized-value-exclusive name ["en"] :maxlen 225)
+        :eigenNaamKort (ooapi-utils/truncate abbreviation 40)
+        :eigenOmschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"] :maxlen 3000)
         :eisenWerkzaamheden (rio-helper/ooapi-mapping "eisenWerkzaamheden" requirementsActivities)
-        :internationaleNaamDuits (ooapi-utils/get-localized-value-exclusive name ["de"])
+        :internationaleNaamDuits (ooapi-utils/get-localized-value-exclusive name ["de"] :maxlen 225)
         :propedeutischeFase (rio-helper/ooapi-mapping "propedeutischeFase" propaedeuticPhase)
         :samenwerkendeOnderwijsaanbiedercode jointPartnerCodes
         :studiekeuzecheck (rio-helper/ooapi-mapping "studiekeuzecheck" studyChoiceCheck)

@@ -102,17 +102,6 @@
      ::ooapi/type "course"
      :client-id "rio-mapper-dev.jomco.nl"}))
 
-;; eigenNaamInternationaal max 225 chars
-(deftest test-and-validate-program-4-invalid
-  (let [request (test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
-                               ::ooapi/type "program"
-                               :client-id "rio-mapper-dev.jomco.nl"})]
-    (is (thrown? ExceptionInfo
-                 (-> request
-                     prep-body
-                     (soap/guard-valid-sexp mutator/validator)))
-        "guard should throw an exception")))
-
 (defn collect-paths
   "If leaf-node, add current path (and node if include-leaves is true) to acc.
    Otherwise, call recursively for each child with name of child appended to the path."
