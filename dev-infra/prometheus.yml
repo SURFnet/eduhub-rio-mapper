@@ -1,16 +1,10 @@
-# my global config
 global:
   scrape_interval: 15s
   evaluation_interval: 30s
-  # scrape_timeout is set to the global default (10s).
 
   external_labels:
     monitor: codelab
     foo: bar
-
-#rule_files:
-#  - "first.rules"
-#  - "my/*.rules"
 
 scrape_configs:
   - job_name: scrape-static
@@ -27,9 +21,6 @@ scrape_configs:
       - targets: ["localhost:9090"]
         labels:
           service: prometheus
-#      - targets: ["host.docker.internal:8080"]
-#        labels:
-#          service: eduhub-gateway
       - targets: ["worker:9464"]
         labels:
           service: worker
