@@ -9,7 +9,9 @@ RUN make opentelemetry-javaagent.jar
 FROM gcr.io/distroless/java:11
 
 COPY --from=builder /app/target/eduhub-rio-mapper.jar /eduhub-rio-mapper.jar
-COPY --from=builder /app/opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
+# Make sure there is an opentelemetry agent in the workdir in case docker-compose
+# starts up a process with -javaagent in the JAVA_TOOL_OPTIONS
+COPY --from=builder /app/vendor/opentelemetry-javaagent-2.2.0.jar /opentelemetry-javaagent.jar
 
 WORKDIR /
 ENTRYPOINT ["java", "-jar", "/eduhub-rio-mapper.jar"]
