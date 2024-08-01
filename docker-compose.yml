@@ -19,6 +19,7 @@ services:
     env_file:
       - .envrc # read environment from local direnv settings
     environment:
+      CLIENTS_INFO_PATH: /test-clients.json
       REDIS_URI: redis://redis
       OTEL_METRICS_EXPORTER: prometheus
       OTEL_EXPORTER_PROMETHEUS_ENDPOINT: http://localhost:9464/metrics
@@ -39,6 +40,7 @@ services:
     env_file:
       - .envrc # read environment from local direnv settings
     environment:
+      CLIENTS_INFO_PATH: /test-clients.json
       REDIS_URI: redis://redis
       OTEL_METRICS_EXPORTER: prometheus
       OTEL_EXPORTER_PROMETHEUS_ENDPOINT: http://localhost:9464/metrics
