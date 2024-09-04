@@ -87,15 +87,6 @@
           (update res :job assoc ::job/callback-url callback-url)
           {:status http-status/bad-request :body "Malformed callback url"})))))
 
-(defn wrap-metrics-getter
-  [app count-queues-fn fetch-jobs-by-status schac-home-to-name]
-  (fn with-metrics-getter [req]
-    (let [res (app req)]
-      (cond-> res
-              (:metrics res)
-              (assoc :status http-status/ok
-                     :body (metrics/prometheus-render-metrics (count-queues-fn) (fetch-jobs-by-status) schac-home-to-name))))))
-
 (defn json-request-headers? [headers]
   (let [accept (get headers "Accept")]
     (and accept
@@ -216,8 +207,6 @@
 
 (def public-routes
   (compojure.core/routes
-   (GET "/metrics" []
-     {:metrics true})
    (GET "/health" []
      {:health true})))
 
@@ -244,9 +233,6 @@
     (-> (routes {:enqueuer-fn      (partial worker/enqueue! config)
                  :status-getter-fn (partial status/rget config)})
         (health/wrap-health config)
-        (wrap-metrics-getter queue-counter-fn
-                             jobs-by-status-counter-fn
-                             schac-home-to-name)
         (wrap-client-info clients)
         (authentication/wrap-authentication token-authenticator)
         (wrap-logging)
