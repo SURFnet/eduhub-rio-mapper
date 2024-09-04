@@ -67,16 +67,6 @@
                  (get jobs-count-by-status status)))
           ["started" "done" "time_out" "error"]))
 
-(defn prometheus-render-metrics [current-queue-count jobs-count-by-status schac-home-to-name]
-  {:pre [(map? current-queue-count)
-         (every? string? (keys current-queue-count))
-         (every? integer? (vals current-queue-count))
-         (map? jobs-count-by-status)
-         (every? string? (keys jobs-count-by-status))
-         (every? map? (vals jobs-count-by-status))]}
-  (str/join "\n" (into (prometheus-current-jobs current-queue-count schac-home-to-name)
-                       (prometheus-jobs-by-status jobs-count-by-status schac-home-to-name))))
-
 (defn count-queues [grouped-queue-counter client-schac-homes]
   {:post [(map? %)
           (every? string? (keys %))
