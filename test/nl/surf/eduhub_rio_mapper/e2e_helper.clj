@@ -518,6 +518,11 @@
 (defn start-services
   "Start the serve-api and worker services."
   []
+  (let [config (config/make-config env)]
+
+    (when (= (:api-config config) (:worker-api-config config))
+      (println "The api and the worker must run on separate ports.")
+      (System/exit 1)))
   (doseq [cmd ["serve-api" "worker"]]
     (let [runtime (Runtime/getRuntime)
           cmds    ^"[Ljava.lang.String;" (into-array ["lein" "trampoline" "mapper" cmd])]
