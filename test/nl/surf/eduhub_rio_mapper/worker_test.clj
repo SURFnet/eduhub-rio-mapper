@@ -34,6 +34,7 @@
                       :queue-fn      :queue
                       :retryable-fn  (constantly false)
                       :error-fn      (constantly false)
+                      :jobs-counter  (constantly nil)
                       :set-status-fn (fn [_ _ & [_]] (comment "nop"))}})
 
 (deftest ^:redis worker
@@ -79,6 +80,7 @@
         max-retries   3
         config        (-> config
                           (assoc-in [:worker :max-retries] max-retries)
+                          (assoc-in [:worker :jobs-counter] (constantly nil))
                           (assoc-in [:worker :run-job-fn]
                                     (fn [job]
                                       (reset! last-seen-job (dissoc job :started-at))
@@ -107,6 +109,7 @@
         max-retries   3
         config        (-> config
                           (assoc-in [:worker :max-retries] max-retries)
+                          (assoc-in [:worker :jobs-counter] (constantly nil))
                           (assoc-in [:worker :run-job-fn]
                                     (fn [job]
                                       (reset! last-seen-job (dissoc job :started-at))
@@ -135,6 +138,7 @@
         retry-wait-ms 3000
         config        (-> config
                           (assoc-in [:worker :retry-wait-ms] retry-wait-ms)
+                          (assoc-in [:worker :jobs-counter] (constantly nil))
                           (assoc-in [:worker :run-job-fn]
                                     (fn [job]
                                       (reset! last-seen-job (dissoc job :started-at))
@@ -168,6 +172,7 @@
           config           (-> config
                                (assoc-in [:worker :error-fn] :error?)
                                (assoc-in [:worker :run-job-fn] identity)
+                               (assoc-in [:worker :jobs-counter] (constantly nil))
                                (assoc-in [:worker :set-status-fn]
                                          (fn [job status & [data]]
                                            (reset! last-seen-status {:job    (dissoc job :started-at)

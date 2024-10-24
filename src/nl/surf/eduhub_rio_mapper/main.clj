@@ -41,7 +41,7 @@
     (println (config/help))
     (System/exit 0))
 
-  (let [result (cli-commands/process-command command args (config/make-config-and-handlers))]
+  (let [result (cli-commands/process-command command args (config/make-config-and-handlers (= command "serve-api")))]
     (case command
       ("serve-api" "worker")
       nil
