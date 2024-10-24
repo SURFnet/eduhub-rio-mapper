@@ -17,55 +17,40 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.endpoints.metrics
-  (:require [clojure.string :as str]
-            [nl.surf.eduhub-rio-mapper.utils.redis :as redis]))
+  (:require [clojure.string]
+            [steffan-westcott.clj-otel.api.metrics.instrument :as instrument]))
 
 (def jobs-count-by-status-key-name "jobs-count-by-status")
 
-(defn increment-count [{:keys [redis-conn]} job status]
-  (let [hash-key (str (:institution-schac-home job) "/" (name status))]
-    (redis/hincrby redis-conn jobs-count-by-status-key-name hash-key 1)))
+(declare count-queues)
+
+(defn- update-gauge [gauge data]
+  (doseq [[k v] data]
+    (instrument/set! gauge {:value v :attributes {"queue-name" k}})))
+
+(defn make-jobs-counter [schac-home-to-name queue-counter institution-schac-homes]
+  (let [counter (instrument/instrument {:name            "rio_mapper_http_requests_total"
+                                        :instrument-type :counter})
+
+        gauge   (instrument/instrument {:name            "rio_mapper_active_and_queued_job_count"
+                                        :instrument-type :gauge})]
+    (fn [job status]
+      (update-gauge gauge (count-queues queue-counter institution-schac-homes))
+      (let [schac-home (:institution-schac-home job)
+            attributes {:status           (name status)
+                        :schac-home       schac-home
+                        :institution-name (schac-home-to-name schac-home)}]
+        (instrument/add! counter {:value 1 :attributes attributes})))))
 
 ;; Wraps the set-status-fn in order to increment the job count if it is a final status
 ;; (done,error,timeout). These, and only these, have a third argument with the result.
-(defn wrap-increment-count [config set-status-fn]
+(defn wrap-increment-count [jobs-counter set-status-fn]
   (fn
     ([job status]
      (set-status-fn job status))
     ([job status result]
-     (increment-count config job status)
+     (jobs-counter job status)
      (set-status-fn job status result))))
-
-;; Retrieves the total number of processed jobs by status (started,done,error,time_out)
-;; The job count is grouped per schachome. Returns a map with as keys the status (keyword)
-;; and as values maps with as keys the schachome and count (integer) as values.
-(defn fetch-jobs-by-status-count [{:keys [redis-conn] :as _config}]
-  {:post [(every? string? (keys %))
-          (every? map? (vals %))]}
-  (let [process-pair
-        (fn [[k cnt]]
-          (let [[schach-home status] (clojure.string/split k #"/")]
-            [status schach-home cnt]))
-        process-triplet
-        (fn [h [status schach-home cnt]]
-          (assoc-in h [status schach-home] cnt))]
-    (->> (redis/hgetall redis-conn jobs-count-by-status-key-name)
-         (partition 2)
-         (map process-pair)
-         (reduce process-triplet {}))))
-
-(defn prometheus-current-jobs [queue-count schac-home-to-name]
-  (map (fn [[k v]] (format "rio_mapper_active_and_queued_job_count{schac_home=\"%s\", institution_name=\"%s\"} %s" k (schac-home-to-name k) v))
-       queue-count))
-
-(defn prometheus-jobs-by-status [jobs-count-by-status schac-home-to-name]
-  {:pre [(every? string? (keys jobs-count-by-status))
-         (every? map? (vals jobs-count-by-status))]}
-  (mapcat (fn [status]
-            (map (fn [[k v]]
-                   (format "rio_mapper_jobs_total{schac_home=\"%s\", institution_name=\"%s\", job_status=\"%s\"} %s" k (schac-home-to-name k) status v))
-                 (get jobs-count-by-status status)))
-          ["started" "done" "time_out" "error"]))
 
 (defn count-queues [grouped-queue-counter client-schac-homes]
   {:post [(map? %)
