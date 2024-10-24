@@ -23,9 +23,11 @@
             [nl.jomco.envopts :as envopts]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.commands.processing :as processing]
+            [nl.surf.eduhub-rio-mapper.endpoints.metrics :as metrics]
             [nl.surf.eduhub-rio-mapper.endpoints.status :as status]
             [nl.surf.eduhub-rio-mapper.job :as job]
-            [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]))
+            [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
+            [nl.surf.eduhub-rio-mapper.worker :as worker]))
 
 (defn parse-int-list [s & _opts] [(mapv #(Integer/parseInt %) (str/split s #","))])
 
@@ -161,14 +163,19 @@
                                            trust-store-pass))
            (assoc :clients (clients-info/read-clients-data clients-info-config)))))))
 
-(defn make-config-and-handlers []
+(defn make-config-and-handlers [web-api?]
   (let [{:keys [clients] :as cfg} (make-config)
         handlers (processing/make-handlers cfg)
+        schac-home-to-name (reduce (fn [h c] (assoc h (:institution-schac-home c) (:institution-name c))) {} clients)
+        institution-schac-homes (clients-info/institution-schac-homes clients)
         config (update cfg :worker merge
                        {:queues        (clients-info/institution-schac-homes clients)
                         :queue-fn      :institution-schac-home
                         :run-job-fn    #(job/run! handlers % (= "true" (:store-http-requests cfg)))
                         :set-status-fn (status/make-set-status-fn cfg)
                         :retryable-fn  status/retryable?
-                        :error-fn      status/errors?})]
+                        :error-fn      status/errors?
+                        ;; The web-api doesn't need the job-counter
+                        :jobs-counter  (if web-api? (constantly nil)
+                                                    (metrics/make-jobs-counter schac-home-to-name #(worker/queue-counts-by-key % cfg) institution-schac-homes))})]
     {:handlers handlers :config config}))

@@ -3,7 +3,8 @@
   :url "https://github.com/jomco/eduhub-rio-mapper"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url  "https://www.eclipse.org/legal/epl-2.0/"}
-  :dependencies [[org.clojure/clojure "1.12.0"]
+  :dependencies [[com.github.steffan-westcott/clj-otel-api "0.2.7"]
+                 [org.clojure/clojure "1.12.0"]
                  [org.clojure/core.async "1.7.701"]
                  [org.clojure/core.memoize "1.1.266"]
                  [com.velisco/strgen "0.2.5" :exclusions [org.clojure/clojurescript]]
@@ -54,6 +55,7 @@
                                   [nl.jomco/proof-specs "RELEASE"]
                                   [ring/ring-mock "RELEASE"]]
                    :plugins      [[lein-ancient "RELEASE"]]
+                   ;;:jvm-opts     ["-javaagent:vendor/opentelemetry-javaagent-2.9.0.jar"]
                    :aliases      {"lint"           ["run" "-m" "clj-kondo.main" "--lint" "src" "test"]
                                   "check-deps"     ["ancient" "check" ":no-profiles" ":exclude" "keep-this-version"]
                                   "upgrade-deps"   ["ancient" "upgrade" ":no-profiles" ":exclude" "keep-this-version"]

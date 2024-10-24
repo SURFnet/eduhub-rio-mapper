@@ -1,4 +1,4 @@
-FROM clojure:temurin-17-lein-2.11.2-alpine as builder
+FROM clojure:temurin-17-lein-2.11.2-alpine AS builder
 
 RUN mkdir /app
 WORKDIR /app
@@ -10,7 +10,7 @@ COPY --from=builder /app/target/eduhub-rio-mapper.jar /eduhub-rio-mapper.jar
 COPY --from=builder /app/test/test-clients.json /test-clients.json
 # Make sure there is an opentelemetry agent in the workdir in case docker-compose
 # starts up a process with -javaagent in the JAVA_TOOL_OPTIONS
-COPY --from=builder /app/vendor/opentelemetry-javaagent-2.2.0.jar /opentelemetry-javaagent.jar
+COPY --from=builder /app/vendor/opentelemetry-javaagent-2.9.0.jar /opentelemetry-javaagent.jar
 
 WORKDIR /
 ENTRYPOINT ["java", "-jar", "/eduhub-rio-mapper.jar"]

@@ -202,7 +202,8 @@
             error-fn
             retryable-fn
             run-job-fn
-            set-status-fn]
+            set-status-fn
+            jobs-counter]
      ;; Set lock expiry to 1 minute; locks in production have unexpectedly expired with shorter intervals
      :or {lock-ttl-ms   60000
           nap-ms        1000}} :worker
@@ -210,6 +211,7 @@
    stop-atom]
   {:pre [retry-wait-ms
          max-retries
+         jobs-counter
          (seq queues)
          (fn? run-job-fn) (fn? set-status-fn)
          (ifn? retryable-fn) (ifn? error-fn) (ifn? queue-fn)]}
@@ -231,9 +233,9 @@
                                                      (str (Instant/now))))]
                   ;; Don't count job as started while retrying it
                   (when (nil? (::retries job))
-                    (metrics/increment-count config job :started))
+                    (jobs-counter job :started))
                   ;; run job asynchronous
-                  (let [set-status-fn (metrics/wrap-increment-count config set-status-fn)
+                  (let [set-status-fn (metrics/wrap-increment-count jobs-counter set-status-fn)
                         c             (async/thread
                                         (.setName (Thread/currentThread) (str "runner-" queue))
                                         (run-job-fn job))]
