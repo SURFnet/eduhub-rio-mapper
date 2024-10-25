@@ -163,19 +163,27 @@
                                            trust-store-pass))
            (assoc :clients (clients-info/read-clients-data clients-info-config)))))))
 
-(defn make-config-and-handlers [web-api?]
+(defn make-config-and-handlers-web []
+  (let [{:keys [clients] :as cfg} (make-config)
+        handlers (processing/make-handlers cfg)
+        config (update cfg :worker merge
+                       {:queues        (clients-info/institution-schac-homes clients)
+                        :queue-fn      :institution-schac-home})]
+    {:handlers handlers :config config}))
+
+(defn make-config-and-handlers-worker []
   (let [{:keys [clients] :as cfg} (make-config)
         handlers (processing/make-handlers cfg)
         schac-home-to-name (reduce (fn [h c] (assoc h (:institution-schac-home c) (:institution-name c))) {} clients)
         institution-schac-homes (clients-info/institution-schac-homes clients)
         config (update cfg :worker merge
-                       {:queues        (clients-info/institution-schac-homes clients)
-                        :queue-fn      :institution-schac-home
-                        :run-job-fn    #(job/run! handlers % (= "true" (:store-http-requests cfg)))
-                        :set-status-fn (status/make-set-status-fn cfg)
-                        :retryable-fn  status/retryable?
-                        :error-fn      status/errors?
+
+                       {:queues          (clients-info/institution-schac-homes clients)
+                        :queue-fn        :institution-schac-home
+                        :run-job-fn      #(job/run! handlers % (= "true" (:store-http-requests cfg)))
+                        :set-status-fn   (status/make-set-status-fn cfg)
+                        :retryable-fn    status/retryable?
+                        :error-fn        status/errors?
                         ;; The web-api doesn't need the job-counter
-                        :jobs-counter  (if web-api? (constantly nil)
-                                                    (metrics/make-jobs-counter schac-home-to-name #(worker/queue-counts-by-key % cfg) institution-schac-homes))})]
+                        :jobs-counter-fn (metrics/make-jobs-counter schac-home-to-name #(worker/queue-counts-by-key % cfg) institution-schac-homes)})]
     {:handlers handlers :config config}))

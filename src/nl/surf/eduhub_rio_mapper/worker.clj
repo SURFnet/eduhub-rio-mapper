@@ -188,8 +188,11 @@
   - `error-fn` a function which takes one argument, the result of the
     job, and returns true when the job failed.
 
-  - `retryable-fn` a functions which one argument, the result of the
+  - `retryable-fn` a function which takes one argument, the result of the
     job, and returns true when job failed but can be retried.
+
+  - `jobs-counter-fn` a function which takes two arguments, a job and a job status,
+    and updates the metrics related to the job status type. Also updates the metrics for the queues.
   "
   [{{:keys [queues
             lock-ttl-ms
@@ -203,7 +206,7 @@
             retryable-fn
             run-job-fn
             set-status-fn
-            jobs-counter]
+            jobs-counter-fn]
      ;; Set lock expiry to 1 minute; locks in production have unexpectedly expired with shorter intervals
      :or {lock-ttl-ms   60000
           nap-ms        1000}} :worker
@@ -211,7 +214,7 @@
    stop-atom]
   {:pre [retry-wait-ms
          max-retries
-         jobs-counter
+         jobs-counter-fn
          (seq queues)
          (fn? run-job-fn) (fn? set-status-fn)
          (ifn? retryable-fn) (ifn? error-fn) (ifn? queue-fn)]}
@@ -233,9 +236,9 @@
                                                      (str (Instant/now))))]
                   ;; Don't count job as started while retrying it
                   (when (nil? (::retries job))
-                    (jobs-counter job :started))
+                    (jobs-counter-fn job :started))
                   ;; run job asynchronous
-                  (let [set-status-fn (metrics/wrap-increment-count jobs-counter set-status-fn)
+                  (let [set-status-fn (metrics/wrap-increment-count jobs-counter-fn set-status-fn)
                         c             (async/thread
                                         (.setName (Thread/currentThread) (str "runner-" queue))
                                         (run-job-fn job))]
