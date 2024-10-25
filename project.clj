@@ -55,6 +55,7 @@
                                   [nl.jomco/proof-specs "RELEASE"]
                                   [ring/ring-mock "RELEASE"]]
                    :plugins      [[lein-ancient "RELEASE"]]
+                   ;; Uncomment this to test the opentelemetry agent
                    ;;:jvm-opts     ["-javaagent:vendor/opentelemetry-javaagent-2.9.0.jar"]
                    :aliases      {"lint"           ["run" "-m" "clj-kondo.main" "--lint" "src" "test"]
                                   "check-deps"     ["ancient" "check" ":no-profiles" ":exclude" "keep-this-version"]
