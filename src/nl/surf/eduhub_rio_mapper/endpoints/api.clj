@@ -24,10 +24,9 @@
             [compojure.route :as route]
             [nl.jomco.http-status-codes :as http-status]
             [nl.jomco.ring-trace-context :refer [wrap-trace-context]]
-            [nl.surf.eduhub-rio-mapper.clients-info :refer [wrap-client-info] :as clients-info]
+            [nl.surf.eduhub-rio-mapper.clients-info :refer [wrap-client-info]]
             [nl.surf.eduhub-rio-mapper.endpoints.app-server :as app-server]
             [nl.surf.eduhub-rio-mapper.endpoints.health :as health]
-            [nl.surf.eduhub-rio-mapper.endpoints.metrics :as metrics]
             [nl.surf.eduhub-rio-mapper.endpoints.status :as status]
             [nl.surf.eduhub-rio-mapper.job :as job]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi-specs]
@@ -86,15 +85,6 @@
         (if (valid-url? callback-url)
           (update res :job assoc ::job/callback-url callback-url)
           {:status http-status/bad-request :body "Malformed callback url"})))))
-
-(defn wrap-metrics-getter
-  [app count-queues-fn fetch-jobs-by-status schac-home-to-name]
-  (fn with-metrics-getter [req]
-    (let [res (app req)]
-      (cond-> res
-              (:metrics res)
-              (assoc :status http-status/ok
-                     :body (metrics/prometheus-render-metrics (count-queues-fn) (fetch-jobs-by-status) schac-home-to-name))))))
 
 (defn json-request-headers? [headers]
   (let [accept (get headers "Accept")]
@@ -216,10 +206,8 @@
 
 (def public-routes
   (compojure.core/routes
-   (GET "/metrics" []
-     {:metrics true})
-   (GET "/health" []
-     {:health true})))
+    (GET "/health" []
+      {:health true})))
 
 (defn read-only-routes [config]
   (-> (GET "/status/:token" [token] {:token token})
@@ -235,18 +223,11 @@
    (route/not-found nil)))
 
 (defn make-app [{:keys [auth-config clients] :as config}]
-  (let [institution-schac-homes   (clients-info/institution-schac-homes clients)
-        schac-home-to-name        (reduce (fn [h c] (assoc h (:institution-schac-home c) (:institution-name c))) {} clients)
-        queue-counter-fn          (fn [] (metrics/count-queues #(worker/queue-counts-by-key % config) institution-schac-homes))
-        jobs-by-status-counter-fn (fn [] (metrics/fetch-jobs-by-status-count config))
-        token-authenticator       (-> (authentication/make-token-authenticator auth-config)
+  (let [token-authenticator       (-> (authentication/make-token-authenticator auth-config)
                                       (authentication/cache-token-authenticator {:ttl-minutes 10}))]
     (-> (routes {:enqueuer-fn      (partial worker/enqueue! config)
                  :status-getter-fn (partial status/rget config)})
         (health/wrap-health config)
-        (wrap-metrics-getter queue-counter-fn
-                             jobs-by-status-counter-fn
-                             schac-home-to-name)
         (wrap-client-info clients)
         (authentication/wrap-authentication token-authenticator)
         (wrap-logging)
