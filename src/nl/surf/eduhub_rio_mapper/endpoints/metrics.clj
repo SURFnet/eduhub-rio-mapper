@@ -20,9 +20,16 @@
   (:require [clojure.string]
             [steffan-westcott.clj-otel.api.metrics.instrument :as instrument]))
 
-(def jobs-count-by-status-key-name "jobs-count-by-status")
-
-(declare count-queues)
+(defn count-queues [grouped-queue-counter client-schac-homes]
+  {:post [(map? %)
+          (every? string? (keys %))
+          (every? integer? (vals %))]}
+  ;; For all keys in client-schac-homes, add value 0 in map if not already in map
+  (reduce (fn [m k] (assoc m k (get m k 0)))
+          (merge-with +
+                      (grouped-queue-counter :queue)
+                      (grouped-queue-counter :busy-queue))
+          client-schac-homes))
 
 (defn- update-gauge [gauge data]
   (doseq [[k v] data]
@@ -51,14 +58,3 @@
     ([job status result]
      (jobs-counter job status)
      (set-status-fn job status result))))
-
-(defn count-queues [grouped-queue-counter client-schac-homes]
-  {:post [(map? %)
-          (every? string? (keys %))
-          (every? integer? (vals %))]}
-  ;; For all keys in client-schac-homes, add value 0 in map if not already in map
-  (reduce (fn [m k] (assoc m k (get m k 0)))
-          (merge-with +
-                      (grouped-queue-counter :queue)
-                      (grouped-queue-counter :busy-queue))
-          client-schac-homes))
