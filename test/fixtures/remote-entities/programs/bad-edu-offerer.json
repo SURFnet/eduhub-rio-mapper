@@ -29,10 +29,10 @@
         "latitude": 0
       },
       "addressType": "teaching",
-      "streetNumber": 23,
+      "streetNumber": "23",
       "postalCode": "4184QU",
       "street": "Tollenslaan",
-      "additional": "a"
+      "additional": []
     }
   ],
   "programType": "program",

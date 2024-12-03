@@ -29,10 +29,10 @@
         "latitude": 67
       },
       "addressType": "teaching",
-      "streetNumber": 160,
+      "streetNumber": "160",
       "postalCode": "4945JP",
       "street": "GranprÃ© MoliÃ¨restraat",
-      "additional": ""
+      "additional": []
     }
   ],
   "programType": "specialization",
