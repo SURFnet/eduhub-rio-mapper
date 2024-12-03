@@ -57,6 +57,7 @@
     "P01081" ;; Er bestaat al een opleidingseenheid met dezelfde eigenOpleidingseenheidSleutel
     "N11020" ;; De einddatum van een aanmeldperiode moet na de begindatum liggen
     "N11030" ;; De einddatum van een instroomperiode moet na de begindatum liggen
+    "INT500" ;; Algemene interne fout
     })
 
 ;; Note: `P01810: Er bestaan nog verwijzingen naar de te verwijderen
