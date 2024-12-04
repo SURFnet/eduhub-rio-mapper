@@ -276,6 +276,18 @@
                       :message (or ~msg "Expect job result attributes to include opleidingseenheidcode."),
                       :expected '~form, :actual attrs#})))
 
+
+(defn kenmerken-tekst [xml naam]
+  (as-> (xml-utils/element->edn xml) $
+        (:Envelope $)
+        (:Body $)
+        (:opvragen_opleidingseenheid_response $)
+        (:hoOpleiding $)
+        (keep #(:kenmerken %) $)
+        (filter #(= naam (:kenmerknaam %)) $)
+        (first $)
+        (:kenmerkwaardeTekst $)))
+
 (defn job-result-aangebodenopleidingcode
   "Short cut to `post-job` job response attributes aangebodenopleidingcode."
   [job]
