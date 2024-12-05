@@ -70,20 +70,20 @@ jobs:
       - name: Notify ok only if previous run failed.
         env:
           SLACK_URL: ${{ secrets.SLACK_URL }}
-        if: ${{ steps.test_rio.outputs.ERROR_STATUS == 0 && steps.last_status.outputs.last_status != 'success' }}
+        if: ${{ steps.test_rio.outputs.ERROR_STATUS == '0' && steps.last_status.outputs.last_status != 'success' }}
         run: |
           curl -q -H "Content-Type: application/json" -X POST -d '{"text": "RIO Queue is finally UP"}' $SLACK_URL
       - name: Notify queue down
         env:
           SLACK_URL: ${{ secrets.SLACK_URL }}
-        if: ${{ steps.test_rio.outputs.ERROR_STATUS == 255 }}
+        if: ${{ steps.test_rio.outputs.ERROR_STATUS == '255' }}
         run: |
           curl -q -H "Content-Type: application/json" -X POST -d '{"text": "RIO Queue is DOWN"}' $SLACK_URL
           exit 1
       - name: Notify error
         env:
           SLACK_URL: ${{ secrets.SLACK_URL }}
-        if: ${{ steps.test_rio.outputs.ERROR_STATUS == 254 }}
+        if: ${{ steps.test_rio.outputs.ERROR_STATUS == '254' }}
         run: |
           curl -q -H "Content-Type: application/json" -X POST -d '{"text": "Error while checking RIO Queue"}' $SLACK_URL
           exit 1
