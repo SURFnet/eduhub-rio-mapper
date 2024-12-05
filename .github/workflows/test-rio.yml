@@ -1,11 +1,7 @@
 name: Check if RIO queue is up or down
 
-on:
-  schedule:
-    # every hour on weekdays during working hours, 9:06 tm 16:06
-    # may be shifted an hour in late March and October, but that's not a big deal
-    - cron: '6 8-15 * 1,2,3,11,12 1-5' # Winter time CET (UTC+1).
-    - cron: '6 7-14 * 4-10 1-5' # Summer time CET (UTC+2)
+on: push
+
 
 jobs:
   rio_queue:
