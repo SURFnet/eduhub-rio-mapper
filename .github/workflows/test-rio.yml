@@ -60,8 +60,11 @@ jobs:
           TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
         id: test_rio
         run: |
+          set +e
           lein mapper test-rio rio-mapper-dev.jomco.nl
           echo "ERROR_STATUS=$?" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+          set -e
         continue-on-error: true
       - name: Notify ok only if previous run failed.
         env:
