@@ -139,4 +139,4 @@
                           name-id id})
                        {:action    command
                         ::ooapi/id id}))]
-      (job/run! handlers job (= (System/getenv "STORE_HTTP_REQUESTS") "true")))))
+      (job/run! handlers job (= "true" (:store-http-requests config))))))

@@ -127,7 +127,7 @@
                                         ;; xml response converted to edn.
                                         (assoc :attributes {:opleidingseenheidcode opleidingseenheidcode})
 
-                                        (and (= (System/getenv "STORE_HTTP_REQUESTS") "true")
+                                        (and (= "true" (:store-http-requests config))
                                              (#{:done :error :time-out} status)
                                              (-> data :http-messages))
                                         (assoc :http-messages (-> data :http-messages))
