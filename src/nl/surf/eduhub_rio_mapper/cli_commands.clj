@@ -21,6 +21,7 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
+            [nl.surf.eduhub-rio-mapper.config :as config]
             [nl.surf.eduhub-rio-mapper.endpoints.api :as api]
             [nl.surf.eduhub-rio-mapper.endpoints.worker-api :as worker-api]
             [nl.surf.eduhub-rio-mapper.job :as job]
@@ -119,6 +120,12 @@
     (let [[client-info [type id]] (parse-client-info-args args clients)]
       (resolver type id (:institution-oin client-info)))
 
+    "document-env-vars"
+    (let [x (map (fn [[k v]] [(-> k name str/upper-case (str/replace #"-" "_")) (first v)]) config/opts-spec)
+          max-env-length (last (sort (map #(count (first %)) x)))
+          output (map (fn [[env desc]] (str env " " (apply str (repeat (- max-env-length (count env) -1) " ")) desc)) x)]
+      (str/join "\n" (sort output)))
+
     ("upsert" "delete" "delete-by-code")
     (let [[client-info [type id rest-args]] (parse-client-info-args args clients)
           job (merge (assoc client-info
@@ -132,4 +139,4 @@
                           name-id id})
                        {:action    command
                         ::ooapi/id id}))]
-      (job/run! handlers job (= (System/getenv "STORE_HTTP_REQUESTS") "true")))))
+      (job/run! handlers job (= "true" (:store-http-requests config))))))

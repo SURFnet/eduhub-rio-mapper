@@ -66,16 +66,16 @@
    :api-hostname                       ["Hostname for listing web API" :str
                                         :default "localhost"
                                         :in [:api-config :host]]
-   :worker-api-port                    ["HTTP port for serving web API" :int
+   :worker-api-port                    ["HTTP port for serving worker web API" :int
                                         :default 8080
                                         :in [:worker-api-config :port]]
-   :worker-api-hostname                ["Hostname for listing web API" :str
+   :worker-api-hostname                ["Hostname for listing worker web API" :str
                                         :default "localhost"
                                         :in [:worker-api-config :host]]
-   :job-retry-wait-ms                  ["Number of ms to wait before retrying job" :int
+   :job-retry-wait-ms                  ["Number of milliseconds to wait before retrying a failed job" :int
                                         :default 5000
                                         :in [:worker :retry-wait-ms]]
-   :job-max-retries                    ["Max number of retries of a job" :int
+   :job-max-retries                    ["Max number of retries of a failed job" :int
                                         :default 3
                                         :in [:worker :max-retries]]
    :redis-uri                          ["URI to redis" :str
@@ -88,9 +88,12 @@
                                         :default [5,30,120,600]
                                         :parser parse-int-list
                                         :in [:rio-config :rio-retry-attempts-seconds]]
-   :status-ttl-sec                     ["Number of seconds hours to keep job status" :int
+   :status-ttl-sec                     ["Number of seconds to keep job status" :int
                                         :default (* 60 60 24 7) ;; one week
-                                        :in [:status-ttl-sec]]})
+                                        :in [:status-ttl-sec]]
+   :store-http-requests                ["Boolean; should all http traffic be logged? Defaults to true." :str
+                                        :default "true"
+                                        :in [:store-http-requests]]})
 
 (defn help []
   (envopts/specs-description opts-spec))
@@ -159,12 +162,13 @@
            (assoc :clients (clients-info/read-clients-data clients-info-config)))))))
 
 (defn make-config-and-handlers []
+  (println "make-config-and-handlers")
   (let [{:keys [clients] :as cfg} (make-config)
         handlers (processing/make-handlers cfg)
         config (update cfg :worker merge
                        {:queues        (clients-info/institution-schac-homes clients)
                         :queue-fn      :institution-schac-home
-                        :run-job-fn    #(job/run! handlers % (= (System/getenv "STORE_HTTP_REQUESTS") "true"))
+                        :run-job-fn    #(job/run! handlers % (= "true" (:store-http-requests cfg)))
                         :set-status-fn (status/make-set-status-fn cfg)
                         :retryable-fn  status/retryable?
                         :error-fn      status/errors?})]

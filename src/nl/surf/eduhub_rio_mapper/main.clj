@@ -26,7 +26,8 @@
   (:gen-class))
 
 (def commands
-  #{"upsert" "delete" "delete-by-code" "get" "show" "resolve" "serve-api" "worker" "help" "dry-run-upsert" "link" "test-rio"})
+  #{"upsert" "delete" "delete-by-code" "get" "show" "resolve" "serve-api" "worker" "help" "dry-run-upsert" "link"
+    "document-env-vars" "test-rio"})
 
 (defn -main
   [command & args]
@@ -43,7 +44,7 @@
 
   (let [result (cli-commands/process-command command args (config/make-config-and-handlers))]
     (case command
-      ("serve-api" "worker")
+      ("serve-api" "worker" "show" "test-rio")
       nil
 
       "get"
@@ -53,10 +54,7 @@
       ("dry-run-upsert" "link")
       (pprint/pprint result)
 
-      ("show" "test-rio")
-      nil
-
-      "resolve"
+      ("resolve" "document-env-vars")
       (println result)
 
       ("upsert" "delete" "delete-by-code")
