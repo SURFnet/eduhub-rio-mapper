@@ -138,9 +138,8 @@ must be set:
 ```
 API_HOSTNAME                        Hostname for listing web API
 API_PORT                            HTTP port for serving web API
-WORKER_HOSTNAME                     Hostname for listing worker web API
-WORKER_PORT                         HTTP port for serving werker web API
-CLIENTS_INFO_PATH                   CLients info config file
+CLIENTS_INFO_PATH                   Clients info config file
+CONNECTION_TIMEOUT_MILLIS           HTTP connection timeout in milliseconds
 GATEWAY_PASSWORD                    OOAPI Gateway Password
 GATEWAY_ROOT_URL                    OOAPI Gateway Root URL
 GATEWAY_USER                        OOAPI Gateway Username
@@ -151,17 +150,19 @@ KEYSTORE_ALIAS                      Key alias in keystore
 KEYSTORE_PASSWORD                   Keystore password
 REDIS_KEY_PREFIX                    Prefix for redis keys
 REDIS_URI                           URI to redis
-RIO_RETRY_ATTEMPTS_SECONDS          Comma-separated list of number of seconds to wait after each RIO retry.
 RIO_READ_URL                        RIO Services Read URL
 RIO_RECIPIENT_OIN                   Recipient OIN for RIO SOAP calls
+RIO_RETRY_ATTEMPTS_SECONDS          Number of seconds to wait for first, second, etc. retry of RIO command, comma separated
 RIO_UPDATE_URL                      RIO Services Update URL
-STATUS_TTL_SEC                      Number of seconds hours to keep job status
+STATUS_TTL_SEC                      Number of seconds to keep job status
 STORE_HTTP_REQUESTS                 Boolean; should all http traffic be logged? Defaults to true.
 SURF_CONEXT_CLIENT_ID               SurfCONEXT client id for Mapper service
 SURF_CONEXT_CLIENT_SECRET           SurfCONEXT client secret for Mapper service
 SURF_CONEXT_INTROSPECTION_ENDPOINT  SurfCONEXT introspection endpoint
 TRUSTSTORE                          Path to trust-store
 TRUSTSTORE_PASSWORD                 Trust-store password
+WORKER_API_HOSTNAME                 Hostname for listing worker web API
+WORKER_API_PORT                     HTTP port for serving worker web API
 ```
 
 The `CLIENTS_INFO_PATH` should specify a json file with settings for client-id, schac-home and oin:
