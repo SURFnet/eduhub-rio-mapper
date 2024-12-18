@@ -18,6 +18,7 @@
 
 (ns nl.surf.eduhub-rio-mapper.e2e-helper
   (:require [clj-http.client :as http]
+            [clojure.pprint :as pprint]
             [clojure.string :as str]
             [clojure.test :as test]
             [environ.core :refer [env]]
@@ -34,8 +35,8 @@
   (:import [java.io StringWriter]
            [java.net ConnectException]
            [java.util Base64]
-           [javax.xml.xpath XPathFactory]
-           [org.w3c.dom Node]))
+           [javax.xml.xpath XPathConstants XPathFactory]
+           [org.w3c.dom Node NodeList]))
 
 (def ^:private last-seen-testing-contexts (atom nil))
 
@@ -220,6 +221,7 @@
   Return the HTTP response of the call and includes a \"delay\" to access
   the job result at `:result-delay`."
   [action & args]
+  {:pre [(#{:upsert :delete :link :unlink :status :dry-run/upsert} action)]}
   (let [{:keys [status] {:keys [token]} :body :as res}
         (call-api :post action args)]
     (assoc res :result-delay
@@ -276,14 +278,40 @@
                       :message (or ~msg "Expect job result attributes to include opleidingseenheidcode."),
                       :expected '~form, :actual attrs#})))
 
+(defn- rio-type-to-response-name [rio-type]
+  (case rio-type
+    :education-specification :opvragen_opleidingseenheid_response
+    :course :opvragen_aangebodenOpleiding_response
+    :program :opvragen_aangebodenOpleiding_response))
 
-(defn kenmerken-tekst [xml naam]
+(defn- rio-type-to-root-element [rio-type node]
+  (pprint/pprint node)
+  (let [x
+        (case rio-type
+          :education-specification (some node rio-loader/opleidingseenheid-namen)
+          :course (some node rio-loader/aangeboden-opleiding-namen)
+          :program (some node rio-loader/aangeboden-opleiding-namen))]
+    (pprint/pprint x)
+    x))
+
+(defn debug [msg x]
+  (println  msg "DEBUG") (pprint/pprint x) x)
+
+(defn- extract-kenmerken [node]
+  (if (map? node)
+    [(:kenmerken node)]
+    (keep #(:kenmerken %) node)))
+
+(defn- kenmerken-tekst [xml naam rio-type]
+  {:pre [(#{:education-specification :course :program} rio-type)]}
   (as-> (xml-utils/element->edn xml) $
         (:Envelope $)
         (:Body $)
-        (:opvragen_opleidingseenheid_response $)
-        (:hoOpleiding $)
-        (keep #(:kenmerken %) $)
+        (debug "BODY" $)
+        ((rio-type-to-response-name rio-type) $)
+        (rio-type-to-root-element rio-type $)
+        (extract-kenmerken $)
+        (debug "KENMERKEN" $)
         (filter #(= naam (:kenmerknaam %)) $)
         (first $)
         (:kenmerkwaardeTekst $)))
@@ -381,6 +409,7 @@
 
 
 (def ^:private rio-getter (delay (rio-loader/make-getter (:rio-config @config))))
+(def ^:private rio-resolver (delay (rio-loader/make-resolver (:rio-config @config))))
 (def ^:private client-info (delay (clients-info/client-info (:clients @config)
                                                             (:client-id env))))
 
@@ -388,6 +417,14 @@
   (let [messages-atom (atom [])
         result (binding [http-utils/*http-messages* messages-atom]
                  (@rio-getter req))]
+    (print-http-messages @messages-atom)
+    result))
+
+(defn rio-resolve [rio-type id]
+  {:pre [(#{"education-specification" "course" "program"} rio-type)]}
+  (let [messages-atom (atom [])
+        result (binding [http-utils/*http-messages* messages-atom]
+                 (@rio-resolver rio-type id (:institution-oin @client-info)))]
     (print-http-messages @messages-atom)
     result))
 
@@ -429,6 +466,22 @@
         rio-get
         xml-utils/str->dom)))
 
+(defn kenmerken-tekst-opleidingseenheid [rio-code naam]
+  (as-> rio-code $
+        (rio-opleidingseenheid $)
+        (xml-utils/element->edn $)
+        (:Envelope $)
+        (:Body $)
+        (:opvragen_opleidingseenheid_response $)
+        (some $ rio-loader/opleidingseenheid-namen)
+        (extract-kenmerken $)
+        (filter #(= naam (:kenmerknaam %)) $)
+        (first $)
+        (:kenmerkwaardeTekst $)))
+
+(defn eigen-opleidingseenheid-sleutel [rio-code]
+  (kenmerken-tekst-opleidingseenheid rio-code "eigenOpleidingseenheidSleutel"))
+
 (defn rio-aangebodenopleiding
   "Call RIO `opvragen_aangebodenOpleiding`."
   [id]
@@ -439,6 +492,22 @@
          :response-type                  :literal}
         rio-get
         xml-utils/str->dom)))
+
+(defn kenmerken-tekst-aangeboden-opleiding [rio-code naam]
+  (as-> rio-code $
+        (rio-aangebodenopleiding $)
+        (xml-utils/element->edn $)
+        (:Envelope $)
+        (:Body $)
+        (:opvragen_aangebodenOpleiding_response $)
+        (some $ rio-loader/aangeboden-opleiding-namen)
+        (extract-kenmerken $)
+        (filter #(= naam (:kenmerknaam %)) $)
+        (first $)
+        (:kenmerkwaardeTekst $)))
+
+(defn eigen-aangeboden-opleiding-sleutel [rio-code]
+  (kenmerken-tekst-aangeboden-opleiding rio-code "eigenAangebodenOpleidingSleutel"))
 
 (defn get-in-xml
   "Get text node from `path` starting at `node`."
@@ -451,6 +520,24 @@
     (.evaluate (.newXPath (XPathFactory/newInstance))
                xpath
                node)))
+
+(defn get-all-in-xml
+  "Get text node from `path` starting at `node`."
+  [node path]
+  {:pre [(instance? Node node)]}
+  (let [xpath           (str "//"
+                   (->> path
+                        (map #(str "*[local-name()='" % "']"))
+                        (str/join "/")))
+        ^NodeList nodes (.evaluate (.newXPath (XPathFactory/newInstance))
+                                   xpath
+                                   node
+                                   XPathConstants/NODESET)
+        node-length     (.getLength nodes)
+        values          (vec (for [i (range node-length)]
+                      (-> (.item nodes i)
+                          (.getTextContent))))]
+    values))
 
 
 
