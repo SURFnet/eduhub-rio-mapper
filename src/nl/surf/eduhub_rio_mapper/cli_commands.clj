@@ -76,7 +76,9 @@
 
     "test-rio"
     (let [[client-info _args] (parse-client-info-args args clients)
-          uuid    (UUID/randomUUID)
+          uuid     (UUID/randomUUID)
+          new-uuid (UUID/randomUUID)
+
           eduspec (-> "../test/fixtures/ooapi/education-specification-template.json"
                       io/resource
                       slurp
@@ -84,11 +86,28 @@
                       (assoc :educationSpecificationId uuid))]
 
       (try
-        (insert! {:institution-oin        (:institution-oin client-info)
-                  :institution-schac-home (:institution-schac-home client-info)
-                  ::ooapi/type            "education-specification"
-                  ::ooapi/id              uuid
-                  ::ooapi/entity          eduspec})
+        (let [insert-req {:institution-oin        (:institution-oin client-info)
+                          :institution-schac-home (:institution-schac-home client-info)
+                          ::ooapi/type            "education-specification"
+                          ::ooapi/id              uuid
+                          ::ooapi/entity          eduspec}
+              rio-code (-> insert-req insert! :aanleveren_opleidingseenheid_response :opleidingseenheidcode)
+              link-req (merge insert-req {::ooapi/id new-uuid ::rio/opleidingscode rio-code})]
+          (link! link-req)
+          (let [rio-obj (rio.loader/find-rio-object rio-code getter (:institution-oin client-info) "opleidingseenheid")
+                nieuwe-sleutel (->> rio-obj
+                                    :content
+                                    (filter #(= :kenmerken (:tag %)))
+                                    (map :content)
+                                    (map #(reduce (fn [m el] (assoc m (:tag el) (-> el :content first))) {} %))
+                                    (filter #(= "eigenOpleidingseenheidSleutel" (:kenmerknaam %)))
+                                    first
+                                    :kenmerkwaardeTekst)]
+            (when (not= nieuwe-sleutel (str uuid))
+              (println "Failed to set eigenOpleidingseenheidSleutel to" nieuwe-sleutel)
+              (println "The RIO Queue is DOWN")
+              (System/exit 255))))
+
         (println "The RIO Queue is UP")
         (catch Exception ex
           (when-let [ex-data (ex-data ex)]
