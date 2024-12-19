@@ -120,6 +120,24 @@
   (rio-helper/->xml (partial link-item-adapter rio-obj)
                     (-> rio-obj first strip-duo)))
 
+(defn convert-rio-obj-raadplegen->beheren [rio-obj finder]
+  (let [rio-obj (xmlclj->duo-hiccup rio-obj)
+        ;; There is a mismatch between raadplegen and beheren for aangeboden-opleidingen.
+        ;; raadplegen returns opleidingseenheidcode, but beheren requires opleidingseenheidSleutel.
+        rio-obj (map #(if (and (sequential? %)
+                               (aangeboden-opleiding? rio-obj)
+                               (= :duo:opleidingseenheidcode (first %)))
+                        (assoc % 0 :duo:opleidingseenheidSleutel)
+                        %)
+                     rio-obj)
+        rio-new  (->> rio-obj
+                      ;; verwijder opleidingserkenningSleutel, aangezien er niet een opleidingseenheidcode EN een
+                      ;; opleidingserkenningSleutel aangeboden mogen worden.
+                      (filter (fn [n] (not (and (vector? n)
+                                                (#{:duo:opleidingserkenningSleutel} (first n))))))
+                      (linker))]
+    [rio-new (some finder rio-obj)]))
+
 (defn make-linker [rio-config getter]
   {:pre [rio-config]}
   (fn [{::ooapi/keys [id type] :keys [institution-oin] :as request}]
@@ -127,35 +145,17 @@
     (let [[action sleutelnaam]
           (case type
             "education-specification" ["aanleveren_opleidingseenheid" "eigenOpleidingseenheidSleutel"]
-            ("course" "program")     ["aanleveren_aangebodenOpleiding" "eigenAangebodenOpleidingSleutel"])
+            ("course" "program")      ["aanleveren_aangebodenOpleiding" "eigenAangebodenOpleidingSleutel"])
           rio-obj  (rio.loader/rio-finder getter request)]
       (if (nil? rio-obj)
         (throw (ex-info "404 Not Found" {:phase :resolving}))
-        (let [rio-obj (xmlclj->duo-hiccup rio-obj)
-              ;; There is a mismatch between raadplegen and beheren for aangeboden-opleidingen.
-              ;; raadplegen returns opleidingseenheidcode, but beheren requires opleidingseenheidSleutel.
-              rio-obj (map #(if (and (sequential? %)
-                                     (aangeboden-opleiding? rio-obj)
-                                     (= :duo:opleidingseenheidcode (first %)))
-                              (assoc % 0 :duo:opleidingseenheidSleutel)
-                              %)
-                           rio-obj)
-              finder   (sleutel-finder sleutelnaam)
-              old-id   (some finder rio-obj)
-              new-id   id
-              result   {(keyword sleutelnaam) (if (= old-id new-id)
-                                                {:diff false}
-                                                {:diff true :old-id old-id :new-id new-id})}
-              rio-new (->> rio-obj
-                           ;; verwijder opleidingserkenningSleutel, aangezien er niet een opleidingseenheidcode EN een
-                           ;; opleidingserkenningSleutel aangeboden mogen worden.
-                           (filter (fn [n] (not (and (vector? n)
-                                                     (#{:duo:opleidingserkenningSleutel} (first n))))))
-                           (linker)
-                           (keep (sleutel-changer new-id finder))
-                           vec)
+        (let [finder (sleutel-finder sleutelnaam)
+              [rio-new old-id] (convert-rio-obj-raadplegen->beheren rio-obj finder)
               mutation {:action     action
-                        :rio-sexp   [rio-new]
+                        :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
                         :sender-oin institution-oin}
               _success (mutator/mutate! mutation rio-config)]
-          {:link result, :rio-sexp (:rio-sexp mutation)})))))
+          {:link     {(keyword sleutelnaam) (if (= old-id id)
+                                          {:diff false}
+                                          {:diff true :old-id old-id :new-id id})},
+           :rio-sexp (:rio-sexp mutation)})))))
