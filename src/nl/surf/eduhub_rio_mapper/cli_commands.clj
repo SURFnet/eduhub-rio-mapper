@@ -40,7 +40,7 @@
         response-type (and response-type (keyword response-type))
         key-name (cond
                    (rio.loader/aangeboden-opleiding-types type)
-                   ::ooapi/id
+                   ::rio/aangeboden-opleiding-code
 
                    (= type rio.loader/opleidingseenheden-van-organisatie-type)
                    ::rio/code
