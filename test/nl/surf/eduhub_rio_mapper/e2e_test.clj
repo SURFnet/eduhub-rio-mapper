@@ -17,8 +17,7 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.e2e-test
-  (:require [clojure.pprint :as pprint]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
             [clojure.test :refer :all]
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.e2e-helper :refer :all]
@@ -48,9 +47,10 @@
 (deftest ^:e2e test-program-without-eduspecs
   (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
     (let [job (post-job :upsert :programs "some")]
-      (is (job-error? job))
-      (is (str/starts-with? (job-result job :message)
-                            "No 'opleidingseenheid' found in RIO with eigensleutel:")))))
+      (and
+        (is (job-error? job))
+        (is (str/starts-with? (job-result job :message)
+                              "No 'opleidingseenheid' found in RIO with eigensleutel:"))))))
 
 (deftest ^:e2e test-upsert-eduspec-dry-run
   (testing "scenario [1a]: Test /job/dry-run to see the difference between the edspec parent in OOAPI en de opleidingeenheid in RIO. You can expect RIO to be empty, when you start fresh."
@@ -190,7 +190,7 @@
           (is (job-dry-run-found? last-job))
           (is (job-without-diffs? last-job))))
 
-      ;; link program "some" to new sleutel. For program and courses, id == sleutel
+      ;; link program "some" to new sleutel. For program and courses, usually aangeboden-opleiding-code == sleutel
 
       (set! program-id (str (ooapi-id :programs "some")))
       (set! generated-sleutel (UUID/randomUUID))
@@ -247,8 +247,8 @@
       (testing "scenario [7a]: Test /job/upsert with the edspec for a course. You can expect 'done'."
         (set! parent-code (job-result-opleidingseenheidcode last-job))
         (and
-          (is (some? parent-code))
           (is (job-done? last-job))
+          (is (some? parent-code))
           ;; make sure we see it after a read request as well
           (is (= parent-code
                  (get-in-xml (rio-opleidingseenheid parent-code) ["hoOnderwijseenheid" "opleidingseenheidcode"])))))
@@ -284,44 +284,83 @@
           (is (job-dry-run-found? last-job))
           (is (job-without-diffs? last-job))))
 
-      (testing "scenario [7e]: Test /job/delete with the course. You can expect an error, because the course is not upserted yet."
+      (testing "scenario [7e]: Test /job/delete with the course."
         (set! last-job (post-job :delete :courses "some"))
-        (is (job-done? last-job))
-        ;; TODO validate the answer
-        (set! last-xml (rio-aangebodenopleiding course-id))
-        (println "HEREHERE")
-        (pprint/pprint (xml-utils/dom->str last-xml)))
+        (and
+          (is (job-done? last-job))
+          (is (nil? (rio-resolve "course" course-id)))))
 
       (set! course-id (str (ooapi-id :courses "some")))
       (set! generated-sleutel (UUID/randomUUID))
-      ;; link course "some" to new sleutel. For program and courses, id == sleutel
+      ;; link course "some" to new sleutel. For program and courses, usually aangeboden-opleiding-code == sleutel
       (testing "scenario [8a]: Test /job/link of the course and create a new 'eigen sleutel'. You can expect the 'eigen sleutel' to be changed."
         (set! last-job (post-job :link course-id :courses generated-sleutel))
         (and
           (is (job-done? last-job))
           (is (job-has-diffs? last-job))
           (is (= (str generated-sleutel)
-                 (eigen-aangeboden-opleiding-sleutel course-id)))
+                 (eigen-aangeboden-opleiding-sleutel course-id)))))
 
-          (testing "(you can repeat this to expect an error because the new 'eigen sleutel' already exists.)"
-            (set! last-job (post-job :link course-id :courses generated-sleutel))
-            (and
-              (is (job-done? last-job))
-              (is (job-without-diffs? last-job))))
+      ;; unlink course "some"
+      (testing "scenario [8d]: Test /job/unlink to reset the course to an empty 'eigen sleutel'."
+        ;; course-id is also the course-code
+        (set! last-job (post-job :unlink course-id :courses generated-sleutel))
+        (and
+          (is (job-done? last-job))
+          (is (nil? (eigen-aangeboden-opleiding-sleutel course-id)))))
 
-          ;; unlink course "some"
-          (testing "scenario [8d]: Test /job/unlink to reset the course to an empty 'eigen sleutel'."
-            ;; course-id is also the course-code
-            (set! last-job (post-job :unlink course-id :courses generated-sleutel))
-            (and
-              (is (job-done? last-job))
-              (is (nil? (eigen-aangeboden-opleiding-sleutel course-id)))))
+      ;; link course "some" to old sleutel
+      (testing "scenario [8b]: Test /job/link to reset the course to the old 'eigen sleutel'."
+        (set! last-job (post-job :link course-id :courses (ooapi-id :courses "some")))
+        (and
+          (is (job-done? last-job))
+          (is (job-has-diffs? last-job))
+          (is (= course-id (get-in (job-result-attributes last-job) [:eigenAangebodenOpleidingSleutel :new-id])))
+          (is (= course-id (eigen-aangeboden-opleiding-sleutel course-id))))))))
 
-          ;; link course "some" to old sleutel
-          (testing "scenario [8b]: Test /job/link to reset the course to the old 'eigen sleutel'."
-            (set! last-job (post-job :link course-id :courses (ooapi-id :courses "some")))
-            (and
-              (is (job-done? last-job))
-              (is (job-has-diffs? last-job))
-              (is (= course-id (get-in (job-result-attributes last-job) [:eigenAangebodenOpleidingSleutel :new-id])))
-              (is (= course-id (eigen-aangeboden-opleiding-sleutel course-id))))))))))
+(deftest ^:e2e test-accredited-program
+  ;; Dit is een belangrijke usecase voor
+  ;; instellingen die vaak voorkomt. Lastige is
+  ;; dat die voortbouwt op data in RIO die er al
+  ;; moet zijn en die we niet zelf kunnen
+  ;; aanmaken.
+  ;; In onze eigen tests gebruikten we daarvoor
+  ;; de opleiding Bio-informatica (1001O5220)
+  ;; van de Hanzehogeschool Groningen op de
+  ;; KAT omgeving van RIO.
+  ;; Als deze opleiding ook bestaat in de KIT
+  ;; kunnen we die hier ook voor gebruiken.
+  ;; Als dat geen optie is, is het belangrijk dat
+  ;; we in ieder geval test 9c wel uitvoeren.
+  (binding [generated-sleutel (UUID/randomUUID)
+            parent-code       "1001O5220"
+            child-code        nil
+            last-job          nil]
+
+
+    (testing "scenario [9a]: Link to accredited program. You can expect the eigenSleutel field to be set in RIO."
+      (set! last-job (post-job :link parent-code :education-specifications generated-sleutel))
+      (and
+        (is (job-done? last-job))
+        (is (= (str generated-sleutel)
+               (get-in (job-result last-job) [:attributes :eigenOpleidingseenheidSleutel :new-id])))
+        (is (job-has-diffs? last-job))
+        (is (= (str generated-sleutel)
+               (eigen-opleidingseenheid-sleutel parent-code)))))
+
+    (testing "scenario [9b]: Upsert accredited program. Not much should be changed in RIO, because it is an accredited program, where we're not allowed to change a lot."
+      ;; difficult. link uses update, maybe we can use that
+      )
+    (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
+      ;; insert eduspec with type "variant", then create relation. Delete after use
+      (and
+        (set! last-job (post-job :upsert :education-specifications "accredited-variant"))
+        (set! child-code (job-result-opleidingseenheidcode last-job))
+        (set! last-job (post-job :delete :education-specifications "accredited-variant"))
+        (is (nil? (rio-resolve "education-specification" parent-code)))))
+
+    (testing "scenario [9e]: Unlink from accredited program > done"
+      (set! last-job (post-job :unlink parent-code :education-specifications))
+      (and
+        (is (job-done? last-job))
+        (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))))
