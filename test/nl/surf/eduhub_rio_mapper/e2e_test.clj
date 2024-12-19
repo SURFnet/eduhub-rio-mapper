@@ -22,7 +22,8 @@
             [clojure.test :refer :all]
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.e2e-helper :refer :all]
-            [nl.surf.eduhub-rio-mapper.remote-entities-helper :refer [remote-entities-fixture]])
+            [nl.surf.eduhub-rio-mapper.remote-entities-helper :refer [remote-entities-fixture]]
+            [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
   (:import [java.util UUID]))
 
 (use-fixtures :once with-running-mapper remote-entities-fixture)
@@ -237,7 +238,9 @@
 (deftest ^:e2e test-course-with-eduspecs
   (binding [last-job (post-job :upsert :education-specifications "parent-course")
             course-id nil
-            generated-sleutel nil]
+            generated-sleutel nil
+            parent-code nil
+            last-xml nil]
 
     ;; insert eduspec called "parent-course"
     (and
@@ -258,17 +261,17 @@
 
       (testing "scenario [7e]: Test /job/delete with the course. You can expect an error, because the course is not upserted yet."
         (set! last-job (post-job :delete :courses "some"))
-        ;; TODO check whether course has been deleted
         (is (job-error? last-job)))
 
       ;; insert course "some"
       (testing "scenario [7d]: Test /job/upsert with the course. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
         (set! last-job (post-job :upsert :courses "some"))
-        ;; TODO Er komt een aangebodenopleidingcode terug - even checken dat die ook in rio staat
-        ;; TODO ook checken dat de opleidingseenheidcode van de course klopt
+        (set! course-id (job-result-aangebodenopleidingcode last-job))
         (and
           (is (job-done? last-job))
-          (set! last-xml (rio-aangebodenopleiding (job-result-aangebodenopleidingcode last-job)))
+          (set! last-xml (rio-aangebodenopleiding course-id))
+          (is (= parent-code
+                 (get-in-xml last-xml ["opleidingseenheidcode"])))
           (is (= "1994-09-05"
                  (get-in-xml last-xml ["aangebodenHOOpleidingsonderdeel" "eersteInstroomDatum"])))
           (is (= "2050-11-10"
@@ -280,6 +283,14 @@
           (is (job-done? last-job))
           (is (job-dry-run-found? last-job))
           (is (job-without-diffs? last-job))))
+
+      (testing "scenario [7e]: Test /job/delete with the course. You can expect an error, because the course is not upserted yet."
+        (set! last-job (post-job :delete :courses "some"))
+        (is (job-done? last-job))
+        ;; TODO validate the answer
+        (set! last-xml (rio-aangebodenopleiding course-id))
+        (println "HEREHERE")
+        (pprint/pprint (xml-utils/dom->str last-xml)))
 
       (set! course-id (str (ooapi-id :courses "some")))
       (set! generated-sleutel (UUID/randomUUID))
