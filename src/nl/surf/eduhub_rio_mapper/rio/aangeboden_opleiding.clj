@@ -19,7 +19,6 @@
 (ns nl.surf.eduhub-rio-mapper.rio.aangeboden-opleiding
   (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
-            [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.ooapi :as ooapi-utils])
   (:import [java.time Period Duration]))
 
@@ -176,6 +175,7 @@
 (defn ->aangeboden-opleiding
   "Converts a program or course into the right kind of AangebodenOpleiding."
   [course-program ooapi-type opleidingscode education-specification-type]
+  {:pre [(string? education-specification-type)]}
   (-> (course-program-adapter course-program opleidingscode ooapi-type)
       rio-helper/wrapper-periodes-cohorten
       (rio-helper/->xml (education-specification-type-mapping education-specification-type))))

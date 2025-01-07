@@ -30,6 +30,7 @@
             [nl.surf.eduhub-rio-mapper.rio.opleidingseenheid :as opl-eenh]
             [nl.surf.eduhub-rio-mapper.rio.updated-handler :as updated-handler]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+            [nl.surf.eduhub-rio-mapper.test-helper :as helper]
             [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
             [nl.surf.eduhub-rio-mapper.utils.soap :as soap]
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
@@ -58,10 +59,10 @@
 (def test-handler
   "Loads ooapi fixtures from file and fakes resolver."
   (-> updated-handler/update-mutation
-      (updated-handler/wrap-resolver (fn [ootype _ _] (if (= "education-specification" ootype)
+      (helper/wrap-resolver (fn [ootype _ _] (if (= "education-specification" ootype)
                                                         "1009O1234"
                                                         "12345678-9abc-def0-1234-56789abcdef0")))
-      (ooapi.loader/wrap-load-entities ooapi.loader/ooapi-file-loader)
+      (helper/wrap-load-entities ooapi.loader/ooapi-file-loader)
       (clients-info/wrap-client-info [{:client-id              "rio-mapper-dev.jomco.nl"
                                        :institution-schac-home "demo06.test.surfeduhub.nl"
                                        :institution-oin        "0000000700025BE00000"}])))
