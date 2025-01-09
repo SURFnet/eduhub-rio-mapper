@@ -18,7 +18,6 @@
 
 (ns nl.surf.eduhub-rio-mapper.e2e-helper
   (:require [clj-http.client :as http]
-            [clojure.pprint :as pprint]
             [clojure.string :as str]
             [clojure.test :as test]
             [environ.core :refer [env]]
@@ -278,43 +277,10 @@
                       :message (or ~msg "Expect job result attributes to include opleidingseenheidcode."),
                       :expected '~form, :actual attrs#})))
 
-(defn- rio-type-to-response-name [rio-type]
-  (case rio-type
-    :education-specification :opvragen_opleidingseenheid_response
-    :course :opvragen_aangebodenOpleiding_response
-    :program :opvragen_aangebodenOpleiding_response))
-
-(defn- rio-type-to-root-element [rio-type node]
-  (pprint/pprint node)
-  (let [x
-        (case rio-type
-          :education-specification (some node rio-loader/opleidingseenheid-namen)
-          :course (some node rio-loader/aangeboden-opleiding-namen)
-          :program (some node rio-loader/aangeboden-opleiding-namen))]
-    (pprint/pprint x)
-    x))
-
-(defn debug [msg x]
-  (println  msg "DEBUG") (pprint/pprint x) x)
-
 (defn- extract-kenmerken [node]
   (if (map? node)
     [(:kenmerken node)]
     (keep #(:kenmerken %) node)))
-
-(defn- kenmerken-tekst [xml naam rio-type]
-  {:pre [(#{:education-specification :course :program} rio-type)]}
-  (as-> (xml-utils/element->edn xml) $
-        (:Envelope $)
-        (:Body $)
-        (debug "BODY" $)
-        ((rio-type-to-response-name rio-type) $)
-        (rio-type-to-root-element rio-type $)
-        (extract-kenmerken $)
-        (debug "KENMERKEN" $)
-        (filter #(= naam (:kenmerknaam %)) $)
-        (first $)
-        (:kenmerkwaardeTekst $)))
 
 (defn job-result-aangebodenopleidingcode
   "Short cut to `post-job` job response attributes aangebodenopleidingcode."

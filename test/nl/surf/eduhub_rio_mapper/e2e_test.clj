@@ -47,9 +47,10 @@
 (deftest ^:e2e test-program-without-eduspecs
   (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
     (let [job (post-job :upsert :programs "some")]
-      (is (job-error? job))
-      (is (str/starts-with? (job-result job :message)
-                            "No 'opleidingseenheid' found in RIO with eigensleutel:")))))
+      (and
+        (is (job-error? job))
+        (is (str/starts-with? (job-result job :message)
+                              "No 'opleidingseenheid' found in RIO with eigensleutel:"))))))
 
 (deftest ^:e2e test-upsert-eduspec-dry-run
   (testing "scenario [1a]: Test /job/dry-run to see the difference between the edspec parent in OOAPI en de opleidingeenheid in RIO. You can expect RIO to be empty, when you start fresh."
@@ -246,8 +247,8 @@
       (testing "scenario [7a]: Test /job/upsert with the edspec for a course. You can expect 'done'."
         (set! parent-code (job-result-opleidingseenheidcode last-job))
         (and
-          (is (some? parent-code))
           (is (job-done? last-job))
+          (is (some? parent-code))
           ;; make sure we see it after a read request as well
           (is (= parent-code
                  (get-in-xml (rio-opleidingseenheid parent-code) ["hoOnderwijseenheid" "opleidingseenheidcode"])))))
