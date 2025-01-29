@@ -23,7 +23,11 @@
     [clojure.java.io :as io]
     [clojure.pprint :refer [pprint]]
     [clojure.string :as str]
-    [clojure.test :refer :all])
+    [clojure.test :refer :all]
+    [nl.surf.eduhub-rio-mapper.ooapi.base :as ooapi-base]
+    [nl.surf.eduhub-rio-mapper.ooapi.loader :as ooapi.loader]
+    [nl.surf.eduhub-rio-mapper.specs.ooapi :as-alias ooapi]
+    [nl.surf.eduhub-rio-mapper.specs.rio :as-alias rio])
   (:import
     [java.io PushbackReader]))
 
@@ -32,6 +36,36 @@
           io/resource
           slurp
           (json/read-str :key-fn keyword)))
+
+(defn wrap-load-entities
+  [f ooapi-loader]
+  (let [loader (ooapi.loader/validating-loader ooapi-loader)]
+    (fn wrapped-load-entities [{:keys [::ooapi/type] :as request}]
+      (f
+        (cond->> request
+                 (not= "relation" type) (ooapi.loader/load-entities loader))))))
+
+(defn wrap-resolver
+  "Get the RIO opleidingscode and aangeboden opleiding code for the given entity.
+
+  Inserts the codes in the request as ::rio/opleidingscode
+  and ::rio/aangeboden-opleiding-code (if entity is a course or
+  program)."
+  [f resolver]
+  (fn with-resolver [{:keys [institution-oin] ::ooapi/keys [type id entity] ::rio/keys [opleidingscode] :as request}]
+    (f (cond-> request
+               (#{"course" "program"} type)
+               (assoc ::rio/aangeboden-opleiding-code
+                      (resolver type id institution-oin))
+
+               true
+               (assoc ::rio/opleidingscode
+                      (or opleidingscode
+                          (resolver "education-specification"
+                                    (if (= type "education-specification")
+                                      id
+                                      (ooapi-base/education-specification-id entity))
+                                    institution-oin)))))))
 
 (defn wait-while-predicate [predicate val-atom max-sec]
   (loop [ttl (* max-sec 10)]

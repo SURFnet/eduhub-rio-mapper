@@ -23,6 +23,7 @@
     [nl.jomco.http-status-codes :as http-status]
     [nl.surf.eduhub-rio-mapper.commands.dry-run :as dry-run]
     [nl.surf.eduhub-rio-mapper.commands.link :as link]
+    [nl.surf.eduhub-rio-mapper.ooapi.base :as ooapi-base]
     [nl.surf.eduhub-rio-mapper.ooapi.loader :as ooapi.loader]
     [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
@@ -63,10 +64,14 @@
         (ooapi.loader/load-entities validating-loader request)))))
 
 (defn- make-updater-resolve-phase [{:keys [resolver]}]
-  (fn resolve-phase [{::ooapi/keys [type id] :keys [institution-oin action] ::rio/keys [opleidingscode] :as request}]
+  (fn resolve-phase [{:keys [institution-oin action]
+                      ::ooapi/keys [type id entity]
+                      ::rio/keys [opleidingscode] :as request}]
     {:pre [institution-oin]}
     (let [resolve-eduspec (= type "education-specification")
-          edu-id          (updated-handler/education-specification-id request)
+          edu-id          (if (= type "education-specification")
+                            id
+                            (ooapi-base/education-specification-id entity))
           oe-code         (or opleidingscode
                               (resolver "education-specification" edu-id institution-oin))
           ao-code         (when-not resolve-eduspec (resolver type id institution-oin))]

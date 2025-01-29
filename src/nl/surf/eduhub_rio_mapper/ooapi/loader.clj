@@ -27,6 +27,7 @@
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.program :as program]
             [nl.surf.eduhub-rio-mapper.specs.request :as request]
+            [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.utils.ooapi :as ooapi-utils]))
 
@@ -163,33 +164,33 @@
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
   [loader {::ooapi/keys [type] :as request}]
   (let [entity                  (loader request)
+        rio-consumer            (ooapi-utils/extract-rio-consumer (:consumers entity))
+        joint-program?          (= "true" (str (:jointProgram rio-consumer)))
         offerings               (load-offerings loader request)
-        education-specification (if (= type "education-specification")
-                                  entity
+        eduspec-type            (cond
+                                  joint-program?
+                                  "program"
+
+                                  (= type "education-specification")
+                                  (:educationSpecificationType entity)
+
+                                  :else
                                   (-> request
                                       (assoc ::ooapi/type "education-specification"
                                              ::ooapi/id (ooapi-base/education-specification-id entity))
-                                      (loader)))]
+                                      (loader)
+                                      :educationSpecificationType))]
+
     (when (and (not= type "education-specification")
-               (= "program" (:educationSpecificationType education-specification)))
+               (= "program" eduspec-type))
       (validate-entity entity ::program/ProgramType "ProgramType")
-      (validate-entity (ooapi-utils/extract-rio-consumer (:consumers entity)) ::program/ProgramConsumerType "ProgramConsumerType"))
-    (assoc request
-      ::ooapi/entity (assoc entity :offerings offerings)
-      ::ooapi/education-specification education-specification)))
+      (validate-entity rio-consumer ::program/ProgramConsumerType "ProgramConsumerType"))
+    (cond-> request
+            true
+            (assoc
+              ::ooapi/entity (assoc entity :offerings offerings)
+              ::ooapi/education-specification-type eduspec-type)
 
-(defn wrap-load-entities
-  "Middleware for loading and validating ooapi entitites.
-
-  Gets ooapi/type and ooapi/id from the request and fetches the given
-  entity + its related offerings and its education-specification.
-
-  The resulting entity is passed along as ::ooapi/entity
-  with :offerings. The related education-specification is passed
-  as ::ooapi/education-specification."
-  [f ooapi-loader]
-  (let [loader (validating-loader ooapi-loader)]
-    (fn wrapped-load-entities [{:keys [::ooapi/type] :as request}]
-      (if (= "relation" type)
-        (f request)
-        (->> request (load-entities loader) (f))))))
+            joint-program?
+            (assoc
+              ::rio/opleidingscode (:educationUnitCode rio-consumer)))))

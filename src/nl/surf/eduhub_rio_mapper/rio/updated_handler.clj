@@ -34,35 +34,13 @@
 ;; been deleted) and we only need the education-specification id if
 ;; the root entity is an education-specification.
 
-(defn education-specification-id
-  [{:keys [::ooapi/entity ::ooapi/type ::ooapi/id]}]
-  (if (= type "education-specification")
-    id
-    (ooapi-base/education-specification-id entity)))
-
-(defn wrap-resolver
-  "Get the RIO opleidingscode and aangeboden opleiding code for the given entity.
-
-  Inserts the codes in the request as ::rio/opleidingscode
-  and ::rio/aangeboden-opleiding-code (if entity is a course or
-  program)."
-  [f resolver]
-  (fn with-resolver [{:keys [institution-oin] ::ooapi/keys [type id] ::rio/keys [opleidingscode] :as request}]
-    (f (cond-> request
-         (#{"course" "program"} type)
-         (assoc ::rio/aangeboden-opleiding-code
-                (resolver type id institution-oin))
-
-         true
-         (assoc ::rio/opleidingscode
-                (or opleidingscode (resolver "education-specification" (education-specification-id request) institution-oin)))))))
-
 (defn update-mutation
   "Returned object conforms to ::Mutation/mutation-response."
   [{:keys [institution-oin args]
-    ::ooapi/keys [id entity type education-specification]
+    ::ooapi/keys [id entity type education-specification-type]
     ::rio/keys [opleidingscode aangeboden-opleiding-code]}]
-  {:post [(s/valid? ::mutation/mutation-response %)]}
+  {:pre [(or (not= type "program") education-specification-type)]
+   :post [(s/valid? ::mutation/mutation-response %)]}
   (assert institution-oin)
   (if (and (not (#{"education-specification" "relation"} type))
            (not opleidingscode))
@@ -98,7 +76,7 @@
         {:action     "aanleveren_aangebodenOpleiding"
          :ooapi      entity
          :sender-oin institution-oin
-         :rio-sexp   [(aangeboden-opl/->aangeboden-opleiding entity :program opleidingscode (:educationSpecificationType education-specification))]}
+         :rio-sexp   [(aangeboden-opl/->aangeboden-opleiding entity :program opleidingscode education-specification-type)]}
 
         "relation"
         (let [[object-code valid-from valid-to] args]

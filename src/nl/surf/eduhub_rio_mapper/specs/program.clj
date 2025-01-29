@@ -20,7 +20,8 @@
   (:require [clojure.spec.alpha :as s]
             [nl.surf.eduhub-rio-mapper.ooapi.enums :as enums]
             [nl.surf.eduhub-rio-mapper.re-spec :refer [re-spec text-spec]]
-            [nl.surf.eduhub-rio-mapper.specs.common :as common]))
+            [nl.surf.eduhub-rio-mapper.specs.common :as common]
+            [nl.surf.eduhub-rio-mapper.specs.rio :as rio]))
 
 (s/def ::abbreviation
   (text-spec 1 40))
@@ -32,6 +33,8 @@
 (s/def ::description ::common/LongLanguageTypedStrings)
 (s/def ::educationLocationCode string?)
 (s/def ::educationSpecification ::common/uuid)
+(s/def ::educationUnitCode ::rio/OpleidingsEenheidID-v01)
+(s/def ::jointProgram boolean?)
 (s/def ::firstStartDate ::common/date)
 (s/def ::foreignPartner string?)
 (s/def ::foreignPartners (s/coll-of ::foreignPartner))
@@ -82,13 +85,13 @@
 (s/def ::program
   (s/keys :req-un [::programId
                    ::consumers
-                   ::educationSpecification
                    ::name
                    ::validFrom]
           :opt-un [::abbreviation
                    ::children
                    ::description
                    ::common/duration
+                   ::educationSpecification
                    ::link
                    ::modeOfStudy
                    ::parent
@@ -104,4 +107,6 @@
 
 (s/def ::ProgramConsumerType
   (s/keys :req-un [::propaedeuticPhase
-                   ::studyChoiceCheck]))
+                   ::studyChoiceCheck]
+          :opt-un [::educationUnitCode
+                   ::jointProgram]))
