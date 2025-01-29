@@ -31,8 +31,7 @@ This concerns the following top-level OOAPI objects:
 
 - Course / Program (with related Offerings)
 
-We'll start with the EducationSpecification because this is it
-simplest.
+We'll start with the EducationSpecification because this is it simplest.
 
 # Data flow (final app)
 
@@ -219,7 +218,7 @@ docker run \
   worker
 ```
 
-Notice that `config.env` is not included in the repo, and that the configuration files should be made 
+Notice that `config.env` is not included in the repo, and that the configuration files should be made
 available via a "volume" (see `-v` option).
 
 ## End to End tests
