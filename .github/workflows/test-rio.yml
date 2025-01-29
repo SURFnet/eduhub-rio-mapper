@@ -9,7 +9,7 @@ on:
 
 jobs:
   rio_queue:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Get status of previous run of this workflow - store in last_status
