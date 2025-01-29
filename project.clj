@@ -28,7 +28,7 @@
                  [compojure "1.7.1"]
                  [ring/ring-jetty-adapter "1.13.0"]
                  [ring/ring-core "1.13.0"]
-                 [ring/ring-defaults "0.5.0"]
+                 [ring/ring-defaults "0.6.0"]
                  [ring/ring-json "0.5.1"]
                  [nl.jomco/ring-trace-context "0.0.8"]
 
@@ -43,7 +43,7 @@
                  ;; force newest version
                  [cheshire "5.13.0"]
                  [commons-io "2.18.0"]
-                 [commons-codec "1.17.2"]]
+                 [commons-codec "1.18.0"]]
 
   :java-source-paths ["src"]
 
