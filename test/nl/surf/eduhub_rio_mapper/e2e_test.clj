@@ -17,7 +17,8 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.e2e-test
-  (:require [clojure.string :as str]
+  (:require [clojure.pprint :as pprint]
+            [clojure.string :as str]
             [clojure.test :refer :all]
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.e2e-helper :refer :all]
@@ -169,6 +170,8 @@
       ;; insert program "some", belonging to eduspec "parent-program"
       (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
         (set! last-job (post-job :upsert :programs "some"))
+        (println "JOB")
+        (pprint/pprint last-job)
         (set! program-code (job-result-aangebodenopleidingcode last-job))
         (and
           (is (job-done? last-job))
