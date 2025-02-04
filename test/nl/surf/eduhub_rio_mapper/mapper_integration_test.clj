@@ -130,7 +130,12 @@
 (deftest test-joint-program
   (let [ooapi-loader (mock-ooapi-loader program-req-0)
         upserter #(simulate-upsert % (slurp (io/resource "fixtures/rio/integratie-program-0.xml")) "program")
-        goedgekeurd? (fn [result] (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))]
+        goedgekeurd? (fn [result] (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))
+        extract-opleidingseenheidsleutel (fn [mutation]
+                                           (first
+                                             (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
+                                                     (-> mutation :rio-sexp first))))
+        set-joint-program-in-consumers (fn [entity] 1)]
 
     (testing "fake joint program"
       ;; after loading program, set jointProgram to true
@@ -139,9 +144,7 @@
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O1234"]
-               (first
-                 (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
-                         (-> mutation :rio-sexp first)))))
+               (extract-opleidingseenheidsleutel mutation)))
         (is (goedgekeurd? result))))
 
     (testing "normal joint program"
@@ -152,9 +155,7 @@
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O4323"]
-               (first
-                 (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
-                         (-> mutation :rio-sexp first)))))
+               (extract-opleidingseenheidsleutel mutation)))
         (is (goedgekeurd? result))))
 
     (testing "joint-program-without-eduspec"
@@ -165,9 +166,7 @@
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O4323"]
-               (first
-                 (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
-                         (-> mutation :rio-sexp first)))))
+               (extract-opleidingseenheidsleutel mutation)))
         (is (goedgekeurd? result))))
 
     (testing "joint-program-invalid-code"
