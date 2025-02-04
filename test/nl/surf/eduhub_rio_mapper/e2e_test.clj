@@ -17,13 +17,11 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.e2e-test
-  (:require [clojure.pprint :as pprint]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
             [clojure.test :refer :all]
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.e2e-helper :refer :all]
-            [nl.surf.eduhub-rio-mapper.remote-entities-helper :refer [remote-entities-fixture]]
-            [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
+            [nl.surf.eduhub-rio-mapper.remote-entities-helper :refer [remote-entities-fixture]])
   (:import [java.util UUID]))
 
 (use-fixtures :once with-running-mapper remote-entities-fixture)
@@ -63,6 +61,7 @@
 (def ^:dynamic parent-code nil)
 (def ^:dynamic last-job nil)
 (def ^:dynamic child-code nil)
+(def ^:dynamic variant-code nil)
 (def ^:dynamic generated-sleutel nil)
 (def ^:dynamic program-id nil)
 (def ^:dynamic program-code nil)
@@ -170,8 +169,6 @@
       ;; insert program "some", belonging to eduspec "parent-program"
       (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
         (set! last-job (post-job :upsert :programs "some"))
-        (println "JOB")
-        (pprint/pprint last-job)
         (set! program-code (job-result-aangebodenopleidingcode last-job))
         (and
           (is (job-done? last-job))
@@ -232,9 +229,10 @@
                  (eigen-aangeboden-opleiding-sleutel program-id)))))
 
       (testing "scenario [1e] Delete child eduspec."
+        (set! last-job (post-job :delete :education-specifications "child-program"))
         (and
-          (is (job-done? (post-job :delete :education-specifications "parent-program")))
-          (is (nil? (rio-resolve "education-specification" parent-code))))))))
+          (is (job-done? last-job))
+          (is (nil? (rio-resolve "education-specification" child-code))))))))
 
 (def ^:dynamic course-id nil)
 
@@ -287,12 +285,6 @@
           (is (job-dry-run-found? last-job))
           (is (job-without-diffs? last-job))))
 
-      (testing "scenario [7e]: Test /job/delete with the course."
-        (set! last-job (post-job :delete :courses "some"))
-        (and
-          (is (job-done? last-job))
-          (is (nil? (rio-resolve "course" course-id)))))
-
       (set! course-id (str (ooapi-id :courses "some")))
       (set! generated-sleutel (UUID/randomUUID))
       ;; link course "some" to new sleutel. For program and courses, usually aangeboden-opleiding-code == sleutel
@@ -319,29 +311,22 @@
           (is (job-done? last-job))
           (is (job-has-diffs? last-job))
           (is (= course-id (get-in (job-result-attributes last-job) [:eigenAangebodenOpleidingSleutel :new-id])))
-          (is (= course-id (eigen-aangeboden-opleiding-sleutel course-id))))))))
+          (is (= course-id (eigen-aangeboden-opleiding-sleutel course-id)))))
+
+      (testing "scenario [7e]: Test /job/delete with the course."
+        (set! last-job (post-job :delete :courses "some"))
+        (and
+          (is (job-done? last-job))
+          (is (nil? (rio-resolve "course" course-id))))))))
 
 (deftest ^:e2e test-accredited-program
-  ;; Dit is een belangrijke usecase voor
-  ;; instellingen die vaak voorkomt. Lastige is
-  ;; dat die voortbouwt op data in RIO die er al
-  ;; moet zijn en die we niet zelf kunnen
-  ;; aanmaken.
-  ;; In onze eigen tests gebruikten we daarvoor
-  ;; de opleiding Bio-informatica (1001O5220)
-  ;; van de Hanzehogeschool Groningen op de
-  ;; KAT omgeving van RIO.
-  ;; Als deze opleiding ook bestaat in de KIT
-  ;; kunnen we die hier ook voor gebruiken.
-  ;; Als dat geen optie is, is het belangrijk dat
-  ;; we in ieder geval test 9c wel uitvoeren.
   (binding [generated-sleutel (UUID/randomUUID)
             parent-code       "1001O5220"
-            child-code        nil
+            variant-code      nil
             last-job          nil]
 
-
-    (testing "scenario [9a]: Link to accredited program. You can expect the eigenSleutel field to be set in RIO."
+    (testing "scenario [9a]: Link to accredited program. You can expect the eigenSleutel field to be set in RIO.
+              scenario [9b]: Upsert accredited program. Not much should be changed in RIO, because it is an accredited program, where we're not allowed to change a lot. Link uses upsert"
       (set! last-job (post-job :link parent-code :education-specifications generated-sleutel))
       (and
         (is (job-done? last-job))
@@ -351,19 +336,17 @@
         (is (= (str generated-sleutel)
                (eigen-opleidingseenheid-sleutel parent-code)))))
 
-    (testing "scenario [9b]: Upsert accredited program. Not much should be changed in RIO, because it is an accredited program, where we're not allowed to change a lot."
-      ;; difficult. link uses update, maybe we can use that
-      )
-    (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
-      ;; insert eduspec with type "variant", then create relation. Delete after use
-      (and
-        (set! last-job (post-job :upsert :education-specifications "accredited-variant"))
-        (set! child-code (job-result-opleidingseenheidcode last-job))
-        (set! last-job (post-job :delete :education-specifications "accredited-variant"))
-        (is (nil? (rio-resolve "education-specification" parent-code)))))
-
     (testing "scenario [9e]: Unlink from accredited program > done"
       (set! last-job (post-job :unlink parent-code :education-specifications))
       (and
         (is (job-done? last-job))
-        (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))))
+        (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))
+
+    (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
+      ;; insert eduspec with type "variant", then create relation. Delete after use
+      (and
+        (set! last-job (post-job :upsert :education-specifications "accredited-variant"))
+        (set! variant-code (job-result-opleidingseenheidcode last-job))
+        (is (rio-with-relation? parent-code variant-code))
+        (set! last-job (post-job :delete :education-specifications "accredited-variant"))
+        (is (nil? (rio-resolve "education-specification" parent-code)))))))
