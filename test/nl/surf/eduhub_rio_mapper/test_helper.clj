@@ -58,7 +58,7 @@
                (assoc ::rio/aangeboden-opleiding-code
                       (resolver type id institution-oin))
 
-               true
+               :always
                (assoc ::rio/opleidingscode
                       (or opleidingscode
                           (resolver "education-specification"

@@ -186,11 +186,11 @@
       (validate-entity entity ::program/ProgramType "ProgramType")
       (validate-entity rio-consumer ::program/ProgramConsumerType "ProgramConsumerType"))
     (cond-> request
-            true
-            (assoc
-              ::ooapi/entity (assoc entity :offerings offerings)
-              ::ooapi/education-specification-type eduspec-type)
-
             joint-program?
             (assoc
-              ::rio/opleidingscode (:educationUnitCode rio-consumer)))))
+              ::rio/opleidingscode (:educationUnitCode rio-consumer))
+
+            :always
+            (assoc
+              ::ooapi/entity (assoc entity :offerings offerings)
+              ::ooapi/education-specification-type eduspec-type))))
