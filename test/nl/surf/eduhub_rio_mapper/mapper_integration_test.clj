@@ -135,12 +135,18 @@
                                            (first
                                              (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
                                                      (-> mutation :rio-sexp first))))
-        set-joint-program-in-consumers (fn [entity] 1)]
+        set-joint-program-in-consumers (fn [entity unit-code]
+                                         (update-in entity
+                                                    [:consumers 1]
+                                                    merge
+                                                    (cond-> {:jointProgram true}
+                                                            unit-code
+                                                            (assoc :educationUnitCode unit-code))))]
 
     (testing "fake joint program"
       ;; after loading program, set jointProgram to true
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (update-in [:consumers 1] merge {:jointProgram true}))
+                              (set-joint-program-in-consumers nil))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O1234"]
@@ -150,8 +156,7 @@
     (testing "normal joint program"
       ;; after loading program, set jointProgram to true
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (update-in [:consumers 1] merge {:jointProgram      true
-                                                               :educationUnitCode "1234O4323"}))
+                              (set-joint-program-in-consumers "1234O4323"))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O4323"]
@@ -160,8 +165,7 @@
 
     (testing "joint-program-without-eduspec"
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (update-in [:consumers 1] merge {:jointProgram      true
-                                                               :educationUnitCode "1234O4323"})
+                              (set-joint-program-in-consumers "1234O4323")
                               (dissoc :educationSpecification))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
@@ -171,8 +175,7 @@
 
     (testing "joint-program-invalid-code"
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (update-in [:consumers 1] merge {:jointProgram      true
-                                                               :educationUnitCode "ZAZA"}))]
+                              (set-joint-program-in-consumers "ZAZA"))]
         (is (thrown? ExceptionInfo
                      (upserter ooapi-loader)))))))
 
