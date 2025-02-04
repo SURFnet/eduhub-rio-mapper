@@ -22,13 +22,11 @@
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.test :refer [are deftest is testing]]
-            [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.ooapi.loader :as ooapi.loader]
             [nl.surf.eduhub-rio-mapper.rio.aangeboden-opleiding :as aangeboden-opl]
             [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
             [nl.surf.eduhub-rio-mapper.rio.opleidingseenheid :as opl-eenh]
-            [nl.surf.eduhub-rio-mapper.rio.updated-handler :as updated-handler]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.test-helper :as helper]
             [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
@@ -56,21 +54,15 @@
   (soap/request-body action rio-sexp "http://duo.nl/schema/DUO_RIO_Beheren_OnderwijsOrganisatie_V4"
                      "1234" "12345"))
 
-(def test-handler
-  "Loads ooapi fixtures from file and fakes resolver."
-  (-> updated-handler/update-mutation
-      (helper/wrap-resolver (fn [ootype _ _] (if (= "education-specification" ootype)
-                                                        "1009O1234"
-                                                        "12345678-9abc-def0-1234-56789abcdef0")))
-      (helper/wrap-load-entities ooapi.loader/ooapi-file-loader)
-      (clients-info/wrap-client-info [{:client-id              "rio-mapper-dev.jomco.nl"
-                                       :institution-schac-home "demo06.test.surfeduhub.nl"
-                                       :institution-oin        "0000000700025BE00000"}])))
+(defn test-resolver [ootype]
+  (if (= "education-specification" ootype)
+    "1009O1234"
+    "12345678-9abc-def0-1234-56789abcdef0"))
 
 (deftest test-and-validate-entities
   (are [updated]
       (is (-> updated
-              (test-handler)
+              (helper/test-handler test-resolver ooapi.loader/ooapi-file-loader)
               (prep-body)
               (soap/guard-valid-sexp mutator/validator)))
 
@@ -105,9 +97,11 @@
 ;; eigenNaamInternationaal is over 225 chars, which is > max-length
 ;; but no exception, since fields gets truncated.
 (deftest test-and-validate-program-4-valid
-  (let [request (test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
-                               ::ooapi/type "program"
-                               :client-id "rio-mapper-dev.jomco.nl"})]
+  (let [request (helper/test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
+                                      ::ooapi/type "program"
+                                      :client-id "rio-mapper-dev.jomco.nl"}
+                                     test-resolver
+                                     ooapi.loader/ooapi-file-loader)]
     (is (= :duo:aanleveren_aangebodenOpleiding_request
            (first (-> request
                       prep-body
