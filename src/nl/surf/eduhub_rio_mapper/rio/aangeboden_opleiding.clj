@@ -19,7 +19,6 @@
 (ns nl.surf.eduhub-rio-mapper.rio.aangeboden-opleiding
   (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
-            [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.ooapi :as ooapi-utils])
   (:import [java.time Period Duration]))
 
@@ -58,7 +57,6 @@
    :eersteInstroomDatum [:firstStartDate false]
    :onderwijsaanbiedercode [:educationOffererCode true]
    :onderwijslocatiecode [:educationLocationCode true]
-   :opleidingseenheidSleutel [::rio/opleidingscode false]
    :toestemmingDeelnameSTAP [:consentParticipationSTAP true]
    :voertaal [:teachingLanguage false]})
 
@@ -144,40 +142,40 @@
                              :validTo   (:validTo %))
                           timelineOverrides)]
     (fn [k] {:pre [(keyword? k)]}
-      (if (= k :opleidingseenheidSleutel)
-        opleidingscode
-        (if-let [[translation consumer] (mapping-course-program->aangeboden-opleiding k)]
-          (if (ooapi-mapping? (name k))
-            (rio-helper/ooapi-mapping (name k) (translation (if consumer rio-consumer course-program)))
-            (translation (if consumer rio-consumer course-program)))
-          (case k
-            ;; Required field. If found in the resolve phase, will be added to the entity under the rioCode key,
-            ;; otherwise use the eigen sleutel value (an UUID).
-            :aangebodenOpleidingCode (or rioCode id)
-            ;; See opleidingseenheid for explanation of timelineOverrides and periods.
-            :begindatum (first (sort (conj (map :validFrom timelineOverrides) validFrom)))
-            :einddatum (last (sort (conj (map :validTo timelineOverrides) validTo)))
-            :ISCED (rio-helper/narrow-isced fieldsOfStudy)
-            :afwijkendeOpleidingsduur (when duration-map {:opleidingsduurEenheid (:eenheid duration-map)
-                                                          :opleidingsduurOmvang (:omvang duration-map)})
-            :niveau (rio-helper/level-sector-mapping level sector)
-            :vorm (rio-helper/ooapi-mapping "vorm" modeOfStudy)
+      (if-let [[translation consumer] (mapping-course-program->aangeboden-opleiding k)]
+        (if (ooapi-mapping? (name k))
+          (rio-helper/ooapi-mapping (name k) (translation (if consumer rio-consumer course-program)))
+          (translation (if consumer rio-consumer course-program)))
+        (case k
+          :opleidingseenheidSleutel opleidingscode
+          ;; Required field. If found in the resolve phase, will be added to the entity under the rioCode key,
+          ;; otherwise use the eigen sleutel value (an UUID).
+          :aangebodenOpleidingCode (or rioCode id)
+          ;; See opleidingseenheid for explanation of timelineOverrides and periods.
+          :begindatum (first (sort (conj (map :validFrom timelineOverrides) validFrom)))
+          :einddatum (last (sort (conj (map :validTo timelineOverrides) validTo)))
+          :ISCED (rio-helper/narrow-isced fieldsOfStudy)
+          :afwijkendeOpleidingsduur (when duration-map {:opleidingsduurEenheid (:eenheid duration-map)
+                                                        :opleidingsduurOmvang  (:omvang duration-map)})
+          :niveau (rio-helper/level-sector-mapping level sector)
+          :vorm (rio-helper/ooapi-mapping "vorm" modeOfStudy)
 
-            :cohorten (mapv #(course-program-offering-adapter %)
-                            offerings)
+          :cohorten (mapv #(course-program-offering-adapter %)
+                          offerings)
 
-            ;; See opleidingseenheid for explanation of timelineOverrides and periods.
-            :periodes (->> (conj periods course-program)
-                           (mapv #(course-program-timeline-override-adapter %)))
+          ;; See opleidingseenheid for explanation of timelineOverrides and periods.
+          :periodes (->> (conj periods course-program)
+                         (mapv #(course-program-timeline-override-adapter %)))
 
-            ;; These are in the xsd but ignored by us
-            :eigenAangebodenOpleidingSleutel (some-> id str/lower-case) ;; resolve to the ooapi id
-            :opleidingserkenningSleutel nil
-            :voVakerkenningSleutel nil))))))
+          ;; These are in the xsd but ignored by us
+          :eigenAangebodenOpleidingSleutel (some-> id str/lower-case) ;; resolve to the ooapi id
+          :opleidingserkenningSleutel nil
+          :voVakerkenningSleutel nil)))))
 
 (defn ->aangeboden-opleiding
   "Converts a program or course into the right kind of AangebodenOpleiding."
   [course-program ooapi-type opleidingscode education-specification-type]
+  {:pre [(string? education-specification-type)]}
   (-> (course-program-adapter course-program opleidingscode ooapi-type)
       rio-helper/wrapper-periodes-cohorten
       (rio-helper/->xml (education-specification-type-mapping education-specification-type))))

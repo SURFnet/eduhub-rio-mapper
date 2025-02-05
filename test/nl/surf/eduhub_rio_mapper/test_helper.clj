@@ -23,7 +23,11 @@
     [clojure.java.io :as io]
     [clojure.pprint :refer [pprint]]
     [clojure.string :as str]
-    [clojure.test :refer :all])
+    [clojure.test :refer :all]
+    [nl.surf.eduhub-rio-mapper.ooapi.loader :as ooapi.loader]
+    [nl.surf.eduhub-rio-mapper.rio.updated-handler :as updated-handler]
+    [nl.surf.eduhub-rio-mapper.specs.ooapi :as-alias ooapi]
+    [nl.surf.eduhub-rio-mapper.specs.rio :as-alias rio])
   (:import
     [java.io PushbackReader]))
 
@@ -32,6 +36,30 @@
           io/resource
           slurp
           (json/read-str :key-fn keyword)))
+
+(defn test-resolve-request [{::ooapi/keys [type] ::rio/keys [opleidingscode] :as request} resolver]
+  (cond-> request
+          (#{"course" "program"} type)
+          (assoc ::rio/aangeboden-opleiding-code
+                 (resolver type))
+
+          :always
+          (assoc ::rio/opleidingscode
+                 (or opleidingscode
+                     (resolver "education-specification")))))
+
+(def test-client-info {:client-id              "rio-mapper-dev.jomco.nl"
+                       :institution-schac-home "demo06.test.surfeduhub.nl"
+                       :institution-oin        "0000000700025BE00000"})
+
+(defn test-handler
+  "Loads ooapi fixtures from file and fakes resolver."
+  [{::ooapi/keys [type] :as req} resolver ooapi-loader]
+  (-> (cond->> (merge req test-client-info)
+               (not= "relation" type)
+               (ooapi.loader/load-entities (ooapi.loader/validating-loader ooapi-loader)))
+      (test-resolve-request resolver)
+      updated-handler/update-mutation))
 
 (defn wait-while-predicate [predicate val-atom max-sec]
   (loop [ttl (* max-sec 10)]
