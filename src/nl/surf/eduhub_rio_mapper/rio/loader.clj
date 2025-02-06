@@ -270,7 +270,6 @@
              (throw (ex-info "first precondition" rio-get-data)))
          (or (not= type aangeboden-opleidingen-van-organisatie-type)
              id)
-         ;; is this precondition correct?
          ;; if the type is aangebodenOpleiding, there must be an aangeboden-opleiding-code
          (or (not= type aangeboden-opleiding-type)
              aangeboden-opleiding-code
