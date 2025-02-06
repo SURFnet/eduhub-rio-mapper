@@ -41,7 +41,7 @@
       entity)))
 
 (defn blocking-retry
-  "Calls f and retries if it returns nil.
+  "Calls f and retries if it returns nil or false.
 
   Sleeps between each invocation as specified in retry-delays-seconds.
   Returns return value of f when successful.
@@ -116,24 +116,31 @@
     (logging/with-mdc {:soap-action (:action result) :ooapi-id (::ooapi/id job)}
       {:job job :eduspec eduspec :mutate-result (mutator/mutate! result rio-config)})))
 
+(defn- make-deleter-confirm-rio-phase [{:keys [resolver]} rio-config]
+  (fn confirm-rio-phase [{:keys [job] :as result}]
+    (let [{::ooapi/keys [id type]
+           :keys        [institution-oin]} job]
+      (if (blocking-retry (complement #(resolver type id institution-oin))
+                          (:rio-retry-attempts-seconds rio-config)
+                          "Ensure delete is processed by RIO")
+        result
+        (throw (ex-info (str "Processing this job takes longer than expected. Our developers have been informed and will contact DUO. Please try again in a few hours."
+                             ": " type " " id) {:rio-queue-status :down}))))))
+
 (defn- make-updater-confirm-rio-phase [{:keys [resolver]} rio-config]
-  (fn confirm-rio-phase [{{::ooapi/keys [id type]
-                           :keys        [institution-oin]
-                           :as          job} :job
-                          mutate-result      :mutate-result
-                          eduspec            :eduspec}]
-    (if-let [rio-code (blocking-retry #(resolver type id institution-oin)
+  (fn confirm-rio-phase [{:keys [job] :as result}]
+    (let [{::ooapi/keys [id type]
+           :keys        [institution-oin]} job
+          rio-code (blocking-retry #(resolver type id institution-oin)
                                    (:rio-retry-attempts-seconds rio-config)
                                    "Ensure upsert is processed by RIO")]
-      (if (= type "education-specification")
-        {:job           job
-         :eduspec       (assoc eduspec ::rio/opleidingscode rio-code)
-         :mutate-result mutate-result}
-        {:job           (assoc job ::rio/aangeboden-opleiding-code rio-code)
-         :eduspec       eduspec
-         :mutate-result mutate-result})
-      (throw (ex-info (str "Processing this job takes longer than expected. Our developers have been informed and will contact DUO. Please try again in a few hours."
-                           ": " type " " id) {:rio-queue-status :down})))))
+      (if rio-code
+        (let [path (if (= type "education-specification")
+                     [:eduspec ::rio/opleidingscode]
+                     [:job ::rio/aangeboden-opleiding-code])]
+          (assoc-in result path rio-code))
+        (throw (ex-info (str "Processing this job takes longer than expected. Our developers have been informed and will contact DUO. Please try again in a few hours."
+                             ": " type " " id) {:rio-queue-status :down}))))))
 
 (defn- make-updater-sync-relations-phase [handlers]
   (fn sync-relations-phase [{:keys [job eduspec] :as request}]
@@ -178,10 +185,11 @@
 
 (defn- make-deleter [{:keys [rio-config] :as handlers}]
   {:pre [rio-config]}
-  (let [fs [[:resolving (make-updater-resolve-phase handlers)]
-            [:deleting  (make-deleter-prune-relations-phase handlers)]
-            [:preparing (make-deleter-soap-phase)]
-            [:deleting  (make-updater-mutate-rio-phase handlers)]]
+  (let [fs [[:resolving  (make-updater-resolve-phase handlers)]
+            [:deleting   (make-deleter-prune-relations-phase handlers)]
+            [:preparing  (make-deleter-soap-phase)]
+            [:deleting   (make-updater-mutate-rio-phase handlers)]
+            [:confirming (make-deleter-confirm-rio-phase handlers rio-config)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
       {:pre [(:institution-oin request)]}

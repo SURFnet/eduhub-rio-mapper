@@ -40,7 +40,7 @@
         response-type (and response-type (keyword response-type))
         key-name (cond
                    (rio.loader/aangeboden-opleiding-types type)
-                   ::ooapi/id
+                   ::rio/aangeboden-opleiding-code
 
                    (= type rio.loader/opleidingseenheden-van-organisatie-type)
                    ::rio/code
@@ -110,6 +110,8 @@
                 (println "old uuid " old-uuid)
                 (println "new uuid " new-uuid)
                 (throw (ex-info "Failed to set eigenOpleidingseenheidSleutel" {:rio-queue-status :down}))))
+            (printer/print-http-messages @*http-messages*)
+
             (println "The RIO Queue is UP"))
           (catch Exception ex
             (when-let [ex-data (ex-data ex)]
