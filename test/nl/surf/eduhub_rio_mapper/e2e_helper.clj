@@ -280,7 +280,7 @@
 (defn- extract-kenmerken [node]
   (if (map? node)
     [(:kenmerken node)]
-    (keep #(:kenmerken %) node)))
+    (keep :kenmerken node)))
 
 (defn job-result-aangebodenopleidingcode
   "Short cut to `post-job` job response attributes aangebodenopleidingcode."
@@ -432,7 +432,7 @@
         rio-get
         xml-utils/str->dom)))
 
-(defn kenmerken-tekst-opleidingseenheid [rio-code naam]
+(defn- kenmerken-tekst-opleidingseenheid [rio-code naam]
   (as-> rio-code $
         (rio-opleidingseenheid $)
         (xml-utils/element->edn $)
@@ -459,7 +459,7 @@
         rio-get
         xml-utils/str->dom)))
 
-(defn kenmerken-tekst-aangeboden-opleiding [rio-code naam]
+(defn- kenmerken-tekst-aangeboden-opleiding [rio-code naam]
   (as-> rio-code $
         (rio-aangebodenopleiding $)
         (xml-utils/element->edn $)
@@ -500,9 +500,8 @@
                                    node
                                    XPathConstants/NODESET)
         node-length     (.getLength nodes)
-        values          (vec (for [i (range node-length)]
-                      (-> (.item nodes i)
-                          (.getTextContent))))]
+        values          (mapv #(.getTextContent (.item nodes %))
+                              (range node-length))]
     values))
 
 

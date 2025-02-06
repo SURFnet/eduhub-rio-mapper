@@ -132,7 +132,7 @@ supported:
 #### aangebodenOpleiding
 
 This action retrieves the "aangeboden opleiding" based on its course
-ID or program ID (the rio code, not the ooapi id / eigen sleutel)
+ID or program ID (the RIO code, not the OOAPI id / eigen sleutel)
 
 Example:
 

@@ -120,7 +120,7 @@
   (rio-helper/->xml (partial link-item-adapter rio-obj)
                     (-> rio-obj first strip-duo)))
 
-(defn convert-rio-obj-raadplegen->beheren [rio-obj finder]
+(defn rio-obj-raadplegen->beheren [rio-obj finder]
   (let [rio-obj (xmlclj->duo-hiccup rio-obj)
         ;; There is a mismatch between raadplegen and beheren for aangeboden-opleidingen.
         ;; raadplegen returns opleidingseenheidcode, but beheren requires opleidingseenheidSleutel.
@@ -142,20 +142,22 @@
   {:pre [rio-config]}
   (fn [{::ooapi/keys [id type] :keys [institution-oin] :as request}]
     {:pre [(:institution-oin request)]}
-    (let [[action sleutelnaam]
+    (let [[action sleutelnaam-kw]
           (case type
-            "education-specification" ["aanleveren_opleidingseenheid" "eigenOpleidingseenheidSleutel"]
-            ("course" "program")      ["aanleveren_aangebodenOpleiding" "eigenAangebodenOpleidingSleutel"])
+            "education-specification" ["aanleveren_opleidingseenheid" :eigenOpleidingseenheidSleutel]
+            ("course" "program")      ["aanleveren_aangebodenOpleiding" :eigenAangebodenOpleidingSleutel])
           rio-obj  (rio.loader/rio-finder getter request)]
       (if (nil? rio-obj)
         (throw (ex-info "404 Not Found" {:phase :resolving}))
-        (let [finder (sleutel-finder sleutelnaam)
-              [rio-new old-id] (convert-rio-obj-raadplegen->beheren rio-obj finder)
+        (let [finder (sleutel-finder (name sleutelnaam-kw))
+              [rio-new old-id] (rio-obj-raadplegen->beheren rio-obj finder)
               mutation {:action     action
                         :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
                         :sender-oin institution-oin}
-              _success (mutator/mutate! mutation rio-config)]
-          {:link     {(keyword sleutelnaam) (if (= old-id id)
-                                          {:diff false}
-                                          {:diff true :old-id old-id :new-id id})},
+              _success (mutator/mutate! mutation rio-config)
+              diff? (not= old-id id)]
+          {:link     {sleutelnaam-kw (cond-> {:diff diff?}
+                                             diff?
+                                             (assoc :old-id old-id
+                                                    :new-id id))}
            :rio-sexp (:rio-sexp mutation)})))))

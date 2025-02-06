@@ -120,7 +120,7 @@
   (fn confirm-rio-phase [{:keys [job] :as result}]
     (let [{::ooapi/keys [id type]
            :keys        [institution-oin]} job]
-      (if (blocking-retry #(nil? (resolver type id institution-oin))
+      (if (blocking-retry (complement #(resolver type id institution-oin))
                           (:rio-retry-attempts-seconds rio-config)
                           "Ensure delete is processed by RIO")
         result
