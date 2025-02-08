@@ -29,10 +29,10 @@
         "latitude": 31
       },
       "addressType": "postal",
-      "streetNumber": 66,
+      "streetNumber": "66",
       "postalCode": "3480IT",
       "street": "Jan Fabriciusstraat",
-      "additional": ""
+      "additional": []
     }
   ],
   "programType": "minor",
