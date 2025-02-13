@@ -179,29 +179,41 @@
                  uuid)
                id)])))
 
+(defn- api-http-request [method path]
+  (let [req {:url              (str @base-url path)
+             :method           method
+             :headers          {"Authorization" (str "Bearer " @bearer-token)}
+             :query-params     {:http-messages "true"}
+             :as               :json
+             :throw-exceptions false}]
+    {:req req, :res (http/request req)}))
+
+(defn- call-api-status
+  "Make API call, print results and http-message, and return response."
+  [token]
+  (let [req-res        (api-http-request :get (api-path :status [token]))
+        http-messages (-> req-res :res :body :http-messages)]
+    (print-boxed "API"
+                 (print-api-message req-res))
+    (when (seq http-messages)
+      (print-boxed (str "Status: Job HTTP messages (" (count http-messages) ")")
+                   (print-http-messages http-messages)))
+    (:res req-res)))
+
 (defn- call-api
   "Make API call, print results and http-message, and return response."
-  [method action args]
-  (let [args          (if (= method :post)
-                        (interpret-post-job-args args)
-                        args)
-        url           (str @base-url (api-path action args))
-        req           {:method           method
-                       :url              url
-                       :headers          {"Authorization" (str "Bearer "
-                                                               @bearer-token)}
-                       :query-params     {:http-messages "true"}
-                       :as               :json
-                       :throw-exceptions false}
-        res           (http/request req)
-        http-messages (-> res :body :http-messages)
-        res           (if (map? (:body res)) ;; expect JSON response
-                        ;; but can be something
-                        ;; else on error
-                        (update res :body dissoc :http-messages)
-                        res)]
+  [action args]
+  (let [{:keys [req res]} (->> args
+                               interpret-post-job-args
+                               (api-path action)
+                               (api-http-request :post))
+        http-messages     (-> res :body :http-messages)
+        res               (if (map? (:body res)) ;; expect JSON response
+                            ;; but can be something else on error
+                            (update res :body dissoc :http-messages)
+                            res)]
     (print-boxed "API"
-      (print-api-message {:req req, :res res}))
+                 (print-api-message {:req req, :res res}))
     (when (seq http-messages)
       (print-boxed "Job HTTP messages"
         (print-http-messages http-messages)))
@@ -222,14 +234,15 @@
   [action & args]
   {:pre [(#{:upsert :delete :link :unlink :status :dry-run/upsert} action)]}
   (let [{:keys [status] {:keys [token]} :body :as res}
-        (call-api :post action args)]
+        (call-api action args)]
     (assoc res :result-delay
            (delay
-             (if (= http-status/ok status)
+             (if (not= http-status/ok status)
+               (println "failed to post job")
                (loop [tries-left (/ job-status-poll-total-msecs
                                     job-status-poll-sleep-msecs)]
                  (let [{:keys [status body] :as res}
-                       (call-api :get :status [token])]
+                       (call-api-status token)]
                    (cond
                      (zero? tries-left)
                      (do
@@ -247,8 +260,7 @@
                      :else
                      (do
                        (Thread/sleep job-status-poll-sleep-msecs)
-                       (recur (dec tries-left))))))
-               (println "failed to post job"))))))
+                       (recur (dec tries-left)))))))))))
 
 (defn job-result
   "Use `get-in` to access job response from `post-job`."
