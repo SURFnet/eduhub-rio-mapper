@@ -90,7 +90,7 @@
    :os-project-name        ["ObjectStore project name" :str
                             :in [:project-name]]})
 
-(defn- config
+(defn config
   []
   (let [[config err] (envopts/opts env opts-spec)]
     (when err
@@ -151,9 +151,18 @@
        :body
        (map :name)))
 
+(defn os-get-object
+  "Retrieve an object from the ObjectStore."
+  [info container-name {:keys [path]}]
+  {:pre [(seq path)]}
+  (->> (str "/" container-name "/" path)
+    (os-req info :get)
+    (client/request)
+    :body))
+
 (defn os-put-object
   [info container-name {:keys [path body]}]
-  {:pre [(seq path) body]}
+  {:pre [(seq path) (string? body)]}
   (client/request (assoc (os-req info :put (str "/" container-name "/" path))
                          :content-type :json
                          :body body)))
@@ -248,7 +257,7 @@
           (str base "/" (string/replace loc k (str v))))
         (recur more)))))
 
-(defn- remote-objects
+(defn remote-objects
   [session]
   (map (fn [f]
          {:path (object-location f session)
