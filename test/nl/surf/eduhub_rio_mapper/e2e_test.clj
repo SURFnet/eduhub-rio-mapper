@@ -17,11 +17,12 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.e2e-test
-  (:require [clojure.string :as str]
+  (:require [clojure.data.json :as json]
+            [clojure.string :as str]
             [clojure.test :refer :all]
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.e2e-helper :refer :all]
-            [nl.surf.eduhub-rio-mapper.remote-entities-helper :refer [remote-entities-fixture]])
+            [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-helper :refer [remote-entities-fixture]])
   (:import [java.util UUID]))
 
 (use-fixtures :once with-running-mapper remote-entities-fixture)
@@ -350,3 +351,73 @@
         (is (rio-with-relation? parent-code variant-code))
         (set! last-job (post-job :delete :education-specifications "accredited-variant"))
         (is (nil? (rio-resolve "education-specification" parent-code)))))))
+
+(defn update-in-remote-entity [ooapi-type fixture-name f]
+  (let [cfg (remote-helper/config)
+        info (remote-helper/swift-auth-info cfg)
+        path (str (name ooapi-type) "/" (ooapi-id ooapi-type fixture-name))
+        container-name (:container-name cfg)
+        entity (remote-helper/os-get-object info container-name {:path path})
+        updated-entity (f entity)
+        body (json/write-str updated-entity)]
+    (remote-helper/os-put-object info container-name {:path path, :body body})))
+
+(defn- set-education-unit-code-in-consumer [consumer unit-code]
+  (if (not= "rio" (:consumerKey consumer))
+    consumer
+    (assoc consumer :educationUnitCode unit-code)))
+
+(defn- set-education-unit-code-in-rio-consumer [consumers unit-code]
+  (mapv
+    #(set-education-unit-code-in-consumer % unit-code)
+    consumers))
+
+(deftest ^:e2e test-update-remote-entities
+  ;; insert eduspec "parent-program"
+  (binding [parent-code "2345O5432"
+            last-xml nil
+            original-rio-sleutel nil]
+    (update-in-remote-entity :programs "joint"
+                             #(update % :consumers set-education-unit-code-in-rio-consumer parent-code))
+    (update-in-remote-entity :programs "joint" #(dissoc % :educationSpecification))
+
+    (let [cfg (remote-helper/config)
+          info (remote-helper/swift-auth-info cfg)
+          path (str "programs/" (ooapi-id :programs "joint"))
+          container-name (:container-name cfg)
+          updated-program (remote-helper/os-get-object  info container-name {:path path})]
+      (is (= parent-code (get-in updated-program [:consumers 1 :educationUnitCode]))))))
+
+(deftest ^:e2e test-joint-program
+  ;; insert eduspec "parent-program"
+  (binding [last-job (post-job :upsert :education-specifications "joint")
+            parent-code nil
+            program-code nil
+            last-xml nil
+            original-rio-sleutel nil]
+
+    (set! parent-code (job-result-opleidingseenheidcode last-job))
+
+    (and
+      (is last-job)
+      (is (job-done? last-job))
+      (is parent-code)
+      (set! original-rio-sleutel (eigen-opleidingseenheid-sleutel parent-code))
+
+      ;; great! we have the rio code
+      ;; now we update the fixture and add `:educationUnitCode rio-code` to the rio consumer.
+      (update-in-remote-entity :programs "joint" #(update % :consumers set-education-unit-code-in-rio-consumer parent-code))
+      (update-in-remote-entity :programs "joint" #(dissoc % :educationSpecification))
+
+      ;; Now that the ooapi entity has been updated, we can upsert the program.
+
+      ;; insert program "joint", which has no educationSpecification, but does have a jointProgram: true
+      ;; in the rio consumer, and also has educationUnitCode set to parent-code
+      (testing "scenario [10a]: Test /job/upsert with the joint program."
+        (set! last-job (post-job :upsert :programs "joint"))
+        (set! program-code (job-result-aangebodenopleidingcode last-job))
+        (and
+          (is (job-done? last-job))
+          (set! last-xml (rio-aangebodenopleiding program-code))
+          (is (= parent-code
+                 (get-in-xml last-xml ["aangebodenHOOpleiding" "opleidingseenheidcode"]))))))))
