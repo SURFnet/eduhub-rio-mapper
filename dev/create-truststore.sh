@@ -20,7 +20,7 @@
 
 set -ex
 
-PEM_FILE="$(dirname "$0")/staat-der-nederlanden-private-root.pem"
+PEM_FILE="$(dirname "$0")/vt-webservice.duo.nl.cer"
 TRUSTSTORE_DEST_DIR="$(dirname "$0")/.."
 
 keytool -import \
