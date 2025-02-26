@@ -259,6 +259,45 @@
       (is (-> res :job ::job/callback-url)
           "valid url"))))
 
+(deftest wrap-mocked-status-getter
+  (let [http-messages [{:req {:headers {"Accept" "application/json"}} :res {:status {:finished true}, :body "{\"foo\": 123}"}}]
+        http-messages-no-headers [{:req {} :res {:status {:finished true}, :body "{\"foo\": 123}"}}]
+        status {:http-messages http-messages, :profile "rio"}
+        f (fn mocked-wrap-status-getter [req status-getter]
+            (let [f (api/wrap-status-getter
+                      (fn [req] {:token (:token req)})
+                      {:status-getter-fn status-getter})]
+              (f req)))]
+    (testing "Token is nil"
+      (let [actual (f {:token nil} (constantly status))]
+        (is (= {:token nil} actual))))
+    (testing "Status is nil"
+      (let [actual (f {:token "T"} (constantly nil))]
+        (is (= {:status 404, :token "T", :body {:status :unknown}} actual))))
+    (testing "http-messages is false"
+      (let [actual (f {:token "T"} (constantly status))]
+        (is (= {:status 200, :token "T", :body {:profile "rio"}} actual))))
+    (testing "Accept header is not json"
+      (let [actual (f {:token "T" :params {:http-messages "true"}} (constantly (assoc status :http-messages http-messages-no-headers)))]
+        (is (= {:status 200,
+                :token "T",
+                :body {:profile "rio",
+                       :http-messages [{:req {}, :res {:status {:finished true}, :body "{\"foo\": 123}"}}]}}
+               actual))))
+    (testing "Full functionality"
+      (let [actual (f {:token "T" :params {:http-messages "true"}} (constantly status))]
+        (is (= {:status 200,
+                :token "T",
+                :body
+                {:profile "rio",
+                 :http-messages
+                 [{:req {:headers {"Accept" "application/json"}},
+                   :res
+                   {:status {:finished true},
+                    :body "{\"foo\": 123}",
+                    :json-body {:foo 123}}}]}}
+               actual))))))
+
 (deftest ^:redis wrap-status-getter
   (let [config      {:redis-conn       {:pool {} :spec {:uri (or (System/getenv "REDIS_URI") "redis://localhost")}}
                      :redis-key-prefix "eduhub-rio-mapper-test"

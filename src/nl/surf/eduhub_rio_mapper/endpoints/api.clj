@@ -111,6 +111,7 @@
                 (assoc :json-body (json/read-str body :key-fn keyword)))})
 
 (defn wrap-status-getter
+  "If the response contains a token, use it to load the status from redis and return it. Optionally, add the logs with all http traffic."
   [app {:keys [status-getter-fn]}]
   (fn status-getter [req]
     (let [res (app req)
@@ -118,16 +119,17 @@
           show-http-messages? (= "true" (get-in req [:params :http-messages] "false"))]
       (if (nil? token)
         res
-        (let [job-status (status-getter-fn token)]
+        (let [{:keys [http-messages] :as job-status}
+              (status-getter-fn token)]
           (if (nil? job-status)
             {:status http-status/not-found
              :token  token
              :body   {:status :unknown}}
             {:status http-status/ok
              :token  token
-             :body   (cond-> job-status
-                             show-http-messages?
-                             (assoc :http-messages (map add-single-parsed-json-response (:http-messages job-status))))}))))))
+             :body   (cond-> (dissoc job-status :http-messages)
+                       show-http-messages?
+                       (assoc :http-messages (map add-single-parsed-json-response http-messages)))}))))))
 
 (defn wrap-uuid-validator [app]
   (fn uuid-validator [req]
