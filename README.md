@@ -15,7 +15,7 @@
 - [OOAPI doc](https://openonderwijsapi.nl/specification/v5/docs.html)
 - [OOAPI doc/consumers-and-profiles/rio](https://openonderwijsapi.nl/#/technical/consumers-and-profiles/rio)
 
-# Goal for project
+# Goal for this project
 
 Purpose 1: mapper function to transfer top-level OOAPI objects
 to RIO objects (one directional). This works purely with clojure data
@@ -219,7 +219,7 @@ docker run \
   worker
 ```
 
-Notice that `config.env` is not included in the repo, and that the configuration files should be made 
+Notice that `config.env` is not included in the repo, and that the configuration files should be made
 available via a "volume" (see `-v` option).
 
 ## End to End tests
