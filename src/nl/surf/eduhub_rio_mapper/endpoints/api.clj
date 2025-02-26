@@ -101,14 +101,16 @@
     (and accept
          (str/starts-with? accept "application/json"))))
 
+(defn add-json-body [res add-json?]
+  (if add-json?
+    (assoc res :json-body (json/read-str (:body res) :key-fn keyword))
+    res))
+
 ;; For json requests (requests with a json Accept header) add a :json-body key to the response with the
 ;; same content as the response body, only with the json parsed, instead of as a raw string.
-(defn add-single-parsed-json-response [{{headers :headers :as req} :req, {status :status, body :body} :res}]
-  {:pre [req status body]}
-  {:req req
-   :res (cond-> {:status status :body body}
-                (json-request-headers? headers)
-                (assoc :json-body (json/read-str body :key-fn keyword)))})
+(defn add-single-parsed-json-response [{req :req :as all}]
+  {:pre [req]}
+  (update all :res #(add-json-body % (json-request-headers? (:headers req)))))
 
 (defn wrap-status-getter
   "If the response contains a token, use it to load the status from redis and return it. Optionally, add the logs with all http traffic."
@@ -119,17 +121,16 @@
           show-http-messages? (= "true" (get-in req [:params :http-messages] "false"))]
       (if (nil? token)
         res
-        (let [{:keys [http-messages] :as job-status}
-              (status-getter-fn token)]
+        (let [job-status (status-getter-fn token)]
           (if (nil? job-status)
             {:status http-status/not-found
              :token  token
              :body   {:status :unknown}}
             {:status http-status/ok
              :token  token
-             :body   (cond-> (dissoc job-status :http-messages)
-                       show-http-messages?
-                       (assoc :http-messages (map add-single-parsed-json-response http-messages)))}))))))
+             :body   (if show-http-messages?
+                       (update job-status :http-messages #(map add-single-parsed-json-response %))
+                       (dissoc job-status :http-messages))}))))))
 
 (defn wrap-uuid-validator [app]
   (fn uuid-validator [req]

@@ -260,9 +260,9 @@
           "valid url"))))
 
 (deftest wrap-mocked-status-getter
-  (let [http-messages [{:req {:headers {"Accept" "application/json"}} :res {:status {:finished true}, :body "{\"foo\": 123}"}}]
-        http-messages-no-headers [{:req {} :res {:status {:finished true}, :body "{\"foo\": 123}"}}]
-        status {:http-messages http-messages, :profile "rio"}
+  (let [http-messages-json [{:req {:headers {"Accept" "application/json"}} :res {:status {:finished true}, :body "{\"foo\": 123}"}}]
+        http-messages-xml [{:req {:headers {"Accept" "application/xml"}} :res {:status {:finished true}, :body "{\"foo\": 123}"}}]
+        status {:http-messages http-messages-json, :profile "rio"}
         f (fn mocked-wrap-status-getter [req status-getter]
             (let [f (api/wrap-status-getter
                       (fn [req] {:token (:token req)})
@@ -273,20 +273,20 @@
         (is (= {:token nil} actual))))
     (testing "Status is nil"
       (let [actual (f {:token "T"} (constantly nil))]
-        (is (= {:status 404, :token "T", :body {:status :unknown}} actual))))
+        (is (= {:status http-status/not-found, :token "T", :body {:status :unknown}} actual))))
     (testing "http-messages is false"
       (let [actual (f {:token "T"} (constantly status))]
-        (is (= {:status 200, :token "T", :body {:profile "rio"}} actual))))
-    (testing "Accept header is not json"
-      (let [actual (f {:token "T" :params {:http-messages "true"}} (constantly (assoc status :http-messages http-messages-no-headers)))]
-        (is (= {:status 200,
+        (is (= {:status http-status/ok, :token "T", :body {:profile "rio"}} actual))))
+    (testing "Accept header is not json but xml"
+      (let [actual (f {:token "T" :params {:http-messages "true"}} (constantly (assoc status :http-messages http-messages-xml)))]
+        (is (= {:status http-status/ok,
                 :token "T",
                 :body {:profile "rio",
-                       :http-messages [{:req {}, :res {:status {:finished true}, :body "{\"foo\": 123}"}}]}}
+                       :http-messages [{:req {:headers {"Accept" "application/xml"}}, :res {:status {:finished true}, :body "{\"foo\": 123}"}}]}}
                actual))))
     (testing "Full functionality"
       (let [actual (f {:token "T" :params {:http-messages "true"}} (constantly status))]
-        (is (= {:status 200,
+        (is (= {:status http-status/ok,
                 :token "T",
                 :body
                 {:profile "rio",
