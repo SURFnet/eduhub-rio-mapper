@@ -26,4 +26,4 @@ jobs:
         key: "${{ runner.os }}-clojure-${{ hashFiles('**/project.clj') }}"
 
     - name: NVD clojure
-      uses: jomco/nvd-clojure-action@v4
+      uses: jomco/nvd-clojure-action@v5
