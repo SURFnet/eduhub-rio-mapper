@@ -36,7 +36,7 @@
                  [org.clojure/tools.logging "1.3.0"]
                  [ch.qos.logback.contrib/logback-jackson "0.1.5"]
                  [ch.qos.logback.contrib/logback-json-classic "0.1.5"]
-                 [ch.qos.logback/logback-classic "1.5.16"]
+                 [ch.qos.logback/logback-classic "1.5.17"]
                  [com.fasterxml.jackson.core/jackson-core "2.18.2"]
                  [com.fasterxml.jackson.core/jackson-databind "2.18.2"]
 
