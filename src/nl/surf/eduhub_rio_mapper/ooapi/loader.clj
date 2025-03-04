@@ -146,6 +146,7 @@
 
 (defn validate-entity [entity spec type]
   (when-not (s/valid? spec entity)
+    (println "YES")
     (throw (ex-info (str "Entity does not conform to OOAPI type " type "\n" (s/explain-str spec entity))
                     {:entity     entity
                      ;; retrying a failing spec won't help
