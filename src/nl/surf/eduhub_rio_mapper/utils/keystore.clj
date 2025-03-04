@@ -24,6 +24,7 @@
 
 (defn keystore
   ^KeyStore [path password]
+  {:pre (= "xxxxxx" password)}
   (with-open [in (io/input-stream path)]
     (doto (KeyStore/getInstance "JKS")
       (.load in (char-array password)))))

@@ -21,7 +21,6 @@
     [clojure.test :refer :all]
     [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
     [nl.surf.eduhub-rio-mapper.commands.processing :as processing]
-    [nl.surf.eduhub-rio-mapper.config :as config]
     [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
     [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
     [nl.surf.eduhub-rio-mapper.test-helper :as helper]
@@ -30,7 +29,7 @@
 
 (deftest link-test
   (let [vcr    (helper/make-vcr :playback)
-        config (config/make-config)
+        config (helper/make-test-config)
         client-info (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         rio-config (:rio-config config)
         handlers (processing/make-handlers {:rio-config rio-config

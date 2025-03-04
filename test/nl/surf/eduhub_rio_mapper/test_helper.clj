@@ -24,6 +24,8 @@
     [clojure.pprint :refer [pprint]]
     [clojure.string :as str]
     [clojure.test :refer :all]
+    [environ.core :refer [env]]
+    [nl.surf.eduhub-rio-mapper.config :as config]
     [nl.surf.eduhub-rio-mapper.ooapi.loader :as ooapi.loader]
     [nl.surf.eduhub-rio-mapper.rio.updated-handler :as updated-handler]
     [nl.surf.eduhub-rio-mapper.specs.ooapi :as-alias ooapi]
@@ -131,3 +133,8 @@
   (case method
     :playback make-playbacker
     :record   make-recorder))
+
+;; The truststore used for unit tests has a different password than the official password.
+;; The truststore (as opposed to the keystore) does not contain sensitive or private data.
+(defn make-test-config []
+  (config/make-config (assoc env :truststore-password "xxxxxx")))

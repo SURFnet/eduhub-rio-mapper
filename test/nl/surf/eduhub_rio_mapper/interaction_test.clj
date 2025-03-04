@@ -24,7 +24,6 @@
     [nl.surf.eduhub-rio-mapper.cli-commands :as cli-commands]
     [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
     [nl.surf.eduhub-rio-mapper.commands.processing :as processing]
-    [nl.surf.eduhub-rio-mapper.config :as config]
     [nl.surf.eduhub-rio-mapper.job :as job]
     [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
@@ -59,7 +58,7 @@
         eduspec-parent-id "fddec347-8ca1-c991-8d39-9a85d09c0004"
         eduspec-child-id  "afb435cc-5352-f55f-a548-41c9dfd60002"
         program-id        "49ca7998-74b1-f44a-1ec1-000000000002"
-        config            (config/make-config)
+        config            (helper/make-test-config)
         handlers          (processing/make-handlers config)
         client-info       (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         logging-runner    (make-runner handlers
@@ -134,7 +133,7 @@
         eduspec-parent-id "fddec347-8ca1-c991-8d39-9a85d09c0004"
         eduspec-child-id  "afb435cc-5352-f55f-a548-41c9dfd60002"
         program-id        "49ca7998-74b1-f44a-1ec1-000000000002"
-        config            (config/make-config)
+        config            (helper/make-test-config)
         handlers          (processing/make-handlers config)
         client-info       (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         runner            (make-runner handlers
@@ -164,7 +163,7 @@
 
 (deftest opleidingseenheid-finder-test
   (let [vcr    (helper/make-vcr :playback)
-        config (config/make-config)
+        config (helper/make-test-config)
         client-info (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         rio-config (:rio-config config)
         handlers (processing/make-handlers {:rio-config rio-config
@@ -176,7 +175,7 @@
 
 (deftest aangeboden-finder-test
   (let [vcr    (helper/make-vcr :playback)
-        config (config/make-config)
+        config (helper/make-test-config)
         client-info (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         rio-config (:rio-config config)
         handlers (processing/make-handlers {:rio-config rio-config
