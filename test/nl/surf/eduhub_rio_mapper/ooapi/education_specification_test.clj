@@ -21,12 +21,91 @@
             [clojure.java.io :as io]
             [clojure.spec.alpha :as s]
             [clojure.test :refer :all]
+            [nl.surf.eduhub-rio-mapper.specs.helper :as spec-helper]
             [nl.surf.eduhub-rio-mapper.specs.education-specification :as es]))
 
 (def education-specification (-> "fixtures/ooapi/education-specification.json"
                                  io/resource
                                  slurp
                                  (json/read-str :key-fn keyword)))
+
+(deftest test-check-spec
+  (testing "education specification"
+    (let [spec ::es/EducationSpecificationTopLevel
+          valid-eduspec education-specification]
+      ;; nil
+      (is (= "Top level object is `null`. Expected an EducationSpecification object."
+             (spec-helper/check-spec nil spec "EducationSpecification")))
+      ;; not a JSON object
+      (is (= "Top level object is not a JSON object. Expected an EducationSpecification object."
+             (spec-helper/check-spec [] spec "EducationSpecification")))
+      ;; missing required fields
+      (is (= "Top level EducationSpecification object is missing these required fields: educationSpecificationId, educationSpecificationType, primaryCode, validFrom, name, consumers"
+             (spec-helper/check-spec {} spec "EducationSpecification")))
+      ;; required fields have invalid formats
+      #_(is (= ""
+             (spec-helper/check-spec (assoc valid-eduspec "educationSpecificationType" "lecture")
+                                     spec "EducationSpecification")))
+      ;; optional fields have invalid formats
+      #_(is (= ""
+             (spec-helper/check-spec (assoc valid-eduspec "levelOfQualification" "A")
+                                     spec "EducationSpecification")))
+      ;; valid-type-and-subtype? fails
+      (is (= "Invalid combination of educationSpecificationType and educationSpecificationSubType fields"
+             (spec-helper/check-spec (assoc valid-eduspec :educationSpecificationType "course"
+                                                          :educationSpecificationSubType "variant")
+                                     spec "EducationSpecification")))
+      ;; not-equal-to-parent? fails
+      (is (= "Fields educationSpecificationId and parent are not allowed to be equal"
+             (spec-helper/check-spec (assoc valid-eduspec :parent (:educationSpecificationId valid-eduspec))
+                                     spec "EducationSpecification")))
+      ;; level-sector-map-to-rio?
+      (is (= "Invalid combination of level and sector fields"
+             (spec-helper/check-spec (assoc valid-eduspec :level "NONE") spec "EducationSpecification")))
+      ;; timeline overrides is nil
+      (is (= "The `timelineOverrides` attribute should be an array, but it was null."
+             (spec-helper/check-spec (assoc valid-eduspec :timelineOverrides nil) spec "EducationSpecification")))
+      ;; timeline overrides is not an array
+      (is (= "The `timelineOverrides` attribute should be an array."
+             (spec-helper/check-spec (assoc valid-eduspec :timelineOverrides {}) spec "EducationSpecification")))
+      ;; a timeline overrides element does not contain educationSpecification
+      (is (= "Each item in the `timelineOverrides` attribute should contain an object with an `educationSpecification` attribute."
+             (spec-helper/check-spec (assoc valid-eduspec :timelineOverrides [{}]) spec "EducationSpecification")))
+      ;; a timeline overrides element does not contain required field `validFrom`
+      (is (= "Each item in the `timelineOverrides` attribute should contain an object with a `validFrom` attribute."
+             (spec-helper/check-spec (assoc valid-eduspec :timelineOverrides [{:educationSpecification {}}]) spec "EducationSpecification")))
+      ;; educationSpecification in a timeline overrides element is nil
+      (is (= "The `educationSpecification` attribute within a `timelineOverrides` item should be an object, but it was null."
+             (spec-helper/check-spec (assoc valid-eduspec :timelineOverrides [{:validFrom "2019-08-24", :educationSpecification nil}]) spec "EducationSpecification")))
+      ;; educationSpecification in a timeline overrides element is not a map
+      (is (= "The `educationSpecification` attribute within a `timelineOverrides` item should be an object."
+             (spec-helper/check-spec (assoc valid-eduspec :timelineOverrides [{:validFrom "2019-08-24", :educationSpecification []}]) spec "EducationSpecification")))
+      ;; educationSpecification in a timeline overrides element does not contain required element `name`
+      (is (= "The `educationSpecification` attribute within a `timelineOverrides` item should have an attribute `name`."
+             (spec-helper/check-spec (assoc valid-eduspec :timelineOverrides [{:validFrom "2019-08-24", :educationSpecification {}}]) spec "EducationSpecification")))
+      ;; topline element consumers, if present, is an array
+      (is (= "The `consumers` attribute should be an array."
+             (spec-helper/check-spec (assoc valid-eduspec :consumers {}) spec "EducationSpecification")))
+      ;; topline element consumers, if present, is an array with items
+      (is (= "The `consumers` attribute should be an array with at least one item."
+             (spec-helper/check-spec (assoc valid-eduspec :consumers []) spec "EducationSpecification")))
+      ;; topline element consumers, if present, is an array in which each items contains a profile.
+      (is (= "Each item in the `consumers` attribute should contain an object with an `profile` attribute."
+             (spec-helper/check-spec (assoc valid-eduspec :consumers [{}]) spec "EducationSpecification")))
+      ;; topline element consumers, if present, is an array in which there is an item with profile "rio"
+      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `profile` \"rio\"."
+             (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "fortaleza"}]) spec "EducationSpecification")))
+      ;; No errors for one consumer with profile rio
+      (is (nil?
+            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "rio"}]) spec "EducationSpecification")))
+      ;; No errors for two consumers with profile rio and another
+      (is (nil?
+            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "fortaleza"}, {:profile "rio"}]) spec "EducationSpecification")))
+      ;; only one rio consumer allowed
+      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `profile` \"rio\"."
+            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "rio"}, {:profile "rio"}]) spec "EducationSpecification")))
+
+      )))
 
 (deftest validate-no-problems-in-fixtures
   (let [problems (get (s/explain-data ::es/EducationSpecification education-specification)
