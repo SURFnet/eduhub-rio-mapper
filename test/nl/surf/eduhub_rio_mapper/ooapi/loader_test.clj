@@ -20,7 +20,6 @@
   (:require
     [clojure.test :refer :all]
     [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
-    [nl.surf.eduhub-rio-mapper.config :as config]
     [nl.surf.eduhub-rio-mapper.ooapi.loader :as ooapi.loader]
     [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
     [nl.surf.eduhub-rio-mapper.test-helper :as helper]
@@ -31,7 +30,7 @@
 ;; just create the vcr files manually
 (deftest loader
   (let [vcr  (helper/make-vcr :playback)
-        config       (config/make-config)
+        config       (helper/make-test-config)
         ooapi-loader (ooapi.loader/make-ooapi-http-loader (URI. "https://jomco.github.io/rio-mapper-test-data/")
                                                           (:gateway-credentials config)
                                                           config)
