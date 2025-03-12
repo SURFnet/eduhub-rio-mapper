@@ -33,7 +33,7 @@
   (testing "education specification"
     (let [spec ::es/EducationSpecificationTopLevel
           valid-eduspec education-specification]
-      ;; nil
+      ;; Education specification is nil
       (is (= "Top level object is `null`. Expected an EducationSpecification object."
              (spec-helper/check-spec nil spec "EducationSpecification")))
       ;; not a JSON object
@@ -42,19 +42,15 @@
       ;; missing required fields
       (is (= "Top level EducationSpecification object is missing these required fields: educationSpecificationId, educationSpecificationType, primaryCode, validFrom, name, consumers"
              (spec-helper/check-spec {} spec "EducationSpecification")))
-      ;; required fields have invalid formats
-      #_(is (= ""
-             (spec-helper/check-spec (assoc valid-eduspec "educationSpecificationType" "lecture")
-                                     spec "EducationSpecification")))
-      ;; optional fields have invalid formats
-      #_(is (= ""
-             (spec-helper/check-spec (assoc valid-eduspec "levelOfQualification" "A")
-                                     spec "EducationSpecification")))
-      ;; valid-type-and-subtype? fails
+      ;; valid-type-and-subtype? (course/variant) fails
       (is (= "Invalid combination of educationSpecificationType and educationSpecificationSubType fields"
-             (spec-helper/check-spec (assoc valid-eduspec :educationSpecificationType "course"
-                                                          :educationSpecificationSubType "variant")
+             (spec-helper/check-spec (assoc valid-eduspec :educationSpecificationType "course")
                                      spec "EducationSpecification")))
+      ;; valid-type-and-subtype? (course/nil) succeeds
+      (is (nil?
+           (spec-helper/check-spec (assoc valid-eduspec :educationSpecificationType "course"
+                                                        :consumers [{:consumerKey "rio"}])
+                                   spec "EducationSpecification")))
       ;; not-equal-to-parent? fails
       (is (= "Fields educationSpecificationId and parent are not allowed to be equal"
              (spec-helper/check-spec (assoc valid-eduspec :parent (:educationSpecificationId valid-eduspec))
@@ -89,23 +85,21 @@
       ;; topline element consumers, if present, is an array with items
       (is (= "The `consumers` attribute should be an array with at least one item."
              (spec-helper/check-spec (assoc valid-eduspec :consumers []) spec "EducationSpecification")))
-      ;; topline element consumers, if present, is an array in which each items contains a profile.
-      (is (= "Each item in the `consumers` attribute should contain an object with an `profile` attribute."
+      ;; topline element consumers, if present, is an array in which each items contains a consumerKey.
+      (is (= "Each item in the `consumers` attribute should contain an object with an `consumerKey` attribute."
              (spec-helper/check-spec (assoc valid-eduspec :consumers [{}]) spec "EducationSpecification")))
-      ;; topline element consumers, if present, is an array in which there is an item with profile "rio"
-      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `profile` \"rio\"."
-             (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "fortaleza"}]) spec "EducationSpecification")))
-      ;; No errors for one consumer with profile rio
+      ;; topline element consumers, if present, is an array in which there is an item with consumerKey "rio"
+      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `consumerKey` \"rio\"."
+             (spec-helper/check-spec (assoc valid-eduspec :consumers [{:consumerKey "fortaleza"}]) spec "EducationSpecification")))
+      ;; No errors for one consumer with consumerKey rio
       (is (nil?
-            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "rio"}]) spec "EducationSpecification")))
-      ;; No errors for two consumers with profile rio and another
+            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:consumerKey "rio"}]) spec "EducationSpecification")))
+      ;; No errors for two consumers with consumerKey rio and another
       (is (nil?
-            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "fortaleza"}, {:profile "rio"}]) spec "EducationSpecification")))
+            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:consumerKey "fortaleza"}, {:consumerKey "rio"}]) spec "EducationSpecification")))
       ;; only one rio consumer allowed
-      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `profile` \"rio\"."
-            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:profile "rio"}, {:profile "rio"}]) spec "EducationSpecification")))
-
-      )))
+      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `consumerKey` \"rio\"."
+            (spec-helper/check-spec (assoc valid-eduspec :consumers [{:consumerKey "rio"}, {:consumerKey "rio"}]) spec "EducationSpecification"))))))
 
 (deftest validate-no-problems-in-fixtures
   (let [problems (get (s/explain-data ::es/EducationSpecification education-specification)
