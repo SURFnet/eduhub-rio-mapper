@@ -21,6 +21,7 @@
             [clojure.java.io :as io]
             [clojure.spec.alpha :as s]
             [clojure.test :refer :all]
+            [nl.surf.eduhub-rio-mapper.specs.helper :as spec-helper]
             [nl.surf.eduhub-rio-mapper.specs.program :as prg]))
 
 (def program (-> "fixtures/ooapi/program.json"
@@ -41,6 +42,73 @@
 (def other-consumer (first consumers))
 
 (def rio-consumer (last consumers))
+
+(deftest test-check-spec
+  (testing "program"
+    (let [spec ::prg/program]
+      ;; Program is nil
+      (is (= "Top level object is `null`. Expected an Program object."
+             (spec-helper/check-spec nil spec "Program")))
+      ;; not a JSON object
+      (is (= "Top level object is not a JSON object. Expected an Program object."
+             (spec-helper/check-spec [] spec "Program")))
+      ;; missing required fields
+      (is (= "Top level Program object is missing these required fields: programId, consumers, name, validFrom"
+             (spec-helper/check-spec {} spec "Program")))
+      ;; timeline overrides is nil
+      (is (= "The `timelineOverrides` attribute should be an array, but it was null."
+             (spec-helper/check-spec (assoc program :timelineOverrides nil) spec "Program")))
+      ;; timeline overrides is not an array
+      (is (= "The `timelineOverrides` attribute should be an array."
+             (spec-helper/check-spec (assoc program :timelineOverrides {}) spec "Program")))
+      ;; a timeline overrides element does not contain educationSpecification
+      (is (= "Each item in the `timelineOverrides` attribute should contain an object with an `program` attribute."
+             (spec-helper/check-spec (assoc program :timelineOverrides [{}]) spec "Program")))
+      ;; a timeline overrides element does not contain required field `validFrom`
+      (is (= "Each item in the `timelineOverrides` attribute should contain an object with an `program` attribute."
+             (spec-helper/check-spec (assoc program :timelineOverrides [{:educationSpecification {}}]) spec "Program")))
+      ;; program in a timeline overrides element is nil
+      (is (= "The `program` attribute within a `timelineOverrides` item should be an object, but it was null."
+             (spec-helper/check-spec (assoc program :timelineOverrides [{:validFrom "2019-08-24", :program nil}]) spec "Program")))
+      ;; program in a timeline overrides element is not a map
+      (is (= "The `program` attribute within a `timelineOverrides` item should be an object."
+             (spec-helper/check-spec (assoc program :timelineOverrides [{:validFrom "2019-08-24", :program []}]) spec "Program")))
+      ;; program in a timeline overrides element does not contain required element `name`
+      (is (= "The `program` attribute within a `timelineOverrides` item should have an attribute `name`."
+             (spec-helper/check-spec (assoc program :timelineOverrides [{:validFrom "2019-08-24", :program {}}]) spec "Program")))
+      ;; topline element consumers, if present, is an array
+      (is (= "The `consumers` attribute should be an array."
+             (spec-helper/check-spec (assoc program :consumers {}) spec "Program")))
+      ;; topline element consumers, if present, is an array with items
+      (is (= "The `consumers` attribute should be an array with at least one item."
+             (spec-helper/check-spec (assoc program :consumers []) spec "Program")))
+      ;; topline element consumers, if present, is an array in which each items contains a consumerKey.
+      (is (= "Each item in the `consumers` attribute should contain an object with an `consumerKey` attribute."
+             (spec-helper/check-spec (assoc program :consumers [{}]) spec "Program")))
+      ;; topline element consumers, if present, is an array in which there is an item with consumerKey "rio"
+      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `consumerKey` \"rio\"."
+             (spec-helper/check-spec (assoc program :consumers [{:consumerKey "fortaleza"}]) spec "Program")))
+      ;; No errors for one consumer with consumerKey rio
+      (is (nil?
+            (spec-helper/check-spec (assoc program :consumers [{:consumerKey "rio"}]) spec "Program")))
+      ;; No errors for two consumers with consumerKey rio and another
+      (is (nil?
+            (spec-helper/check-spec (assoc program :consumers [{:consumerKey "fortaleza"}, {:consumerKey "rio"}]) spec "Program")))
+      ;; only one rio consumer allowed
+      (is (= "Top level `consumers` attribute, if present, must contain exactly one item with `consumerKey` \"rio\"."
+             (spec-helper/check-spec (assoc program :consumers [{:consumerKey "rio"}, {:consumerKey "rio"}]) spec "Program")))
+      ;; If present, jointProgram must be a boolean
+      (is (= "The `jointProgram` attribute in the rio consumer must be a boolean"
+             (spec-helper/check-spec (assoc program :consumers [{:consumerKey "rio", :jointProgram "true"}]) spec "Program")))
+      ;; If jointProgram is true, educationUnitCode is required
+      (is (= "If the `jointProgram` attribute is true, `educationUnitCode` is required."
+             (spec-helper/check-spec (assoc program :consumers [{:consumerKey "rio", :jointProgram true}]) spec "Program")))
+      ;; If jointProgram is true, educationUnitCode is required and must be a string.
+      (is (= "The `educationUnitCode` attribute must be a string."
+             (spec-helper/check-spec (assoc program :consumers [{:consumerKey "rio", :jointProgram true, :educationUnitCode 1234}]) spec "Program")))
+      ;; If jointProgram is true, educationUnitCode is required and must have the correct format.
+      (is (= "The format of the value of the `educationUnitCode` attribute is invalid."
+             (spec-helper/check-spec (assoc program :consumers [{:consumerKey "rio", :jointProgram true, :educationUnitCode "1234"}]) spec "Program"))))))
 
 (deftest validate-rio-consumer
   (let [{::s/keys [problems]} (s/explain-data ::prg/rio-consumer rio-consumer)]
