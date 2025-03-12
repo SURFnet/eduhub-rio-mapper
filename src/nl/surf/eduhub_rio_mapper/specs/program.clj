@@ -60,9 +60,11 @@
                             ::common/educationOffererCode]
                    :opt-un [::acceleratedRoute
                             ::educationLocationCode
+                            ::educationUnitCode
                             ::consentParticipationSTAP
                             ::foreignPartners
                             ::jointPartnerCodes
+                            ::jointProgram
                             ::propaedeuticPhase
                             ::requirementsActivities
                             ::studyChoiceCheck
