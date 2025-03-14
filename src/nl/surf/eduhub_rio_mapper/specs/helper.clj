@@ -6,22 +6,43 @@
             [nl.surf.eduhub-rio-mapper.specs.program :as prg]
             [nl.surf.eduhub-rio-mapper.utils.ooapi :as ooapi-utils]))
 
-(defn check-education-specification [eduspec]
+(defn- check-eduspec-required-attributes [eduspec]
   (when
     (nil? (:name eduspec))
     "The `educationSpecification` attribute within a `timelineOverrides` item should have an attribute `name`."))
 
-(defn check-program [eduspec]
+(defn- check-program-required-attributes [eduspec]
   (when
     (nil? (:name eduspec))
     "The `program` attribute within a `timelineOverrides` item should have an attribute `name`."))
 
-(defn check-course [course]
+(defn- check-course-required-attributes [course]
   (when
     (nil? (:name course))
     "The `course` attribute within a `timelineOverrides` item should have an attribute `name`."))
 
-(defn check-generic-timeline-override [to entity-name]
+;; attributes
+
+(defn- check-generic-attribute [entity attr attributes entity-name]
+  (when-not (= :consumers attr)
+    (when-let [spec (some #(when (= (name attr) (name %))
+                             %)
+                          attributes)]
+      (when-not (s/valid? spec (attr entity))
+        (str "The `" (name attr) "` attribute of the " entity-name " does not conform to the required format.")))))
+
+(defn- check-eduspec-attribute [entity attr]
+  (check-generic-attribute entity attr (into es/education-specification-req-attrs es/education-specification-opt-attrs) "education specification"))
+
+(defn- check-program-attribute [entity attr]
+  (check-generic-attribute entity attr (into prg/program-req-attrs prg/program-opt-attrs) "program"))
+
+(defn- check-course-attribute [entity attr]
+  (check-generic-attribute entity attr (into crs/course-req-attrs crs/course-opt-attrs) "course"))
+
+;; timelineOverrides
+
+(defn- check-generic-timeline-override [to entity-name]
   (cond
     (nil? to)
     "The `timelineOverrides` attribute should be an array, but it was null."
@@ -41,12 +62,24 @@
     (not (every? #(map? (entity-name %)) to))
     (str "The `" (name entity-name) "` attribute within a `timelineOverrides` item should be an object.")))
 
-(defn check-eduspec-timeline-overrides [to]
+(defn- check-course-timeline-overrides [to]
+  (or
+    (check-generic-timeline-override to :course)
+    (some #(check-course-required-attributes (:course %)) to)))
+
+(defn- check-eduspec-timeline-overrides [to]
   (or
     (check-generic-timeline-override to :educationSpecification)
-    (some #(check-education-specification (:educationSpecification %)) to)))
+    (some #(check-eduspec-required-attributes (:educationSpecification %)) to)))
 
-(defn check-generic-consumers [consumers]
+(defn- check-program-timeline-overrides [to]
+  (or
+    (check-generic-timeline-override to :program)
+    (some #(check-program-required-attributes (:program %)) to)))
+
+;; consumers
+
+(defn- check-generic-consumers [consumers]
   (cond
     (not (sequential? consumers))
     "The `consumers` attribute should be an array."
@@ -60,11 +93,51 @@
     (not= 1 (count (filter #(= "rio" (:consumerKey %)) consumers)))
     "Top level `consumers` attribute, if present, must contain exactly one item with `consumerKey` \"rio\"."))
 
-(defn check-eduspec-consumers [consumers]
-  ;; TODO there are differences between eduspec and program consumers
-  (check-generic-consumers consumers))
+(defn- check-program-rio-consumer [rio-consumer]
+  (or
+    (when (contains? rio-consumer :jointProgram)
+      (cond
+        (not (boolean? (:jointProgram rio-consumer)))
+        "The `jointProgram` attribute in the rio consumer must be a boolean"
 
-(defn check-top-level-education-specification [entity]
+        (not (contains? rio-consumer :educationUnitCode))
+        "If the `jointProgram` attribute is true, `educationUnitCode` is required."
+
+        (not (string? (:educationUnitCode rio-consumer)))
+        "The `educationUnitCode` attribute must be a string."
+
+        (not (s/valid? ::prg/educationUnitCode (:educationUnitCode rio-consumer)))
+        "The format of the value of the `educationUnitCode` attribute is invalid."))
+
+    (let [attributes (into prg/program-consumer-req-attrs prg/program-consumer-opt-attrs)]
+      (some #(check-generic-attribute rio-consumer % attributes "program's rio consumer") (keys rio-consumer)))))
+
+(defn check-eduspec-rio-consumer [rio-consumer]
+  (let [attributes (into es/eduspec-consumer-req-attrs es/eduspec-consumer-opt-attrs)]
+    (some #(check-generic-attribute rio-consumer % attributes "education specification's rio consumer") (keys rio-consumer))))
+
+(defn- check-eduspec-consumers [consumers]
+  (or
+    (check-generic-consumers consumers)
+    (check-eduspec-rio-consumer (ooapi-utils/extract-rio-consumer consumers))))
+
+(defn check-course-rio-consumer [rio-consumer]
+  (let [attributes (into crs/course-consumer-req-attrs crs/course-consumer-opt-attrs)]
+    (some #(check-generic-attribute rio-consumer % attributes "course's rio consumer") (keys rio-consumer))))
+
+(defn- check-course-consumers [consumers]
+  (or
+    (check-generic-consumers consumers)
+    (check-course-rio-consumer (ooapi-utils/extract-rio-consumer consumers))))
+
+(defn- check-program-consumers [consumers]
+  (or
+    (check-generic-consumers consumers)
+    (check-program-rio-consumer (ooapi-utils/extract-rio-consumer consumers))))
+
+;; top level checks
+
+(defn- check-top-level-eduspec [entity]
   (let [missing (filter #(not (contains? entity %)) [:educationSpecificationId :educationSpecificationType :primaryCode :validFrom :name :consumers])]
     (or
       (when-not (empty? missing)
@@ -79,43 +152,22 @@
       (when-not (ooapi-utils/level-sector-map-to-rio? entity)
         "Invalid combination of level and sector fields")
 
+      (some #(check-eduspec-attribute entity %) (keys entity))
+
       (when (contains? entity :timelineOverrides)
         (check-eduspec-timeline-overrides (:timelineOverrides entity)))
 
       (when (contains? entity :consumers)
         (check-eduspec-consumers (:consumers entity))))))
 
-(defn check-program-timeline-overrides [to]
-  (or
-    (check-generic-timeline-override to :program)
-    (some #(check-program (:program %)) to)))
 
-(defn check-program-rio-consumer [rio-consumer]
-  (or
-    (when (contains? rio-consumer :jointProgram)
-      (cond
-        (not (boolean? (:jointProgram rio-consumer)))
-        "The `jointProgram` attribute in the rio consumer must be a boolean"
-
-        (not (contains? rio-consumer :educationUnitCode))
-        "If the `jointProgram` attribute is true, `educationUnitCode` is required."
-
-        (not (string? (:educationUnitCode rio-consumer)))
-        "The `educationUnitCode` attribute must be a string."
-
-        (not (s/valid? ::prg/educationUnitCode (:educationUnitCode rio-consumer)))
-        "The format of the value of the `educationUnitCode` attribute is invalid."))))
-
-(defn check-program-consumers [consumers]
-  (or
-    (check-generic-consumers consumers)
-    (check-program-rio-consumer (ooapi-utils/extract-rio-consumer consumers))))
-
-(defn check-top-level-program [entity]
+(defn- check-top-level-program [entity]
   (let [missing (filter #(not (contains? entity %)) [:programId :consumers :name :validFrom])]
     (or
       (when-not (empty? missing)
         (str "Top level Program object is missing these required fields: " (str/join ", " (map name missing))))
+
+      (some #(check-program-attribute entity %) (keys entity))
 
       (when (contains? entity :timelineOverrides)
         (check-program-timeline-overrides (:timelineOverrides entity)))
@@ -123,20 +175,13 @@
       (when (contains? entity :consumers)
         (check-program-consumers (:consumers entity))))))
 
-(defn check-course-timeline-overrides [to]
-  (or
-    (check-generic-timeline-override to :course)
-    (some #(check-course (:course %)) to)))
-
-(defn check-course-consumers [consumers]
-  ;; TODO
-  (check-generic-consumers consumers))
-
-(defn check-top-level-course [entity]
+(defn- check-top-level-course [entity]
   (let [missing (filter #(not (contains? entity %)) [:consumers :courseId :duration :educationSpecification :name :validFrom])]
     (or
       (when-not (empty? missing)
         (str "Top level EducationSpecification object is missing these required fields: " (str/join ", " (map name missing))))
+
+      (some #(check-course-attribute entity %) (keys entity))
 
       (when (contains? entity :timelineOverrides)
         (check-course-timeline-overrides (:timelineOverrides entity)))
@@ -153,7 +198,7 @@
     (str "Top level object is not a JSON object. Expected an " human-name " object.")
 
     (= spec-name ::es/EducationSpecificationTopLevel)
-    (check-top-level-education-specification entity)
+    (check-top-level-eduspec entity)
 
     (= spec-name ::prg/program)
     (check-top-level-program entity)
