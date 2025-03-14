@@ -19,7 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.specs.course
   (:require [clojure.spec.alpha :as s]
             [nl.surf.eduhub-rio-mapper.ooapi.enums :as enums]
-            [nl.surf.eduhub-rio-mapper.re-spec :refer [text-spec]]
+            [nl.surf.eduhub-rio-mapper.re-spec :refer [re-spec text-spec]]
             [nl.surf.eduhub-rio-mapper.specs.common :as common]))
 
 (s/def ::abbreviation string?)
@@ -35,17 +35,23 @@
 (s/def ::jointPartnerCodes (s/coll-of ::jointPartnerCode))
 (s/def ::link string?)
 (s/def ::name ::common/LanguageTypedStrings)
-(s/def ::teachingLanguage string?)
+(s/def ::teachingLanguage (re-spec #"[a-z]{3}"))
 (s/def ::validFrom ::common/date)
 (s/def ::validTo ::common/date)
 
+(s/def ::course-consumer
+  (s/keys :req-un [::consentParticipationSTAP
+                   ::common/educationOffererCode]
+          :opt-un [::educationLocationCode
+                   ::foreignPartners
+                   ::jointPartnerCodes]))
+
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
-           (s/keys :req-un [::consentParticipationSTAP
-                            ::common/educationOffererCode]
-                   :opt-un [::educationLocationCode
-                            ::foreignPartners
-                            ::jointPartnerCodes])))
+           ::course-consumer))
+
+(def course-consumer-req-attrs (-> (s/describe ::course-consumer) (nth 2)))
+(def course-consumer-opt-attrs (-> (s/describe ::course-consumer) (nth 4)))
 
 ;; must have at least one rio consumer
 (s/def ::consumers
@@ -70,3 +76,6 @@
                    ::description
                    ::link
                    ::teachingLanguage]))
+
+(def course-req-attrs (-> (s/describe ::course) (nth 2)))
+(def course-opt-attrs (-> (s/describe ::course) (nth 4)))

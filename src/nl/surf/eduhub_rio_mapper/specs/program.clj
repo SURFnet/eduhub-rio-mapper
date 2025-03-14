@@ -54,23 +54,29 @@
 (s/def ::validFrom ::common/date)
 (s/def ::validTo ::common/date)
 
+(s/def ::program-consumer
+  (s/keys :req-un [::consentParticipationSTAP
+                   ::common/educationOffererCode]
+          :opt-un [::acceleratedRoute
+                   ::educationLocationCode
+                   ::educationUnitCode
+                   ::consentParticipationSTAP
+                   ::foreignPartners
+                   ::jointPartnerCodes
+                   ::jointProgram
+                   ::propaedeuticPhase
+                   ::requirementsActivities
+                   ::studyChoiceCheck
+                   ::common/level
+                   ::common/sector
+                   ::common/levelOfQualification]))
+
+(def program-consumer-req-attrs (-> (s/describe ::program-consumer) (nth 2)))
+(def program-consumer-opt-attrs (-> (s/describe ::program-consumer) (nth 4)))
+
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
-           (s/keys :req-un [::consentParticipationSTAP
-                            ::common/educationOffererCode]
-                   :opt-un [::acceleratedRoute
-                            ::educationLocationCode
-                            ::educationUnitCode
-                            ::consentParticipationSTAP
-                            ::foreignPartners
-                            ::jointPartnerCodes
-                            ::jointProgram
-                            ::propaedeuticPhase
-                            ::requirementsActivities
-                            ::studyChoiceCheck
-                            ::common/level
-                            ::common/sector
-                            ::common/levelOfQualification])))
+           ::program-consumer))
 
 ;; must have at least one rio consumer
 (s/def ::consumers
@@ -103,6 +109,9 @@
                    ::common/learningOutcomes
                    ::common/otherCodes
                    ::common/studyLoad]))
+
+(def program-req-attrs (-> (s/describe ::program) (nth 2)))
+(def program-opt-attrs (-> (s/describe ::program) (nth 4)))
 
 (s/def ::ProgramType
   (s/keys :req-un [::modeOfStudy]))
