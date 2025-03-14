@@ -6,29 +6,23 @@
             [nl.surf.eduhub-rio-mapper.specs.program :as prg]
             [nl.surf.eduhub-rio-mapper.utils.ooapi :as ooapi-utils]))
 
-(defn- check-eduspec-required-attributes [eduspec]
-  (when
-    (nil? (:name eduspec))
-    "The `educationSpecification` attribute within a `timelineOverrides` item should have an attribute `name`."))
+;; Required keys in timelineOverride entity
 
-(defn- check-program-required-attributes [eduspec]
-  (when
-    (nil? (:name eduspec))
-    "The `program` attribute within a `timelineOverrides` item should have an attribute `name`."))
-
-(defn- check-course-required-attributes [course]
-  (when
-    (nil? (:name course))
-    "The `course` attribute within a `timelineOverrides` item should have an attribute `name`."))
+(defn- check-required-attributes-entity [entity entity-name attrs]
+  (when-let [attr (some #(and (nil? (% (entity-name entity))) %)
+                        attrs)]
+    (str "The `" (name entity-name) "` attribute within a `timelineOverrides` item should have an attribute `" (name attr) "`.")))
 
 ;; attributes
 
-(defn- check-generic-attribute [entity attr attributes entity-name]
-  (when-not (= :consumers attr)
-    (when-let [spec (some #(when (= (name attr) (name %))
-                             %)
-                          attributes)]
-      (when-not (s/valid? spec (attr entity))
+(defn- check-generic-attribute [entity attr specced-attributes entity-name]
+  (when-not (= :consumers attr)                             ; skip consumers
+    (let [attr-match? #(= (name %) (name attr))
+          ;; specced-attributes are qualified keywords, attr is unqualified
+          spec        (->> specced-attributes
+                           (filter attr-match?)
+                           first)]
+      (when (and spec (not (s/valid? spec (attr entity))))
         (str "The `" (name attr) "` attribute of the " entity-name " does not conform to the required format.")))))
 
 (defn- check-eduspec-attribute [entity attr]
@@ -65,17 +59,17 @@
 (defn- check-course-timeline-overrides [to]
   (or
     (check-generic-timeline-override to :course)
-    (some #(check-course-required-attributes (:course %)) to)))
+    (some #(check-required-attributes-entity % :course [:name]) to)))
 
 (defn- check-eduspec-timeline-overrides [to]
   (or
     (check-generic-timeline-override to :educationSpecification)
-    (some #(check-eduspec-required-attributes (:educationSpecification %)) to)))
+    (some #(check-required-attributes-entity % :educationSpecification [:name]) to)))
 
 (defn- check-program-timeline-overrides [to]
   (or
     (check-generic-timeline-override to :program)
-    (some #(check-program-required-attributes (:program %)) to)))
+    (some #(check-required-attributes-entity % :program [:name]) to)))
 
 ;; consumers
 
@@ -160,7 +154,6 @@
       (when (contains? entity :consumers)
         (check-eduspec-consumers (:consumers entity))))))
 
-
 (defn- check-top-level-program [entity]
   (let [missing (filter #(not (contains? entity %)) [:programId :consumers :name :validFrom])]
     (or
@@ -179,7 +172,7 @@
   (let [missing (filter #(not (contains? entity %)) [:consumers :courseId :duration :educationSpecification :name :validFrom])]
     (or
       (when-not (empty? missing)
-        (str "Top level EducationSpecification object is missing these required fields: " (str/join ", " (map name missing))))
+        (str "Top level Course object is missing these required fields: " (str/join ", " (map name missing))))
 
       (some #(check-course-attribute entity %) (keys entity))
 
@@ -205,3 +198,7 @@
 
     (= spec-name ::crs/course)
     (check-top-level-course entity)))
+
+(defn check-spec-with-fallback [entity spec-name human-name]
+  (or (check-spec entity spec-name human-name)
+      (s/explain-str spec-name entity)))
