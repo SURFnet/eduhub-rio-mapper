@@ -50,9 +50,6 @@
   (s/merge ::common/rio-consumer
            ::eduspec-consumer))
 
-(def eduspec-consumer-req-attrs (-> (s/describe ::eduspec-consumer) (nth 2)))
-(def eduspec-consumer-opt-attrs (-> (s/describe ::eduspec-consumer) (nth 4)))
-
 (s/def ::consumers (s/coll-of ::common/consumer))
 
 (s/def ::EducationSpecification
@@ -77,8 +74,11 @@
 
 (s/def ::educationSpecification ::EducationSpecification)
 
+;; extract attribute vector from specs for use in spec helper
 (def education-specification-req-attrs (-> (s/describe ::educationSpecification) (nth 2)))
 (def education-specification-opt-attrs (-> (s/describe ::educationSpecification) (nth 4)))
+(def eduspec-consumer-req-attrs (-> (s/describe ::eduspec-consumer) (nth 2)))
+(def eduspec-consumer-opt-attrs (-> (s/describe ::eduspec-consumer) (nth 4)))
 
 (s/def ::timelineOverride
   (s/keys :req-un [::educationSpecification
