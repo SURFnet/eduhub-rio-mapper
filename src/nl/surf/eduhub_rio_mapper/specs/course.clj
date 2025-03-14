@@ -50,9 +50,6 @@
   (s/merge ::common/rio-consumer
            ::course-consumer))
 
-(def course-consumer-req-attrs (-> (s/describe ::course-consumer) (nth 2)))
-(def course-consumer-opt-attrs (-> (s/describe ::course-consumer) (nth 4)))
-
 ;; must have at least one rio consumer
 (s/def ::consumers
   (s/with-gen
@@ -65,17 +62,32 @@
                    :rio ::rio-consumer
                    :tail (s/* ::common/consumer)))))
 
+
 (s/def ::course
-  (s/keys :req-un [::consumers
-                   ::courseId
-                   ::common/duration
-                   ::educationSpecification
-                   ::name
-                   ::validFrom]
+  (s/keys :req-un [::name]
           :opt-un [::abbreviation
                    ::description
                    ::link
                    ::teachingLanguage]))
 
+(s/def ::timelineOverride
+  (s/keys :req-un [::course
+                   ::validFrom]
+          :opt-un [::validTo]))
+
+(s/def ::timelineOverrides
+  (s/coll-of ::timelineOverride))
+
+(s/def ::courseTopLevel
+  (s/keys :req-un [::consumers
+                   ::courseId
+                   ::common/duration
+                   ::educationSpecification
+                   ::validFrom]
+          :opt-un [::timelineOverrides]))
+
+;; extract attribute vector from specs for use in spec helper
 (def course-req-attrs (-> (s/describe ::course) (nth 2)))
 (def course-opt-attrs (-> (s/describe ::course) (nth 4)))
+(def course-consumer-req-attrs (-> (s/describe ::course-consumer) (nth 2)))
+(def course-consumer-opt-attrs (-> (s/describe ::course-consumer) (nth 4)))

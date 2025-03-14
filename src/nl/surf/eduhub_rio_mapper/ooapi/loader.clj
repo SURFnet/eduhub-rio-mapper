@@ -23,6 +23,7 @@
             [nl.surf.eduhub-rio-mapper.ooapi.base :as ooapi-base]
             [nl.surf.eduhub-rio-mapper.specs.course :as course]
             [nl.surf.eduhub-rio-mapper.specs.education-specification :as education-specification]
+            [nl.surf.eduhub-rio-mapper.specs.helper :as spec-helper]
             [nl.surf.eduhub-rio-mapper.specs.offerings :as offerings]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.program :as program]
@@ -146,10 +147,14 @@
 
 (defn validate-entity [entity spec type]
   (when-not (s/valid? spec entity)
-    (throw (ex-info (str "Entity does not conform to OOAPI type " type "\n" (s/explain-str spec entity))
-                    {:entity     entity
-                     ;; retrying a failing spec won't help
-                     :retryable? false})))
+    (let [error-msg (str "Entity does not conform to OOAPI type " type)
+          origin    (spec-helper/check-spec-with-fallback entity spec type)]
+      (throw (ex-info (str error-msg "\n" origin)
+                      {:entity     entity
+                       :error      error-msg
+                       :origin     origin
+                       ;; retrying a failing spec won't help
+                       :retryable? false}))))
   entity)
 
 (defn validating-loader

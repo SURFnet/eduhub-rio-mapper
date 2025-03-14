@@ -71,8 +71,6 @@
                    ::common/sector
                    ::common/levelOfQualification]))
 
-(def program-consumer-req-attrs (-> (s/describe ::program-consumer) (nth 2)))
-(def program-consumer-opt-attrs (-> (s/describe ::program-consumer) (nth 4)))
 
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
@@ -110,8 +108,11 @@
                    ::common/otherCodes
                    ::common/studyLoad]))
 
+;; extract attribute vector from specs for use in spec helper
 (def program-req-attrs (-> (s/describe ::program) (nth 2)))
 (def program-opt-attrs (-> (s/describe ::program) (nth 4)))
+(def program-consumer-req-attrs (-> (s/describe ::program-consumer) (nth 2)))
+(def program-consumer-opt-attrs (-> (s/describe ::program-consumer) (nth 4)))
 
 (s/def ::ProgramType
   (s/keys :req-un [::modeOfStudy]))

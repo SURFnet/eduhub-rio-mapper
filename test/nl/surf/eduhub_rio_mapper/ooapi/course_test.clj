@@ -43,7 +43,7 @@
     (is (= "Top level object is not a JSON object. Expected an Course object."
            (check-spec [])))
     ;; missing required fields
-    (is (= "Top level EducationSpecification object is missing these required fields: consumers, courseId, duration, educationSpecification, name, validFrom"
+    (is (= "Top level Course object is missing these required fields: consumers, courseId, duration, educationSpecification, name, validFrom"
            (check-spec {})))
     ;; incorrect format
     (is (= "The `teachingLanguage` attribute of the course does not conform to the required format."
