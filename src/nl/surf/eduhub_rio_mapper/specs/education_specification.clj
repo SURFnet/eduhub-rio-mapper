@@ -41,11 +41,17 @@
 (s/def ::validTo ::common/date)
 
 (s/def ::category (s/coll-of string?))
+
+(s/def ::eduspec-consumer
+  (s/keys :req-un []
+          :opt-un [::educationSpecificationSubType ::category]))
+
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
-           (s/keys :opt-un
-                   [::educationSpecificationSubType
-                    ::category])))
+           ::eduspec-consumer))
+
+(def eduspec-consumer-req-attrs (-> (s/describe ::eduspec-consumer) (nth 2)))
+(def eduspec-consumer-opt-attrs (-> (s/describe ::eduspec-consumer) (nth 4)))
 
 (s/def ::consumers (s/coll-of ::common/consumer))
 
@@ -70,6 +76,9 @@
            ::common/studyLoad]))
 
 (s/def ::educationSpecification ::EducationSpecification)
+
+(def education-specification-req-attrs (-> (s/describe ::educationSpecification) (nth 2)))
+(def education-specification-opt-attrs (-> (s/describe ::educationSpecification) (nth 4)))
 
 (s/def ::timelineOverride
   (s/keys :req-un [::educationSpecification
