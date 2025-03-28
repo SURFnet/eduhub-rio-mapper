@@ -22,12 +22,12 @@
                  [com.taoensso/carmine "3.4.1" :exclusions [org.clojure/tools.reader]]
 
                  ;; CLI
-                 [nl.jomco/envopts "0.0.5"]
+                 [nl.jomco/envopts "0.0.6"]
 
                  ;; API
                  [compojure "1.7.1"]
-                 [ring/ring-jetty-adapter "1.13.0"]
-                 [ring/ring-core "1.13.0"]
+                 [ring/ring-jetty-adapter "1.13.0" :upgrade :keep-this-version]
+                 [ring/ring-core "1.13.0" :upgrade :keep-this-version]
                  [ring/ring-defaults "0.6.0"]
                  [ring/ring-json "0.5.1"]
                  [nl.jomco/ring-trace-context "0.0.8"]
@@ -36,7 +36,7 @@
                  [org.clojure/tools.logging "1.3.0"]
                  [ch.qos.logback.contrib/logback-jackson "0.1.5"]
                  [ch.qos.logback.contrib/logback-json-classic "0.1.5"]
-                 [ch.qos.logback/logback-classic "1.5.17"]
+                 [ch.qos.logback/logback-classic "1.5.18"]
                  [com.fasterxml.jackson.core/jackson-core "2.18.3"]
                  [com.fasterxml.jackson.core/jackson-databind "2.18.3"]
 
