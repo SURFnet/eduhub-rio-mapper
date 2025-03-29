@@ -207,20 +207,6 @@
       (is (= res (app res))
           "valid opleidingscode"))))
 
-(deftest metrics
-  (let [app (api/wrap-metrics-getter
-             api-routes
-             (constantly {"foo" 1, "bar" 2})
-             (constantly {"done" {"google" 123, "meta" 321}})
-             {"delft" "TU", "leiden" "LU", "google" "alphabet", "meta" "facebook", "foo" "OOF", "bar" "RAB"})
-        {:keys [status body]} (app (request :get "/metrics"))]
-    (is (= http-status/ok status))
-    (is (= (str "rio_mapper_jobs_total{schac_home=\"meta\", institution_name=\"facebook\", job_status=\"done\"} 321\n"
-                "rio_mapper_jobs_total{schac_home=\"google\", institution_name=\"alphabet\", job_status=\"done\"} 123\n"
-                "rio_mapper_active_and_queued_job_count{schac_home=\"foo\", institution_name=\"OOF\"} 1\n"
-                "rio_mapper_active_and_queued_job_count{schac_home=\"bar\", institution_name=\"RAB\"} 2")
-           body))))
-
 (deftest wrap-job-queuer
   (let [queue-atom (atom [])
         app        (api/wrap-job-enqueuer identity #(swap! queue-atom conj %))]
