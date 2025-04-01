@@ -161,4 +161,4 @@
                           name-id id})
                        {:action    command
                         ::ooapi/id id}))]
-      (job/run! handlers job (= "true" (:store-http-requests config))))))
+      (job/run! handlers job (:store-http-requests config)))))
