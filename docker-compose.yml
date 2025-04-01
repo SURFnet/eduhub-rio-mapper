@@ -1,0 +1,63 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - '6380:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis:/data
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./dev-infra/prometheus.yml:/etc/prometheus/prometheus.yml
+  worker:
+    platform: "linux/amd64"
+    build: .
+    env_file:
+      - .envrc # read environment from local direnv settings
+    environment:
+      CLIENTS_INFO_PATH: /test/test-clients.json
+      REDIS_URI: redis://redis
+      OTEL_METRICS_EXPORTER: prometheus
+      OTEL_EXPORTER_PROMETHEUS_ENDPOINT: http://localhost:9464/metrics
+      OTEL_SERVICE_NAME: edumapper-worker
+      OTEL_LOGS_EXPORTER: none
+      OTEL_TRACES_EXPORTER: none
+      JAVA_TOOL_OPTIONS: -javaagent:./opentelemetry-javaagent.jar
+    volumes:
+      - ./truststore.jks:/truststore.jks
+      - ./keystore.jks:/keystore.jks
+      - ./test/test-clients.json:/test/test-clients.json
+    command: worker
+    ports:
+      - "9465:9464"
+  api:
+    platform: "linux/amd64"
+    build: .
+    env_file:
+      - .envrc # read environment from local direnv settings
+    environment:
+      CLIENTS_INFO_PATH: /test/test-clients.json
+      REDIS_URI: redis://redis
+      OTEL_METRICS_EXPORTER: prometheus
+      OTEL_EXPORTER_PROMETHEUS_ENDPOINT: http://localhost:9464/metrics
+      OTEL_SERVICE_NAME: edumapper-api
+      OTEL_LOGS_EXPORTER: none
+      OTEL_TRACES_EXPORTER: none
+      JAVA_TOOL_OPTIONS: -javaagent:./opentelemetry-javaagent.jar
+      API_HOSTNAME: 0.0.0.0
+      API_PORT: 3000
+    volumes:
+      - ./truststore.jks:/truststore.jks
+      - ./keystore.jks:/keystore.jks
+      - ./test/test-clients.json:/test/test-clients.json
+    ports:
+      - "3000:3000"
+      - "9464:9464"
+    command: serve-api
+volumes:
+  redis:
+    driver: local
