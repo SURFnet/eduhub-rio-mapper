@@ -33,7 +33,8 @@
     :keys        [token action institution-schac-home institution-name institution-oin trace-context] :as request}
    http-logging-enabled]
   {:pre [type action institution-schac-home institution-oin
-         delete! update! dry-run! link!]}
+         delete! update! dry-run! link!
+         (boolean? http-logging-enabled)]}
   (let [log-context (assoc trace-context
                       :token token
                       :institution-schac-home institution-schac-home
