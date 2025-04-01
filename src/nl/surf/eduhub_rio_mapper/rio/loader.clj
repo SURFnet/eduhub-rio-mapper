@@ -130,6 +130,7 @@
 
 (defn guard-getter-response
   [{:keys [body]} type tag]
+  {:pre [tag body]}
   (when-not (re-find (re-pattern (str "<" tag "[^>]*>")) body)
     (throw (ex-info (str "Unexpected response, it does not contain tag: " tag)
                     {:type type, :body body})))

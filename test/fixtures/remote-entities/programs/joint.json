@@ -1,0 +1,191 @@
+{
+  "fieldsOfStudy": "0612",
+  "teachingLanguage": "eng",
+  "studyLoad": {
+    "value": 155,
+    "studyLoadUnit": "ects"
+  },
+  "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+  "level": "nt2-2",
+  "educationSpecification": "{{education-specifications/parent-program}}",
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "Some a program"
+    },
+    {
+      "language": "nl-NL",
+      "value": "Zomaar een programma"
+    }
+  ],
+  "sector": "secondary vocational education",
+  "validFrom": "2008-10-18",
+  "addresses": [
+    {
+      "countryCode": "NL",
+      "city": "Morra",
+      "geoLocation": {
+        "longitude": 88,
+        "latitude": 0
+      },
+      "addressType": "teaching",
+      "streetNumber": "23",
+      "postalCode": "4184QU",
+      "street": "Tollenslaan",
+      "additional": []
+    }
+  ],
+  "programType": "program",
+  "primaryCode": {
+    "codeType": "crohoCreboCode",
+    "code": "60740"
+  },
+  "modeOfDelivery": [
+    "on campus",
+    "distance-learning",
+    "hybrid",
+    "online"
+  ],
+  "duration": "P1DT30H4S",
+  "qualificationAwarded": "Phd",
+  "link": "https://universiteit-van-morra.nl/programs/{{programs/joint}}",
+  "coordinators": [
+    "cafecafe-cafe-cafe-cafe-cafecafecafe"
+  ],
+  "otherCodes": [
+    {
+      "codeType": "crohoCreboCode",
+      "code": "60740"
+    }
+  ],
+  "validTo": "2023-12-18",
+  "modeOfStudy": "dual training",
+  "assessment": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "description": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "levelOfQualification": "2",
+  "consumers": [
+    {
+      "alliances": [
+        {
+          "name": "lde",
+          "enrollmentForOwnStudents": "broker",
+          "type": "broadening",
+          "visibleForOwnStudents": false,
+          "selection": true,
+          "theme": "13"
+        }
+      ],
+      "consumerKey": "eduxchange"
+    },
+    {
+      "educationOffererCode": "110A133",
+      "acceleratedRoute": "no_accelerated_route",
+      "consentParticipationSTAP": "permission_not_granted",
+      "deficiency": "deficiencies",
+      "studyChoiceCheck": "no_study_choice_check",
+      "consumerKey": "rio",
+      "requirementsActivities": "requirements",
+      "propaedeuticPhase": "no_propaedeutic_phase",
+      "jointProgram": true,
+      "educationLocationCode": "107X215"
+    }
+  ],
+  "programId": "{{programs/joint}}",
+  "firstStartDate": "2010-01-31",
+  "resources": [
+    "Lelieveldt, H. Course guide. Sage.Miles, M.",
+    "- lecture hand-outs and additional book chapters will be available online. Sage. Mourato (2006).",
+    "B. Practical manual Soil Pollution and Soil Protection. ."
+  ],
+  "qualificationRequirements": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "abbreviation": "TEC",
+  "learningOutcomes": [
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ]
+  ],
+  "admissionRequirements": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "enrollment": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ]
+}
