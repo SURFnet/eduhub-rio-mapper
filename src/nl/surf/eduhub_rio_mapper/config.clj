@@ -93,8 +93,8 @@
    :status-ttl-sec                     ["Number of seconds to keep job status" :int
                                         :default (* 60 60 24 7) ;; one week
                                         :in [:status-ttl-sec]]
-   :store-http-requests                ["Boolean; should all http traffic be logged? Defaults to true." :str
-                                        :default "true"
+   :store-http-requests                ["Boolean; should all http traffic be logged? Defaults to true." :bool
+                                        :default true
                                         :in [:store-http-requests]]})
 
 (defn help []
@@ -180,7 +180,7 @@
 
                        {:queues          (clients-info/institution-schac-homes clients)
                         :queue-fn        :institution-schac-home
-                        :run-job-fn      #(job/run! handlers % (= "true" (:store-http-requests cfg)))
+                        :run-job-fn      #(job/run! handlers % (:store-http-requests cfg))
                         :set-status-fn   (status/make-set-status-fn cfg)
                         :retryable-fn    status/retryable?
                         :error-fn        status/errors?
