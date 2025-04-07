@@ -5,7 +5,7 @@
             :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[com.github.steffan-westcott/clj-otel-api "0.2.7"]
                  [org.clojure/clojure "1.12.0"]
-                 [org.clojure/core.async "1.7.701"]
+                 [org.clojure/core.async "1.8.735"]
                  [org.clojure/core.memoize "1.1.266"]
                  [com.velisco/strgen "0.2.5" :exclusions [org.clojure/clojurescript]]
 
@@ -27,8 +27,9 @@
 
                  ;; API
                  [compojure "1.7.1"]
-                 [ring/ring-jetty-adapter "1.13.0" :upgrade :keep-this-version]
-                 [ring/ring-core "1.13.0" :upgrade :keep-this-version]
+                 [ring/ring-codec "1.3.0"]
+                 [ring/ring-jetty-adapter "1.14.1"]
+                 [ring/ring-core "1.14.1"]
                  [ring/ring-defaults "0.6.0"]
                  [ring/ring-json "0.5.1"]
                  [nl.jomco/ring-trace-context "0.0.8"]

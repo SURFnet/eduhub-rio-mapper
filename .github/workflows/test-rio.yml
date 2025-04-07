@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
       - name: Get status of previous run of this workflow - store in last_status
         uses: Mercymeilya/last-workflow-status@v0.3.3
         id: last_status
