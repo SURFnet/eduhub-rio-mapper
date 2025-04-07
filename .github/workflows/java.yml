@@ -1,0 +1,29 @@
+name: Show Installed JDKs
+
+on:
+  workflow_dispatch:  # You can trigger this manually from the Actions tab
+jobs:
+  list-jdks:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: List all JDK directories
+        run: |
+          echo "Installed JDKs under /usr/lib/jvm:"
+          ls -l /usr/lib/jvm
+
+      - name: Print java -version from each JDK
+        run: |
+          echo "Java versions from each JDK:"
+          for jdk in /usr/lib/jvm/*; do
+            if [ -x "$jdk/bin/java" ]; then
+              echo "➡️ $jdk"
+              "$jdk/bin/java" -version
+              echo ""
+            fi
+          done
+
+      - name: Show default java version
+        run: |
+          echo "Default java on PATH:"
+          which java
+          java -version
