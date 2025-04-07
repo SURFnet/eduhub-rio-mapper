@@ -27,8 +27,9 @@
 
                  ;; API
                  [compojure "1.7.1"]
-                 [ring/ring-jetty-adapter "1.13.0" :upgrade :keep-this-version]
-                 [ring/ring-core "1.13.0" :upgrade :keep-this-version]
+                 [ring/ring-codec "1.3.0"]
+                 [ring/ring-jetty-adapter "1.14.1"]
+                 [ring/ring-core "1.14.1"]
                  [ring/ring-defaults "0.6.0"]
                  [ring/ring-json "0.5.1"]
                  [nl.jomco/ring-trace-context "0.0.8"]
