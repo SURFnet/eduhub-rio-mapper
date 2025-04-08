@@ -1,0 +1,9 @@
+{:aliases
+
+ {:lein2deps {:deps {io.github.borkdude/lein2deps {:git/sha "1fdaf45577edc9a6aeee027501e50924b9b793f5"}}
+              :main-opts ["-m" "lein2deps.api"]}
+
+  :watson  {:paths        []
+            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.0.1"
+                                                            :git/sha "b5203518d023d50e70a240d59a0770ccbacf3867"}}
+            :main-opts    ["-m" "clj-watson.cli"]}}}

@@ -18,5 +18,5 @@ pom.xml.asc
 /logs
 /keystore.jks
 /.envrc
-.github/
 /.envrc-docker
+/lein-deps.edn
