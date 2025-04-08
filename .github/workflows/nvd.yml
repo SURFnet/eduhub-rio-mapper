@@ -11,9 +11,6 @@ jobs:
   deps:
     runs-on: ubuntu-22.04
 
-    env:
-      NVD_API_TOKEN: ${{ secrets.NVD_API_TOKEN }}
-
     steps:
 
     - name: Checkout code
@@ -25,5 +22,20 @@ jobs:
         path: "~/.m2/repository"
         key: "${{ runner.os }}-clojure-${{ hashFiles('**/project.clj') }}"
 
-    - name: NVD clojure
-      uses: jomco/nvd-clojure-action@v5
+    - name: Install clj runtime
+      run: |
+        .github/workflows/install-binaries.sh
+        echo "${PWD}/bin" >> $GITHUB_PATH
+
+    - name: Check that NVD Secret is set
+      env:
+        NVD_API_TOKEN: ${{ secrets.NVD_API_TOKEN }}
+      if: ${{ env.NVD_API_TOKEN == '' }}
+      run: echo "NVD_API_TOKEN secret is empty"; exit 1
+
+    - name: Check clojure dependencies with NVD
+      env:
+        CLJ_WATSON_NVD_API_KEY: ${{ secrets.NVD_API_TOKEN }}
+      run: |
+        clojure -M:lein2deps --write-file lein-deps.edn
+        clojure -M:watson scan -p lein-deps.edn -f -w .watson.properties
