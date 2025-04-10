@@ -87,7 +87,7 @@
           :opt-un [::timelineOverrides]))
 
 ;; extract attribute vector from specs for use in spec helper
-(def course-req-attrs (-> (s/describe ::course) (nth 2)))
-(def course-opt-attrs (-> (s/describe ::course) (nth 4)))
-(def course-consumer-req-attrs (-> (s/describe ::course-consumer) (nth 2)))
-(def course-consumer-opt-attrs (-> (s/describe ::course-consumer) (nth 4)))
+(def course-req-attrs (common/extract-req-attrs ::course))
+(def course-opt-attrs (common/extract-opt-attrs ::course))
+(def course-consumer-req-attrs (common/extract-req-attrs ::course-consumer))
+(def course-consumer-opt-attrs (common/extract-opt-attrs ::course-consumer))

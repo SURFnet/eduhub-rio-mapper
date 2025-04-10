@@ -207,3 +207,13 @@
 ;; A consumer with consumerKey "rio"
 (s/def ::rio-consumer
   (s/keys :req-un [::rio-consumer/consumerKey]))
+
+(defn extract-req-attrs [spec]
+  (let [spec-desc (s/describe spec)]
+    (assert (= :req-un (nth spec-desc 1)))
+    (nth spec-desc 2)))
+
+(defn extract-opt-attrs [spec]
+  (let [spec-desc (s/describe spec)]
+    (assert (= :opt-un (nth spec-desc 3)))
+    (nth spec-desc 4)))

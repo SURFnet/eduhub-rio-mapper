@@ -109,10 +109,10 @@
                    ::common/studyLoad]))
 
 ;; extract attribute vector from specs for use in spec helper
-(def program-req-attrs (-> (s/describe ::program) (nth 2)))
-(def program-opt-attrs (-> (s/describe ::program) (nth 4)))
-(def program-consumer-req-attrs (-> (s/describe ::program-consumer) (nth 2)))
-(def program-consumer-opt-attrs (-> (s/describe ::program-consumer) (nth 4)))
+(def program-req-attrs (common/extract-req-attrs ::program))
+(def program-opt-attrs (common/extract-opt-attrs ::program))
+(def program-consumer-req-attrs (common/extract-req-attrs ::program-consumer))
+(def program-consumer-opt-attrs (common/extract-opt-attrs ::program-consumer))
 
 (s/def ::ProgramType
   (s/keys :req-un [::modeOfStudy]))

@@ -75,10 +75,10 @@
 (s/def ::educationSpecification ::EducationSpecification)
 
 ;; extract attribute vector from specs for use in spec helper
-(def education-specification-req-attrs (-> (s/describe ::educationSpecification) (nth 2)))
-(def education-specification-opt-attrs (-> (s/describe ::educationSpecification) (nth 4)))
-(def eduspec-consumer-req-attrs (-> (s/describe ::eduspec-consumer) (nth 2)))
-(def eduspec-consumer-opt-attrs (-> (s/describe ::eduspec-consumer) (nth 4)))
+(def education-specification-req-attrs (common/extract-req-attrs ::educationSpecification))
+(def education-specification-opt-attrs (common/extract-opt-attrs ::educationSpecification))
+(def eduspec-consumer-req-attrs (common/extract-req-attrs ::eduspec-consumer))
+(def eduspec-consumer-opt-attrs (common/extract-opt-attrs ::eduspec-consumer))
 
 (s/def ::timelineOverride
   (s/keys :req-un [::educationSpecification
