@@ -54,21 +54,27 @@
 (s/def ::validFrom ::common/date)
 (s/def ::validTo ::common/date)
 
+(s/def ::program-consumer
+  (s/keys :req-un [::consentParticipationSTAP
+                   ::common/educationOffererCode]
+          :opt-un [::acceleratedRoute
+                   ::educationLocationCode
+                   ::educationUnitCode
+                   ::consentParticipationSTAP
+                   ::foreignPartners
+                   ::jointPartnerCodes
+                   ::jointProgram
+                   ::propaedeuticPhase
+                   ::requirementsActivities
+                   ::studyChoiceCheck
+                   ::common/level
+                   ::common/sector
+                   ::common/levelOfQualification]))
+
+
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
-           (s/keys :req-un [::consentParticipationSTAP
-                            ::common/educationOffererCode]
-                   :opt-un [::acceleratedRoute
-                            ::educationLocationCode
-                            ::consentParticipationSTAP
-                            ::foreignPartners
-                            ::jointPartnerCodes
-                            ::propaedeuticPhase
-                            ::requirementsActivities
-                            ::studyChoiceCheck
-                            ::common/level
-                            ::common/sector
-                            ::common/levelOfQualification])))
+           ::program-consumer))
 
 ;; must have at least one rio consumer
 (s/def ::consumers
@@ -101,6 +107,12 @@
                    ::common/learningOutcomes
                    ::common/otherCodes
                    ::common/studyLoad]))
+
+;; extract attribute vector from specs for use in spec helper
+(def program-req-attrs (common/extract-req-attrs ::program))
+(def program-opt-attrs (common/extract-opt-attrs ::program))
+(def program-consumer-req-attrs (common/extract-req-attrs ::program-consumer))
+(def program-consumer-opt-attrs (common/extract-opt-attrs ::program-consumer))
 
 (s/def ::ProgramType
   (s/keys :req-un [::modeOfStudy]))

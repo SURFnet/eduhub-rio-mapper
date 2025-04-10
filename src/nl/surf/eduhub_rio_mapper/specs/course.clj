@@ -19,7 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.specs.course
   (:require [clojure.spec.alpha :as s]
             [nl.surf.eduhub-rio-mapper.ooapi.enums :as enums]
-            [nl.surf.eduhub-rio-mapper.re-spec :refer [text-spec]]
+            [nl.surf.eduhub-rio-mapper.re-spec :refer [re-spec text-spec]]
             [nl.surf.eduhub-rio-mapper.specs.common :as common]))
 
 (s/def ::abbreviation string?)
@@ -35,17 +35,20 @@
 (s/def ::jointPartnerCodes (s/coll-of ::jointPartnerCode))
 (s/def ::link string?)
 (s/def ::name ::common/LanguageTypedStrings)
-(s/def ::teachingLanguage string?)
+(s/def ::teachingLanguage (re-spec #"[a-z]{3}"))
 (s/def ::validFrom ::common/date)
 (s/def ::validTo ::common/date)
 
+(s/def ::course-consumer
+  (s/keys :req-un [::consentParticipationSTAP
+                   ::common/educationOffererCode]
+          :opt-un [::educationLocationCode
+                   ::foreignPartners
+                   ::jointPartnerCodes]))
+
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
-           (s/keys :req-un [::consentParticipationSTAP
-                            ::common/educationOffererCode]
-                   :opt-un [::educationLocationCode
-                            ::foreignPartners
-                            ::jointPartnerCodes])))
+           ::course-consumer))
 
 ;; must have at least one rio consumer
 (s/def ::consumers
@@ -59,14 +62,32 @@
                    :rio ::rio-consumer
                    :tail (s/* ::common/consumer)))))
 
+
 (s/def ::course
-  (s/keys :req-un [::consumers
-                   ::courseId
-                   ::common/duration
-                   ::educationSpecification
-                   ::name
-                   ::validFrom]
+  (s/keys :req-un [::name]
           :opt-un [::abbreviation
                    ::description
                    ::link
                    ::teachingLanguage]))
+
+(s/def ::timelineOverride
+  (s/keys :req-un [::course
+                   ::validFrom]
+          :opt-un [::validTo]))
+
+(s/def ::timelineOverrides
+  (s/coll-of ::timelineOverride))
+
+(s/def ::courseTopLevel
+  (s/keys :req-un [::consumers
+                   ::courseId
+                   ::common/duration
+                   ::educationSpecification
+                   ::validFrom]
+          :opt-un [::timelineOverrides]))
+
+;; extract attribute vector from specs for use in spec helper
+(def course-req-attrs (common/extract-req-attrs ::course))
+(def course-opt-attrs (common/extract-opt-attrs ::course))
+(def course-consumer-req-attrs (common/extract-req-attrs ::course-consumer))
+(def course-consumer-opt-attrs (common/extract-opt-attrs ::course-consumer))

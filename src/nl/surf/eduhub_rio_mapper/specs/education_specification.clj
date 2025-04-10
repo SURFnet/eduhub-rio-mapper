@@ -41,11 +41,14 @@
 (s/def ::validTo ::common/date)
 
 (s/def ::category (s/coll-of string?))
+
+(s/def ::eduspec-consumer
+  (s/keys :req-un []
+          :opt-un [::educationSpecificationSubType ::category]))
+
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
-           (s/keys :opt-un
-                   [::educationSpecificationSubType
-                    ::category])))
+           ::eduspec-consumer))
 
 (s/def ::consumers (s/coll-of ::common/consumer))
 
@@ -70,6 +73,12 @@
            ::common/studyLoad]))
 
 (s/def ::educationSpecification ::EducationSpecification)
+
+;; extract attribute vector from specs for use in spec helper
+(def education-specification-req-attrs (common/extract-req-attrs ::educationSpecification))
+(def education-specification-opt-attrs (common/extract-opt-attrs ::educationSpecification))
+(def eduspec-consumer-req-attrs (common/extract-req-attrs ::eduspec-consumer))
+(def eduspec-consumer-opt-attrs (common/extract-opt-attrs ::eduspec-consumer))
 
 (s/def ::timelineOverride
   (s/keys :req-un [::educationSpecification
