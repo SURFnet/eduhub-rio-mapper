@@ -189,7 +189,7 @@
     {:req req, :res (http/request req)}))
 
 (defn- call-api-status
-  "Make API call, print results and http-message, and return response."
+  "Make API status call, print results and http-message, and return response."
   [token]
   (let [req-res        (api-http-request :get (api-path :status [token]))
         http-messages (-> req-res :res :body :http-messages)]
@@ -201,7 +201,7 @@
     (:res req-res)))
 
 (defn- call-api
-  "Make API call, print results and http-message, and return response."
+  "Make API POST call, print results and http-message, and return response."
   [action args]
   (let [{:keys [req res]} (->> args
                                interpret-post-job-args
