@@ -121,8 +121,8 @@
     (is (contains? #{nil []} problems))))
 
 (deftest validate-rio-consumer-missing-consumer
-  (let [problems (s/explain-str ::prg/consumers [])]
-    (is (= "[] - failed: not-empty spec: :nl.surf.eduhub-rio-mapper.specs.program/consumers\n" problems))))
+  (let [problems (s/explain-data ::prg/consumers [])]
+    (is (= "not-empty" (name (get-in problems [::s/problems 0 :pred]))))))
 
 (deftest validate-rio-consumer-wrong-education-offerer-code
   (let [{::s/keys [problems]} (s/explain-data ::prg/rio-consumer (assoc rio-consumer :educationOffererCode "123B123"))]

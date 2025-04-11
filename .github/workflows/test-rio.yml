@@ -16,14 +16,19 @@ jobs:
         uses: Mercymeilya/last-workflow-status@v0.3.3
         id: last_status
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Cache lein project dependencies
         uses: actions/cache@v4
         with:
           path: "~/.m2/repository"
           key: "${{ runner.os }}-clojure-${{ hashFiles('**/project.clj') }}"
 
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Install clj runtime
+        run: |
+          .github/workflows/install-binaries.sh
+          echo "${PWD}/bin" >> $GITHUB_PATH
 
       - name: Setup certificate stores
         env:

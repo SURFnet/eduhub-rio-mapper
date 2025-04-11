@@ -11,11 +11,13 @@ jobs:
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
-    - name: Run linters
-      run: lein lint
+    - name: Install clj runtime
+      run: |
+        .github/workflows/install-binaries.sh
+        echo "${PWD}/bin" >> $GITHUB_PATH
 
-    - name: Run checks
-      run: lein check
+    - name: Run linters
+      run: make lint
 
   test:
     runs-on: ubuntu-22.04
@@ -24,6 +26,11 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
+
+    - name: Install clj runtime
+      run: |
+        .github/workflows/install-binaries.sh
+        echo "${PWD}/bin" >> $GITHUB_PATH
 
     - name: Run tests
       env:
@@ -49,7 +56,7 @@ jobs:
         TRUSTSTORE: truststore.jks
         KEYSTORE: test/keystore.jks
 
-      run: lein test
+      run: make test
 
     - name: Start Redis
       uses: supercharge/redis-github-action@1.4.0
@@ -57,7 +64,7 @@ jobs:
         redis-version: 6.2
 
     - name: Run tests with redis
-      run: lein test :redis
+      run: make test-redis
 
   specs:
     runs-on: ubuntu-22.04
@@ -67,8 +74,13 @@ jobs:
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
+    - name: Install clj runtime
+      run: |
+        .github/workflows/install-binaries.sh
+        echo "${PWD}/bin" >> $GITHUB_PATH
+
     - name: Proof data specs
-      run: lein proof-specs
+      run: make proof-specs
 
   uberjar:
     runs-on: ubuntu-22.04
@@ -78,8 +90,13 @@ jobs:
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
+    - name: Install clj runtime
+      run: |
+        .github/workflows/install-binaries.sh
+        echo "${PWD}/bin" >> $GITHUB_PATH
+
     - name: Run compile
-      run: lein uberjar
+      run: make jar
 
   docker-build:
     runs-on: ubuntu-22.04
