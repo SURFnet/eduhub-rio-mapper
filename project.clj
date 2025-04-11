@@ -5,7 +5,7 @@
             :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[com.github.steffan-westcott/clj-otel-api "0.2.7"]
                  [org.clojure/clojure "1.12.0"]
-                 [org.clojure/core.async "1.7.701"]
+                 [org.clojure/core.async "1.8.735"]
                  [org.clojure/core.memoize "1.1.266"]
                  [com.velisco/strgen "0.2.5" :exclusions [org.clojure/clojurescript]]
 
