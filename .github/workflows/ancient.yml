@@ -11,14 +11,20 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Cache lein project dependencies
       uses: actions/cache@v4
       with:
         path: "~/.m2/repository"
         key: "${{ runner.os }}-clojure-${{ hashFiles('**/project.clj') }}"
 
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Install clj runtime
+      run: |
+        .github/workflows/install-binaries.sh
+        echo "${PWD}/bin" >> $GITHUB_PATH
 
     - name: Check dependency freshness
-      run: lein check-deps
+      run: make antq

@@ -1,9 +1,69 @@
-{:aliases
+{:paths ["src" "resources" "target/classes"]
+ :deps  {org.clojure/clojure      {:mvn/version "1.12.0"}
+         org.clojure/core.async   {:mvn/version "1.7.701"}
+         org.clojure/core.memoize {:mvn/version "1.1.266"}
 
- {:lein2deps {:deps {io.github.borkdude/lein2deps {:git/sha "1fdaf45577edc9a6aeee027501e50924b9b793f5"}}
-              :main-opts ["-m" "lein2deps.api"]}
+         ;; data
+         org.clojure/data.json       {:mvn/version "2.5.1"}
+         org.clojure/data.xml        {:mvn/version "0.0.8"}
+         org.apache.santuario/xmlsec {:mvn/version "4.0.3"}
+         cheshire/cheshire           {:mvn/version "5.13.0"}
+         commons-io/commons-io       {:mvn/version "2.18.0"}
+         commons-codec/commons-codec {:mvn/version "1.18.0"}
+         com.velisco/strgen          {:mvn/version "0.2.5" :exclusions [org.clojure/clojurescript]}
 
-  :watson  {:paths        []
-            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.0.1"
-                                                            :git/sha "b5203518d023d50e70a240d59a0770ccbacf3867"}}
-            :main-opts    ["-m" "clj-watson.cli"]}}}
+         ;; http
+         ring/ring-core                 {:mvn/version "1.13.0"}
+         ring/ring-jetty-adapter        {:mvn/version "1.13.0"}
+         ring/ring-defaults             {:mvn/version "0.6.0"}
+         ring/ring-json                 {:mvn/version "0.5.1"}
+         compojure/compojure            {:mvn/version "1.7.1"}
+         nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
+         nl.jomco/clj-http-status-codes {:mvn/version "0.1"}
+
+         ;; interface
+         nl.jomco/envopts     {:mvn/version "0.0.6"}
+         clj-http/clj-http    {:mvn/version "3.13.0"}
+         clj-time/clj-time    {:mvn/version "0.15.2"}
+         com.taoensso/carmine {:mvn/version "3.4.1" :exclusions [org.clojure/tools.reader]}
+
+         ;; logging
+         org.clojure/tools.logging                   {:mvn/version "1.3.0"}
+         ch.qos.logback.contrib/logback-jackson      {:mvn/version "0.1.5"}
+         ch.qos.logback.contrib/logback-json-classic {:mvn/version "0.1.5"}
+         ch.qos.logback/logback-classic              {:mvn/version "1.5.18"}
+         com.fasterxml.jackson.core/jackson-core     {:mvn/version "2.18.3"}
+         com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.18.3"}
+         com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.7"}}
+
+ :aliases
+ {:test {:extra-paths ["test"]
+         :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                       ring/ring-mock      {:mvn/version "RELEASE"}}
+         :main-opts   ["-m" "kaocha.runner"]}
+
+  :proof-specs {:extra-deps {nl.jomco/proof-specs {:mvn/version "RELEASE"}}
+                :main-opts ["-m" "nl.jomco.proof-specs"
+                            "--verbose"
+                            "--num-vals" "10"
+                            "--limit-ms" "5000"
+                            "--include" "nl.surf.*"
+                            "--require" "nl.surf.eduhub-rio-mapper.specs.ooapi"]}
+
+  :lint {:paths        []
+         :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
+         :main-opts    ["-m" "clj-kondo.main" "--lint" "src" "test"]}
+
+  :uberjar {:replace-deps  {uberdeps/uberdeps   {:mvn/version "RELEASE"}
+                            org.clojure/clojure {:mvn/version "RELEASE"}}
+            :replace-paths []
+            :main-opts     ["-m" "uberdeps.uberjar"]}
+
+  :watson {:paths        []
+           :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.0.1"
+                                                           :git/sha "b5203518d023d50e70a240d59a0770ccbacf3867"}}
+           :main-opts    ["-m" "clj-watson.cli" "scan" "-w" ".watson.properties" "-p" "deps.edn" "-f" "-s"]}
+
+  :antq {:paths        []
+         :replace-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+         :main-opts    ["-m" "antq.core"]}}}

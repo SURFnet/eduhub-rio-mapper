@@ -12,6 +12,11 @@ jobs:
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
+    - name: Install clj runtime
+      run: |
+        .github/workflows/install-binaries.sh
+        echo "${PWD}/bin" >> $GITHUB_PATH
+
     - name: Start Redis
       uses: supercharge/redis-github-action@1.4.0
       with:
@@ -55,4 +60,4 @@ jobs:
         TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
         WORKER_API_PORT: 8081
 
-      run: lein test :e2e
+      run: make test-e2e

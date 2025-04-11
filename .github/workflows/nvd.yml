@@ -37,5 +37,4 @@ jobs:
       env:
         CLJ_WATSON_NVD_API_KEY: ${{ secrets.NVD_API_TOKEN }}
       run: |
-        clojure -M:lein2deps --write-file lein-deps.edn
-        clojure -M:watson scan -p lein-deps.edn -f -w .watson.properties
+        make watson
