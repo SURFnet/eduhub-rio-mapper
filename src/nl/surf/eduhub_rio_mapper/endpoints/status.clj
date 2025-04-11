@@ -127,7 +127,7 @@
                                         ;; xml response converted to edn.
                                         (assoc :attributes {:opleidingseenheidcode opleidingseenheidcode})
 
-                                        (and (= "true" (:store-http-requests config))
+                                        (and (:store-http-requests config)
                                              (#{:done :error :time-out} status)
                                              (-> data :http-messages))
                                         (assoc :http-messages (-> data :http-messages))
