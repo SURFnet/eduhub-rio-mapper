@@ -1,4 +1,4 @@
-{:paths ["src" "resources" "target/classes"]
+{:paths ["src" "resources"]
  :deps  {org.clojure/clojure      {:mvn/version "1.12.0"}
          org.clojure/core.async   {:mvn/version "1.7.701"}
          org.clojure/core.memoize {:mvn/version "1.1.266"}
@@ -54,10 +54,11 @@
          :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
          :main-opts    ["-m" "clj-kondo.main" "--lint" "src" "test"]}
 
+  :package {:extra-paths ["target/classes"]}
   :uberjar {:replace-deps  {uberdeps/uberdeps   {:mvn/version "RELEASE"}
                             org.clojure/clojure {:mvn/version "RELEASE"}}
             :replace-paths []
-            :main-opts     ["-m" "uberdeps.uberjar"]}
+            :main-opts     ["-m" "uberdeps.uberjar" "--aliases" "package"]}
 
   :watson {:paths        []
            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.0.1"
