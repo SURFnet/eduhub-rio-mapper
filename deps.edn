@@ -37,7 +37,11 @@
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.7"}}
 
  :aliases
- {:test {:extra-paths ["test"]
+ {:dev {:extra-paths ["dev"]
+        :extra-deps  {clj-commons/clj-yaml {:mvn/version "RELEASE"}
+                      expound/expound      {:mvn/version "RELEASE"}}}
+
+  :test {:extra-paths ["test"]
          :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
                        ring/ring-mock      {:mvn/version "RELEASE"}}
          :main-opts   ["-m" "kaocha.runner"]}

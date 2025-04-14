@@ -35,6 +35,15 @@ watson:
 antq:
 	clojure -M:antq
 
+generate-enums:
+	clojure -M:dev -m generate-enums.main
+
+beheren-edn:
+	clojure -M:dev -m xsd-to-edn.main schema
+
+types-edn:
+	clojure -M:dev -m xsd-to-edn.main types
+
 clean:
 	rm -rf $(CLASSES_DIR) $(JAR_FILE)
 
