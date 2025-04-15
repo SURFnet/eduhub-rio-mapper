@@ -115,9 +115,7 @@
                                  :credentials   (keystore/credentials
                                                  "test/keystore.jks"
                                                  "xxxxxx"
-                                                 "test-surf"
-                                                 "truststore.jks"
-                                                 "xxxxxx")}}]
+                                                 "test-surf")}}]
     (binding [client/request (constantly {:status 200 :body (slurp "test/fixtures/rio/create-relation.xml")})]
       (testing "child with one parent"
         (let [{:keys [missing superfluous]} (rh/after-upsert (loader 1) job handlers)]
@@ -139,7 +137,7 @@
   (testing "Valid call to delete relation"
     (let [sender-oin "4783648273648372"
           recipient-oin "5783648273648372"
-          credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf" "truststore.jks" "xxxxxx")
+          credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf")
           actual (rh/relation-mutation
                    :delete
                    sender-oin

@@ -28,6 +28,12 @@
     (doto (KeyStore/getInstance "JKS")
       (.load in (char-array password)))))
 
+(defn keystore-resource
+  ^KeyStore [resource-path password]
+  (with-open [in (io/input-stream (io/resource resource-path))]
+    (doto (KeyStore/getInstance "JKS")
+      (.load in (char-array password)))))
+
 (defn- get-entry
   ^KeyStore$PrivateKeyEntry [^KeyStore keystore alias password]
   (.getEntry keystore
@@ -46,13 +52,12 @@
       .getEncoded))
 
 (defn credentials
-  [keystore-path keystore-pass keystore-alias
-   trust-store-path trust-store-pass]
+  [keystore-path keystore-pass keystore-alias]
   {:post [(some? (:certificate %))]}
   (let [ks (keystore keystore-path keystore-pass)]
     {:keystore        ks
-     :trust-store     (keystore trust-store-path trust-store-pass)
+     :trust-store     (keystore-resource "truststore.jks" "")
      :keystore-pass   keystore-pass
-     :trust-store-pass trust-store-pass
+     :trust-store-pass ""
      :private-key     (get-key ks keystore-alias keystore-pass)
      :certificate     (get-certificate ks keystore-alias keystore-pass)}))

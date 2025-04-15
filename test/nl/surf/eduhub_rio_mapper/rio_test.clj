@@ -142,7 +142,7 @@
 
 ;; Differences between two consecutive signings of identical requests should be in timestamps, uuids and digests.
 (deftest only-differences-between-signed-requests-are-in-given-paths
-  (let [credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf" "truststore.jks" "xxxxxx")
+  (let [credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf")
         rio-sexp [[:duo:onderwijsaanbiedercode "110A133"]
                   [:duo:peildatum "2022-06-22"]
                   [:duo:pagina "0"]]
