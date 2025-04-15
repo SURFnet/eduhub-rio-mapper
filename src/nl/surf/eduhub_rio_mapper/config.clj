@@ -168,6 +168,7 @@
         handlers (processing/make-handlers cfg)
         config (update cfg :worker merge
                        {:queues        (clients-info/institution-schac-homes clients)
+                        :set-status-fn (status/make-set-status-fn cfg)
                         :queue-fn      :institution-schac-home})]
     {:handlers handlers :config config}))
 
