@@ -1,7 +1,8 @@
 *.class
 *.iml
-.DS_Store
 .clj-kondo
+.cpcache
+.DS_Store
 .hg/
 .hgignore
 /.envrc
