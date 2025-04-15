@@ -14,20 +14,20 @@ to create a truststore yourself.
 
 ## Running commands
 
-Commands can be run in development mode, from leiningen, or from the compiled uberjar.
+Commands can be run in development mode, from clojure, or from the compiled uberjar.
 
 In development mode, commands can be executed directly from the source repository using `leiningen`.  Leiningen should be installed; https://leiningen.org/
 
 Mapper commands in leiningen take the form:
 
 ```sh
-lein mapper COMMAND [ARGS]
+clojure -M:mapper COMMAND [ARGS]
 ```
 
 For instance
 
 ```sh
-lein mapper upsert uni-nl course 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper upsert uni-nl course 123e4567-e89b-12d3-a456-426655440000
 ```
 
 
@@ -52,7 +52,7 @@ Updates or inserts an "opleidingseenheid" or "aangeboden opleiding,
 specified by the OOAPI endpoint, type and ID.  An example:
 
 ```sh
-lein mapper upsert uni-id course 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper upsert uni-id course 123e4567-e89b-12d3-a456-426655440000
 ```
 
 ### delete
@@ -61,7 +61,7 @@ Removes an "opleidingseenheid" or "aangeboden opleiding, specified by
 the OOAPI endpoint, type and ID.  An example:
 
 ```sh
-lein mapper delete uni-id course 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper delete uni-id course 123e4567-e89b-12d3-a456-426655440000
 ```
 
 ### delete-by-code
@@ -69,7 +69,7 @@ lein mapper delete uni-id course 123e4567-e89b-12d3-a456-426655440000
 Removes an "opleidingseenheid", specified by the OOAPI endpoint, type and RIO opleidingscode.  An example:
 
 ```sh
-lein mapper delete-by-code uni-id education-specification 1234O1234
+clojure -M:mapper delete-by-code uni-id education-specification 1234O1234
 ```
 
 ### show
@@ -81,7 +81,7 @@ The `show` command retrieves data from OOAPI. The following entities are support
 Example:
 
 ```sh
-lein mapper show uni-id courses
+clojure -M:mapper show uni-id courses
 ```
 
 #### course
@@ -89,7 +89,7 @@ lein mapper show uni-id courses
 Example:
 
 ```sh
-lein mapper show uni-id course 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper show uni-id course 123e4567-e89b-12d3-a456-426655440000
 ```
 
 #### programs
@@ -97,7 +97,7 @@ lein mapper show uni-id course 123e4567-e89b-12d3-a456-426655440000
 Example:
 
 ```sh
-lein mapper show uni-id programs
+clojure -M:mapper show uni-id programs
 ```
 
 #### program
@@ -105,7 +105,7 @@ lein mapper show uni-id programs
 Example:
 
 ```sh
-lein mapper show uni-id program 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper show uni-id program 123e4567-e89b-12d3-a456-426655440000
 ```
 
 #### education-specifications
@@ -113,7 +113,7 @@ lein mapper show uni-id program 123e4567-e89b-12d3-a456-426655440000
 Example:
 
 ```sh
-lein mapper show uni-id education-specifications
+clojure -M:mapper show uni-id education-specifications
 ```
 
 #### education-specification
@@ -121,7 +121,7 @@ lein mapper show uni-id education-specifications
 Example:
 
 ```sh
-lein mapper show uni-id education-specification 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper show uni-id education-specification 123e4567-e89b-12d3-a456-426655440000
 ```
 
 ### get
@@ -137,13 +137,13 @@ ID or program ID (the RIO code, not the OOAPI id / eigen sleutel)
 Example:
 
 ```sh
-lein mapper get uni-id aangebodenOpleiding 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper get uni-id aangebodenOpleiding 123e4567-e89b-12d3-a456-426655440000
 ```
 
 An `xml:` prefix can be added to specify that the output should show the XML response from RIO. Example:
 
 ```sh
-lein mapper get uni-id xml:aangebodenOpleiding 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper get uni-id xml:aangebodenOpleiding 123e4567-e89b-12d3-a456-426655440000
 ```
 
 #### opleidingseenheid
@@ -153,13 +153,13 @@ This action retrieves the "opleidingseenheid" based on its opleidingeenheidcode.
 Example:
 
 ```sh
-lein mapper get uni-id opleidingseenheid 1015O5036
+clojure -M:mapper get uni-id opleidingseenheid 1015O5036
 ```
 
 An `xml:` prefix can be added to specify that the output should show the XML response from RIO. Example: 
 
 ```sh
-lein mapper get uni-id xml:opleidingseenheid 1015O5036
+clojure -M:mapper get uni-id xml:opleidingseenheid 1015O5036
 ```
 
 #### opleidingseenhedenVanOrganisatie
@@ -170,19 +170,19 @@ This action retrieves a page of "opleidingseenheden" for a specific
 Example:
 
 ```sh
-lein mapper get uni-id opleidingseenhedenVanOrganisatie 100B490
+clojure -M:mapper get uni-id opleidingseenhedenVanOrganisatie 100B490
 ```
 
 An optional page argument can be passed. Example:
 
 ```sh
-lein mapper get uni-id opleidingseenhedenVanOrganisatie 100B490 4
+clojure -M:mapper get uni-id opleidingseenhedenVanOrganisatie 100B490 4
 ```
 
 An `xml:` prefix can be added to specify that the output should show the XML response from RIO.
 
 ```sh
-lein mapper get uni-id xml:aangebodenOpleidingenVanOrganisatie 110A133 2
+clojure -M:mapper get uni-id xml:aangebodenOpleidingenVanOrganisatie 110A133 2
 ```
 
 
@@ -192,7 +192,7 @@ This action retrieves a page of "aangeboden opleidingen" for a
 specific organization, specified by a "onderwijsaanbiedercode".
 
 ```sh
-lein mapper get uni-id aangebodenOpleidingenVanOrganisatie 110A133
+clojure -M:mapper get uni-id aangebodenOpleidingenVanOrganisatie 110A133
 ```
 
 An optional page argument can be passed.
@@ -200,13 +200,13 @@ An optional page argument can be passed.
 Example:
 
 ```sh
-lein mapper get uni-id aangebodenOpleidingenVanOrganisatie 110A133 2
+clojure -M:mapper get uni-id aangebodenOpleidingenVanOrganisatie 110A133 2
 ```
 
 An `xml:` prefix can be added to specify that the output should show the XML response from RIO.
 
 ```sh
-lein mapper get uni-id xml:aangebodenOpleidingenVanOrganisatie 110A133 2
+clojure -M:mapper get uni-id xml:aangebodenOpleidingenVanOrganisatie 110A133 2
 ```
 
 ### resolve
@@ -218,7 +218,7 @@ Type is one of: `course`, `program`, `education-specification`.
 Example:
 
 ```sh
-lein mapper resolve uni-id course 123e4567-e89b-12d3-a456-426655440000
+clojure -M:mapper resolve uni-id course 123e4567-e89b-12d3-a456-426655440000
 ```
 
 ### dry-run-upsert
@@ -228,7 +228,7 @@ This action simulates an upsert of an OOAPI object and returns a diff of the fie
 Example:
 
 ```sh
-lein mapper dry-run-upsert uni-id course 4c358c84-dfc3-4a30-874e-0b70db15638a
+clojure -M:mapper dry-run-upsert uni-id course 4c358c84-dfc3-4a30-874e-0b70db15638a
 ```
 
 ### link
@@ -238,7 +238,7 @@ This action changes the OOAPI id of an object in RIO specified by a given RIO id
 Example:
 
 ```sh
-lein mapper link uni-id rio-id course ooapi-id
+clojure -M:mapper link uni-id rio-id course ooapi-id
 ```
 
 ### unlink
@@ -249,7 +249,7 @@ The RIO object is no longer linked to an OOAPI-object.
 Example:
 
 ```sh
-lein mapper unlink uni-id rio-id course
+clojure -M:mapper unlink uni-id rio-id course
 ```
 
 ### serve-api
@@ -269,5 +269,5 @@ If it is down, it will print a warning and exit with code -1.
 Example:
 
 ```sh
-lein mapper test-rio uni-id
+clojure -M:mapper test-rio uni-id
 ```

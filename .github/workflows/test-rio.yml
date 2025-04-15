@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache lein project dependencies
+      - name: Cache maven repository
         uses: actions/cache@v4
         with:
           path: "~/.m2/repository"
@@ -70,7 +70,7 @@ jobs:
         id: test_rio
         run: |
           set +e
-          lein mapper test-rio rio-mapper-dev.jomco.nl
+          clojure -M:mapper test-rio rio-mapper-dev.jomco.nl
           echo "ERROR_STATUS=$?" >> "$GITHUB_OUTPUT"
           set -e
         continue-on-error: true

@@ -532,7 +532,7 @@
       (System/exit 1)))
   (doseq [cmd ["serve-api" "worker"]]
     (let [runtime (Runtime/getRuntime)
-          cmds    ^"[Ljava.lang.String;" (into-array ["lein" "trampoline" "mapper" cmd])]
+          cmds    ^"[Ljava.lang.String;" (into-array ["clojure" "-M:mapper" cmd])]
       (reset! serve-api-process-atom (.exec runtime cmds)))))
 
 (defn stop-services

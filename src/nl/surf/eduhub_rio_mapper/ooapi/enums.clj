@@ -17,7 +17,7 @@
 ;; <https://www.gnu.org/licenses/>.
 
 ;; DO NOT EDIT - CHANGES WILL BE OVERWRITTEN
-;; This file is generated automatically via lein generate-enums $PATH
+;; This file is generated automatically via make generate-enums $PATH
 
 (ns nl.surf.eduhub-rio-mapper.ooapi.enums)
 
