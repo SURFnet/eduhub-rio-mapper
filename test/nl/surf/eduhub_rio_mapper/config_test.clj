@@ -28,8 +28,6 @@
                   :keystore "test/keystore.jks",
                   :clients-info-path "test/test-clients.json",
                   :rio-recipient-oin "default",
-                  :truststore "truststore.jks",
-                  :keystore-password "default",
                   :rio-update-url "default",
                   :gateway-user "default",
                   :surf-conext-client-id "default",
@@ -37,45 +35,44 @@
                   :gateway-root-url "https://gateway.test.surfeduhub.nl/",
                   :rio-read-url "default"})
 
-(def default-expected-value {:keystore-pass "default",
+(def default-expected-value {:keystore-pass "repelsteeltje!",
                              :gateway-credentials
                              {:password "default", :username "default"},
-                             :trust-store-pass "repelsteeltje!",
                              :redis-conn {:spec {:uri "redis://localhost"}}})
 
 (defn- test-env [env]
   (config/load-config-from-env (merge default-env env)))
 
 (deftest missing-secret
-  (is (= {:truststore-password "missing"}
+  (is (= {:keystore-password "missing"}
          (last (test-env {})))))
 
 (deftest only-value-secret
-  (let [env {:truststore-password "repelsteeltje!"}]
+  (let [env {:keystore-password "repelsteeltje!"}]
     (is (= default-expected-value
-           (-> env test-env first (select-keys [:keystore-pass :gateway-credentials :trust-store-pass :redis-conn]))))))
+           (-> env test-env first (select-keys [:keystore-pass :gateway-credentials :redis-conn]))))))
 
 (deftest only-file-secret
   (let [path (.getAbsolutePath (File/createTempFile "test-secret" ".txt"))
-        env {:truststore-password-file path}]
+        env {:keystore-password-file path}]
     (spit path "repelsteeltje!")
     (is (= default-expected-value
-           (-> env test-env first (select-keys [:keystore-pass :gateway-credentials :trust-store-pass :redis-conn]))))))
+           (-> env test-env first (select-keys [:keystore-pass :gateway-credentials :redis-conn]))))))
 
 (deftest file-secret-for-env-with-default
   (let [path (.getAbsolutePath (File/createTempFile "test-secret" ".txt"))
-        env {:redis-uri-file path :truststore-password "repelsteeltje!"}]
+        env {:redis-uri-file path :keystore-password "repelsteeltje!"}]
     (spit path "redis://localhost:6381")
     (is (= (assoc-in default-expected-value [:redis-conn :spec :uri] "redis://localhost:6381")
-           (-> env test-env first (select-keys [:keystore-pass :gateway-credentials :trust-store-pass :redis-conn]))))))
+           (-> env test-env first (select-keys [:keystore-pass :gateway-credentials :redis-conn]))))))
 
 (deftest only-file-secret-file-missing
-  (let [env {:truststore-password-file "missing-file"}]
+  (let [env {:keystore-password-file "missing-file"}]
     (is (thrown? ExceptionInfo (test-env env)))))
 
 (deftest both-types-of-secret-specified
   (let [path (.getAbsolutePath (File/createTempFile "test-secret" ".txt"))
-        env {:truststore-password "repelsteeltje!"
-             :truststore-password-file path}]
+        env {:keystore-password "repelsteeltje!"
+             :keystore-password-file path}]
     (spit path "repelsteeltje!")
     (is (thrown? ExceptionInfo (test-env env)))))

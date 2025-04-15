@@ -46,10 +46,6 @@
    :keystore-password                  ["Keystore password" :str
                                         :in [:keystore-pass]] ; name compatibility with clj-http
    :keystore-alias                     ["Key alias in keystore" :str]
-   :truststore                         ["Path to trust-store" :file
-                                        :in [:trust-store]] ; name compatibility with clj-http
-   :truststore-password                ["Trust-store password" :str
-                                        :in [:trust-store-pass]] ; name compatibility with clj-http
    :rio-read-url                       ["RIO Services Read URL" :str
                                         :in [:rio-config :read-url]]
    :rio-update-url                     ["RIO Services Update URL" :str
@@ -130,7 +126,7 @@
 ;; These ENV keys may alternatively have a form in which the secret is contained in a file.
 ;; These ENV keys have a -file suffix, e.g.: gateway-basic-auth-pass-file
 (def env-keys-with-alternate-file-secret
-  [:gateway-password :keystore-password :truststore-password :surf-conext-client-secret :redis-uri])
+  [:gateway-password :keystore-password :surf-conext-client-secret :redis-uri])
 
 (defn load-config-from-env [env-map]
   (-> (reduce file-secret-loader-reducer env-map env-keys-with-alternate-file-secret)
@@ -150,17 +146,13 @@
      (let [{:keys [clients-info-config
                    keystore
                    keystore-pass
-                   keystore-alias
-                   trust-store
-                   trust-store-pass] :as cfg}
+                   keystore-alias] :as cfg}
            config]
        (-> cfg
            (assoc-in [:rio-config :credentials]
                      (keystore/credentials keystore
                                            keystore-pass
-                                           keystore-alias
-                                           trust-store
-                                           trust-store-pass))
+                                           keystore-alias))
            (assoc :clients (clients-info/read-clients-data clients-info-config)))))))
 
 (defn make-config-and-handlers-web []
