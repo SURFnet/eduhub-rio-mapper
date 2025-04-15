@@ -47,7 +47,7 @@ If the mapper is running locally (happens automatically):
 When the above has been done, tests can be run using:
 
 ```sh
-lein test :e2e
+make test-e2e
 ```
 
 For debugging set environment variable `STORE_HTTP_REQUESTS` to `true` to get extra information about the API calls done by the mapper.

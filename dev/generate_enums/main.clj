@@ -27,7 +27,7 @@
         consumers-path (io/file specification-dir "v5" "consumers/RIO/V1")
         enum-clojure-file (str
                             ";; DO NOT EDIT - CHANGES WILL BE OVERWRITTEN\n"
-                            ";; This file is generated automatically via lein generate-enums $PATH\n\n"
+                            ";; This file is generated automatically via make generate-enums $PATH\n\n"
                             "(ns nl.surf.eduhub-rio-mapper.ooapi.enums)\n\n"
                             (generate-enum enum-path "codeType.yaml" [:x-ooapi-extensible-enum] "codeTypes"
                                            "Enum used in EducationSpecification for primaryCode and otherCodes.")
