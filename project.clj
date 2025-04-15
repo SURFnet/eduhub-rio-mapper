@@ -81,6 +81,7 @@
              ;; i.e. cider-nrepl and refactor-nrepl generally have
              ;; conflicting transitive dependencies.
              :test {:pedantic?    :abort
+                    :jvm-opts     ["-Dclojure.main.report=stderr"]
                     :dependencies [[pjstadig/humane-test-output "RELEASE"]]
                     :injections   [(require 'pjstadig.humane-test-output)
                                    (pjstadig.humane-test-output/activate!)]}
