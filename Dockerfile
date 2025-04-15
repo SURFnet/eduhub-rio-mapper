@@ -1,11 +1,11 @@
-FROM clojure:temurin-17-tools-deps-alpine AS builder
+FROM clojure:temurin-21-tools-deps-alpine AS builder
 
 RUN mkdir /app
 WORKDIR /app
 COPY . /app/
 RUN make jar
 
-FROM gcr.io/distroless/java17-debian12
+FROM gcr.io/distroless/java21-debian12
 COPY --from=builder /app/target/eduhub-rio-mapper.jar /eduhub-rio-mapper.jar
 # Make sure there is an opentelemetry agent in the workdir in case docker-compose
 # starts up a process with -javaagent in the JAVA_TOOL_OPTIONS

@@ -7,7 +7,15 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+
+    - name: Set up Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
     - uses: actions/checkout@v4
+
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
@@ -23,7 +31,15 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+
+    - name: Set up Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
     - uses: actions/checkout@v4
+
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
@@ -59,7 +75,7 @@ jobs:
       run: make test
 
     - name: Start Redis
-      uses: supercharge/redis-github-action@1.4.0
+      uses: supercharge/redis-github-action@1.8.0
       with:
         redis-version: 6.2
 
@@ -70,6 +86,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+
+    - name: Set up Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
@@ -86,7 +110,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+    - name: Set up Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
     - uses: actions/checkout@v4
+
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
