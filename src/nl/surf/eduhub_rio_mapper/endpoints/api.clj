@@ -27,6 +27,7 @@
             [nl.surf.eduhub-rio-mapper.clients-info :refer [wrap-client-info]]
             [nl.surf.eduhub-rio-mapper.endpoints.app-server :as app-server]
             [nl.surf.eduhub-rio-mapper.endpoints.health :as health]
+            [nl.surf.eduhub-rio-mapper.endpoints.ring-middleware-json :refer [wrap-json-response]]
             [nl.surf.eduhub-rio-mapper.endpoints.status :as status]
             [nl.surf.eduhub-rio-mapper.job :as job]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi-specs]
@@ -36,7 +37,6 @@
             [nl.surf.eduhub-rio-mapper.utils.ooapi :as ooapi-utils]
             [nl.surf.eduhub-rio-mapper.worker :as worker]
             [ring.middleware.defaults :as defaults]
-            [ring.middleware.json :refer [wrap-json-response]]
             [ring.util.response :as response])
   (:import [java.net MalformedURLException URL]
            [java.time Instant]
