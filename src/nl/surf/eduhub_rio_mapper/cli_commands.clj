@@ -81,7 +81,7 @@
           old-uuid     (UUID/randomUUID)
           new-uuid     (UUID/randomUUID)
 
-          eduspec (-> "../test/fixtures/ooapi/education-specification-template.json"
+          eduspec (-> "eduspec-test-rio.json"
                       io/resource
                       slurp
                       (json/read-str :key-fn keyword)

@@ -73,4 +73,5 @@
          :replace-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
          :main-opts    ["-m" "antq.core"]}
 
-  :mapper {:main-opts ["-m" "nl.surf.eduhub-rio-mapper.main"]}}}
+  :mapper {:extra-paths []
+           :main-opts ["-m" "nl.surf.eduhub-rio-mapper.main"]}}}
