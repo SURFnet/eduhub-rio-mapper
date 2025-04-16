@@ -7,8 +7,7 @@
          org.clojure/data.json       {:mvn/version "2.5.1"}
          org.clojure/data.xml        {:mvn/version "0.0.8"}
          org.apache.santuario/xmlsec {:mvn/version "4.0.4"}
-         cheshire/cheshire           {:mvn/version "5.13.0"}
-         commons-io/commons-io       {:mvn/version "2.18.0"}
+         commons-io/commons-io       {:mvn/version "2.19.0"}
          commons-codec/commons-codec {:mvn/version "1.18.0"}
          com.velisco/strgen          {:mvn/version "0.2.5" :exclusions [org.clojure/clojurescript]}
 
