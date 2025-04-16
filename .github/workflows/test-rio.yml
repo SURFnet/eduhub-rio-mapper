@@ -39,10 +39,8 @@ jobs:
       - name: Setup certificate stores
         env:
           KEYSTORE_JKS_B64: ${{ secrets.KEYSTORE_JKS_B64 }}
-          TRUSTSTORE_JKS_B64: ${{ secrets.TRUSTSTORE_JKS_B64 }}
         run: |
           echo "$KEYSTORE_JKS_B64" | base64 -d > keystore.jks
-          echo "$TRUSTSTORE_JKS_B64" | base64 -d > truststore.jks
 
       - name: Check rio queue status
         env:
@@ -71,8 +69,6 @@ jobs:
           SURF_CONEXT_CLIENT_SECRET: ${{ secrets.SURF_CONEXT_CLIENT_SECRET }}
           SURF_CONEXT_INTROSPECTION_ENDPOINT: ${{ secrets.SURF_CONEXT_INTROSPECTION_ENDPOINT }}
           TOKEN_ENDPOINT: ${{ secrets.TOKEN_ENDPOINT }}
-          TRUSTSTORE: truststore.jks
-          TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
         id: test_rio
         run: |
           set +e

@@ -41,6 +41,7 @@
                       expound/expound      {:mvn/version "RELEASE"}}}
 
   :test {:extra-paths ["test"]
+         :jvm-opts    ["-Dclojure.main.report=stderr"]
          :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
                        ring/ring-mock      {:mvn/version "RELEASE"}}
          :main-opts   ["-m" "kaocha.runner"]}
