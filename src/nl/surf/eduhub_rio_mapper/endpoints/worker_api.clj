@@ -22,9 +22,9 @@
             [nl.jomco.ring-trace-context :refer [wrap-trace-context]]
             [nl.surf.eduhub-rio-mapper.endpoints.app-server :as app-server]
             [nl.surf.eduhub-rio-mapper.endpoints.health :as health]
+            [nl.surf.eduhub-rio-mapper.endpoints.ring-middleware-json :refer [wrap-json-response]]
             [nl.surf.eduhub-rio-mapper.utils.logging :refer [wrap-logging]]
-            [ring.middleware.defaults :as defaults]
-            [ring.middleware.json :refer [wrap-json-response]]))
+            [ring.middleware.defaults :as defaults]))
 
 (def public-routes
   (-> (compojure.core/routes

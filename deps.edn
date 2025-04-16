@@ -7,6 +7,7 @@
          org.clojure/data.json       {:mvn/version "2.5.1"}
          org.clojure/data.xml        {:mvn/version "0.0.8"}
          org.apache.santuario/xmlsec {:mvn/version "4.0.4"}
+         cheshire/cheshire           {:mvn/version "6.0.0"}
          commons-io/commons-io       {:mvn/version "2.19.0"}
          commons-codec/commons-codec {:mvn/version "1.18.0"}
          com.velisco/strgen          {:mvn/version "0.2.5" :exclusions [org.clojure/clojurescript]}
@@ -15,7 +16,6 @@
          ring/ring-core                 {:mvn/version "1.14.1"}
          ring/ring-jetty-adapter        {:mvn/version "1.14.1"}
          ring/ring-defaults             {:mvn/version "0.6.0"}
-         ring/ring-json                 {:mvn/version "0.5.1"}
          compojure/compojure            {:mvn/version "1.7.1"}
          nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
          nl.jomco/clj-http-status-codes {:mvn/version "0.1"}
