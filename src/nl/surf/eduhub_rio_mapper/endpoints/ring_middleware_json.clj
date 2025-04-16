@@ -1,4 +1,6 @@
 ;; Extracted from ring/ring-json. That project is unmaintained, and has dependencies with CVEs.
+;; Copyright © 2021 James Reeves
+;; Distributed under the MIT License, the same as Ring.
 (ns nl.surf.eduhub-rio-mapper.endpoints.ring-middleware-json
   "Ring middleware for parsing JSON requests and generating JSON responses."
   (:require [cheshire.core :as json]
