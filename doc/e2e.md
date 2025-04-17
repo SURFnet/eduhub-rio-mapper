@@ -50,6 +50,12 @@ When the above has been done, tests can be run using:
 make test-e2e
 ```
 
+For "live" output run:
+
+```sh
+make test-e2e TEST_OPTS=--no-capture-output
+```
+
 For debugging set environment variable `STORE_HTTP_REQUESTS` to `true` to get extra information about the API calls done by the mapper.
 
 See also [e2e GH workflow](../.github/workflows/e2e.yml).

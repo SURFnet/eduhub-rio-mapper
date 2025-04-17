@@ -6,6 +6,7 @@ JAR_FILE=target/eduhub-rio-mapper.jar
 DEPS_EDN=deps.edn
 DEPS_PATHS=src resources # should be the same as defined in deps.edn
 CLASSES_DIR=target/classes
+TEST_OPTS=
 
 all: lint proof-specs test watson clean jar
 
@@ -18,13 +19,13 @@ proof-specs:
 	clojure -M:proof-specs
 
 test:
-	clojure -M:test --skip-meta :redis --skip-meta :e2e
+	clojure -M:test $(TEST_OPTS) --skip-meta :redis --skip-meta :e2e
 
 test-redis:
-	clojure -M:test --focus-meta :redis
+	clojure -M:test $(TEST_OPTS) --focus-meta :redis
 
 test-e2e:
-	clojure -M:test --focus-meta :e2e
+	clojure -M:test $(TEST_OPTS) --focus-meta :e2e
 
 test-all:
 	clojure -M:test
