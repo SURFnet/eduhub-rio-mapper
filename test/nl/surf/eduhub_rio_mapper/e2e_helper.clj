@@ -31,7 +31,7 @@
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.utils.printer :as printer]
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
-  (:import [java.io StringWriter]
+  (:import [java.io File StringWriter]
            [java.net ConnectException]
            [java.util Base64]
            [javax.xml.xpath XPathConstants XPathFactory]
@@ -522,8 +522,12 @@
 (defonce ^:private serve-api-process-atom (atom nil))
 (defonce ^:private worker-process-atom (atom nil))
 
-(def services [["serve-api" serve-api-process-atom]
-               ["worker" worker-process-atom]])
+(def services [{:cmd ["serve-api"]
+                :proc-atom serve-api-process-atom
+                :log-file "logs/test-e2e-serve-api.log"}
+               {:cmd ["worker"]
+                :proc-atom worker-process-atom
+                :log-file "logs/test-e2e-worker.log"}])
 
 (defn start-services
   "Start the serve-api and worker services."
@@ -533,16 +537,17 @@
     (when (= (:api-config config) (:worker-api-config config))
       (println "The api and the worker must run on separate ports.")
       (System/exit 1)))
-  (doseq [[cmd proc-atom] services]
-    (let [runtime (Runtime/getRuntime)
-          cmds    ^"[Ljava.lang.String;" (into-array ["clojure" "-M:mapper" cmd])]
+  (doseq [{:keys [cmd proc-atom log-file]} services]
+    (let [process-builder (ProcessBuilder. (into ["clojure" "-M:mapper"] cmd))]
+      (.redirectErrorStream process-builder true)
+      (.redirectOutput process-builder (File. log-file))
       (println "Starting mapper" cmd)
-      (reset! proc-atom (.exec runtime cmds)))))
+      (reset! proc-atom (.start process-builder)))))
 
 (defn stop-services
   "Stop the serve-api and worker services (if the are started)."
   []
-  (doseq [[cmd proc-atom] services]
+  (doseq [{:keys [cmd proc-atom]} services]
     (when-let [proc @proc-atom]
       (println "Stopping mapper" cmd)
       (.destroy proc)
