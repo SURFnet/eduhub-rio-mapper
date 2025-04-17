@@ -522,6 +522,9 @@
 (defonce ^:private serve-api-process-atom (atom nil))
 (defonce ^:private worker-process-atom (atom nil))
 
+(def services [["serve-api" serve-api-process-atom]
+               ["worker" worker-process-atom]])
+
 (defn start-services
   "Start the serve-api and worker services."
   []
@@ -530,20 +533,20 @@
     (when (= (:api-config config) (:worker-api-config config))
       (println "The api and the worker must run on separate ports.")
       (System/exit 1)))
-  (doseq [cmd ["serve-api" "worker"]]
+  (doseq [[cmd proc-atom] services]
     (let [runtime (Runtime/getRuntime)
           cmds    ^"[Ljava.lang.String;" (into-array ["clojure" "-M:mapper" cmd])]
-      (reset! serve-api-process-atom (.exec runtime cmds)))))
+      (println "Starting mapper" cmd)
+      (reset! proc-atom (.exec runtime cmds)))))
 
 (defn stop-services
   "Stop the serve-api and worker services (if the are started)."
   []
-  (when-let [proc @serve-api-process-atom]
-    (.destroy proc)
-    (reset! serve-api-process-atom nil))
-  (when-let [proc @worker-process-atom]
-    (.destroy proc)
-    (reset! worker-process-atom nil)))
+  (doseq [[cmd proc-atom] services]
+    (when-let [proc @proc-atom]
+      (println "Stopping mapper" cmd)
+      (.destroy proc)
+      (reset! proc-atom nil))))
 
 (def wait-for-serve-api-sleep-msec 500)
 (def wait-for-serve-api-total-msec 20000)
