@@ -538,9 +538,15 @@
       (println "The api and the worker must run on separate ports.")
       (System/exit 1)))
   (doseq [{:keys [cmd proc-atom log-file]} services]
-    (let [process-builder (ProcessBuilder. (into ["clojure" "-M:mapper"] cmd))]
+
+    (let [process-builder (ProcessBuilder. (into ["clojure" "-M:mapper"] cmd))
+          log-file (File. log-file)]
+      (when-let [parent (.getParentFile log-file)]
+        (.mkdirs parent))
+      (when-not (.exists log-file)
+        (.createNewFile log-file))
       (.redirectErrorStream process-builder true)
-      (.redirectOutput process-builder (File. log-file))
+      (.redirectOutput process-builder log-file)
       (println "Starting mapper" cmd)
       (reset! proc-atom (.start process-builder)))))
 
