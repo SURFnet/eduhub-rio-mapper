@@ -577,7 +577,7 @@
                         {:msecs wait-for-serve-api-total-msec})))
       (let [result
             (try
-              (http/get (str @base-url "/metrics")
+              (http/get (str @base-url "/health")
                         {:throw-exceptions false})
               true
               (catch ConnectException _
