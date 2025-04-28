@@ -21,6 +21,7 @@
   (:import [org.eclipse.jetty.server HttpConnectionFactory]))
 
 (defn run-jetty [app host port]
+  (println (str "Starting Jetty on port " port))
   (jetty/run-jetty app
                    {:host         host
                     :port         port
