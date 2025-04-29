@@ -5,14 +5,14 @@
             :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[com.github.steffan-westcott/clj-otel-api "0.2.7"]
                  [org.clojure/clojure "1.12.0"]
-                 [org.clojure/core.async "1.8.735"]
+                 [org.clojure/core.async "1.8.741"]
                  [org.clojure/core.memoize "1.1.266"]
                  [com.velisco/strgen "0.2.5" :exclusions [org.clojure/clojurescript]]
 
                  ;; data
                  [org.clojure/data.json "2.5.1"]
                  [org.clojure/data.xml "0.0.8"]
-                 [org.apache.santuario/xmlsec "4.0.3"]
+                 [org.apache.santuario/xmlsec "4.0.4"]
 
                  ;; interaction
                  [clj-http "3.13.0"]
@@ -26,9 +26,9 @@
                  [nl.jomco/envopts "0.0.6"]
 
                  ;; API
-                 [compojure "1.7.1"]
-                 [ring/ring-jetty-adapter "1.13.0" :upgrade :keep-this-version]
-                 [ring/ring-core "1.13.0" :upgrade :keep-this-version]
+                 [compojure "1.7.1" :exclusions [ring/ring-codec]]
+                 [ring/ring-jetty-adapter "1.14.1" :upgrade :keep-this-version]
+                 [ring/ring-core "1.14.1" :upgrade :keep-this-version]
                  [ring/ring-defaults "0.6.0"]
                  [ring/ring-json "0.5.1"]
                  [nl.jomco/ring-trace-context "0.0.8"]
@@ -42,8 +42,8 @@
                  [com.fasterxml.jackson.core/jackson-databind "2.18.3"]
 
                  ;; force newest version
-                 [cheshire "5.13.0"]
-                 [commons-io "2.18.0"]
+                 [cheshire "6.0.0"]
+                 [commons-io "2.19.0"]
                  [commons-codec "1.18.0"]]
 
   :java-source-paths ["src"]
