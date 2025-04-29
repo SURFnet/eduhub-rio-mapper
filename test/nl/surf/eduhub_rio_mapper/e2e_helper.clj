@@ -543,8 +543,6 @@
           log-file (File. log-file)]
       (when-let [parent (.getParentFile log-file)]
         (.mkdirs parent))
-      (when-not (.exists log-file)
-        (.createNewFile log-file))
       (.redirectErrorStream process-builder true)
       (.redirectOutput process-builder log-file)
       (println "Starting mapper" cmd)
