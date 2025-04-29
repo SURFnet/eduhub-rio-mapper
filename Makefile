@@ -25,7 +25,7 @@ test-redis:
 	clojure -M:test $(TEST_OPTS) --focus-meta :redis
 
 test-e2e:
-	clojure -M:test $(TEST_OPTS) --focus-meta :e2e
+	clojure -M:test $(TEST_OPTS) --focus-meta :e2e --no-capture-output
 
 test-all:
 	clojure -M:test

@@ -33,7 +33,7 @@
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
   (:import [java.io File StringWriter]
            [java.net ConnectException]
-           [java.util Base64]
+           [java.util Base64 List]
            [javax.xml.xpath XPathConstants XPathFactory]
            [org.w3c.dom Node NodeList]))
 
@@ -259,7 +259,7 @@
 
                      :else
                      (do
-                       (Thread/sleep job-status-poll-sleep-msecs)
+                       (Thread/sleep ^long job-status-poll-sleep-msecs)
                        (recur (dec tries-left)))))))))))
 
 (defn job-result
@@ -537,9 +537,9 @@
     (when (= (:api-config config) (:worker-api-config config))
       (println "The api and the worker must run on separate ports.")
       (System/exit 1)))
-  (doseq [{:keys [cmd proc-atom log-file]} services]
+  (doseq [{:keys [cmd proc-atom ^String log-file]} services]
 
-    (let [process-builder (ProcessBuilder. (into ["clojure" "-M:mapper"] cmd))
+    (let [process-builder (ProcessBuilder. ^List (into ["clojure" "-M:mapper"] cmd))
           log-file (File. log-file)]
       (when-let [parent (.getParentFile log-file)]
         (.mkdirs parent))
@@ -583,7 +583,7 @@
               (catch ConnectException _
                 false))]
         (when-not result
-          (Thread/sleep wait-for-serve-api-sleep-msec)
+          (Thread/sleep ^long wait-for-serve-api-sleep-msec)
           (recur (dec tries-left))))))
 
   ;; run tests
