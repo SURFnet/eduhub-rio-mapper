@@ -67,9 +67,6 @@ jobs:
         SURF_CONEXT_CLIENT_SECRET: ${{ secrets.SURF_CONEXT_CLIENT_SECRET }}
         SURF_CONEXT_INTROSPECTION_ENDPOINT: ${{ secrets.SURF_CONEXT_INTROSPECTION_ENDPOINT }}
         TOKEN_ENDPOINT: ${{ secrets.TOKEN_ENDPOINT }}
-        TRUSTSTORE_JKS_B64: ${{ secrets.TRUSTSTORE_JKS_B64 }}
-        TRUSTSTORE_PASSWORD: ${{ secrets.TRUSTSTORE_PASSWORD }}
-        TRUSTSTORE: truststore.jks
         KEYSTORE: test/keystore.jks
 
       run: make test

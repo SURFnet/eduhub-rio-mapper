@@ -35,9 +35,7 @@
 (def config {:rio-config
              {:credentials   (keystore/credentials "test/keystore.jks"
                                                  "xxxxxx"
-                                                 "test-surf"
-                                                 "truststore.jks"
-                                                 "xxxxxx")
+                                                 "test-surf")
               :recipient-oin "12345"
               :read-url      "http://example.com"
               :update-url    "http://example.com"}})
