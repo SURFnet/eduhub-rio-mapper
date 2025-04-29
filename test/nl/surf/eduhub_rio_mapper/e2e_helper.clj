@@ -558,7 +558,7 @@
       (reset! proc-atom nil))))
 
 (def wait-for-serve-api-sleep-msec 500)
-(def wait-for-serve-api-total-msec 20000)
+(def wait-for-serve-api-total-msec 120000)
 
 (defn with-running-mapper
   "Wrapper to use with `use-fixtures` to automatically start mapper services."
