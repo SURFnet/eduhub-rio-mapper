@@ -183,11 +183,16 @@ The `CLIENTS_INFO_PATH` should specify a json file with settings for client-id, 
 
 ## Docker containers
 
-The application consists of two parts: the *API* and the *Worker*. Both
-components can be started from a single docker image
-for which a [./Dockerfile](Dockerfile) is included. See for the
-configuration options the [./CLI.md](CLI) documentation and note that
-these containers both need access to the same *redis*
+The application consists of two parts: the *API* and the
+*Worker*. Both components can be started from a single docker image
+for which a [./Dockerfile](Dockerfile) is included.  The image build
+is *nonroot* variant of *distroless* Debian which runs the CLI as:
+
+- *user*: `nonroot` (uid=65532)
+- *group*: `nonroot` (guid=65532)
+
+See for the configuration options the [./CLI.md](CLI) documentation
+and note that these containers both need access to the same *redis*
 server.
 
 Build the docker image with:
