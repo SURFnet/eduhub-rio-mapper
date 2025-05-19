@@ -231,13 +231,32 @@ available via a "volume" (see `-v` option).
 
 See [doc/e2e.md](./doc/e2e.md).
 
+## OpenTelemetry
+
+The RIO Mapper supports Open Telemetry and the docker containers include the [OpenTelemetry Java agent](https://github.com/open-telemetry/opentelemetry-java-instrumentation).  It provides JVM related metrics for monitoring.
+
+The *worker* will add extra metrics:
+
+- `rio_mapper_http_requests_total` counters per status, schac-home and institution name
+- `rio_mapper_active_and_queued_job_count` gauge for queue length per institution
+
+This agent is configured using the following environment variables:
+
+ - `OTEL_METRICS_EXPORTER`
+ - `OTEL_EXPORTER_PROMETHEUS_ENDPOINT`
+ - `OTEL_SERVICE_NAME`
+ - `OTEL_LOGS_EXPORTER`
+ - `OTEL_TRACES_EXPORTER`
+ 
+ For example values see [docker-compose.yml](./docker-compose.yml).
+
 # Reporting vulnerabilities
 
 If you have found a vulnerability in the code, we would like to hear about it so that we can take appropriate measures as quickly as possible. We are keen to cooperate with you to protect users and systems better. See https://www.surf.nl/.well-known/security.txt for information on how to report vulnerabilities responsibly.
 
 # License
 
-Copyright (C) 2022 SURFnet B.V.
+Copyright (C) 2022-2025 SURFnet B.V.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
