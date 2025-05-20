@@ -137,4 +137,6 @@
 ;; The truststore used for unit tests has a different password than the official password.
 ;; The truststore (as opposed to the keystore) does not contain sensitive or private data.
 (defn make-test-config []
-  (config/make-config (assoc env :truststore-password "xxxxxx")))
+  (config/make-config (assoc env :keystore-password "xxxxxx"
+                                 :truststore-password "xxxxxx"
+                                 :keystore-alias "test-surf")))

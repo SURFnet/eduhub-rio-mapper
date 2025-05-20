@@ -24,6 +24,7 @@
 
 (defn keystore
   ^KeyStore [path password]
+  (println (str "Loading keystore, path:" path ", password starts with " (subs password 0 2)))
   (with-open [in (io/input-stream path)]
     (doto (KeyStore/getInstance "JKS")
       (.load in (char-array password)))))
@@ -46,8 +47,8 @@
 
 (defn get-certificate
   [^KeyStore keystore alias password]
-  (-> keystore
-      (get-entry alias password)
+  {:pre [keystore alias password]}
+  (-> (get-entry keystore alias password)
       .getCertificate
       .getEncoded))
 
