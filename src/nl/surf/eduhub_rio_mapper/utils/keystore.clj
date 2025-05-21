@@ -46,8 +46,8 @@
 
 (defn get-certificate
   [^KeyStore keystore alias password]
-  (-> keystore
-      (get-entry alias password)
+  {:pre [keystore alias password]}
+  (-> (get-entry keystore alias password)
       .getCertificate
       .getEncoded))
 
