@@ -33,7 +33,7 @@
          ch.qos.logback/logback-classic              {:mvn/version "1.5.18"}
          com.fasterxml.jackson.core/jackson-core     {:mvn/version "2.19.0"}
          com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.19.0"}
-         com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.7"}}
+         com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.8"}}
 
  :aliases
  {:dev {:extra-paths ["dev"]
