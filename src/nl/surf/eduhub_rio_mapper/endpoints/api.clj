@@ -20,6 +20,7 @@
   (:require [clojure.data.json :as json]
             [clojure.spec.alpha :as s]
             [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [compojure.core :refer [GET POST]]
             [compojure.route :as route]
             [nl.jomco.http-status-codes :as http-status]
@@ -93,7 +94,12 @@
 
 (defn add-json-body [res add-json?]
   (if add-json?
-    (assoc res :json-body (json/read-str (:body res) :key-fn keyword))
+    (try
+      (assoc res :json-body (json/read-str (:body res) :key-fn keyword))
+      (catch Exception ex
+        ;; sometimes web servers return text instead of json for 4xx and 5xx status responses.
+        (log/errorf ex "Not valid JSON: %s" (:body res))
+        res))
     res))
 
 ;; For json requests (requests with a json Accept header) add a :json-body key to the response with the
