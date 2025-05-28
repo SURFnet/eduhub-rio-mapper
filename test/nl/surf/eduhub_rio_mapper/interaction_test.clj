@@ -117,7 +117,7 @@
           (let [result        (logging-runner ootype id action)
                 http-messages (:http-messages result)]
             (is (= "http://duo.nl/contract/DUO_RIO_Beheren_OnderwijsOrganisatie_V4/verwijderen_opleidingsrelatie"
-                   (get-in http-messages [7 :req :headers "SOAPAction"])))))))
+                   (get-in http-messages [8 :req :headers "SOAPAction"])))))))
 
     (testing "Delete program using code not id"
       (binding [http-utils/*vcr* (vcr "test/fixtures/interaction" 7 "delete-program")]

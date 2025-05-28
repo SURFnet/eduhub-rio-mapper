@@ -63,6 +63,8 @@
         {:ooapi-type type :ooapi-id id}
         (ooapi.loader/load-entities validating-loader request)))))
 
+;; returns function that takes request
+;; and returns request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
 (defn- make-updater-resolve-phase [{:keys [resolver]}]
   (fn resolve-phase [{:keys [institution-oin action]
                       ::ooapi/keys [type id entity]
@@ -90,6 +92,55 @@
               oe-code (assoc ::rio/opleidingscode oe-code)
               ao-code (assoc ::rio/aangeboden-opleiding-code ao-code)))))
 
+;; returns function that takes request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
+;; and returns request with :rio-relations
+(defn- make-load-relations-phase [{:keys [getter]}]
+  (fn load-relations-phase [{::rio/keys [opleidingscode]
+                             ::ooapi/keys [type]
+                             :keys [institution-oin] :as request}]
+    (cond-> request
+      (and opleidingscode
+           (= type "education-specification"))
+            ;; Format: vector of relations, each relation is a map with:
+            ;; {:opleidingseenheidcodes #{string...}  ; set of opleidingseenheid codes
+            ;;  :valid-from LocalDate                 ; start date
+            ;;  :valid-to LocalDate}                  ; optional end date
+      (assoc :rio-relations
+             (relation-handler/load-relation-data getter opleidingscode institution-oin)))))
+
+(defn- relation-grouper [eduspec {:keys [valid-from valid-to] :as _relation}]
+  (let [eduspec-valid-from (:validFrom eduspec)
+        eduspec-valid-to   (:validTo eduspec)
+        valid-from-check (or (nil? eduspec-valid-from)
+                            (<= 0 (compare valid-from eduspec-valid-from)))
+        valid-to-check   (or (nil? valid-to)
+                            (nil? eduspec-valid-to)
+                            (>= 0 (compare valid-to eduspec-valid-to)))
+        is-valid (and valid-from-check valid-to-check)]
+    is-valid))
+
+(defn- make-prune-relations-phase [handlers]
+  (fn prune-relations-phase [{:keys [rio-relations institution-oin]
+                              ::ooapi/keys [entity]
+                              ::rio/keys [opleidingscode] :as request}]
+    (if-not rio-relations
+      request
+      (let [eduspec entity
+            {valid-relations true
+             invalid-relations false} (group-by (partial relation-grouper eduspec)
+                                                rio-relations)]
+        ;; Delete invalid relations from RIO system
+        (when (and (seq invalid-relations)
+                   opleidingscode)
+          (doseq [invalid-rel invalid-relations]
+            (-> (relation-handler/relation-mutation :delete institution-oin invalid-rel)
+                (mutator/mutate! (:rio-config handlers)))))
+
+        ;; Return request with only valid relations
+        (assoc request :rio-relations (vec valid-relations))))))
+
+  ;; returns function that takes request, and returns
+;; map with keys :job (request), :result (::Mutation/mutation-response) and :eduspec (education specification)
 (defn- make-updater-soap-phase []
   (fn soap-phase [{:keys [institution-oin] :as job}]
     {:pre [institution-oin (job :institution-schac-home)]}
@@ -142,10 +193,17 @@
         (throw (ex-info (str "Processing this job takes longer than expected. Our developers have been informed and will contact DUO. Please try again in a few hours."
                              ": " type " " id) {:rio-queue-status :down}))))))
 
-(defn- make-updater-sync-relations-phase [handlers]
+(defn- make-updater-sync-relations-phase
+  "Calculates which relations exist in ooapi, which relations exist in RIO, and synchronizes them.
+
+  Only relations between education-specifications are considered; specifically, relations with type program,
+  one with no subtype and one with subtype variant.
+  To perform synchronization, relations are added and deleted in RIO."
+  [handlers]
   (fn sync-relations-phase [{:keys [job eduspec] :as request}]
     (when eduspec
-      (relation-handler/after-upsert eduspec job handlers))
+      (-> (relation-handler/relation-mutations eduspec job handlers)
+          (relation-handler/mutate-relations! job handlers)))
     request))
 
 (defn- wrap-phase [[phase f]]
@@ -170,12 +228,14 @@
             (:mutate-result $)))))
 
 (defn- make-update [handlers rio-config]
-  (let [fs [[:fetching-ooapi (make-updater-load-ooapi-phase handlers)]
-            [:resolving      (make-updater-resolve-phase handlers)]
-            [:preparing      (make-updater-soap-phase)]
-            [:upserting      (make-updater-mutate-rio-phase handlers)]
-            [:confirming     (make-updater-confirm-rio-phase handlers rio-config)]
-            [:associating    (make-updater-sync-relations-phase handlers)]]
+  (let [fs [[:fetching-ooapi  (make-updater-load-ooapi-phase handlers)]
+            [:resolving       (make-updater-resolve-phase handlers)]
+            [:load-relations  (make-load-relations-phase handlers)]
+            [:prune-relations (make-prune-relations-phase handlers)]
+            [:preparing       (make-updater-soap-phase)]
+            [:upserting       (make-updater-mutate-rio-phase handlers)]
+            [:confirming      (make-updater-confirm-rio-phase handlers rio-config)]
+            [:associating     (make-updater-sync-relations-phase handlers)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
       {:pre [(:institution-oin request)]}
