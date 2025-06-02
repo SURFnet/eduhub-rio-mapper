@@ -284,10 +284,12 @@
 
 (defmethod test/assert-expr 'job-result-opleidingseenheidcode [msg form]
   `(let [job# ~(second form)
-         attrs# (job-result-attributes job#)]
-     (test/do-report {:type (if (job-result-opleidingseenheidcode job#) :pass :fail)
+         attrs# (job-result-attributes job#)
+         result# (job-result-opleidingseenheidcode job#)]
+     (test/do-report {:type (if result# :pass :fail)
                       :message (or ~msg "Expect job result attributes to include opleidingseenheidcode."),
-                      :expected '~form, :actual attrs#})))
+                      :expected '~form, :actual attrs#})
+     result#))
 
 (defn- extract-kenmerken [node]
   (if (map? node)
@@ -303,10 +305,12 @@
 
 (defmethod test/assert-expr 'job-result-aangebodenopleidingcode [msg form]
   `(let [job# ~(second form)
-         attrs# (job-result-attributes job#)]
-     (test/do-report {:type (if (job-result-aangebodenopleidingcode job#) :pass :fail)
+         attrs# (job-result-attributes job#)
+         result# (job-result-aangebodenopleidingcode job#)]
+     (test/do-report {:type (if result# :pass :fail)
                       :message (or ~msg "Expect job result attributes to include aangebodenopleidingcode."),
-                      :expected '~form, :actual attrs#})))
+                      :expected '~form, :actual attrs#})
+     result#))
 
 (defn job-has-diffs?
   "Returns `true` if \"diff\" is detected in given attributes."
@@ -319,10 +323,12 @@
 
 (defmethod test/assert-expr 'job-has-diffs? [msg form]
   `(let [job# ~(second form)
-         attrs# (job-result-attributes job#)]
-    (test/do-report {:type (if (job-has-diffs? job#) :pass :fail)
-                     :message (or ~msg "Expect job result attributes to have diffs"),
-                     :expected '~form, :actual attrs#})))
+         attrs# (job-result-attributes job#)
+         result# (job-has-diffs? job#)]
+     (test/do-report {:type (if result# :pass :fail)
+                      :message (or ~msg "Expect job result attributes to have diffs"),
+                      :expected '~form, :actual attrs#})
+     result#))
 
 (defn job-without-diffs?
   "Complement of `job-has-diffs?`."
@@ -331,22 +337,27 @@
 
 (defmethod test/assert-expr 'job-without-diffs? [msg form]
   `(let [job# ~(second form)
-         attrs# (job-result-attributes job#)]
-    (test/do-report {:type (if (job-without-diffs? job#) :pass :fail)
-                     :message (or ~msg "Expect job result attributes to not have diffs"),
-                     :expected '~form, :actual attrs#})))
+         attrs# (job-result-attributes job#)
+         result# (job-without-diffs? job#)]
+     (test/do-report {:type (if result# :pass :fail)
+                      :message (or ~msg "Expect job result attributes to not have diffs"),
+                      :expected '~form, :actual attrs#})
+     result#))
 
 (defn job-done?
   "Final job status is 'done'."
   [job]
+  (println "XXX in JOB DONE")
   (= "done" (job-result-status job)))
 
 (defmethod test/assert-expr 'job-done? [msg form]
   `(let [job# ~(second form)
-         status# (job-result-status job#)]
-    (test/do-report {:type (if (= "done" status#) :pass :fail)
+         status# (job-result-status job#)
+         result# (= "done" status#)]
+    (test/do-report {:type (if result# :pass :fail)
                      :message (or ~msg "Expect final job status to equal 'done'"),
-                     :expected "done", :actual status#})))
+                     :expected "done", :actual status#})
+    result#))
 
 (defn job-error?
   "Final job status is 'error'."
@@ -355,10 +366,12 @@
 
 (defmethod test/assert-expr 'job-error? [msg form]
   `(let [job# ~(second form)
-         status# (job-result-status job#)]
-    (test/do-report {:type (if (= "error" status#) :pass :fail)
-                     :message (or ~msg "Expect final job status to equal 'error'"),
-                     :expected "error", :actual status#})))
+         status# (job-result-status job#)
+         result# (= "error" status#)]
+     (test/do-report {:type (if result# :pass :fail)
+                      :message (or ~msg "Expect final job status to equal 'error'"),
+                      :expected "error", :actual status#})
+     result#))
 
 (defn job-dry-run-found?
   "Final job status attributes status is 'found'."
@@ -367,10 +380,12 @@
 
 (defmethod test/assert-expr 'job-dry-run-found? [msg form]
   `(let [job# ~(second form)
-         status# (:status (job-result-attributes job#))]
-    (test/do-report {:type (if (= "found" status#) :pass :fail)
-                     :message (or ~msg "Expect final job status attributes status to equal 'found'"),
-                     :expected "found", :actual status#})))
+         status# (:status (job-result-attributes job#))
+         result# (= "found" status#)]
+     (test/do-report {:type (if result# :pass :fail)
+                      :message (or ~msg "Expect final job status attributes status to equal 'found'"),
+                      :expected "found", :actual status#})
+     result#))
 
 (defn job-dry-run-not-found?
   "Final job status attributes status is 'not-found'."
@@ -379,11 +394,12 @@
 
 (defmethod test/assert-expr 'job-dry-run-not-found? [msg form]
   `(let [job# ~(second form)
-         status# (:status (job-result-attributes job#))]
-    (test/do-report {:type (if (= "not-found" status#) :pass :fail)
-                     :message (or ~msg "Expect final job status attributes status to equal 'not-found'"),
-                     :expected "not-found", :actual status#})))
-
+         status# (:status (job-result-attributes job#))
+         result# (= "not-found" status#)]
+     (test/do-report {:type (if result# :pass :fail)
+                      :message (or ~msg "Expect final job status attributes status to equal 'not-found'"),
+                      :expected "not-found", :actual status#})
+     result#))
 
 
 (def ^:private rio-getter (delay (rio-loader/make-getter (:rio-config @config))))
