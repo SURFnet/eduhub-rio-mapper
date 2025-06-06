@@ -27,6 +27,7 @@
 (s/def ::educationLocationCode string?)
 (s/def ::educationSpecification ::common/uuid)
 (s/def ::firstStartDate ::common/date)
+(s/def ::lastStartDate ::common/date)
 (s/def ::foreignPartner string?)
 (s/def ::foreignPartners (s/coll-of ::foreignPartner))
 (s/def ::jointPartnerCode (text-spec 1 1000))
@@ -41,7 +42,8 @@
   (s/keys :req-un [::common/educationOffererCode]
           :opt-un [::educationLocationCode
                    ::foreignPartners
-                   ::jointPartnerCodes]))
+                   ::jointPartnerCodes
+                   ::lastStartDate]))
 
 (s/def ::rio-consumer
   (s/merge ::common/rio-consumer
