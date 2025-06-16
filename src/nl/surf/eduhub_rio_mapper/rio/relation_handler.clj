@@ -147,3 +147,13 @@
     (doseq [rel superfluous] (mutator rel :delete))
     (doseq [rel missing]     (mutator rel :insert)))
   diff)
+
+(defn update-relations
+  "Bring the relations of the education specification in sync.
+
+   First calculates which relations are missing or superfluous, then creates the delete and insert mutations, and executes them."
+  [eduspec job handlers]
+  (when eduspec
+    (-> eduspec
+        (relation-mutations job handlers)
+        (mutate-relations! job handlers))))

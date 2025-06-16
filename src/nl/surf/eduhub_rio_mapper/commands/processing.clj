@@ -108,7 +108,11 @@
       (assoc :rio-relations
              (relation-handler/load-relation-data getter opleidingscode institution-oin)))))
 
-(defn- relation-grouper [eduspec {:keys [valid-from valid-to] :as _relation}]
+(defn- valid-date-range?
+  "Returns whether the date range of the relation is valid.
+
+   A valid range fits completely within the range of the date range of the eduspec."
+  [eduspec {:keys [valid-from valid-to] :as _relation}]
   (let [eduspec-valid-from (:validFrom eduspec)
         eduspec-valid-to   (:validTo eduspec)
         valid-from-check (or (nil? eduspec-valid-from)
@@ -127,7 +131,7 @@
       request
       (let [eduspec entity
             {valid-relations true
-             invalid-relations false} (group-by (partial relation-grouper eduspec)
+             invalid-relations false} (group-by (partial valid-date-range? eduspec)
                                                 rio-relations)]
         ;; Delete invalid relations from RIO system
         (when (and (seq invalid-relations)
@@ -139,9 +143,13 @@
         ;; Return request with only valid relations
         (assoc request :rio-relations (vec valid-relations))))))
 
-  ;; returns function that takes request, and returns
-;; map with keys :job (request), :result (::Mutation/mutation-response) and :eduspec (education specification)
-(defn- make-updater-soap-phase []
+(defn- make-updater-soap-phase
+  "Phase definition for creating the soap document.
+
+   Returns function that takes request, and returns map with keys
+   :job (request), :result (::Mutation/mutation-response) and :eduspec (education specification)
+  "
+  []
   (fn soap-phase [{:keys [institution-oin] :as job}]
     {:pre [institution-oin (job :institution-schac-home)]}
     (let [result  (updated-handler/update-mutation job)
@@ -201,9 +209,7 @@
   To perform synchronization, relations are added and deleted in RIO."
   [handlers]
   (fn sync-relations-phase [{:keys [job eduspec] :as request}]
-    (when eduspec
-      (-> (relation-handler/relation-mutations eduspec job handlers)
-          (relation-handler/mutate-relations! job handlers)))
+    (relation-handler/update-relations eduspec job handlers)
     request))
 
 (defn- wrap-phase [[phase f]]
