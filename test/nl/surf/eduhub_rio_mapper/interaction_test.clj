@@ -116,8 +116,19 @@
         (binding [http-utils/*vcr* (vcr "test/fixtures/interaction" idx (str action "-" (name ootype)))]
           (let [result        (logging-runner ootype id action)
                 http-messages (:http-messages result)]
-            (is (= "http://duo.nl/contract/DUO_RIO_Beheren_OnderwijsOrganisatie_V4/verwijderen_opleidingsrelatie"
-                   (get-in http-messages [7 :req :headers "SOAPAction"])))))))
+            (is (= [nil
+                    "opvragen_rioIdentificatiecode"
+                    "opvragen_opleidingsrelatiesBijOpleidingseenheid"
+                    "aanleveren_opleidingseenheid"
+                    "opvragen_rioIdentificatiecode"
+                    "opvragen_opleidingsrelatiesBijOpleidingseenheid"
+                    nil
+                    "opvragen_rioIdentificatiecode"
+                    "verwijderen_opleidingsrelatie"
+                    "aanleveren_opleidingsrelatie"]
+                   (mapv #(when-let [soap-action (get-in http-messages [% :req :headers "SOAPAction"])]
+                            (last (clojure.string/split soap-action #"/")))
+                         (range 0 (count http-messages)))))))))
 
     (testing "Delete program using code not id"
       (binding [http-utils/*vcr* (vcr "test/fixtures/interaction" 7 "delete-program")]
