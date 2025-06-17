@@ -22,11 +22,23 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Get current date
+      id: get-date
+      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
     - name: Cache maven repository
       uses: actions/cache@v4
       with:
         path: "~/.m2/repository"
         key: "${{ runner.os }}-clojure-${{ hashFiles('**/project.clj') }}"
+
+    - name: Cache NVD database
+      uses: actions/cache@v4
+      with:
+        path: "~/.m2/repository/org/owasp/dependency-check-utils/*/data"
+        key: "${{ runner.os }}-nvd-${{ steps.get-date.outputs.date }}"
+        restore-keys: |
+          ${{ runner.os }}-nvd-
 
     - name: Install clj runtime
       run: |
