@@ -68,11 +68,13 @@
            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.0.1"
                                                            :git/sha "b5203518d023d50e70a240d59a0770ccbacf3867"}
                           org.owasp/dependency-check-core {:mvn/version "RELEASE"}}
-           :main-opts    ["-m" "clj-watson.cli" "scan" "-w" ".watson.properties" "-p" "deps.edn" "-f" "-s"]}
+           :main-opts    ["-m" "clj-watson.cli" "scan" "-w" ".watson.properties" "-p" "deps.edn" "-f" "-s" "-a" "deps-to-scan"]}
 
   :antq {:paths        []
          :replace-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
          :main-opts    ["-m" "antq.core"]}
 
   :mapper {:extra-paths []
-           :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.main"]}}}
+           :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.main"]}
+
+  :deps-to-scan {:extra-deps {io.opentelemetry.javaagent/opentelemetry-javaagent {:mvn/version "2.9.0"}}}}}
