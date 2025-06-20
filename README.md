@@ -54,7 +54,7 @@ simplest.
 
 - Validate RIO XML using XSD
 
-- Post RIO XML to API# Implementation steps (mapper without API calls)
+- Post RIO XML to API# Implementation steps (mapper without API calls).
 
 ## Mapper of pure data
 

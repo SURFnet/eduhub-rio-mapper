@@ -1,6 +1,7 @@
 name: Check if RIO queue is up or down
 
 on:
+  push:
   schedule:
     # every hour on weekdays during working hours, 9:06 tm 16:06
     # may be shifted an hour in late March and October, but that's not a big deal
