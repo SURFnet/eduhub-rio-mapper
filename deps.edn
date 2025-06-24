@@ -47,12 +47,12 @@
          :main-opts   ["-m" "kaocha.runner"]}
 
   :proof-specs {:extra-deps {nl.jomco/proof-specs {:mvn/version "RELEASE"}}
-                :main-opts ["-m" "nl.jomco.proof-specs"
-                            "--verbose"
-                            "--num-vals" "10"
-                            "--limit-ms" "5000"
-                            "--include" "nl.surf.*"
-                            "--require" "nl.surf.eduhub-rio-mapper.specs.ooapi"]}
+                :main-opts  ["-m" "nl.jomco.proof-specs"
+                             "--verbose"
+                             "--num-vals" "10"
+                             "--limit-ms" "5000"
+                             "--include" "nl.surf.*"
+                             "--require" "nl.surf.eduhub-rio-mapper.specs.ooapi"]}
 
   :lint {:paths        []
          :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
@@ -66,7 +66,8 @@
 
   :watson {:paths        []
            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.0.1"
-                                                           :git/sha "b5203518d023d50e70a240d59a0770ccbacf3867"}}
+                                                           :git/sha "b5203518d023d50e70a240d59a0770ccbacf3867"}
+                          org.owasp/dependency-check-core {:mvn/version "RELEASE"}}
            :main-opts    ["-m" "clj-watson.cli" "scan" "-w" ".watson.properties" "-p" "deps.edn" "-f" "-s"]}
 
   :antq {:paths        []
@@ -74,4 +75,4 @@
          :main-opts    ["-m" "antq.core"]}
 
   :mapper {:extra-paths []
-           :main-opts ["-m" "nl.surf.eduhub-rio-mapper.main"]}}}
+           :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.main"]}}}
