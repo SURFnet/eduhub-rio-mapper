@@ -22,10 +22,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Get current date
-      id: get-date
-      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
     - name: Cache maven repository
       uses: actions/cache@v4
       with:
@@ -36,7 +32,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: "~/.m2/repository/org/owasp/dependency-check-utils/*/data"
-        key: "${{ runner.os }}-nvd-${{ steps.get-date.outputs.date }}"
+        key: "${{ runner.os }}-nvd"
         restore-keys: |
           ${{ runner.os }}-nvd-
 
