@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='UTF-8'?>
-<xsd:schema 
+<xsd:schema
 attributeFormDefault="unqualified"
 elementFormDefault="qualified"
 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -527,7 +527,7 @@ DefinitieHerkomst: DUO Gegevenswoordenboek
 <xsd:documentation>
 Definitie: Service voor het aanleveren van een nieuwe of gewijzigde AangebodenOpleiding inclusief eventuele cohortgegevens
 DefinitieHerkomst: RIO
-Toelichting: Er kan 1 AangebodenOpleiding per keer aan RIO aangeboden worden. 
+Toelichting: Er kan 1 AangebodenOpleiding per keer aan RIO aangeboden worden.
 
 Een aangeboden opleiding kan zowel verwijzen naar een erkend vak of  opleiding (crebo, elementcode, etc) als naar een (nog) niet erkende opleidingseenheid. In het bericht moet voor de verwijzing naar welke opleiding aangeboden wordt gekozen worden tussen deze 3 varianten.
 
@@ -610,7 +610,7 @@ DefinitieHerkomst: RIO
 <xsd:documentation>
 Definitie: Service voor het aanleveren van een nieuw of gewijzigd Onderwijslocatiegebruik
 DefinitieHerkomst: RIO
-Toelichting: Een onderwijslocatiegebruik moet verwijzen naar een (al dan niet in Rio bekende) onderwijslocatie. 
+Toelichting: Een onderwijslocatiegebruik moet verwijzen naar een (al dan niet in Rio bekende) onderwijslocatie.
 
 Voor een nieuwe onderwijslocatie binnen Nederland worden Nederlandse adresgegevens gebruikt.
 
@@ -2120,7 +2120,7 @@ DefinitieHerkomst: Registratie Instellingen en Opleidingen
 <xsd:simpleType name="Aanmeldingscohortbegindatum-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: Is de eerste dag waarop een aspirant-student zich aan kan melden voor het betreffende cohort van een aangeboden opleiding. 
+Definitie: Is de eerste dag waarop een aspirant-student zich aan kan melden voor het betreffende cohort van een aangeboden opleiding.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 </xsd:documentation>
 </xsd:annotation>
@@ -2130,7 +2130,7 @@ DefinitieHerkomst: Registratie Instellingen en Opleidingen
 <xsd:simpleType name="Aanmeldingscohorteinddatum-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: Is de laatste dag waarop een aspirant-student zich aan kan melden voor het betreffende cohort van een aangeboden opleiding. 
+Definitie: Is de laatste dag waarop een aspirant-student zich aan kan melden voor het betreffende cohort van een aangeboden opleiding.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 </xsd:documentation>
 </xsd:annotation>
@@ -2150,7 +2150,7 @@ DefinitieHerkomst: DUO
 <xsd:simpleType name="Cohortaanvangsdatum-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: De dag waarop het cohort voor de aangeboden opleiding begint. 
+Definitie: De dag waarop het cohort voor de aangeboden opleiding begint.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 Toelichting: Studenten kunnen mogelijk wel later instromen, maar dan missen ze een deel van de opleiding.
 </xsd:documentation>
@@ -2258,7 +2258,7 @@ FormaatKarakterset: AN
 <xsd:simpleType name="ErkendeOrganisatiecode-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: Is een identificerend kenmerk van een erkenning van een organisatie of een locatie ten behoeve van uitwisseling in de keten. 
+Definitie: Is een identificerend kenmerk van een erkenning van een organisatie of een locatie ten behoeve van uitwisseling in de keten.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 Toelichting: Het identificerend kenmerk wordt toegekend door de erkenner en is uniek per erkenner.
 FormaatKarakterset: AN
@@ -2362,7 +2362,7 @@ BeschrijvingControles: Minimaal 1 en maximaal 50 letters, cijfers, onderstreping
 <xsd:simpleType name="InBedrijfdatum-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: De datum waarop een organisatorische eenheid zoals een onderwijsaanbieder start. 
+Definitie: De datum waarop een organisatorische eenheid zoals een onderwijsaanbieder start.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 Toelichting: Voor een Onderwijsaanbieder in het primair, voortgezet en beroepsonderwijs is dit meestal is het 1 augustus van een jaar bij de start van een schooljaar. Voor een Onderwijsaanbieder in het hoger onderwijs is dit meestal 1 september van een jaar.
 
@@ -2375,9 +2375,9 @@ Bij een niet bekostigde onderwijsaanbieder of een andere soort organisatorische 
 <xsd:simpleType name="InstroomperiodeCohortbegindatum-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: De eerste dag dat een student in een cohort van een aangeboden opleiding met een flexibele instroom kan beginnen. 
+Definitie: De eerste dag dat een student in een cohort van een aangeboden opleiding met een flexibele instroom kan beginnen.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
-Toelichting: Studenten kunnen ook later beginnen. De opleiding start op het moment dat de leerling begint en deze mist daardoor niets van de opleiding. 
+Toelichting: Studenten kunnen ook later beginnen. De opleiding start op het moment dat de leerling begint en deze mist daardoor niets van de opleiding.
 </xsd:documentation>
 </xsd:annotation>
 <xsd:restriction base="DatumType">
@@ -2386,7 +2386,7 @@ Toelichting: Studenten kunnen ook later beginnen. De opleiding start op het mome
 <xsd:simpleType name="InstroomperiodeCohorteinddatum-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: De laatste dag dat een student kan beginnen in een cohort van een aangeboden opleiding met een flexibele instroom. 
+Definitie: De laatste dag dat een student kan beginnen in een cohort van een aangeboden opleiding met een flexibele instroom.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 Toelichting: Studenten kunnen niet later dan deze datum aan dit cohort van deze aangeboden opleiding beginnen.
 </xsd:documentation>
@@ -2528,9 +2528,9 @@ DefinitieHerkomst: Registratie Instellingen en Opleidingen
 <xsd:documentation>
 Definitie: De aanduiding van het niveau van beroepsuitoefening, gebaseerd op de mate van verantwoordelijkheid en complexiteit.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
-Toelichting: De waarde MBO-1 staat 
-vanaf 1 augustus 2014 voor Entree en 
-vanaf 1 augustus 2018 voor MBO Assistent  
+Toelichting: De waarde MBO-1 staat
+vanaf 1 augustus 2014 voor Entree en
+vanaf 1 augustus 2018 voor MBO Assistent
 </xsd:documentation>
 </xsd:annotation>
 <xsd:restriction base="WaardenlijstType-v01">
@@ -2655,10 +2655,10 @@ HBO-AD	80000	80999
 HBO-BA	81000	81499]
 Niveau MA of PM heeft geen propedeutische [Als Niveau-code een Postinitiele Master is of een Master dan mag  OpleidingPerInstelling.Propedeutische fase  niet worden gevuld]
 Studielast bij HBO-BA [Als het niveau van een opleiding HBO-BA is dan is de studielastzwaarte 240 en de studielasteenheid ECTS]
-Studielast minmax [De Studielast kent voor een HO opleiding de volgende beperkingen: 
+Studielast minmax [De Studielast kent voor een HO opleiding de volgende beperkingen:
 HBO master: minimaal 60 en maximaal 240,
-WO bachelor: minimaal 180 en maximaal 240, 
-WO master: minimaal 60 en maximaal 240, 
+WO bachelor: minimaal 180 en maximaal 240,
+WO master: minimaal 60 en maximaal 240,
 Associate Degree: minimaal 120 en maximaal 240 ECTS-punten
 Ongedeelde opleidingen kennen deze beperking niet.]
 </xsd:documentation>
@@ -2682,7 +2682,7 @@ FormaatKarakterset: AN
 <xsd:simpleType name="Omschrijving3000-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: Nadere beschrijving 
+Definitie: Nadere beschrijving
 DefinitieHerkomst: DUO
 </xsd:documentation>
 </xsd:annotation>
@@ -2806,7 +2806,7 @@ FormaatKarakterset: AN
 <xsd:documentation>
 Definitie: De code van de opleidingserkenning binnen het codestelsel.
 DefinitieHerkomst: OCW
-Toelichting: De opleidingserkenning kan betrekking hebben op een opleiding, een opleidingsgroep, een opleidingsfase of een opleidingsonderdeel. 
+Toelichting: De opleidingserkenning kan betrekking hebben op een opleiding, een opleidingsgroep, een opleidingsfase of een opleidingsonderdeel.
 
 Is vervangen door ErkendeOpleidingscode
 FormaatKarakterset: AN
@@ -2891,7 +2891,7 @@ Kijk voor de laatste versie van de waardenlijst op https://www.edustandaard.nl/s
 <xsd:simpleType name="OpleidingskenmerkcodeDoelgroeponderwijsSoVso-v02">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: Een onderscheidende eigenschap voor een orthopedagogische en orthodidactische benadering in het aangeboden onderwijs. 
+Definitie: Een onderscheidende eigenschap voor een orthopedagogische en orthodidactische benadering in het aangeboden onderwijs.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 </xsd:documentation>
 </xsd:annotation>
@@ -2903,7 +2903,7 @@ DefinitieHerkomst: Registratie Instellingen en Opleidingen
 <xsd:documentation>
 Definitie: Mogelijke vormen van doorlopende leerlijnen tussen het basisonderwijs en speciaal basisonderwijs enerzijds en het voortgezet onderwijs anderzijds.
 DefinitieHerkomst: Vertegenwoordigend gremium van VO en PO veldpartijen (de VO/PO ketendagen en de VO/PO softwareleveranciers). RIO is gedelegeerd eigenaar binnen DUO.
-Toelichting: Te gebruiken in de RIO aangeboden opleidingen van het basis en speciaal basisonderwijs. 
+Toelichting: Te gebruiken in de RIO aangeboden opleidingen van het basis en speciaal basisonderwijs.
 
 Kijk voor de laatste versie van de waardenlijst op https://www.edustandaard.nl/standaard_afspraken/registratie-instellingen-en-opleidingen-rio/ onder het kopje Documentatie
 </xsd:documentation>
@@ -2916,7 +2916,7 @@ Kijk voor de laatste versie van de waardenlijst op https://www.edustandaard.nl/s
 <xsd:documentation>
 Definitie: Mogelijke vormen van doorlopende leerlijnen tussen vmbo en mbo.
 DefinitieHerkomst: Vertegenwoordigend gremium van VO en MBO veldpartijen (de VO/MBO ketendagen en de VO/MBO softwareleveranciers). RIO is gedelegeerd eigenaar binnen DUO.
-Toelichting: Te gebruiken in de RIO aangeboden opleidingen van zowel vmbo als mbo. 
+Toelichting: Te gebruiken in de RIO aangeboden opleidingen van zowel vmbo als mbo.
 
 Kijk voor de laatste versie van de waardenlijst op https://www.edustandaard.nl/standaard_afspraken/registratie-instellingen-en-opleidingen-rio/ onder het kopje Documentatie
 </xsd:documentation>
@@ -2930,7 +2930,7 @@ Kijk voor de laatste versie van de waardenlijst op https://www.edustandaard.nl/s
 <xsd:documentation>
 Definitie: De mogelijke manieren waarop de kennisoverdracht is ingericht in het hoger onderwijs wat betreft aanwezigheid  en de duur van de aanwezigheid.
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
-Toelichting: Een duale opleiding is zodanig ingericht dat het volgen van onderwijs gedurende een of meer perioden wordt afgewisseld met beroepsuitoefening in verband met dat onderwijs. 
+Toelichting: Een duale opleiding is zodanig ingericht dat het volgen van onderwijs gedurende een of meer perioden wordt afgewisseld met beroepsuitoefening in verband met dat onderwijs.
 
 Een deeltijds opleiding is zodanig ingericht dat het volgen van onderwijs wordt gedaan gedurende een deel van de tijd die voor een studie  normaal beschikbaar is.
 </xsd:documentation>
@@ -2990,7 +2990,7 @@ DefinitieHerkomst: Registratie Instellingen en Opleidingen
 <xsd:simpleType name="OrganisatorischeEenheidnaam-v01">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: De naam die de onderwijsorganisatie in het maatschappelijk verkeer hanteert voor de organisatorische eenheid 
+Definitie: De naam die de onderwijsorganisatie in het maatschappelijk verkeer hanteert voor de organisatorische eenheid
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 FormaatKarakterset: AN
 </xsd:documentation>
@@ -3023,7 +3023,7 @@ DefinitieHerkomst: DUO
 <xsd:simpleType name="Plaatsnaam-v02">
 <xsd:annotation>
 <xsd:documentation>
-Definitie: De naam van de plaats 
+Definitie: De naam van de plaats
 DefinitieHerkomst: GBA
 Toelichting: Schrijfwijze: in hoofdletters
 FormaatKarakterset: AN
@@ -3160,10 +3160,10 @@ Definitie: De meeteenheid voor de studielast
 DefinitieHerkomst: Registratie Instellingen en Opleidingen
 Geldigheidsregels:
 Studielast bij HBO-BA [Als het niveau van een opleiding HBO-BA is dan is de studielastzwaarte 240 en de studielasteenheid ECTS]
-Studielast minmax [De Studielast kent voor een HO opleiding de volgende beperkingen: 
+Studielast minmax [De Studielast kent voor een HO opleiding de volgende beperkingen:
 HBO master: minimaal 60 en maximaal 240,
-WO bachelor: minimaal 180 en maximaal 240, 
-WO master: minimaal 60 en maximaal 240, 
+WO bachelor: minimaal 180 en maximaal 240,
+WO master: minimaal 60 en maximaal 240,
 Associate Degree: minimaal 120 en maximaal 240 ECTS-punten
 Ongedeelde opleidingen kennen deze beperking niet.]
 </xsd:documentation>
@@ -3180,10 +3180,10 @@ Toelichting: Gegevenstype is vervangen door Studielastzwaarte-v01.
 BeschrijvingControles: De studielastzwaarte bestaat uit maximaal 5 cijfers
 Geldigheidsregels:
 Studielast bij HBO-BA [Als het niveau van een opleiding HBO-BA is dan is de studielastzwaarte 240 en de studielasteenheid ECTS]
-Studielast minmax [De Studielast kent voor een HO opleiding de volgende beperkingen: 
+Studielast minmax [De Studielast kent voor een HO opleiding de volgende beperkingen:
 HBO master: minimaal 60 en maximaal 240,
-WO bachelor: minimaal 180 en maximaal 240, 
-WO master: minimaal 60 en maximaal 240, 
+WO bachelor: minimaal 180 en maximaal 240,
+WO master: minimaal 60 en maximaal 240,
 Associate Degree: minimaal 120 en maximaal 240 ECTS-punten
 Ongedeelde opleidingen kennen deze beperking niet.]
 </xsd:documentation>
@@ -3433,7 +3433,7 @@ Voorbeeld:  Aantal Decimalen = 3
 
 Let op:
 Een attribuut met een EG met coretype &#39;Waardetype&#39; en Aantal decimalen = 0 wordt in het yamlscript uitgegenereerd naar type &#39;integer&#39;
-Standaard zal een attribuut met een EG met coretype ‘Waardetype’ altijd uitgenereren als een type ‘number’ met format ‘bigdecimal’. 
+Standaard zal een attribuut met een EG met coretype ‘Waardetype’ altijd uitgenereren als een type ‘number’ met format ‘bigdecimal’.
 </xsd:documentation>
 </xsd:annotation>
 <xsd:restriction base="xsd:decimal">
