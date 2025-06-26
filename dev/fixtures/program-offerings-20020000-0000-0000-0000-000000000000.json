@@ -97,24 +97,6 @@
             }
           ],
           "ext": {}
-        },
-        {
-          "costType": "STAP eligible",
-          "amount": "40.84",
-          "vatAmount": "10",
-          "amountWithoutVat": "30.84",
-          "currency": "EUR",
-          "displayAmount": [
-            {
-              "language": "nl-NL",
-              "value": "€380,84"
-            },
-            {
-              "language": "en-US",
-              "value": "$401.17"
-            }
-          ],
-          "ext": {}
         }
       ],
       "program": "9d904916-95ab-4cd6-a597-6e333dcf718f",
