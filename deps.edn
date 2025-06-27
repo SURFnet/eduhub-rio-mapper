@@ -18,11 +18,11 @@
          ring/ring-defaults             {:mvn/version "0.6.0"}
          compojure/compojure            {:mvn/version "1.7.1"}
          nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
-         nl.jomco/clj-http-status-codes {:mvn/version "0.1"}
+         nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
 
          ;; interface
          nl.jomco/envopts     {:mvn/version "0.0.6"}
-         clj-http/clj-http    {:mvn/version "3.13.0"}
+         clj-http/clj-http    {:mvn/version "3.13.1"}
          clj-time/clj-time    {:mvn/version "0.15.2"}
          com.taoensso/carmine {:mvn/version "3.4.1" :exclusions [org.clojure/tools.reader]}
 
@@ -77,4 +77,4 @@
   :mapper {:extra-paths []
            :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.main"]}
 
-  :deps-to-scan {:extra-deps {io.opentelemetry.javaagent/opentelemetry-javaagent {:mvn/version "2.9.0"}}}}}
+  :deps-to-scan {:extra-deps {io.opentelemetry.javaagent/opentelemetry-javaagent ^:antq/exclude {:mvn/version "2.9.0"}}}}}
