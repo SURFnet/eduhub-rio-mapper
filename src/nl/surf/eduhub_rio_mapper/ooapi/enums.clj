@@ -41,10 +41,6 @@
   "Enum used in Programs for acceleratedRoute."
   #{"accelerated_route" "no_accelerated_route"})
 
-(def consentParticipationSTAP
-  "Enum used in Programs for consentParticipationSTAP."
-  #{"permission_granted" "permission_not_granted"})
-
 (def deficiency
   "Enum used in Programs for deficiency."
   #{"deficiencies" "no_deficiencies"})
@@ -80,4 +76,3 @@
 (def studyLoadUnits
   "Enum used in EducationSpecification for studyLoad."
   #{"contacttime" "ects" "sbu" "sp" "hour"})
-

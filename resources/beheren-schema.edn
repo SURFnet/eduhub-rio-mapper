@@ -153,9 +153,6 @@
   {:name "eigenAangebodenOpleidingSleutel",
    :type "AangebodenOpleidingExterneIdentificatie-v01",
    :kenmerk true}
-  {:name "toestemmingDeelnameSTAP",
-   :type "SCRtoestemmingVerleendTotDeelname-v01",
-   :kenmerk true}
   {:name "voertaal", :type "Taalcode-v01", :kenmerk true}
   {:name "niveau", :type "Niveaucode-v06"}],
  "AangebodenHOOpleidingsonderdeel"
@@ -177,9 +174,6 @@
   {:name "afwijkendeOpleidingsduur", :type "AfwijkendeOpleidingsduur"}
   {:name "eigenAangebodenOpleidingSleutel",
    :type "AangebodenOpleidingExterneIdentificatie-v01",
-   :kenmerk true}
-  {:name "toestemmingDeelnameSTAP",
-   :type "SCRtoestemmingVerleendTotDeelname-v01",
    :kenmerk true}
   {:name "vorm",
    :type "OpleidingskenmerkcodeOnderwijsintensiteit-v01",
@@ -270,9 +264,6 @@
   {:name "afwijkendeOpleidingsduur", :type "AfwijkendeOpleidingsduur"}
   {:name "eigenAangebodenOpleidingSleutel",
    :type "AangebodenOpleidingExterneIdentificatie-v01",
-   :kenmerk true}
-  {:name "toestemmingDeelnameSTAP",
-   :type "SCRtoestemmingVerleendTotDeelname-v01",
    :kenmerk true}
   {:name "vorm",
    :type "OpleidingskenmerkcodeOnderwijsintensiteit-v01",

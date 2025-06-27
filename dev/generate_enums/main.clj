@@ -39,8 +39,6 @@
                                            "Enum used in Programs for programType.")
                             (generate-enum consumers-path "Program.yaml" [:properties :acceleratedRoute :enum] "acceleratedRoute"
                                            "Enum used in Programs for acceleratedRoute.")
-                            (generate-enum consumers-path "Program.yaml" [:properties :consentParticipationSTAP :enum] "consentParticipationSTAP"
-                                           "Enum used in Programs for consentParticipationSTAP.")
                             (generate-enum consumers-path "Program.yaml" [:properties :deficiency :enum] "deficiency"
                                            "Enum used in Programs for deficiency.")
                             (generate-enum consumers-path "Program.yaml" [:properties :propaedeuticPhase :enum] "propaedeuticPhase"

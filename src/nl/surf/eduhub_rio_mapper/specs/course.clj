@@ -18,12 +18,10 @@
 
 (ns nl.surf.eduhub-rio-mapper.specs.course
   (:require [clojure.spec.alpha :as s]
-            [nl.surf.eduhub-rio-mapper.ooapi.enums :as enums]
             [nl.surf.eduhub-rio-mapper.re-spec :refer [re-spec text-spec]]
             [nl.surf.eduhub-rio-mapper.specs.common :as common]))
 
 (s/def ::abbreviation string?)
-(s/def ::consentParticipationSTAP enums/consentParticipationSTAP)
 (s/def ::courseId ::common/uuid)
 (s/def ::description ::common/LongLanguageTypedStrings)
 (s/def ::educationLocationCode string?)
@@ -40,8 +38,7 @@
 (s/def ::validTo ::common/date)
 
 (s/def ::course-consumer
-  (s/keys :req-un [::consentParticipationSTAP
-                   ::common/educationOffererCode]
+  (s/keys :req-un [::common/educationOffererCode]
           :opt-un [::educationLocationCode
                    ::foreignPartners
                    ::jointPartnerCodes]))

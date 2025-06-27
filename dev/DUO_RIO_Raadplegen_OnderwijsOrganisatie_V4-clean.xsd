@@ -580,7 +580,6 @@
         <xsd:complexContent>
             <xsd:extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
                 <xsd:sequence>
-                    <xsd:element minOccurs="0" name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
                     <xsd:element name="vorm" type="OpleidingskenmerkcodeOnderwijsintensiteit-v01"/>
                     <xsd:element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
                 </xsd:sequence>
@@ -620,7 +619,6 @@
         <xsd:complexContent>
             <xsd:extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
                 <xsd:sequence>
-                    <xsd:element minOccurs="0" name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
                     <xsd:element minOccurs="0" name="vorm" type="OpleidingskenmerkcodeOnderwijsintensiteit-v01"/>
                     <xsd:element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
                 </xsd:sequence>
@@ -654,7 +652,6 @@
         <xsd:complexContent>
             <xsd:extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
                 <xsd:sequence>
-                    <xsd:element minOccurs="0" name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
                     <xsd:element minOccurs="0" name="doorlopendeLeerlijnVmboMbo" type="OpleidingskenmerkcodeDoorlopendeLeerlijnenVmboMbo-v01"/>
                     <xsd:element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
                 </xsd:sequence>
@@ -686,7 +683,6 @@
         <xsd:complexContent>
             <xsd:extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
                 <xsd:sequence>
-                    <xsd:element minOccurs="0" name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
                     <xsd:element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
                 </xsd:sequence>
             </xsd:extension>
@@ -735,7 +731,6 @@
         <xsd:complexContent>
             <xsd:extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
                 <xsd:sequence>
-                    <xsd:element minOccurs="0" name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
                     <xsd:element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
                 </xsd:sequence>
             </xsd:extension>

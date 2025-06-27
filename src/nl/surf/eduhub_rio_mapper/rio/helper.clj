@@ -122,7 +122,6 @@
    "samenwerkendeOnderwijsaanbiedercode" :string
    "soort" :enum
    "studiekeuzecheck" :enum
-   "toestemmingDeelnameSTAP" :enum
    "versneldTraject" :enum
    "voertaal" :enum
    "vorm" :enum
