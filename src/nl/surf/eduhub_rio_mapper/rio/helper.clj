@@ -71,11 +71,12 @@
       nil)))
 
 (def type-mapping
-  {:date    :duo:kenmerkwaardeDatum
-   :string  :duo:kenmerkwaardeTekst
-   :enum    :duo:kenmerkwaardeEnumeratiewaarde
-   :number  :duo:kenmerkwaardeGetal
-   :boolean :duo:kenmerkwaardeBoolean})
+  {:date       :duo:kenmerkwaardeDatum
+   :string     :duo:kenmerkwaardeTekst
+   :enum       :duo:kenmerkwaardeEnumeratiewaarde
+   :enum-array :duo:kenmerkwaardeEnumeratiewaarde
+   :number     :duo:kenmerkwaardeGetal
+   :boolean    :duo:kenmerkwaardeBoolean})
 
 (defn narrow-isced
   "When given an ISCED-F detailed field, return the narrow version."
@@ -94,9 +95,15 @@
 
 (defn- kenmerken [name type value]
   (when value
-     [:duo:kenmerken
+    (if (= type :enum-array)
+      (mapv (fn [v]
+              [:duo:kenmerken
+               [:duo:kenmerknaam name]
+               [(type-mapping type) v]])
+            (if (coll? value) value [value]))
+      [[:duo:kenmerken
        [:duo:kenmerknaam name]
-       [(type-mapping type) value]]))
+       [(type-mapping type) value]]])))
 
 ;;; XML generation
 
@@ -124,7 +131,7 @@
    "soort" :enum
    "studiekeuzecheck" :enum
    "versneldTraject" :enum
-   "voertaal" :enum
+   "voertaal" :enum-array
    "vorm" :enum
    "website" :string})
 
@@ -164,9 +171,9 @@
     [(into [(duoize attr-name)]
            (mapv (fn [[key value]] [(duoize key) value]) attr-value))]
 
-    [(if kenmerk
-       (kenmerken attr-name (attr-name->kenmerk-type attr-name) attr-value)
-       (render-name-value attr-name attr-value type))]))
+    (if kenmerk
+      (kenmerken attr-name (attr-name->kenmerk-type attr-name) attr-value)
+      [(render-name-value attr-name attr-value type)])))
 
 (defn wrapper-periodes-cohorten [rio-obj]
   (fn [key]
