@@ -35,6 +35,7 @@
 (s/def ::educationUnitCode ::rio/OpleidingsEenheidID-v01)
 (s/def ::jointProgram boolean?)
 (s/def ::firstStartDate ::common/date)
+(s/def ::lastStartDate ::common/date)
 (s/def ::foreignPartner string?)
 (s/def ::foreignPartners (s/coll-of ::foreignPartner))
 (s/def ::jointPartnerCode (text-spec 1 1000))
@@ -61,6 +62,7 @@
                    ::foreignPartners
                    ::jointPartnerCodes
                    ::jointProgram
+                   ::lastStartDate
                    ::propaedeuticPhase
                    ::requirementsActivities
                    ::studyChoiceCheck

@@ -38,6 +38,7 @@
  "Sleutelnaam-v01"
  {:base "VrijeTekstType", :restrictions {:minLength 1, :maxLength 25}},
  "EersteInstroomDatum-v01" {:base "DatumType"},
+ "LaasteInstroomDatum-v01" {:base "DatumType"},
  "IdentificatiecodeType"
  {:base "xsd:normalizedString", :restrictions {:minLength 1}},
  "DeficientieMogelijk-v01" {:base "WaardenlijstType-v01"},
