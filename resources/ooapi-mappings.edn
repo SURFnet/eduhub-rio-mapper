@@ -37,8 +37,7 @@
    "propaedeutic_phase_exam" "PROPEDEUTISCHE_FASE_EXAMEN",
    "propaedeutic_phase_no_exam" "PROPEDEUTISCHE_FASE_ZONDER_EXAMEN"},
   "soort"
-  {"STAP eligible" "TOTAAL_STAP_SUBSIDIEERBAAR",
-   "total costs" "TOTALE_VERPLICHTE_KOSTEN"},
+  {"total costs" "TOTALE_VERPLICHTE_KOSTEN"},
   "deficientie"
   {"deficiencies" "DEFICIENTIES",
    "no_deficiencies" "GEEN_DEFICIENTIES"},
@@ -85,9 +84,6 @@
    "testimonial" "GETUIGSCHRIFT"},
   "eisenWerkzaamheden"
   {"requirements" "EISEN", "no_requirements" "GEEN_EISEN"},
-  "toestemmingDeelnameSTAP"
-  {"permission_granted" "TOESTEMMING_VERLEEND",
-   "permission_not_granted" "GEEN_TOESTEMMING_VERLEEND"},
   "opleidingsvorm"
   {"distance-learning" "ONLINE",
    "on campus" "KLASSIKAAL",
@@ -97,10 +93,10 @@
   "nlqf"
   {"3" "3",
    "4" "4",
-   "8" "8", 
-   "7" "7", 
-   "5" "5", 
-   "6" "6", 
-   "1" "1", 
-   "4+" "4p", 
+   "8" "8",
+   "7" "7",
+   "5" "5",
+   "6" "6",
+   "1" "1",
+   "4+" "4p",
    "2" "2"}}}

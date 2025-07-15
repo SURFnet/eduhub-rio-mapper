@@ -112,7 +112,6 @@
       "consumerKey": "rio",
       "educationOffererCode": "110A133",
       "educationLocationCode": "123X122",
-      "consentParticipationSTAP": "permission_granted",
       "jointPartnerCodes": [
         "122A113"
       ],
@@ -246,7 +245,6 @@
             "consumerKey": "rio",
             "educationOffererCode": "122A112",
             "educationLocationCode": "123X122",
-            "consentParticipationSTAP": "permission_granted",
             "jointPartnerCodes": [
               "122A113"
             ],

@@ -80,9 +80,7 @@
           "")
         (when (and (= k :eigenOpleidingseenheidSleutel)
                    (opleidingseenheid? rio-obj))
-          "")
-        (when (= k :toestemmingDeelnameSTAP)
-          "GEEN_TOESTEMMING_VERLEEND"))))
+          ""))))
 
 (declare link-item-adapter)
 

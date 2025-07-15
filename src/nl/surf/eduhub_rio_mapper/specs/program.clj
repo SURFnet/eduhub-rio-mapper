@@ -28,7 +28,6 @@
 
 (s/def ::acceleratedRoute enums/acceleratedRoute)
 (s/def ::children (s/coll-of ::common/uuid))
-(s/def ::consentParticipationSTAP enums/consentParticipationSTAP)
 (s/def ::deficiency enums/deficiency)
 (s/def ::description ::common/LongLanguageTypedStrings)
 (s/def ::educationLocationCode string?)
@@ -55,12 +54,10 @@
 (s/def ::validTo ::common/date)
 
 (s/def ::program-consumer
-  (s/keys :req-un [::consentParticipationSTAP
-                   ::common/educationOffererCode]
+  (s/keys :req-un [::common/educationOffererCode]
           :opt-un [::acceleratedRoute
                    ::educationLocationCode
                    ::educationUnitCode
-                   ::consentParticipationSTAP
                    ::foreignPartners
                    ::jointPartnerCodes
                    ::jointProgram

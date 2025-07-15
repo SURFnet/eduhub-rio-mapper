@@ -534,7 +534,6 @@
     <complexContent>
       <extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
         <sequence>
-          <element name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
           <element name="vorm" type="OpleidingskenmerkcodeOnderwijsintensiteit-v01"/>
           <element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
         </sequence>
@@ -574,7 +573,6 @@
     <complexContent>
       <extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
         <sequence>
-          <element name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
           <element minOccurs="0" name="vorm" type="OpleidingskenmerkcodeOnderwijsintensiteit-v01"/>
           <element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
         </sequence>
@@ -608,7 +606,6 @@
     <complexContent>
       <extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
         <sequence>
-          <element name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
           <element minOccurs="0" name="doorlopendeLeerlijnVmboMbo" type="OpleidingskenmerkcodeDoorlopendeLeerlijnenVmboMbo-v01"/>
           <element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
         </sequence>
@@ -640,7 +637,6 @@
     <complexContent>
       <extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
         <sequence>
-          <element name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
           <element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
         </sequence>
       </extension>
@@ -689,7 +685,6 @@
     <complexContent>
       <extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
         <sequence>
-          <element name="toestemmingDeelnameSTAP" type="SCRtoestemmingVerleendTotDeelname-v01"/>
           <element minOccurs="0" name="voertaal" type="Taalcode-v01"/>
         </sequence>
       </extension>
