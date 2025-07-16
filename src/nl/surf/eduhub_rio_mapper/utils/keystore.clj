@@ -18,12 +18,17 @@
 
 (ns nl.surf.eduhub-rio-mapper.utils.keystore
   (:require [clojure.java.io :as io])
-  (:import (java.security KeyStore
+  (:import [java.security KeyStore
                           KeyStore$PasswordProtection
-                          KeyStore$PrivateKeyEntry)))
+                          KeyStore$PrivateKeyEntry]
+           [java.io FileInputStream]
+           [java.util Collections]))
+
+(declare validate-keystore)
 
 (defn keystore
   ^KeyStore [path password]
+  (validate-keystore path password)
   (with-open [in (io/input-stream path)]
     (doto (KeyStore/getInstance "JKS")
       (.load in (char-array password)))))
@@ -56,8 +61,35 @@
   {:post [(some? (:certificate %))]}
   (let [ks (keystore keystore-path keystore-pass)]
     {:keystore        ks
+     :keystore-alias  keystore-alias
      :trust-store     (keystore-resource "truststore.jks" "")
      :keystore-pass   keystore-pass
      :trust-store-pass ""
      :private-key     (get-key ks keystore-alias keystore-pass)
      :certificate     (get-certificate ks keystore-alias keystore-pass)}))
+
+(defn validate-keystore
+  "Count the number of entries in a keystore file.
+   Returns a map with :count and :aliases keys."
+  [keystore-path password]
+  (let [h
+          (try
+            (let [keystore (KeyStore/getInstance "JKS")
+                  fis (FileInputStream. keystore-path)]
+              (try
+                (.load keystore fis (when password (.toCharArray password)))
+                (let [aliases (Collections/list (.aliases keystore))
+                      count (.size keystore)]
+                  {:count count
+                  :aliases (vec aliases)
+                  :success true})
+                (finally
+                  (.close fis))))
+            (catch Exception e
+              {:error (.getMessage e)
+              :success false}))]
+    (when (< 1 (:count h))
+      (throw (ex-info (str "Keystore contains multiple entries.\n"
+                           "Since the latest clj-http (3.13.1) doesn't support aliases, use only 1 entry in a keystore file.\n"
+                           "For more info: https://github.com/dakrone/clj-http/issues/656")
+                           {})))))
