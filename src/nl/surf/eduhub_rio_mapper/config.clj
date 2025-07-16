@@ -138,7 +138,6 @@
   ([env]
    {:post [(some? (-> % :rio-config :credentials :certificate))]}
    (let [[config errs] (load-config-from-env env)]
-
      (when errs
        (.println *err* "Configuration error")
        (.println *err* (envopts/errs-description errs))
@@ -147,12 +146,13 @@
                    keystore
                    keystore-pass
                    keystore-alias] :as cfg}
-           config]
+           config
+           credentials
+           (keystore/credentials keystore
+                                 keystore-pass
+                                 keystore-alias)]
        (-> cfg
-           (assoc-in [:rio-config :credentials]
-                     (keystore/credentials keystore
-                                           keystore-pass
-                                           keystore-alias))
+           (assoc-in [:rio-config :credentials] credentials)
            (assoc :clients (clients-info/read-clients-data clients-info-config)))))))
 
 (defn make-config-and-handlers-web []
