@@ -27,9 +27,14 @@
 (def xsd-beheren (edn/read (PushbackReader. (io/reader (io/resource "beheren-schema.edn")))))
 (def xsd-types (edn/read (PushbackReader. (io/reader (io/resource "beheren-types.edn")))))
 
-(defn ooapi-mapping [name key]
+(defn ooapi-mapping
+  "Look up the matching rio key for given ooapi key (or keys) of rio type `name` (ooapi-mappings.edn)."
+  [name key]
   {:pre [(string? name)]}
-  (when key (get-in specifications [:mappings name key])))
+  (when key
+    (if (coll? key)
+      (mapv #(get-in specifications [:mappings name %]) key)
+      (get-in specifications [:mappings name key]))))
 
 ;; Helpers
 
