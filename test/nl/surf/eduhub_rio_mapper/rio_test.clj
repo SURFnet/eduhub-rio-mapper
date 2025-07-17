@@ -246,7 +246,6 @@
           [:duo:aangebodenHOOpleidingsonderdeelPeriode
            [:duo:begindatum "2022-09-01"]]
           [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "30010000-0000-0000-0000-000000000001"]]
-          [:duo:kenmerken [:duo:kenmerknaam "toestemmingDeelnameSTAP"] [:duo:kenmerkwaardeEnumeratiewaarde "TOESTEMMING_VERLEEND"]]
           [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]
           [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "ENG"]]]
          (-> {::ooapi/id "30010000-0000-0000-0000-000000000001" ::ooapi/type "course"}
