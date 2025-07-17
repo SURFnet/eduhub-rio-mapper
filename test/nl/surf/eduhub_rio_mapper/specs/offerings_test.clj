@@ -16,7 +16,7 @@
 ;; License along with this program.  If not, see
 ;; <https://www.gnu.org/licenses/>.
 
-(ns nl.surf.eduhub-rio-mapper.ooapi.offerings-test
+(ns nl.surf.eduhub-rio-mapper.specs.offerings-test
   (:require
     [clojure.spec.alpha :as s]
     [clojure.test :refer :all]
