@@ -18,15 +18,23 @@
 
 (ns nl.surf.eduhub-rio-mapper.utils.keystore
   (:require [clojure.java.io :as io])
-  (:import (java.security KeyStore
+  (:import [java.security KeyStore
                           KeyStore$PasswordProtection
-                          KeyStore$PrivateKeyEntry)))
+                          KeyStore$PrivateKeyEntry]))
+
+(defn- validate-keystore [ks]
+  (when (< 1 (.size ks))
+    (throw (ex-info (str "Keystore contains multiple entries.\n"
+                          "Since the latest clj-http (3.13.1) doesn't support aliases, use only 1 entry in a keystore file.\n"
+                          "For more info: https://github.com/dakrone/clj-http/issues/656")
+                    {}))))
 
 (defn keystore
   ^KeyStore [path password]
   (with-open [in (io/input-stream path)]
     (doto (KeyStore/getInstance "JKS")
-      (.load in (char-array password)))))
+      (.load in (char-array password))
+      (validate-keystore))))
 
 (defn keystore-resource
   ^KeyStore [resource-path password]
@@ -56,6 +64,7 @@
   {:post [(some? (:certificate %))]}
   (let [ks (keystore keystore-path keystore-pass)]
     {:keystore        ks
+     :keystore-alias  keystore-alias
      :trust-store     (keystore-resource "truststore.jks" "")
      :keystore-pass   keystore-pass
      :trust-store-pass ""
