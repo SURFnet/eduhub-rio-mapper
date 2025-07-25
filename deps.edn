@@ -8,8 +8,8 @@
          org.clojure/data.xml        {:mvn/version "0.0.8"}
          org.apache.santuario/xmlsec {:mvn/version "4.0.4"}
          cheshire/cheshire           {:mvn/version "6.0.0"}
-         commons-io/commons-io       {:mvn/version "2.19.0"}
-         commons-codec/commons-codec {:mvn/version "1.18.0"}
+         commons-io/commons-io       {:mvn/version "2.20.0"}
+         commons-codec/commons-codec {:mvn/version "1.19.0"}
          com.velisco/strgen          {:mvn/version "0.2.5" :exclusions [org.clojure/clojurescript]}
 
          ;; http
@@ -31,8 +31,8 @@
          ch.qos.logback.contrib/logback-jackson      {:mvn/version "0.1.5"}
          ch.qos.logback.contrib/logback-json-classic {:mvn/version "0.1.5"}
          ch.qos.logback/logback-classic              {:mvn/version "1.5.18"}
-         com.fasterxml.jackson.core/jackson-core     {:mvn/version "2.19.1"}
-         com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.19.1"}
+         com.fasterxml.jackson.core/jackson-core     {:mvn/version "2.19.2"}
+         com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.19.2"}
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.8"}}
 
  :aliases
