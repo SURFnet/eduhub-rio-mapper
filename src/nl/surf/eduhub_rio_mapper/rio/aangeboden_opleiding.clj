@@ -171,7 +171,7 @@
 
           ;; These are in the xsd but ignored by us
           :eigenAangebodenOpleidingSleutel (some-> id str/lower-case) ;; resolve to the ooapi id
-          :instroomEinddatum (:lastStartDate rio-consumer)
+          :laatsteInstroomdatum (:lastStartDate rio-consumer)
           :opleidingserkenningSleutel nil
           :voVakerkenningSleutel nil)))))
 
