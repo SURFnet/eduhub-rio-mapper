@@ -1,13 +1,13 @@
-﻿<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <xsd:schema
 attributeFormDefault="unqualified"
 elementFormDefault="qualified"
 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 targetNamespace="http://duo.nl/schema/DUO_RIO_Raadplegen_OnderwijsOrganisatie_V4"
 xmlns="http://duo.nl/schema/DUO_RIO_Raadplegen_OnderwijsOrganisatie_V4"
-version="5828">
+version="7858">
 <xsd:annotation>
-<xsd:documentation>XSD gegenereerd op 25-02-2025 11:39:18.657 op basis van commit-versie 5828 van het DUO_Service- en Berichtenboek ten behoeve van het servicecontract DUO_RIO_Raadplegen_OnderwijsOrganisatie_V4. Gemaakt met C:\ProgramData\.magicdraw\190SP4\data\reports\WSDL-XSD-script\XSD-WSDL-script_V0045.docx en XSD-script_V0045.xml</xsd:documentation>
+<xsd:documentation>XSD gegenereerd op 14-07-2025 12:59:13.568 op basis van commit-versie 7858 van het DUO_Service- en Berichtenboek ten behoeve van het servicecontract DUO_RIO_Raadplegen_OnderwijsOrganisatie_V4. Gemaakt met C:\Users\in564mei\AppData\Local\.magicdraw\2021x\data\reports\WSDL-XSD-script\XSD-WSDL-script_V0045.docx en XSD-script_V0045.xml</xsd:documentation>
 </xsd:annotation>
 <!--===================Begin berichtelementen=================-->
 <xsd:element name="opvragen_aangebodenOpleidingenVanOrganisatie_request" type="opvragen_aangebodenOpleidingenVanOrganisatie_request"/>
@@ -987,7 +987,7 @@ DefinitieHerkomst: RIO
 <xsd:extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
 <xsd:sequence>
 <xsd:element maxOccurs="1" minOccurs="1" name="vorm" type="OpleidingskenmerkcodeOnderwijsintensiteit-v01"/>
-<xsd:element maxOccurs="1" minOccurs="0" name="voertaal" type="Taalcode-v01"/>
+<xsd:element maxOccurs="3" minOccurs="0" name="voertaal" type="Taalcode-v01"/>
 </xsd:sequence>
 </xsd:extension>
 </xsd:complexContent>
@@ -1044,7 +1044,7 @@ DefinitieHerkomst: RIO
 <xsd:extension base="Kenmerkwaardenbereik_AangebodenOpleiding">
 <xsd:sequence>
 <xsd:element maxOccurs="1" minOccurs="0" name="vorm" type="OpleidingskenmerkcodeOnderwijsintensiteit-v01"/>
-<xsd:element maxOccurs="1" minOccurs="0" name="voertaal" type="Taalcode-v01"/>
+<xsd:element maxOccurs="3" minOccurs="0" name="voertaal" type="Taalcode-v01"/>
 </xsd:sequence>
 </xsd:extension>
 </xsd:complexContent>
@@ -1190,6 +1190,7 @@ DefinitieHerkomst: RIO
 </xsd:annotation>
 <xsd:sequence>
 <xsd:element maxOccurs="1" minOccurs="0" name="eigenAangebodenOpleidingSleutel" type="AangebodenOpleidingExterneIdentificatie-v01"/>
+<xsd:element maxOccurs="1" minOccurs="0" name="laatsteInstroomdatum" type="LaatsteInstroomDatum-v01"/>
 </xsd:sequence>
 </xsd:complexType>
 <xsd:element name="kenmerkwaardenbereik_AangebodenOpleidingCohort" type="Kenmerkwaardenbereik_AangebodenOpleidingCohort" abstract="true"/>
@@ -2000,8 +2001,8 @@ DefinitieHerkomst: RIO
 </xsd:documentation>
 </xsd:annotation>
 <xsd:sequence>
-<xsd:element maxOccurs="1" minOccurs="1" name="opleidingsstelsel" type="Opleidingsstelsel-v07"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="opleidingscode" type="Opleidingcode"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="opleidingsstelsel" type="Opleidingsstelsel-v08"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="opleidingscode" type="Erkendeopleidingscode"/>
 </xsd:sequence>
 </xsd:complexType>
 <xsd:element name="opleidingsonderdeel" type="Opleidingsonderdeel" substitutionGroup="opleidingseenheid" abstract="true"/>
@@ -2775,8 +2776,8 @@ Het opleidingsniveau is opgenomen omdat men voor sommige VO vakken dezelfde code
 </xsd:documentation>
 </xsd:annotation>
 <xsd:sequence>
-<xsd:element maxOccurs="1" minOccurs="1" name="opleidingsstelsel" type="Opleidingsstelsel-v07"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="opleidingscode" type="Opleidingcode"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="opleidingsstelsel" type="Opleidingsstelsel-v08"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="opleidingscode" type="Erkendeopleidingscode"/>
 <xsd:element maxOccurs="1" minOccurs="1" name="opleidingsniveau" type="Niveaucode-v06"/>
 </xsd:sequence>
 </xsd:complexType>
@@ -3075,6 +3076,20 @@ FormaatKarakterset: AN
 <xsd:restriction base="WaardenlijstType-v01">
 <xsd:minLength value="1"/>
 <xsd:maxLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Erkendeopleidingscode">
+<xsd:annotation>
+<xsd:documentation>
+Definitie: Een unieke identificatie die door de erkenner wordt toegekend aan een opleidingserkenning in de Registratie Instellingen en Opleidingen.
+DefinitieHerkomst: Registratie Instellingen en Opleidingen
+Toelichting: De opleidingserkenning kan betrekking hebben op een opleiding, een opleidingsgroep, een opleidingsfase of een opleidingsonderdeel.
+FormaatKarakterset: AN
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="Teksttype">
+<xsd:minLength value="1"/>
+<xsd:maxLength value="8"/>
 </xsd:restriction>
 </xsd:simpleType>
 <xsd:simpleType name="ErkendeOrganisatiecode-v01">
@@ -3399,6 +3414,19 @@ vanaf 1 augustus 2018 voor MBO Assistent
 <xsd:restriction base="WaardenlijstType-v01">
 </xsd:restriction>
 </xsd:simpleType>
+<xsd:simpleType name="LaatsteInstroomDatum-v01">
+<xsd:annotation>
+<xsd:documentation>
+Definitie: De laatste datum dat aspirant studenten kunnen instromen op een opleiding.
+DefinitieHerkomst: Registratie Instellingen en Opleidingen
+Toelichting: Het betreft hier een tot en met datum, dus inclusief de einddatum.
+</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="DatumType">
+<xsd:minInclusive value="2025-01-01"/>
+<xsd:maxInclusive value="2100-01-01"/>
+</xsd:restriction>
+</xsd:simpleType>
 <xsd:simpleType name="Latitude-v01">
 <xsd:annotation>
 <xsd:documentation>
@@ -3697,22 +3725,6 @@ FormaatKarakterset: AN
 <xsd:maxLength value="22"/>
 </xsd:restriction>
 </xsd:simpleType>
-<xsd:simpleType name="Opleidingcode">
-<xsd:annotation>
-<xsd:documentation>
-Definitie: De code van de opleidingserkenning binnen het codestelsel.
-DefinitieHerkomst: OCW
-Toelichting: De opleidingserkenning kan betrekking hebben op een opleiding, een opleidingsgroep, een opleidingsfase of een opleidingsonderdeel.
-
-Is vervangen door ErkendeOpleidingscode
-FormaatKarakterset: AN
-</xsd:documentation>
-</xsd:annotation>
-<xsd:restriction base="VrijeTekstType">
-<xsd:minLength value="1"/>
-<xsd:maxLength value="8"/>
-</xsd:restriction>
-</xsd:simpleType>
 <xsd:simpleType name="OpleidingExterneIdentificatie-v01">
 <xsd:annotation>
 <xsd:documentation>
@@ -3864,7 +3876,7 @@ DefinitieHerkomst: Registratie Instellingen en Opleidingen
 <xsd:restriction base="WaardenlijstType-v01">
 </xsd:restriction>
 </xsd:simpleType>
-<xsd:simpleType name="Opleidingsstelsel-v07">
+<xsd:simpleType name="Opleidingsstelsel-v08">
 <xsd:annotation>
 <xsd:documentation>
 Definitie: De naam van het codestelsel waarbinnen samenhangende erkende opleidingen of vakken uniek onderscheiden worden.
