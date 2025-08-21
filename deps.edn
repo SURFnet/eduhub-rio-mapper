@@ -21,7 +21,7 @@
          nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
 
          ;; interface
-         nl.jomco/envopts     {:mvn/version "0.0.6"}
+         nl.jomco/envopts     {:mvn/version "0.0.7"}
          clj-http/clj-http    {:mvn/version "3.13.1"}
          clj-time/clj-time    {:mvn/version "0.15.2"}
          com.taoensso/carmine {:mvn/version "3.4.1" :exclusions [org.clojure/tools.reader]}
