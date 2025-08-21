@@ -21,4 +21,12 @@ jobs:
           # needs read-write access to actions, for the specified repositories and nothing else
           secret: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           # line separated list of repositories (format owner/repo)
-          repos: SURFnet/demo-data-ooapi,SURFnet/eduhub-gateway,SURFnet/eduhub-configurator,SURFnet/eduhub-rio-mapper,SURFnet/ooapi-demo-data-server,SURFnet/eduhub-validator,SURFnet/eduhub-registry-integration,SURFnet/eduhub-validator-service
+          repos: |
+            SURFnet/demo-data-ooapi
+            SURFnet/eduhub-gateway
+            SURFnet/eduhub-configurator
+            SURFnet/eduhub-rio-mapper
+            SURFnet/ooapi-demo-data-server
+            SURFnet/eduhub-validator
+            SURFnet/eduhub-registry-integration
+            SURFnet/eduhub-validator-service
