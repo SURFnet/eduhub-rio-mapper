@@ -47,12 +47,6 @@
       ("course" "program") (load-json program-course)
       (load-json offerings))))
 
-(defn mock-ooapi-loader-simple [{:keys [eduspec program-course offerings]} ooapi-type]
-  (case ooapi-type
-    "education-specification" (load-json eduspec)
-    ("course" "program") (load-json program-course)
-    (load-json offerings)))
-
 (defn- test-resolver [ootype]
   (if (= ootype "education-specification")
     rio-opleidingsid

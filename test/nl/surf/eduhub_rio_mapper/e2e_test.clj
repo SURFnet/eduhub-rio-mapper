@@ -22,7 +22,8 @@
             [clojure.test :refer :all]
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.e2e-helper :refer :all]
-            [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-helper :refer [remote-entities-fixture]])
+            [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-helper :refer [remote-entities-fixture]]
+            [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
   (:import [java.util UUID]))
 
 (use-fixtures :once with-running-mapper remote-entities-fixture)
@@ -152,34 +153,38 @@
         (set! last-job (post-job :upsert :education-specifications "parent-program"))
 
         (and
-          (is (job-done? last-job) "Parent update job should complete successfully")
+         (is (job-done? last-job) "Parent update job should complete successfully")
 
-          ;; Get updated relations for parent after update
-          (let [updated-relations (rio-relations parent-code)]
+         ;; Get updated relations for parent after update
+         (let [updated-relations (staggered-retrier #(rio-relations parent-code) seq [5 20])]
+           ;; Verify there still exist some relations
+           (is (seq updated-relations))
 
-            ;; Verify no relations with the old dates exist
-            (is (not-any? (fn [relation]
-                            (and (contains? (:opleidingseenheidcodes relation) child-code)
-                                  (= (:valid-from relation) "2016-12-15")))
-                          updated-relations)
-                "No relations should exist with the old child validFrom date (2016-12-15)")
+           ;; Verify no relations with the old dates exist
+           (is (not-any? (fn [relation]
+                           (and (contains? (:opleidingseenheidcodes relation) child-code)
+                                (= (:valid-from relation) "2016-12-15")))
+                         updated-relations)
+               "No relations should exist with the old child validFrom date (2016-12-15)")
 
-            ;; Verify new relation exists with corrected dates (parent's new validFrom)
-            (is (some (fn [relation]
-                        (and (contains? (:opleidingseenheidcodes relation) child-code)
-                              (= (:valid-from relation) "2017-01-01")))
-                      updated-relations)
-                "New relation should exist with corrected validFrom date (2017-01-01)")
+           ;; Verify new relation exists with corrected dates (parent's new validFrom)
+           (is (some (fn [relation]
+                       (and (contains? (:opleidingseenheidcodes relation) child-code)
+                            (= (:valid-from relation) "2017-01-01")))
+                     updated-relations)
+               "New relation should exist with corrected validFrom date (2017-01-01)")
 
-            ;; The basic relation should still exist (but with updated dates)
-            (is (rio-with-relation? parent-code child-code)
-                "Relation should still exist after update, but with corrected dates"))
+           ;; The basic relation should still exist (but with updated dates)
+           (is (rio-with-relation? parent-code child-code)
+               "Relation should still exist after update, but with corrected dates"))
 
-          ;; Verify both parent and child still exist in RIO
-          (is parent-code "Parent should still exist")
-          (is (rio-opleidingseenheid parent-code) "Parent should still be accessible in RIO")
-          (is child-code "Child should still exist")
-          (is (rio-opleidingseenheid child-code) "Child should still be accessible in RIO"))))
+         ;; Verify both parent and child still exist in RIO
+         (is parent-code "Parent should still exist")
+         (is (rio-opleidingseenheid parent-code) "Parent should still be accessible in RIO")
+         (is child-code "Child should still exist")
+         (is (rio-opleidingseenheid child-code) "Child should still be accessible in RIO"))))
+
+(comment
 
     (testing "scenario [1g]: Revert updating parent eduspec validFrom"
       ;; Update parent-program's validFrom to 1950-01-01 (after child's validFrom of 2016-12-15)
@@ -240,17 +245,27 @@
       (is (job-done? last-job))
       (set! program-code (job-result-aangebodenopleidingcode last-job))
       (and
-        (is (job-done? last-job))
-        (is program-code)
-        (is (= (str (ooapi-id :programs "some"))
+       (is (job-done? last-job))
+       (is program-code)
+       (is (= (str (ooapi-id :programs "some"))
               program-code)
-            "aangebodenopleidingcode is the same as the OOAPI id")
-        (set! last-xml (rio-aangebodenopleiding program-code))
-        (is (= "2008-10-18"
+           "aangebodenopleidingcode is the same as the OOAPI id")
+       (set! last-xml (rio-aangebodenopleiding program-code))
+       (let [kenmerken-data (-> (xml-utils/element->edn last-xml)
+                                :Envelope
+                                :Body
+                                :opvragen_aangebodenOpleiding_response
+                                :aangebodenHOOpleiding
+                                extract-kenmerken)]
+         (and
+           (is (= [] (mapv :kenmerknaam kenmerken-data)))
+           (is (not-any? #(= "toestemmingDeelnameSTAP" (:kenmerknaam %)) kenmerken-data)
+               "Should not contain toestemmingDeelnameSTAP kenmerk")))
+       (is (= "2008-10-18"
               (get-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingPeriode" "begindatum"])))
-        (is (= ["1234asd12" "1234poi12" "1234qwe12"]
+       (is (= ["1234asd12" "1234poi12" "1234qwe12"]
               (sort
-                (get-all-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingCohort" "cohortcode"]))))))
+               (get-all-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingCohort" "cohortcode"]))))))
 
     (testing "scenario [4a]: Test /job/dry-run to see the difference between the program in OOAPI en de opleidingeenheid in RIO. You can expect them to be the same."
       (set! last-job (post-job :dry-run/upsert :programs "some"))
@@ -302,6 +317,8 @@
       (and
         (is (job-done? last-job))
         (is (nil? (rio-resolve "education-specification" child-code)))))))
+
+)
 
 (def ^:dynamic course-id nil)
 

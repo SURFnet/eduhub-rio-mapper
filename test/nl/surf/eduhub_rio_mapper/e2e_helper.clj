@@ -20,6 +20,7 @@
   (:require [clj-http.client :as http]
             [clojure.string :as str]
             [clojure.test :as test]
+            [clojure.tools.logging :as log]
             [environ.core :refer [env]]
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
@@ -421,6 +422,16 @@
                  (@rio-resolver rio-type id (:institution-oin @client-info)))]
     (print-http-messages @messages-atom)
     result))
+
+(defn staggered-retrier [f result-ok? retry-delays]
+  (let [r (f)]
+    (if (or (result-ok? r)
+            (empty? retry-delays))
+      r
+      (do
+        (spit "acid.log" (str "ACID isolation error, inconsistent read after write; sleeping for " (first retry-delays) " seconds") :append true)
+        (Thread/sleep (first retry-delays))
+        (staggered-retrier f result-ok? (rest retry-delays))))))
 
 (defn rio-relations
   "Call RIO `opvragen_opleidingsrelatiesBijOpleidingseenheid`."

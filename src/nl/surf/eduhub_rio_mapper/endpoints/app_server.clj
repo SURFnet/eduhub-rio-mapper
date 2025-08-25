@@ -26,7 +26,6 @@
                    {:host         host
                     :port         port
                     :join?        true
-                    :daemon?      true
                     ;; Configure Jetty to not send server version
                     :configurator (fn [jetty]
                                     (doseq [connector (.getConnectors jetty)]
