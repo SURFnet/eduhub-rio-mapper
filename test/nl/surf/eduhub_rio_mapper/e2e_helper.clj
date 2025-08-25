@@ -291,7 +291,7 @@
                       :expected '~form, :actual attrs#})
      result#))
 
-(defn- extract-kenmerken [node]
+(defn extract-kenmerken [node]
   (if (map? node)
     [(:kenmerken node)]
     (keep :kenmerken node)))

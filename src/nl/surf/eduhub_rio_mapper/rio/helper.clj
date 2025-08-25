@@ -128,7 +128,7 @@
    "eigenAangebodenOpleidingSleutel" :string
    "eigenOpleidingseenheidSleutel" :string
    "eisenWerkzaamheden" :enum
-   "instroomEinddatum" :string
+   "laatsteInstroomdatum" :date
    "internationaleNaamDuits" :string
    "opleidingsvorm" :enum
    "propedeutischeFase" :enum

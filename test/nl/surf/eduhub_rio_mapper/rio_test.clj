@@ -308,13 +308,13 @@
               [:duo:soort "TOTALE_VERPLICHTE_KOSTEN"]
               [:duo:bedrag "340.84"]]]
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
-            [:duo:kenmerken [:duo:kenmerknaam "instroomEinddatum"] [:duo:kenmerkwaardeTekst "2025-08-24"]]
+            [:duo:kenmerken [:duo:kenmerknaam "laatsteInstroomdatum"] [:duo:kenmerkwaardeDatum "2022-08-24"]]
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
            (-> (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader
                                            {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
                ::ooapi/entity
-               (assoc-in [:consumers 0 :lastStartDate] "2025-08-24")
+               (assoc-in [:consumers 0 :lastStartDate] "2022-08-24")
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
   (testing "program with nonstandard mode of delivery"
     (is (= [:duo:aangebodenHOOpleiding
