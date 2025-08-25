@@ -45,5 +45,5 @@
       (defaults/wrap-defaults defaults/api-defaults)))
 
 (defn serve-api
-  [{{:keys [^Integer port host]} :worker-api-config :as config}]
-  (app-server/run-jetty (make-app config) host port))
+  [{{:keys [^Integer port host]} :worker-api-config :as config} options]
+  (app-server/run-jetty (make-app config) host port options))

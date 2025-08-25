@@ -66,13 +66,12 @@
   {:pre [getter]}
   (case command
     "serve-api"
-    (api/serve-api config)
+    (api/serve-api config {:join? true})
 
     "worker"
     ; Before starting the worker, start a http server solely for the health endpoint as a daemon thread
-    (let [thread (new Thread ^Runnable #(worker-api/serve-api config))]
-      (.setDaemon thread true)
-      (.start thread)
+    (do
+      (worker-api/serve-api config {:join? false})
       (worker/wait-worker
         (worker/start-worker! config)))
 
