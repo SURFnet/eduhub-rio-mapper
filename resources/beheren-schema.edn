@@ -175,7 +175,7 @@
   {:name "eigenAangebodenOpleidingSleutel",
    :type "AangebodenOpleidingExterneIdentificatie-v01",
    :kenmerk true}
-  {:name "instroomEinddatum", :type "LaasteInstroomDatum-v01", :kenmerk true}
+  {:name "laatsteInstroomdatum", :type "LaasteInstroomDatum-v01", :kenmerk true}
   {:name "vorm",
    :type "OpleidingskenmerkcodeOnderwijsintensiteit-v01",
    :kenmerk true}
@@ -266,7 +266,7 @@
   {:name "eigenAangebodenOpleidingSleutel",
    :type "AangebodenOpleidingExterneIdentificatie-v01",
    :kenmerk true}
-  {:name "instroomEinddatum", :type "LaasteInstroomDatum-v01", :kenmerk true}
+  {:name "laatsteInstroomdatum", :type "LaasteInstroomDatum-v01", :kenmerk true}
   {:name "vorm",
    :type "OpleidingskenmerkcodeOnderwijsintensiteit-v01",
    :kenmerk true}
