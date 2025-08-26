@@ -18,10 +18,10 @@
 
 (ns nl.surf.eduhub-rio-mapper.processing-test
   (:require [clojure.test :refer :all]
-            [nl.surf.eduhub-rio-mapper.commands.processing :as processing]))
+            [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]))
 
 (deftest test-blocking-retry
-  (let [retry-3-times #(processing/blocking-retry % [0.001 0.001 0.001] nil)]
+  (let [retry-3-times #(rio.helper/blocking-retry % [0.001 0.001 0.001] nil)]
     (testing "first attempt successful"
       (let [atm (atom 1)]
         (is (= true (retry-3-times #(do (swap! atm dec)

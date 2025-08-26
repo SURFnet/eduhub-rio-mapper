@@ -184,8 +184,6 @@
          (is child-code "Child should still exist")
          (is (rio-opleidingseenheid child-code) "Child should still be accessible in RIO"))))
 
-(comment
-
     (testing "scenario [1g]: Revert updating parent eduspec validFrom"
       ;; Update parent-program's validFrom to 1950-01-01 (after child's validFrom of 2016-12-15)
         (update-in-remote-entity :education-specifications "parent-program"
@@ -258,7 +256,8 @@
                                 :aangebodenHOOpleiding
                                 extract-kenmerken)]
          (and
-           (is (= [] (mapv :kenmerknaam kenmerken-data)))
+           (is (= #{"eigenAangebodenOpleidingSleutel" "laatsteInstroomdatum" "vorm" "voertaal"}
+                  (set (map :kenmerknaam kenmerken-data))))
            (is (not-any? #(= "toestemmingDeelnameSTAP" (:kenmerknaam %)) kenmerken-data)
                "Should not contain toestemmingDeelnameSTAP kenmerk")))
        (is (= "2008-10-18"
@@ -317,8 +316,6 @@
       (and
         (is (job-done? last-job))
         (is (nil? (rio-resolve "education-specification" child-code)))))))
-
-)
 
 (def ^:dynamic course-id nil)
 

@@ -19,7 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.commands.link
   (:require [clojure.string :as str]
             [clojure.test :refer :all]
-            [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
+            [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
             [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]))
@@ -115,7 +115,7 @@
       (attribute-adapter rio-obj k))))
 
 (defn- linker [rio-obj]
-  (rio-helper/->xml (partial link-item-adapter rio-obj)
+  (rio.helper/->xml (partial link-item-adapter rio-obj)
                     (-> rio-obj first strip-duo)))
 
 (defn rio-obj-raadplegen->beheren [rio-obj finder]
@@ -136,15 +136,27 @@
                       (linker))]
     [rio-new (some finder rio-obj)]))
 
+(defn- current-sleutel [getter request]
+  (let [rio-obj (xmlclj->duo-hiccup (rio.loader/rio-finder getter request))]
+    (->> rio-obj
+         (filter #(and (vector? %)
+                       (= :duo:kenmerken (first %))
+                       (= "eigenOpleidingseenheidSleutel" (get-in % [1 1]))))
+         first
+         last
+         last)))
+
 (defn make-linker [rio-config getter]
   {:pre [rio-config]}
   (fn [{::ooapi/keys [id type] :keys [institution-oin] :as request}]
     {:pre [(:institution-oin request)]}
+    (spit "current" "\nLINKER\n" :append true)
     (let [[action sleutelnaam-kw]
           (case type
             "education-specification" ["aanleveren_opleidingseenheid" :eigenOpleidingseenheidSleutel]
             ("course" "program")      ["aanleveren_aangebodenOpleiding" :eigenAangebodenOpleidingSleutel])
           rio-obj  (rio.loader/rio-finder getter request)]
+      (when (nil? rio-obj) (spit "current" "\nNOT FOUND\n" :append true))
       (if (nil? rio-obj)
         (throw (ex-info "404 Not Found" {:phase :resolving}))
         (let [finder (sleutel-finder (name sleutelnaam-kw))
@@ -153,9 +165,14 @@
                         :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
                         :sender-oin institution-oin}
               _success (mutator/mutate! mutation rio-config)
+
+
               diff? (not= old-id id)]
+          (rio.helper/blocking-retry #(= id (current-sleutel getter request))
+                          (:rio-retry-attempts-seconds rio-config)
+                          "Ensure link sleutel is processed by RIO")
           {:link     {sleutelnaam-kw (cond-> {:diff diff?}
-                                             diff?
-                                             (assoc :old-id old-id
-                                                    :new-id id))}
+                                       diff?
+                                       (assoc :old-id old-id
+                                              :new-id id))}
            :rio-sexp (:rio-sexp mutation)})))))
