@@ -46,4 +46,6 @@
 
 (defn serve-api
   [{{:keys [^Integer port host]} :worker-api-config :as config} options]
-  (app-server/run-jetty (make-app config) host port options))
+  (app-server/run-jetty (make-app config) (assoc options
+                                                 :host host
+                                                 :port port)))
