@@ -255,6 +255,8 @@
       (recur))))
 
 (defn serve-api
-  [{{:keys [^Integer port host]} :api-config :as config}]
+  [{{:keys [^Integer port host]} :api-config :as config} options]
   (.addShutdownHook (Runtime/getRuntime) (new Thread ^Runnable shutdown-handler))
-  (app-server/run-jetty (make-app config) host port))
+  (app-server/run-jetty (make-app config) (assoc options
+                                                 :host host
+                                                 :port port)))

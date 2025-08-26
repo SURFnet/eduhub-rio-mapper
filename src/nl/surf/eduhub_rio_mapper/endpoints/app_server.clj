@@ -20,16 +20,15 @@
   (:require [ring.adapter.jetty :as jetty])
   (:import [org.eclipse.jetty.server HttpConnectionFactory]))
 
-(defn run-jetty [app host port]
+;; Configure Jetty to not send server version
+(defn- configurator [jetty]
+  (doseq [connector (.getConnectors jetty)]
+    (doseq [connFact (.getConnectionFactories connector)]
+      (when (instance? HttpConnectionFactory connFact)
+        (.setSendServerVersion (.getHttpConfiguration connFact) false)))))
+
+(defn run-jetty [app {:keys [port] :as options}]
   (println (str "Starting Jetty on port " port))
-  (jetty/run-jetty app
-                   {:host         host
-                    :port         port
-                    :join?        true
-                    :daemon?      true
-                    ;; Configure Jetty to not send server version
-                    :configurator (fn [jetty]
-                                    (doseq [connector (.getConnectors jetty)]
-                                      (doseq [connFact (.getConnectionFactories connector)]
-                                        (when (instance? HttpConnectionFactory connFact)
-                                          (.setSendServerVersion (.getHttpConfiguration connFact) false)))))}))
+  (jetty/run-jetty app (merge {:daemon?      true
+                               :configurator configurator}
+                              options)))
