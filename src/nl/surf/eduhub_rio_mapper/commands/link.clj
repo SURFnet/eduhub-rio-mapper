@@ -136,26 +136,39 @@
                       (linker))]
     [rio-new (some finder rio-obj)]))
 
+(defn- execute-link [{::ooapi/keys [id type] :keys [institution-oin] :as _request} rio-loader-fn rio-config]
+  {:pre [(#{"education-specification" "course" "program"} type)]}
+  (let [eduspec? (= type "education-specification")
+        sleutelnaam-kw (if eduspec? :eigenOpleidingseenheidSleutel :eigenAangebodenOpleidingSleutel)
+        finder (sleutel-finder (name sleutelnaam-kw))
+        [rio-new old-id] (rio-obj-raadplegen->beheren (rio-loader-fn) finder)
+        mutation {:action     (if eduspec? "aanleveren_opleidingseenheid" "aanleveren_aangebodenOpleiding")
+                  :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
+                  :sender-oin institution-oin}
+        success? (mutator/mutate! mutation rio-config)
+        predicate (fn [] (let [rio-obj (rio-loader-fn)]
+                           (= id (last (rio-obj-raadplegen->beheren rio-obj finder)))))]
+
+    ;; Ensure RIO has processed the update
+    (when success?
+      (rio-helper/blocking-retry predicate
+                                 rio-config
+                                 "Ensure link is processed by rio"))
+
+    {:rio-sexp (:rio-sexp mutation)
+     :success  success?
+     :link     {sleutelnaam-kw (cond-> {:diff (not= old-id id)}
+                                 (not= old-id id)
+                                 (assoc :old-id old-id
+                                        :new-id id))}}))
+
+(defn- load-rio-obj-for-link [getter request]
+  (let [rio-obj (rio.loader/rio-finder getter request)]
+    (or rio-obj
+        (throw (ex-info "404 Not Found" {:phase :resolving})))))
+
 (defn make-linker [rio-config getter]
   {:pre [rio-config]}
-  (fn [{::ooapi/keys [id type] :keys [institution-oin] :as request}]
+  (fn [request]
     {:pre [(:institution-oin request)]}
-    (let [[action sleutelnaam-kw]
-          (case type
-            "education-specification" ["aanleveren_opleidingseenheid" :eigenOpleidingseenheidSleutel]
-            ("course" "program")      ["aanleveren_aangebodenOpleiding" :eigenAangebodenOpleidingSleutel])
-          rio-obj  (rio.loader/rio-finder getter request)]
-      (if (nil? rio-obj)
-        (throw (ex-info "404 Not Found" {:phase :resolving}))
-        (let [finder (sleutel-finder (name sleutelnaam-kw))
-              [rio-new old-id] (rio-obj-raadplegen->beheren rio-obj finder)
-              mutation {:action     action
-                        :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
-                        :sender-oin institution-oin}
-              _success (mutator/mutate! mutation rio-config)
-              diff? (not= old-id id)]
-          {:link     {sleutelnaam-kw (cond-> {:diff diff?}
-                                             diff?
-                                             (assoc :old-id old-id
-                                                    :new-id id))}
-           :rio-sexp (:rio-sexp mutation)})))))
+    (execute-link request #(load-rio-obj-for-link getter request) rio-config)))
