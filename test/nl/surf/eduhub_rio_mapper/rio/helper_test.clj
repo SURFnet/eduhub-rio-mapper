@@ -168,3 +168,18 @@
     (is (= "012" (helper/narrow-isced "0123")))
     (is (= "021" (helper/narrow-isced "0214")))
     (is (= "999" (helper/narrow-isced "9999")))))
+
+(deftest test-blocking-retry
+  (let [retry-3-times #(helper/blocking-retry % {:rio-retry-attempts-seconds [0.001 0.001 0.001]} nil)]
+    (testing "first attempt successful"
+      (let [atm (atom 1)]
+        (is (= true (retry-3-times #(do (swap! atm dec)
+                                        (= 0 @atm)))))))
+    (testing "no successful attempts"
+      (let [atm (atom 5)]
+        (is (nil? (retry-3-times #(do (swap! atm dec)
+                                      (= 0 @atm)))))))
+    (testing "third attempt successful"
+      (let [atm (atom 3)]
+        (is (= true (retry-3-times #(do (swap! atm dec)
+                                        (= 0 @atm)))))))))

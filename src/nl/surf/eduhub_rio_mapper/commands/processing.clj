@@ -19,12 +19,12 @@
 (ns nl.surf.eduhub-rio-mapper.commands.processing
   (:require
     [clojure.spec.alpha :as s]
-    [clojure.tools.logging :as log]
     [nl.jomco.http-status-codes :as http-status]
     [nl.surf.eduhub-rio-mapper.commands.dry-run :as dry-run]
     [nl.surf.eduhub-rio-mapper.commands.link :as link]
     [nl.surf.eduhub-rio-mapper.ooapi.base :as ooapi-base]
     [nl.surf.eduhub-rio-mapper.ooapi.loader :as ooapi.loader]
+    [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
     [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
     [nl.surf.eduhub-rio-mapper.rio.relation-handler :as relation-handler]
@@ -39,22 +39,6 @@
   (let [entity (:ooapi result)]
     (when (= "aanleveren_opleidingseenheid" (:action result))
       entity)))
-
-(defn blocking-retry
-  "Calls f and retries if it returns nil or false.
-
-  Sleeps between each invocation as specified in retry-delays-seconds.
-  Returns return value of f when successful.
-  Returns nil when as many retries as delays have taken place. "
-  [f retry-delays-seconds action]
-  (loop [retry-delays-seconds retry-delays-seconds]
-    (or
-      (f)
-      (when-not (empty? retry-delays-seconds)
-        (let [[head & tail] retry-delays-seconds]
-          (log/warn (format "%s failed - sleeping for %s seconds." action head))
-          (Thread/sleep (long (* 1000 head)))
-          (recur tail))))))
 
 (defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
   (let [validating-loader (ooapi.loader/validating-loader ooapi-loader)]
@@ -123,7 +107,7 @@
         is-valid (and valid-from-check valid-to-check)]
     is-valid))
 
-(defn- make-prune-relations-phase [handlers]
+(defn- make-prune-relations-phase [{:keys [getter] :as _handlers} rio-config]
   (fn prune-relations-phase [{:keys [rio-relations institution-oin]
                               ::ooapi/keys [entity]
                               ::rio/keys [opleidingscode] :as request}]
@@ -138,7 +122,10 @@
                    opleidingscode)
           (doseq [invalid-rel invalid-relations]
             (-> (relation-handler/relation-mutation :delete institution-oin invalid-rel)
-                (mutator/mutate! (:rio-config handlers)))))
+                (mutator/mutate! rio-config)))
+          (rio.helper/blocking-retry #(empty? (relation-handler/load-relation-data getter opleidingscode institution-oin))
+                                     rio-config
+                                     "Ensure delete relation is processed by RIO"))
 
         ;; Return request with only valid relations
         (assoc request :rio-relations (vec valid-relations))))))
@@ -179,9 +166,9 @@
   (fn confirm-rio-phase [{:keys [job] :as result}]
     (let [{::ooapi/keys [id type]
            :keys        [institution-oin]} job]
-      (if (blocking-retry (complement #(resolver type id institution-oin))
-                          (:rio-retry-attempts-seconds rio-config)
-                          "Ensure delete is processed by RIO")
+      (if (rio.helper/blocking-retry (complement #(resolver type id institution-oin))
+                                     rio-config
+                                     "Ensure delete is processed by RIO")
         result
         (throw (ex-info (str "Processing this job takes longer than expected. Our developers have been informed and will contact DUO. Please try again in a few hours."
                              ": " type " " id) {:rio-queue-status :down}))))))
@@ -190,9 +177,9 @@
   (fn confirm-rio-phase [{:keys [job] :as result}]
     (let [{::ooapi/keys [id type]
            :keys        [institution-oin]} job
-          rio-code (blocking-retry #(resolver type id institution-oin)
-                                   (:rio-retry-attempts-seconds rio-config)
-                                   "Ensure upsert is processed by RIO")]
+          rio-code (rio.helper/blocking-retry #(resolver type id institution-oin)
+                                              rio-config
+                                              "Ensure upsert is processed by RIO")]
       (if rio-code
         (let [path (if (= type "education-specification")
                      [:eduspec ::rio/opleidingscode]
@@ -237,7 +224,7 @@
   (let [fs [[:fetching-ooapi  (make-updater-load-ooapi-phase handlers)]
             [:resolving       (make-updater-resolve-phase handlers)]
             [:load-relations  (make-load-relations-phase handlers)]
-            [:prune-relations (make-prune-relations-phase handlers)]
+            [:prune-relations (make-prune-relations-phase handlers rio-config)]
             [:preparing       (make-updater-soap-phase)]
             [:upserting       (make-updater-mutate-rio-phase handlers)]
             [:confirming      (make-updater-confirm-rio-phase handlers rio-config)]

@@ -224,3 +224,19 @@
                (mapcat #(get % :choice [%]))
                (mapcat process)
                vec))))
+
+(defn blocking-retry
+  "Calls f and retries if it returns nil or false.
+
+  Sleeps between each invocation as specified in retry-delays-seconds.
+  Returns return value of f when successful.
+  Returns nil when as many retries as delays have taken place. "
+  [f {:keys [rio-retry-attempts-seconds] :as _rio-config} action]
+  (loop [retry-delays-seconds rio-retry-attempts-seconds]
+    (or
+     (f)
+     (when-not (empty? retry-delays-seconds)
+       (let [[head & tail] retry-delays-seconds]
+         (log/warn (format "%s failed - sleeping for %s seconds." action head))
+         (Thread/sleep (long (* 1000 head)))
+         (recur tail))))))

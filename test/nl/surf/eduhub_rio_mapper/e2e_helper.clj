@@ -425,6 +425,7 @@
 (defn rio-relations
   "Call RIO `opvragen_opleidingsrelatiesBijOpleidingseenheid`."
   [code]
+  {:pre [code]}
   (print-boxed "rio-relations"
     (rio-get {::rio/type           rio-loader/opleidingsrelaties-bij-opleidingseenheid-type
               ::rio/opleidingscode code
