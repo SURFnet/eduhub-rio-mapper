@@ -35,6 +35,7 @@
                       :retryable-fn     (constantly false)
                       :error-fn         (constantly false)
                       :jobs-counter-fn  (constantly nil)
+                      :jobs-gauge-fn    (constantly nil)
                       :set-status-fn    (fn [_ _ & [_]] (comment "nop"))}})
 
 (deftest ^:redis worker
