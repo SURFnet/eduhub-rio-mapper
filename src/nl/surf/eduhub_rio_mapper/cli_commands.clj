@@ -20,6 +20,7 @@
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io]
             [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [nl.jomco.envopts :as envopts]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.config :as config]
@@ -62,6 +63,31 @@
       (System/exit 1))
     [client-info rest-args]))
 
+(defn- thread-info-with-trace [^Thread t stacktrace]
+  {:id (.getId t)
+   :name (.getName t)
+   :state (str (.getState t))
+   :priority (.getPriority t)
+   :alive? (.isAlive t)
+   :daemon? (.isDaemon t)
+   :group (some-> t .getThreadGroup .getName)
+   :stacktrace (mapv str stacktrace)})
+
+(defn- list-non-daemon-threads []
+  (let [current (Thread/currentThread)
+        all (Thread/getAllStackTraces)]
+    (->> all
+         (filter (fn [[^Thread t _]]
+                   (and (.isAlive t)
+                        (not (.isDaemon t))
+                        (not= t current))))
+         (map (fn [[t trace]] (thread-info-with-trace t trace)))
+         (into []))))
+
+(defn- print-remaining-threads []
+  (doseq [t (list-non-daemon-threads)]
+    (log/info t)))
+
 (defn process-command [command args {{:keys [getter resolver ooapi-loader dry-run! link! insert!] :as handlers} :handlers {:keys [clients] :as config} :config}]
   {:pre [getter]}
   (case command
@@ -70,10 +96,20 @@
 
     "worker"
     ; Before starting the worker, start a http server solely for the health endpoint as a daemon thread
-    (do
-      (worker-api/serve-api config {:join? false})
-      (worker/wait-worker
-        (worker/start-worker! config)))
+    (let [jetty (worker-api/serve-api config {:join? false})]
+      (try
+        (let [worker-result (worker/wait-worker
+                             (worker/start-worker! config))]
+          (log/info "The worker has exited without exceptions")
+          (print-remaining-threads)
+          worker-result)
+        (catch Exception ex
+          (log/error "Exception occurred in the worker" ex)
+          (print-remaining-threads)
+          (throw ex))
+        (finally
+          (log/info "Stopping Jetty")
+          (.stop jetty))))
 
     "test-rio"
     (let [[client-info _args] (parse-client-info-args args clients)
