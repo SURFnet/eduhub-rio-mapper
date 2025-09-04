@@ -20,6 +20,7 @@
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io]
             [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [nl.jomco.envopts :as envopts]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.config :as config]
@@ -70,10 +71,13 @@
 
     "worker"
     ; Before starting the worker, start a http server solely for the health endpoint as a daemon thread
-    (do
-      (worker-api/serve-api config {:join? false})
-      (worker/wait-worker
-        (worker/start-worker! config)))
+    (let [jetty (worker-api/serve-api config {:join? false})]
+      (try
+        (worker/wait-worker
+         (worker/start-worker! config))
+        (finally
+          (log/info "Stopping Jetty")
+          (.stop jetty))))
 
     "test-rio"
     (let [[client-info _args] (parse-client-info-args args clients)
