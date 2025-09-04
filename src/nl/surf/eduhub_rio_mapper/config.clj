@@ -177,5 +177,6 @@
                         :retryable-fn    status/retryable?
                         :error-fn        status/errors?
                         ;; The web-api doesn't need the job-counter
-                        :jobs-counter-fn (metrics/make-jobs-counter schac-home-to-name #(worker/queue-counts-by-key % cfg) institution-schac-homes)})]
+                        :jobs-counter-fn (metrics/make-jobs-counter schac-home-to-name)
+                        :jobs-gauge-fn   (metrics/make-jobs-gauge #(worker/queue-counts-by-key % cfg) institution-schac-homes)})]
     {:handlers handlers :config config}))
