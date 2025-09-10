@@ -35,7 +35,7 @@
   (doseq [[k v] data]
     (instrument/set! gauge {:value v :attributes {"queue-name" k}})))
 
-(defn make-jobs-gauge [queue-counter institution-schac-homes]
+(defn make-queued-jobs-gauge [queue-counter institution-schac-homes]
   (let [gauge (instrument/instrument {:name            "rio_mapper_active_and_queued_job_count"
                                       :instrument-type :gauge})]
     (fn []

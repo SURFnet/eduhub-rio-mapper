@@ -27,16 +27,16 @@
   {:redis-conn       {:pool {} :spec {:uri (or (System/getenv "REDIS_URI") "redis://localhost")}}
    :redis-key-prefix "eduhub-rio-mapper-test"
    :status-ttl-sec   10
-   :worker           {:nap-ms           10
-                      :retry-wait-ms    10
-                      :max-retries      3
-                      :queues           ["foo" "bar"]
-                      :queue-fn         :queue
-                      :retryable-fn     (constantly false)
-                      :error-fn         (constantly false)
-                      :jobs-counter-fn  (constantly nil)
-                      :jobs-gauge-fn    (constantly nil)
-                      :set-status-fn    (fn [_ _ & [_]] (comment "nop"))}})
+   :worker           {:nap-ms               10
+                      :retry-wait-ms        10
+                      :max-retries          3
+                      :queues               ["foo" "bar"]
+                      :queue-fn             :queue
+                      :retryable-fn         (constantly false)
+                      :error-fn             (constantly false)
+                      :jobs-counter-fn      (constantly nil)
+                      :queued-jobs-gauge-fn (constantly nil)
+                      :set-status-fn        (fn [_ _ & [_]] (comment "nop"))}})
 
 (deftest ^:redis worker
   (let [job-runs (atom {"foo" [], "bar" []})

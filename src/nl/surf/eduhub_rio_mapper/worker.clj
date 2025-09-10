@@ -194,7 +194,7 @@
   - `jobs-counter-fn` a function which takes two arguments, a job and a job status,
     and updates the metrics related to the job status type.
 
-  - `jobs-gauge-fn` a function which takes no arguments, and updates the metrics for the queues.
+  - `queued-jobs-gauge-fn` a function which takes no arguments, and updates the metrics for the queues.
   "
   [{{:keys [queues
             lock-ttl-ms
@@ -209,7 +209,7 @@
             run-job-fn
             set-status-fn
             jobs-counter-fn
-            jobs-gauge-fn]
+            queued-jobs-gauge-fn]
      ;; Set lock expiry to 1 minute; locks in production have unexpectedly expired with shorter intervals
      :or {lock-ttl-ms   60000
           nap-ms        1000}} :worker
@@ -218,7 +218,7 @@
   {:pre [retry-wait-ms
          max-retries
          jobs-counter-fn
-         jobs-gauge-fn
+         queued-jobs-gauge-fn
          (seq queues)
          (fn? run-job-fn) (fn? set-status-fn)
          (ifn? retryable-fn) (ifn? error-fn) (ifn? queue-fn)]}
@@ -241,7 +241,7 @@
                   ;; Don't count job as started while retrying it
                   (when (nil? (::retries job))
                     (jobs-counter-fn job :started)
-                    (jobs-gauge-fn))
+                    (queued-jobs-gauge-fn))
                   ;; run job asynchronous
                   (let [set-status-fn (metrics/wrap-increment-count jobs-counter-fn set-status-fn)
                         c             (async/thread
@@ -289,7 +289,7 @@
                 (job-done! config queue)
 
                 ;; update gauge only after jobs removed from queue and busy-queue
-                (jobs-gauge-fn))
+                (queued-jobs-gauge-fn))
 
               (finally
                 (some->> @token (release-lock! config queue)))))
