@@ -35,14 +35,17 @@
   (doseq [[k v] data]
     (instrument/set! gauge {:value v :attributes {"queue-name" k}})))
 
-(defn make-jobs-counter [schac-home-to-name queue-counter institution-schac-homes]
-  (let [counter (instrument/instrument {:name            "rio_mapper_http_requests_total"
-                                        :instrument-type :counter})
+(defn make-queued-jobs-gauge [queue-counter institution-schac-homes]
+  (let [gauge (instrument/instrument {:name            "rio_mapper_active_and_queued_job_count"
+                                      :instrument-type :gauge})]
+    (fn []
+      (update-gauge gauge (count-queues queue-counter institution-schac-homes)))))
 
-        gauge   (instrument/instrument {:name            "rio_mapper_active_and_queued_job_count"
-                                        :instrument-type :gauge})]
+
+(defn make-jobs-counter [schac-home-to-name]
+  (let [counter (instrument/instrument {:name            "rio_mapper_http_requests_total"
+                                        :instrument-type :counter})]
     (fn [job status]
-      (update-gauge gauge (count-queues queue-counter institution-schac-homes))
       (let [schac-home (:institution-schac-home job)
             attributes {:status           (name status)
                         :schac-home       schac-home

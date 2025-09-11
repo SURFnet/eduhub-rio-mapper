@@ -192,7 +192,9 @@
     job, and returns true when job failed but can be retried.
 
   - `jobs-counter-fn` a function which takes two arguments, a job and a job status,
-    and updates the metrics related to the job status type. Also updates the metrics for the queues.
+    and updates the metrics related to the job status type.
+
+  - `queued-jobs-gauge-fn` a function which takes no arguments, and updates the metrics for the queues.
   "
   [{{:keys [queues
             lock-ttl-ms
@@ -206,7 +208,8 @@
             retryable-fn
             run-job-fn
             set-status-fn
-            jobs-counter-fn]
+            jobs-counter-fn
+            queued-jobs-gauge-fn]
      ;; Set lock expiry to 1 minute; locks in production have unexpectedly expired with shorter intervals
      :or {lock-ttl-ms   60000
           nap-ms        1000}} :worker
@@ -215,6 +218,7 @@
   {:pre [retry-wait-ms
          max-retries
          jobs-counter-fn
+         queued-jobs-gauge-fn
          (seq queues)
          (fn? run-job-fn) (fn? set-status-fn)
          (ifn? retryable-fn) (ifn? error-fn) (ifn? queue-fn)]}
@@ -236,7 +240,8 @@
                                                      (str (Instant/now))))]
                   ;; Don't count job as started while retrying it
                   (when (nil? (::retries job))
-                    (jobs-counter-fn job :started))
+                    (jobs-counter-fn job :started)
+                    (queued-jobs-gauge-fn))
                   ;; run job asynchronous
                   (let [set-status-fn (metrics/wrap-increment-count jobs-counter-fn set-status-fn)
                         c             (async/thread
@@ -247,7 +252,7 @@
                     ;; wait for job to finish and refresh lock regularly while waiting
                     (loop []
                       (let [result (async/alt!! c ([v] v)
-                                     (async/timeout timeout-ms) ::ping)]
+                                                (async/timeout timeout-ms) ::ping)]
                         (extend-lock! config queue @token lock-ttl-ms)
 
                         (cond
@@ -281,7 +286,10 @@
                             (reset! token nil)))))))
 
                 ;; done, remove from busy
-                (job-done! config queue))
+                (job-done! config queue)
+
+                ;; update gauge only after jobs removed from queue and busy-queue
+                (queued-jobs-gauge-fn))
 
               (finally
                 (some->> @token (release-lock! config queue)))))
