@@ -1,6 +1,6 @@
 (ns generate-enums.main
   (:require [clj-yaml.core :as yaml]
-            [clojure.string :as string]
+            [clojure.string :as str]
             [clojure.java.io :as io]))
 
 (defn generate-enum
@@ -16,7 +16,7 @@
          "\n  \""
          docstring
          "\"\n  #{"
-         (string/join " " (map #(str "\"" % "\"") values))
+         (str/join " " (map #(str "\"" % "\"") values))
          "})\n\n")))
 
 (defn -main

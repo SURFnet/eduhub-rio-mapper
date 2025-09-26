@@ -67,7 +67,7 @@
   exposed by the gateway and accessable to the test client."
   (:require [clj-http.client :as client]
             [clojure.java.io :as io]
-            [clojure.string :as string]
+            [clojure.string :as str]
             [environ.core :refer [env]]
             [nl.jomco.envopts :as envopts])
   (:import java.util.UUID))
@@ -125,7 +125,7 @@
   "Create a request to the ObjectStore."
   [{:keys [token storage-url] :as _info} method path]
   {:headers {"X-Auth-Token" token}
-   :url     (str (string/replace storage-url #"/$" "") path)
+   :url     (str (str/replace storage-url #"/$" "") path)
    :accept  :json
    :as      :json
    :method  method})
@@ -198,7 +198,7 @@
 
 (defn- file->base
   [file]
-  (string/replace
+  (str/replace
    (subs (.getCanonicalPath file)
          (inc (count (.getCanonicalPath (entities-dir)))))
    #"\.json$" ""))
@@ -233,7 +233,7 @@
 
 (defn- replace-content-exprs
   [templ session]
-  (string/replace templ
+  (str/replace templ
                   #"\{\{\s*([^}\s]+)\s*}\}"
                   (fn [[_ name]]
                     (str (or (get session name)
@@ -252,9 +252,9 @@
   (let [loc (file->base f)]
     (loop [[[k v] & more] session]
       (assert k)
-      (if (string/starts-with? loc k)
+      (if (str/starts-with? loc k)
         (let [[_ base] (re-matches #"^([^/]+)/.*" k)]
-          (str base "/" (string/replace loc k (str v))))
+          (str base "/" (str/replace loc k (str v))))
         (recur more)))))
 
 (defn remote-objects

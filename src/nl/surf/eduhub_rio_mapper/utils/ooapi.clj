@@ -1,5 +1,5 @@
 (ns nl.surf.eduhub-rio-mapper.utils.ooapi
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter DateTimeParseException]
@@ -25,7 +25,7 @@
   [attr & [locales]]
   (->> locales
        (keep (fn [locale]
-               (some #(when (string/starts-with? (% :language) locale)
+               (some #(when (str/starts-with? (% :language) locale)
                         (% :value))
                      attr)))
        first))
