@@ -17,7 +17,7 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.utils.logging
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [nl.jomco.http-status-codes :as http-status])
   (:import java.util.UUID
@@ -25,7 +25,7 @@
 
 (def redact-key-re
   "Regex matching keys for entries that should be redacted from logs."
-  #"(?i:)pass|secret|client.id|proxy.options|auth") ;; proxy options can contain authentication info
+  #"(?i:pass|secret|client.id|proxy.options|auth)") ;; proxy options can contain authentication info
 
 (def redact-placeholder
   "String that will replace a redacted entry.
@@ -46,6 +46,8 @@
 
     (str x)))
 
+(declare ->mdc-entry)
+
 (defn ->mdc-val
   "Convert x to value to use in the Mapped Diagnostic Context.
 
@@ -58,8 +60,14 @@
     (keyword? x)
     (subs (str x) 1)
 
+    (map? x)
+    (->> x
+         (map #(str/join " => " (->mdc-entry %)))
+         (str/join ", ")
+         (format "{ %s }"))
+
     (sequential? x)
-    (string/join ", " (map #(str "'" (->mdc-val %) "'") x))
+    (str/join ", " (map #(str "'" (->mdc-val %) "'") x))
 
     :else
     (str x)))
@@ -104,7 +112,7 @@
     ;; We get the institution-schac-home etc from either the request
     ;; or the response, since this is information that might be added
     ;; by middleware down the stack.
-    (let [method (string/upper-case (name request-method))]
+    (let [method (str/upper-case (name request-method))]
       (with-mdc (cond-> {:request_method method
                          :url            uri
                          :trace-id       trace-id

@@ -127,7 +127,7 @@
                     "verwijderen_opleidingsrelatie"
                     "aanleveren_opleidingsrelatie"]
                    (mapv #(when-let [soap-action (get-in http-messages [% :req :headers "SOAPAction"])]
-                            (last (clojure.string/split soap-action #"/")))
+                            (last (str/split soap-action #"/")))
                          (range 0 (count http-messages)))))))))
 
     (testing "Delete program using code not id"
