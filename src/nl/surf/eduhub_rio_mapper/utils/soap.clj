@@ -19,7 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.utils.soap
   (:require
    [clojure.data.xml :as clj-xml]
-   [clojure.string :as string]
+   [clojure.string :as str]
    [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
   (:import
    (java.io ByteArrayOutputStream)
@@ -56,7 +56,7 @@
 (defn- text-content= [^Element element ^String content] (.setTextContent element content))
 
 (defn- to-ns [prefix schema] (str "xmlns:" prefix "=\"" schema "\""))
-(defn xmlns [prefix-schema] (string/join " " (map #(to-ns (first %) (last %)) prefix-schema)))
+(defn xmlns [prefix-schema] (str/join " " (map #(to-ns (first %) (last %)) prefix-schema)))
 
 (def parts-data {"From" ["duo soapenv" ["soapenv:Header" "wsa:From"]]
                  "To"        ["duo soapenv" ["soapenv:Header" "wsa:To"]]
@@ -149,7 +149,7 @@
   (sign-sha256rsa (canonicalize-excl signed-info "wsa duo soapenv") private-key))
 
 (defn request-body [action rio-sexp schema sender-oin recipient-oin]
-  {:pre [sender-oin recipient-oin (not (string/blank? action))]}
+  {:pre [sender-oin recipient-oin (not (str/blank? action))]}
   (into [(keyword (str "duo:" action "_request")) {:xmlns:duo schema}
          [:duo:identificatiecodeBedrijfsdocument (UUID/randomUUID)]
          [:duo:verzendendeInstantie sender-oin]

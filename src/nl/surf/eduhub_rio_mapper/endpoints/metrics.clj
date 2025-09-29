@@ -17,8 +17,7 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.endpoints.metrics
-  (:require [clojure.string]
-            [steffan-westcott.clj-otel.api.metrics.instrument :as instrument]))
+  (:require [steffan-westcott.clj-otel.api.metrics.instrument :as instrument]))
 
 (defn count-queues [grouped-queue-counter client-schac-homes]
   {:post [(map? %)
