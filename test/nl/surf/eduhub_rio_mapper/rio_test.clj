@@ -140,6 +140,82 @@
                      [:Envelope :Header :Security :BinarySecurityTokenAttrs :wsu/Id]
                      [:Envelope :Header :MessageID]])
 
+(def program-period-1
+  [:duo:aangebodenHOOpleidingPeriode
+   [:duo:begindatum "2019-08-24"]
+   [:duo:eigenNaamAangebodenOpleiding "Biology"]
+   [:duo:eigenNaamInternationaal "Biology"]
+   [:duo:eigenOmschrijving "The study of life"]
+   [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
+   [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
+   [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
+   [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
+   [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
+   [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
+   [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
+   [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
+   [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]])
+
+(def program-period-2
+  [:duo:aangebodenHOOpleidingPeriode
+   [:duo:begindatum "2021-09-01"]
+   [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Biology"]
+   [:duo:eigenOmschrijving "The study of life"]
+   [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
+   [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
+   [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
+   [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
+   [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
+   [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
+   [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
+   [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
+   [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]])
+
+(def program-cohort-1
+  [:duo:aangebodenHOOpleidingCohort
+   [:duo:cohortcode "1234qwe12"]
+   [:duo:cohortstatus "O"]
+   [:duo:kenmerken
+    [:duo:kenmerknaam "deelnemersplaatsen"]
+    [:duo:kenmerkwaardeGetal 200]]
+   [:duo:kenmerken
+    [:duo:kenmerknaam "opleidingsvorm"]
+    [:duo:kenmerkwaardeEnumeratiewaarde "COACHING"]]
+   [:duo:beginAanmeldperiode "2019-05-01"]
+   [:duo:flexibeleInstroom
+    [:duo:beginInstroomperiode "2019-08-24"]
+    [:duo:eindeInstroomperiode "2019-08-24"]]
+   [:duo:eindeAanmeldperiode "2019-08-01"]
+   [:duo:toestemmingVereistVoorAanmelding "JA"]
+   [:duo:einddatum "2023-06-15"]
+   [:duo:prijs
+    [:duo:soort "TOTALE_VERPLICHTE_KOSTEN"]
+    [:duo:bedrag "340.84"]]])
+
+(def course-period-1
+  [:duo:aangebodenHOOpleidingsonderdeelPeriode
+   [:duo:begindatum "2019-08-24"]
+   [:duo:eigenNaamAangebodenOpleiding "Academic and Professional Writing"]
+   [:duo:eigenNaamInternationaal "Academic and Professional Writing"]
+   [:duo:eigenOmschrijving
+    "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."]
+   [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "123A123"]]
+   [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "INFOMQNM"]]
+   [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
+   [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]])
+
+(def course-period-2
+  [:duo:aangebodenHOOpleidingsonderdeelPeriode
+    [:duo:begindatum "2021-09-01"]
+    [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Academic and Professional Writing"]
+    [:duo:eigenNaamInternationaal "OVERRIDE Academic and Professional Writing"]
+    [:duo:eigenOmschrijving
+      "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."]
+    [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "999A123"]]
+    [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "INFOMQNM"]]
+    [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
+    [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]])
+
 ;; Differences between two consecutive signings of identical requests should be in timestamps, uuids and digests.
 (deftest only-differences-between-signed-requests-are-in-given-paths
   (let [credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf")
@@ -161,6 +237,11 @@
       (is (= (collect-paths differences [] [] false)
              volatile-paths)))))
 
+(defn- test-loader [id ooapi-type]
+  (->> {::ooapi/id id ::ooapi/type ooapi-type}
+       (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader)
+       ::ooapi/entity))
+
 (deftest to-rio-obj
   (testing "eduspec"
     (is (= [:duo:hoOpleiding
@@ -173,6 +254,7 @@
             [:duo:waardedocumentsoort "DIPLOMA"]
             [:duo:niveau "WO-MA"]
             [:duo:ISCED "073"]]
+
            (-> {::ooapi/id "10010000-0000-0000-0000-000000000000" ::ooapi/type "education-specification"}
                ooapi.loader/ooapi-file-loader
                opl-eenh/education-specification->opleidingseenheid))))
@@ -186,30 +268,13 @@
             [:duo:eersteInstroomDatum "2019-08-24"]
             [:duo:einddatum "2024-08-24"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
-            [:duo:aangebodenHOOpleidingsonderdeelPeriode
-             [:duo:begindatum "2019-08-24"]
-             [:duo:eigenNaamAangebodenOpleiding "Academic and Professional Writing"]
-             [:duo:eigenNaamInternationaal "Academic and Professional Writing"]
-             [:duo:eigenOmschrijving
-              "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "123A123"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "INFOMQNM"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]]
-            [:duo:aangebodenHOOpleidingsonderdeelPeriode
-             [:duo:begindatum "2021-09-01"]
-             [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Academic and Professional Writing"]
-             [:duo:eigenNaamInternationaal "OVERRIDE Academic and Professional Writing"]
-             [:duo:eigenOmschrijving
-              "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "999A123"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "INFOMQNM"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]]
+            course-period-1
+            course-period-2
             [:duo:aangebodenHOOpleidingsonderdeelPeriode
              [:duo:begindatum "2022-09-01"]]
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "30010000-0000-0000-0000-000000000000"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
+
            (-> {::ooapi/id "30010000-0000-0000-0000-000000000000" ::ooapi/type "course"}
                ooapi.loader/ooapi-file-loader
                (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" "course")))))
@@ -223,31 +288,14 @@
           [:duo:eersteInstroomDatum "2019-08-24"]
           [:duo:einddatum "2024-08-24"]
           [:duo:opleidingseenheidSleutel "1234O1234"]
-          [:duo:aangebodenHOOpleidingsonderdeelPeriode
-           [:duo:begindatum "2019-08-24"]
-           [:duo:eigenNaamAangebodenOpleiding "Academic and Professional Writing"]
-           [:duo:eigenNaamInternationaal "Academic and Professional Writing"]
-           [:duo:eigenOmschrijving
-            "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."]
-           [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "123A123"]]
-           [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "INFOMQNM"]]
-           [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-           [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]]
-          [:duo:aangebodenHOOpleidingsonderdeelPeriode
-           [:duo:begindatum "2021-09-01"]
-           [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Academic and Professional Writing"]
-           [:duo:eigenNaamInternationaal "OVERRIDE Academic and Professional Writing"]
-           [:duo:eigenOmschrijving
-            "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."]
-           [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "999A123"]]
-           [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "INFOMQNM"]]
-           [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-           [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]]
+          course-period-1
+          course-period-2
           [:duo:aangebodenHOOpleidingsonderdeelPeriode
            [:duo:begindatum "2022-09-01"]]
           [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "30010000-0000-0000-0000-000000000001"]]
           [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]
           [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "ENG"]]]
+
          (-> {::ooapi/id "30010000-0000-0000-0000-000000000001" ::ooapi/type "course"}
              ooapi.loader/ooapi-file-loader
              (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" "course")))))
@@ -261,33 +309,8 @@
             [:duo:eersteInstroomDatum "2019-08-24"]
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
-            [:duo:aangebodenHOOpleidingPeriode
-             [:duo:begindatum "2019-08-24"]
-             [:duo:eigenNaamAangebodenOpleiding "Biology"]
-             [:duo:eigenNaamInternationaal "Biology"]
-             [:duo:eigenOmschrijving "The study of life"]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
-             [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
-             [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
-             [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]]
-            [:duo:aangebodenHOOpleidingPeriode
-             [:duo:begindatum "2021-09-01"]
-             [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Biology"]
-             [:duo:eigenOmschrijving "The study of life"]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
-             [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
-             [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
-             [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]]
+            program-period-1
+            program-period-2
             [:duo:aangebodenHOOpleidingCohort
              [:duo:cohortcode "1234qwe12"]
              [:duo:cohortstatus "O"]
@@ -311,11 +334,54 @@
             [:duo:kenmerken [:duo:kenmerknaam "laatsteInstroomdatum"] [:duo:kenmerkwaardeDatum "2022-08-24"]]
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
-           (-> (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader
-                                           {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
-               ::ooapi/entity
+
+           (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
                (assoc-in [:consumers 0 :lastStartDate] "2022-08-24")
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
+
+  (testing "program with laatsteInstroomdatum and multiple teaching languages"
+  (is (= [:duo:aangebodenHOOpleiding
+          [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
+          [:duo:onderwijsaanbiedercode "110A133"]
+          [:duo:onderwijslocatiecode "123X122"]
+          [:duo:begindatum "2019-08-24"]
+          [:duo:eersteInstroomDatum "2019-08-24"]
+          [:duo:einddatum "2022-08-31"]
+          [:duo:opleidingseenheidSleutel "1234O1234"]
+          program-period-1
+          program-period-2
+          [:duo:aangebodenHOOpleidingCohort
+           [:duo:cohortcode "1234qwe12"]
+           [:duo:cohortstatus "O"]
+           [:duo:kenmerken
+            [:duo:kenmerknaam "deelnemersplaatsen"]
+            [:duo:kenmerkwaardeGetal 200]]
+           [:duo:kenmerken
+            [:duo:kenmerknaam "opleidingsvorm"]
+            [:duo:kenmerkwaardeEnumeratiewaarde "KLASSIKAAL"]]
+           [:duo:beginAanmeldperiode "2019-05-01"]
+           [:duo:flexibeleInstroom
+            [:duo:beginInstroomperiode "2019-08-24"]
+            [:duo:eindeInstroomperiode "2019-08-24"]]
+           [:duo:eindeAanmeldperiode "2019-08-01"]
+           [:duo:toestemmingVereistVoorAanmelding "JA"]
+           [:duo:einddatum "2023-06-15"]
+           [:duo:prijs
+            [:duo:soort "TOTALE_VERPLICHTE_KOSTEN"]
+            [:duo:bedrag "340.84"]]]
+          [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
+          [:duo:kenmerken [:duo:kenmerknaam "laatsteInstroomdatum"] [:duo:kenmerkwaardeDatum "2022-08-24"]]
+          [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
+          [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]
+          [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "ENG"]]]
+
+         ;; teaching languages in rio consumer override teaching language in program
+         (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
+             (assoc-in [:consumers 0 :lastStartDate] "2022-08-24")
+             (assoc-in [:consumers 0 :teachingLanguages] ["nld", "eng"])
+             (assoc :teachingLanguages "fra")
+             (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
+
   (testing "program with nonstandard mode of delivery"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
@@ -325,61 +391,24 @@
             [:duo:eersteInstroomDatum "2019-08-24"]
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
-            [:duo:aangebodenHOOpleidingPeriode
-             [:duo:begindatum "2019-08-24"]
-             [:duo:eigenNaamAangebodenOpleiding "Biology"]
-             [:duo:eigenNaamInternationaal "Biology"]
-             [:duo:eigenOmschrijving "The study of life"]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
-             [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
-             [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
-             [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]]
-            [:duo:aangebodenHOOpleidingPeriode
-             [:duo:begindatum "2021-09-01"]
-             [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Biology"]
-             [:duo:eigenOmschrijving "The study of life"]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
-             [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
-             [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
-             [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]]
-            [:duo:aangebodenHOOpleidingCohort
-             [:duo:cohortcode "1234qwe12"]
-             [:duo:cohortstatus "O"]
-             [:duo:kenmerken
-              [:duo:kenmerknaam "deelnemersplaatsen"]
-              [:duo:kenmerkwaardeGetal 200]]
-             [:duo:kenmerken
-              [:duo:kenmerknaam "opleidingsvorm"]
-              [:duo:kenmerkwaardeEnumeratiewaarde "COACHING"]]
-             [:duo:beginAanmeldperiode "2019-05-01"]
-             [:duo:flexibeleInstroom
-              [:duo:beginInstroomperiode "2019-08-24"]
-              [:duo:eindeInstroomperiode "2019-08-24"]]
-             [:duo:eindeAanmeldperiode "2019-08-01"]
-             [:duo:toestemmingVereistVoorAanmelding "JA"]
-             [:duo:einddatum "2023-06-15"]
-             [:duo:prijs
-              [:duo:soort "TOTALE_VERPLICHTE_KOSTEN"]
-              [:duo:bedrag "340.84"]]]
+            program-period-1
+            program-period-2
+            program-cohort-1
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
-           (-> (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader
-                                           {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
-               ::ooapi/entity
+           (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
                (assoc-in [:offerings 0 :consumers 0 :modeOfDelivery] ["coaching"])
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
+
   (testing "program with mode of delivery in consumers"
+    (let [mode-of-delivery-loader
+          #(let [json (ooapi.loader/ooapi-file-loader %)]
+             (if (#{"program-offerings" "course-offerings"} (::ooapi/type %))
+               (-> json
+                   (update-in [:items 0] dissoc :modeOfDelivery)
+                   (assoc-in [:items 0 :consumers 0 :modeOfDelivery] ["coaching"]))
+               json))]
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -388,61 +417,15 @@
             [:duo:eersteInstroomDatum "2019-08-24"]
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
-            [:duo:aangebodenHOOpleidingPeriode
-             [:duo:begindatum "2019-08-24"]
-             [:duo:eigenNaamAangebodenOpleiding "Biology"]
-             [:duo:eigenNaamInternationaal "Biology"]
-             [:duo:eigenOmschrijving "The study of life"]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
-             [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
-             [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
-             [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]]
-            [:duo:aangebodenHOOpleidingPeriode
-             [:duo:begindatum "2021-09-01"]
-             [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Biology"]
-             [:duo:eigenOmschrijving "The study of life"]
-             [:duo:kenmerken [:duo:kenmerknaam "samenwerkendeOnderwijsaanbiedercode"] [:duo:kenmerkwaardeTekst "122A113"]]
-             [:duo:kenmerken [:duo:kenmerknaam "deficientie"] [:duo:kenmerkwaardeEnumeratiewaarde "DEFICIENTIES"]]
-             [:duo:kenmerken [:duo:kenmerknaam "versneldTraject"] [:duo:kenmerkwaardeEnumeratiewaarde "VERSNELD_TRAJECT"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
-             [:duo:kenmerken [:duo:kenmerknaam "propedeutischeFase"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_PROPEDEUTISCHE_FASE"]]
-             [:duo:kenmerken [:duo:kenmerknaam "eisenWerkzaamheden"] [:duo:kenmerkwaardeEnumeratiewaarde "EISEN"]]
-             [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
-             [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
-             [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]]
-            [:duo:aangebodenHOOpleidingCohort
-             [:duo:cohortcode "1234qwe12"]
-             [:duo:cohortstatus "O"]
-             [:duo:kenmerken
-              [:duo:kenmerknaam "deelnemersplaatsen"]
-              [:duo:kenmerkwaardeGetal 200]]
-             [:duo:kenmerken
-              [:duo:kenmerknaam "opleidingsvorm"]
-              [:duo:kenmerkwaardeEnumeratiewaarde "COACHING"]]
-             [:duo:beginAanmeldperiode "2019-05-01"]
-             [:duo:flexibeleInstroom
-              [:duo:beginInstroomperiode "2019-08-24"]
-              [:duo:eindeInstroomperiode "2019-08-24"]]
-             [:duo:eindeAanmeldperiode "2019-08-01"]
-             [:duo:toestemmingVereistVoorAanmelding "JA"]
-             [:duo:einddatum "2023-06-15"]
-             [:duo:prijs
-              [:duo:soort "TOTALE_VERPLICHTE_KOSTEN"]
-              [:duo:bedrag "340.84"]]]
+            program-period-1
+            program-period-2
+            program-cohort-1
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
-           (-> (ooapi.loader/load-entities (ooapi.loader/validating-loader #(let [json (ooapi.loader/ooapi-file-loader %)]
-                                                                              (if (#{"program-offerings" "course-offerings"} (::ooapi/type %))
-                                                                                (-> json
-                                                                                    (update-in [:items 0] dissoc :modeOfDelivery)
-                                                                                    (assoc-in [:items 0 :consumers 0 :modeOfDelivery] ["coaching"]))
-                                                                                json)))
-                                           {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
+
+           (-> (ooapi.loader/load-entities
+                (ooapi.loader/validating-loader mode-of-delivery-loader)
+                {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
                ::ooapi/entity
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program"))))))
+               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))))
