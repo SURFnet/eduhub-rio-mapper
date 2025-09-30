@@ -488,21 +488,22 @@
         rio-get
         xml-utils/str->dom)))
 
-(defn- kenmerken-tekst-aangeboden-opleiding [rio-code naam]
-  (as-> rio-code $
-        (rio-aangebodenopleiding $)
-        (xml-utils/element->edn $)
-        (:Envelope $)
-        (:Body $)
-        (:opvragen_aangebodenOpleiding_response $)
-        (some $ rio-loader/aangeboden-opleiding-namen)
-        (extract-kenmerken $)
-        (filter #(= naam (:kenmerknaam %)) $)
-        (first $)
-        (:kenmerkwaardeTekst $)))
+(defn kenmerken-values-aangeboden-opleiding [ao-dom naam kenmerk-type]
+  (as-> ao-dom $
+    (xml-utils/element->edn $)
+    (:Envelope $)
+    (:Body $)
+    (:opvragen_aangebodenOpleiding_response $)
+    (some $ rio-loader/aangeboden-opleiding-namen)
+    (extract-kenmerken $)
+    (filter #(= naam (:kenmerknaam %)) $)
+    (map kenmerk-type $)))
 
 (defn eigen-aangeboden-opleiding-sleutel [rio-code]
-  (kenmerken-tekst-aangeboden-opleiding rio-code "eigenAangebodenOpleidingSleutel"))
+  (first (kenmerken-values-aangeboden-opleiding
+          (rio-aangebodenopleiding rio-code)
+          "eigenAangebodenOpleidingSleutel"
+          :kenmerkwaardeTekst)))
 
 (defn get-in-xml
   "Get text node from `path` starting at `node`."

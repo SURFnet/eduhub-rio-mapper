@@ -256,8 +256,12 @@
               program-code)
            "aangebodenopleidingcode is the same as the OOAPI id")
        (set! last-xml (rio-aangebodenopleiding program-code))
+       (is #{"FRA" "DEU"}
+           (set (kenmerken-values-aangeboden-opleiding last-xml "voertaal" :kenmerkwaardeEnumeratiewaarde)))
        (is (= "2008-10-18"
               (get-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingPeriode" "begindatum"])))
+       (is "2022-08-24"
+           (first (kenmerken-values-aangeboden-opleiding last-xml "laatsteInstroomdatum" :kenmerkwaardeDatum)))
        (is (= ["1234asd12" "1234poi12" "1234qwe12"]
               (sort
                (get-all-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingCohort" "cohortcode"]))))))
