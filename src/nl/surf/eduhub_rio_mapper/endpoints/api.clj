@@ -62,10 +62,14 @@
   (fn job-enqueuer [req]
     (let [{:keys [job] :as res} (app req)]
       (if job
-        (let [token (UUID/randomUUID)]
+        (let [token (UUID/randomUUID)
+              suppress-header (get-in req [:headers "x-suppress-http-messages"])]
           (with-mdc {:token token}
                     ; store created-at in job itself as soon as it is created
-                    (enqueue-fn (assoc job :token token :created-at (str (Instant/now)))))
+                    (enqueue-fn (assoc job
+                                       :token token
+                                       :created-at (str (Instant/now))
+                                       :suppress-http-messages (= "true" suppress-header))))
           (assoc res :body {:token token}))
         res))))
 
