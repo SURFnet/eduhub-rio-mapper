@@ -1,0 +1,32 @@
+(ns nl.surf.eduhub-rio-mapper.dependency-test
+  (:require [clojure.test :refer [deftest is]]
+            [nl.surf.eduhub-rio-mapper.clients-info]
+            [nl.surf.eduhub-rio-mapper.endpoints.app-server]
+            [nl.surf.eduhub-rio-mapper.endpoints.health]
+            [nl.surf.eduhub-rio-mapper.endpoints.metrics]
+            [nl.surf.eduhub-rio-mapper.endpoints.ring-middleware-json]
+            [nl.surf.eduhub-rio-mapper.endpoints.worker-api]
+            [nl.surf.eduhub-rio-mapper.re-spec]
+            [nl.surf.eduhub-rio-mapper.rio.helper]
+            [nl.surf.eduhub-rio-mapper.rio.mutator]
+            [nl.surf.eduhub-rio-mapper.specs.clients-info]
+            [nl.surf.eduhub-rio-mapper.specs.mutation]
+            [nl.surf.eduhub-rio-mapper.specs.ooapi]
+            [nl.surf.eduhub-rio-mapper.specs.rio]
+            [nl.surf.eduhub-rio-mapper.specs.soap]
+            [nl.surf.eduhub-rio-mapper.utils.authentication]
+            [nl.surf.eduhub-rio-mapper.utils.exception-utils]
+            [nl.surf.eduhub-rio-mapper.utils.http-utils]
+            [nl.surf.eduhub-rio-mapper.utils.keystore]
+            [nl.surf.eduhub-rio-mapper.utils.logging]
+            [nl.surf.eduhub-rio-mapper.utils.printer]
+            [nl.surf.eduhub-rio-mapper.utils.redis]
+            [nl.surf.eduhub-rio-mapper.utils.rio-utils]
+            [nl.surf.eduhub-rio-mapper.utils.soap]
+            [nl.surf.eduhub-rio-mapper.utils.xml-utils]
+            [nl.surf.eduhub-rio-mapper.utils.xml-validator]
+            [nl.surf.eduhub-rio-mapper.worker]
+            ))
+
+(deftest ^:common common-has-no-v5-deps
+  (is true "Common code successfully loaded without v5 dependencies"))

@@ -1,5 +1,25 @@
 # SURFeduhub RIO mapper
 
+## Project Structure
+
+This project uses a separated source tree structure to distinguish between v5-specific code and common/shared code:
+
+- `src-v5/` - Version 5 specific implementation code
+- `test-v5/` - Version 5 specific tests
+- `src-common/` - Shared/common code (reusable across versions)
+- `test-common/` - Tests for common code
+
+This separation ensures clear architectural boundaries and prevents common code from depending on version-specific code. See `RFC-source-tree-separation.md` for more details.
+
+### Testing Common Code Isolation
+
+To validate that common code has no v5 dependencies, run:
+```sh
+make test-common
+```
+
+This runs tests with **only** `src-common` on the classpath (excluding `src-v5`). If any common code depends on v5-specific namespaces, the test will fail with a `FileNotFoundException`.
+
 ## Documentation
 
 ### Included
@@ -224,7 +244,7 @@ docker run \
   worker
 ```
 
-Notice that `config.env` is not included in the repo, and that the configuration files should be made 
+Notice that `config.env` is not included in the repo, and that the configuration files should be made
 available via a "volume" (see `-v` option).
 
 ## End to End tests
@@ -247,7 +267,7 @@ This agent is configured using the following environment variables:
  - `OTEL_SERVICE_NAME`
  - `OTEL_LOGS_EXPORTER`
  - `OTEL_TRACES_EXPORTER`
- 
+
  For example values see [docker-compose.yml](./docker-compose.yml).
 
 # Reporting vulnerabilities
