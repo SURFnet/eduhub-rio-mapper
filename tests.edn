@@ -1,1 +1,7 @@
-#kaocha/v1 {}
+#kaocha/v1
+{:tests [{:id :unit
+          :test-paths ["test-v5" "test-common"]
+          :ns-patterns [".*-test$"]}
+         {:id :common
+          :test-paths ["test-common"]
+          :ns-patterns [".*-test$"]}]}
