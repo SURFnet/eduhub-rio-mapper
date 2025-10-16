@@ -81,4 +81,45 @@
                   :started-at    "2024-08-30T08:41:34.929378Z"
                   :token         "12345"}
                  (dissoc (json/read-str (:body req) {:key-fn keyword}) :finished-at)))
-          (is (= (:url req) "https://github.com/")))))))
+          (is (= (:url req) "https://github.com/"))))))
+
+  (testing "webhook with http-messages"
+    (let [config-with-http-logs  (assoc config :store-http-requests true)
+          last-seen-request-atom (atom nil)
+          set-status-fn          (status/make-set-status-fn config-with-http-logs)
+          http-messages          [{:req {:url "https://example.com/"} :res {:status 200}}]
+          job                    {::job/callback-url "https://github.com/"
+                                  :action            "delete"
+                                  ::ooapi/type       "course"
+                                  ::ooapi/id         "123123"
+                                  :created-at        "2024-08-30T08:41:34.929378Z"
+                                  :started-at        "2024-08-30T08:41:34.929378Z"
+                                  :token             "67890"}
+          mock-webhook           (fn mock-webhook [req]
+                                   (reset! last-seen-request-atom req)
+                                   {:status http-status/ok
+                                    :body   {:active    true
+                                             :client_id "institution_client_id"}})
+          setup-test             (fn setup-test [job]
+                                   (reset! last-seen-request-atom nil)
+                                   (set-status-fn job :done {:aanleveren_opleidingseenheid_response {:opleidingseenheidcode "1234O4321"}
+                                                             :http-messages http-messages})
+                                   (helper/wait-while-predicate nil? last-seen-request-atom 1)
+                                   (json/read-str (:body @last-seen-request-atom) {:key-fn keyword}))]
+      (binding [client/request mock-webhook]
+        (testing "without suppress-http-messages flag"
+          (let [body (setup-test job)]
+            (is (some? (:http-messages body))
+                "http-messages should be included in callback when suppress flag is not set")
+            (is (= http-messages (:http-messages body)))))
+
+        (testing "with suppress-http-messages flag set to true"
+          (let [body (setup-test (assoc job :suppress-http-messages true :token "11111"))]
+            (is (nil? (:http-messages body))
+                "http-messages should NOT be included in callback when suppress flag is true")))
+
+        (testing "with suppress-http-messages flag set to false"
+          (let [body (setup-test (assoc job :suppress-http-messages false :token "22222"))]
+            (is (some? (:http-messages body))
+                "http-messages should be included in callback when suppress flag is false")
+            (is (= http-messages (:http-messages body)))))))))

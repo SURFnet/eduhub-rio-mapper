@@ -57,8 +57,9 @@
 
 (def callback-retry-sleep-ms 30000)
 
-(defn- do-async-callback [config {:keys [token trace-context] :as job}]
+(defn- do-async-callback [config {:keys [token trace-context suppress-http-messages] :as job}]
   (let [status (rget config token)
+        status (if suppress-http-messages (dissoc status :http-messages) status)
         req    {:url                    (::job/callback-url job)
                 :method                 :post
                 :content-type           :json

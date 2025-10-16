@@ -219,9 +219,9 @@
           "token returned")
 
       (let [job-result (-> @queue-atom first (dissoc :token))]
-        (is (= [:test :created-at] (keys job-result)))
+        (is (= [:test :created-at :suppress-http-messages] (keys job-result)))
         (is (= {:test "dummy"}
-               (dissoc job-result :created-at))
+               (dissoc job-result :created-at :suppress-http-messages))
             "job queued"))
 
       (is (-> @queue-atom first :token)
@@ -229,7 +229,36 @@
 
       (is (= (-> @queue-atom first :token)
              (-> res :body :token))
-          "job token same as returned token"))))
+          "job token same as returned token"))
+
+    (testing "suppress-http-messages header"
+      (reset! queue-atom [])
+
+      (testing "when header is absent"
+        (app {:job {:test "dummy"}})
+        (is (false? (:suppress-http-messages (first @queue-atom)))
+            "suppress-http-messages should be false when header is absent"))
+
+      (reset! queue-atom [])
+
+      (testing "when header is 'true'"
+        (app {:job {:test "dummy"} :headers {"x-suppress-http-messages" "true"}})
+        (is (true? (:suppress-http-messages (first @queue-atom)))
+            "suppress-http-messages should be true when header is 'true'"))
+
+      (reset! queue-atom [])
+
+      (testing "when header is 'false'"
+        (app {:job {:test "dummy"} :headers {"x-suppress-http-messages" "false"}})
+        (is (false? (:suppress-http-messages (first @queue-atom)))
+            "suppress-http-messages should be false when header is 'false'"))
+
+      (reset! queue-atom [])
+
+      (testing "when header is any other value"
+        (app {:job {:test "dummy"} :headers {"x-suppress-http-messages" "tomato"}})
+        (is (false? (:suppress-http-messages (first @queue-atom)))
+            "suppress-http-messages should be false when header is not 'true'")))))
 
 (deftest wrap-callback-extractor
   (let [app        (api/wrap-callback-extractor identity)]
