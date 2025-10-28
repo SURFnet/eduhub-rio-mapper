@@ -55,11 +55,13 @@
    :opleidingseenheidcode         :rioCode})
 
 (defn- education-specification-adapter
-  [{:keys [validFrom validTo formalDocument level levelOfQualification sector fieldsOfStudy timelineOverrides] :as eduspec}
+  [{:keys [validFrom validTo formalDocument level levelOfQualification sector fieldsOfStudy timelineOverrides educationSpecificationType] :as eduspec}
    {:keys [category] :as _rio-consumer}]
   (fn [opl-eenh-attr-name]
     (let [periods     (ooapi-utils/ooapi-to-periods eduspec :educationSpecification)
-          translation (mapping-eduspec->opleidingseenheid opl-eenh-attr-name)]
+          translation (mapping-eduspec->opleidingseenheid opl-eenh-attr-name)
+          ;; As of November 1st, 2025, RIO no longer returns NLQF/EQF fields for Particuliere Opleidingen
+          is-private-program? (= educationSpecificationType "privateProgram")]
       (if translation
         (translation eduspec)
         (case opl-eenh-attr-name
@@ -71,9 +73,10 @@
           :einddatum (last (sort (conj (map :validTo timelineOverrides) validTo)))
           :ISCED (rio-helper/narrow-isced fieldsOfStudy)
           :categorie (rio-helper/ooapi-mapping "categorie" category)
-          :eqf (rio-helper/ooapi-mapping "eqf" levelOfQualification)
+          ;; NLQF/EQF fields are not used for Particuliere Opleidingen (private programs)
+          :eqf (when-not is-private-program? (rio-helper/ooapi-mapping "eqf" levelOfQualification))
           :niveau (rio-helper/level-sector-mapping level sector)
-          :nlqf (rio-helper/ooapi-mapping "nlqf" levelOfQualification)
+          :nlqf (when-not is-private-program? (rio-helper/ooapi-mapping "nlqf" levelOfQualification))
           ;; eduspec itself is used to represent the main object without adaptations from timelineOverrides.
           :periodes (mapv education-specification-timeline-override-adapter periods)
           :soort (soort-mapping eduspec)
