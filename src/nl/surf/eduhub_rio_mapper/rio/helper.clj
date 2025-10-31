@@ -202,11 +202,11 @@
     (process-attribute name attr-value kenmerk type)))
 
 (defn- process-children [child-type rio-obj]
-  (->> (rio-obj child-type)
-       (mapv (fn [child]
-               {:pre [(or (fn? child)
-                          (map? child))]}
-               (->xml child child-type)))))
+  (mapv (fn [child]
+          {:pre [(or (fn? child)
+                     (map? child))]}
+          (->xml child child-type))
+        (rio-obj child-type)))
 
 (defn ->xml [rio-obj object-name]
   {:pre [(string? object-name)

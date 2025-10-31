@@ -428,4 +428,16 @@
                 (ooapi.loader/validating-loader mode-of-delivery-loader)
                 {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
                ::ooapi/entity
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))))
+               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program"))))))
+
+  (testing "private program does not include nlqf and eqf fields"
+    (let [result (-> {::ooapi/id "10020000-0000-0000-0000-000000000000" ::ooapi/type "education-specification"}
+                     ooapi.loader/ooapi-file-loader
+                     opl-eenh/education-specification->opleidingseenheid)
+          result-keys (->> (rest result)
+                           (filter vector?)
+                           (map first)
+                           set)]
+      (is (not (contains? result-keys :duo:nlqf)) "Private program should not have nlqf field")
+      (is (not (contains? result-keys :duo:eqf)) "Private program should not have eqf field")
+      (is (= (first result) :duo:particuliereOpleiding) "Result should be a particuliereOpleiding"))))
