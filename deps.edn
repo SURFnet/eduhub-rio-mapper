@@ -1,4 +1,4 @@
-{:paths ["src" "resources"]
+{:paths ["src-v5" "src-common" "resources"]
  :deps  {org.clojure/clojure      {:mvn/version "1.12.3"}
          org.clojure/core.async   {:mvn/version "1.8.741"}
          org.clojure/core.memoize {:mvn/version "1.1.266"}
@@ -40,11 +40,17 @@
         :extra-deps  {clj-commons/clj-yaml {:mvn/version "RELEASE"}
                       expound/expound      {:mvn/version "RELEASE"}}}
 
-  :test {:extra-paths ["test"]
+  :test {:extra-paths ["test-v5" "test-common"]
          :jvm-opts    ["-Dclojure.main.report=stderr"]
          :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
                        ring/ring-mock      {:mvn/version "RELEASE"}}
          :main-opts   ["-m" "kaocha.runner"]}
+
+  :test-common {:replace-paths ["src-common" "test-common" "resources"]
+                :jvm-opts      ["-Dclojure.main.report=stderr"]
+                :extra-deps    {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                                ring/ring-mock      {:mvn/version "RELEASE"}}
+                :main-opts     ["-m" "kaocha.runner" "--focus" ":common"]}
 
   :proof-specs {:extra-deps {nl.jomco/proof-specs {:mvn/version "RELEASE"}}
                 :main-opts  ["-m" "nl.jomco.proof-specs"
@@ -56,7 +62,7 @@
 
   :lint {:paths        []
          :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
-         :main-opts    ["-m" "clj-kondo.main" "--lint" "src" "test"]}
+         :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-common" "test-v5" "test-common"]}
 
   :package {:extra-paths ["target/classes"]}
   :uberjar {:replace-deps  {uberdeps/uberdeps   {:mvn/version "RELEASE"}
@@ -75,6 +81,6 @@
          :main-opts    ["-m" "antq.core"]}
 
   :mapper {:extra-paths []
-           :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.main"]}
+           :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.v5.main"]}
 
   :deps-to-scan {:extra-deps {io.opentelemetry.javaagent/opentelemetry-javaagent ^:antq/exclude {:mvn/version "2.9.0"}}}}}
