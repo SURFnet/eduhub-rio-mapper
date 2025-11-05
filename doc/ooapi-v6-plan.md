@@ -41,7 +41,10 @@ Nieuwe deploy met OOAPI v6 configuratie, of OOAPI v6 als extra profiel in bestaa
 
 ## Functionele wijzigingen in v6 Mapper
 
-In de nieuwe versie van de RIO mapper worden een aantal functionaliteiten gewijzigd of toegevoegd:
+In de nieuwe versie van de RIO mapper worden een aantal
+functionaliteiten gewijzigd of toegevoegd. Deze worden alleen in de v6
+versie toegepast, omdat dit niet backwards-compatible wijzigingen
+zouden worden in de huidige productie omgeving van v5.
 
 ### Job create API call geeft een 201 status
 
@@ -50,6 +53,21 @@ Dit is een kleine opschoning van de mapper API.
 ### Validatie op basis van OpenAPI spec
 
 OOAPI Loader code in mapper valideert OOAPI responses op basis van het RIO profiel zoals dat in de v6 specificatie staat, en weigert niet-valide data te behandelen. De bedoeling is dat, voor zover mogelijk, valide OOAPI responses ook succesvol behandeld worden door de RIO mapper.
+
+Voor de implementatie van OpenAPI validaties zal gebruik gemaakt
+worden van het OOAPI RIO profiel en validatie code zoals gebruikt in
+de [eduhub-validator](https://github.com/SURFnet/eduhub-validator/)
+repo en
+[openapi-v3-validator](https://git.sr.ht/~jomco/openapi-v3-validator),
+zodat er geen validatie verschillen optreden tussen de Eduhub
+Validator Service en de RIO Mapper -- als de API van een instelling
+valide is volgens de validator service, zou deze ook valide moeten
+zijn volgens de mapper, en als de RIO Mapper data afkeurt, zo deze ook
+afgekeurd moeten zijn volgens de eduhub validator.
+
+De specificatie van deze functionaliteit moet nog verder worden
+uitgewerkt; de de meldingen die afgegeven worden bij niet-valide data
+kunnen hierdoor anders worden dan nu het geval is.
 
 ## RIO Mapper Code layout & artifacts
 
@@ -64,9 +82,13 @@ De broncode voor deze artifacts wordt georganiseerd in 3 directories:
 
 - `src-v5/src/nl/surf/eduhub_rio_mapper/v5`
 - `src-v6/src/nl/surf/eduhub_rio_mapper/v6` 
-- `src-common/src/nl/surf/eduhub_rio_mapper/common`
+- `src-common/src/nl/surf/eduhub_rio_mapper`
 
-Met overeenkomstige test directories `test-v5`, `test-v6` en `test-common`.
+Met overeenkomstige test directories `test-v5`, `test-v6` en
+`test-common`. De code in de v5 en v6 directories krijgt ook
+onderscheidende namespace prefixes: `nl.surf.eduhub-rio-mapper.v5` en
+`nl.surf.eduhub-rio-mapper.v6`. De common code behoudt de huidige
+namespace prefix `nl.surf.eduhub-rio-mapper`.
 
 De `eduhub-rio-mapper-v5.jar` wordt gemaakt op basis van `src-v5` en `src-common`, `eduhub-rio-mapper-v6.jar` wordt gemaakt op basis van `src-v6` en `src-common`. `src-v5` en `src-v6` mogen niet van elkaar gebruik maken, en `src-common` heeft geen dependencies in `src-v5` of `src-v6`. Bij het bouwen van de jars en het draaien van tests, wordt dmv configuratie in `deps.edn` gezorgd dat alleen de verwachte src & test directories geladen worden.
 
@@ -120,7 +142,7 @@ Inclusief unit tests en relevante e2e scenario's
 
 Inclusief unit tests en relevante e2e scenario's
 
-### Implementatie Create/Update/Delete Course met offerings
+### Implementatie Create/Update/Delete Course met offerings en varianten
 
 Inclusief unit tests en relevante e2e scenario's
 
