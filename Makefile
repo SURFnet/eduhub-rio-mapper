@@ -1,10 +1,10 @@
-.PHONY: all jar lint proof-specs test test-redis test-e2e test-all watson antq clean
+.PHONY: all jar lint proof-specs test test-redis test-e2e test-all test-common create-common-test watson antq clean
 
-MAIN_CLASS=nl.surf.eduhub-rio-mapper.main
+MAIN_CLASS=nl.surf.eduhub-rio-mapper.v5.main
 JAR_FILE=target/eduhub-rio-mapper.jar
 
 DEPS_EDN=deps.edn
-DEPS_PATHS=src resources # should be the same as defined in deps.edn
+DEPS_PATHS=src-v5 src-common resources # should be the same as defined in deps.edn
 CLASSES_DIR=target/classes
 TEST_OPTS=
 
@@ -18,7 +18,7 @@ lint:
 proof-specs:
 	clojure -M:proof-specs
 
-test:
+test: test-common
 	clojure -M:test $(TEST_OPTS) --skip-meta :redis --skip-meta :e2e
 
 test-redis:
@@ -29,6 +29,9 @@ test-e2e:
 
 test-all:
 	clojure -M:test
+
+test-common:
+	clojure -M:test-common
 
 watson:
 	clojure -M:watson
