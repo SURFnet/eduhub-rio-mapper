@@ -36,11 +36,6 @@
 (s/def ::institution-schac-home string?)
 (s/def ::gateway-credentials (s/keys :req-un []))
 
-(s/def ::type
-  #{"course"
-    "education-specification"
-    "program"})
-
 (s/def ::root-url
   (re-spec #"http(s?)://.*"))
 
