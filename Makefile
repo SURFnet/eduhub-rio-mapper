@@ -18,7 +18,7 @@ lint:
 proof-specs:
 	clojure -M:proof-specs
 
-test:
+test: test-common
 	clojure -M:test $(TEST_OPTS) --skip-meta :redis --skip-meta :e2e
 
 test-redis:
@@ -32,17 +32,6 @@ test-all:
 
 test-common:
 	clojure -M:test-common
-
-create-common-test:
-	@echo "(ns nl.surf.eduhub-rio-mapper.dependency-test" > test-common/nl/surf/eduhub_rio_mapper/dependency_test.clj
-	@echo "  (:require [clojure.test :refer [deftest is]]" >> test-common/nl/surf/eduhub_rio_mapper/dependency_test.clj
-	@for ns in $$(find src-common -name "*.clj" -o -name "*.cljc" | sort | sed 's|src-common/||; s|/|.|g; s|_|-|g; s|\.clj[c]*$$||'); do \
-		echo "            [$$ns]" >> test-common/nl/surf/eduhub_rio_mapper/dependency_test.clj; \
-	done
-	@echo "            ))" >> test-common/nl/surf/eduhub_rio_mapper/dependency_test.clj
-	@echo "" >> test-common/nl/surf/eduhub_rio_mapper/dependency_test.clj
-	@echo "(deftest ^:common common-has-no-v5-deps" >> test-common/nl/surf/eduhub_rio_mapper/dependency_test.clj
-	@echo "  (is true \"Common code successfully loaded without v5 dependencies\"))" >> test-common/nl/surf/eduhub_rio_mapper/dependency_test.clj
 
 watson:
 	clojure -M:watson
