@@ -82,6 +82,8 @@
 (def ^:dynamic last-xml nil)
 (def ^:dynamic original-relations nil)
 (def ^:dynamic updated-relations nil)
+(def ^:dynamic bonus-parent-code nil)
+(def ^:dynamic bonus-child-code nil)
 
 (deftest ^:e2e test-program-with-eduspecs
   ;; insert eduspec "parent-program"
@@ -94,7 +96,9 @@
             original-rio-sleutel nil
             last-xml nil
             original-relations nil
-            updated-relations nil]
+            updated-relations nil
+            bonus-parent-code nil
+            bonus-child-code nil]
 
     (set! parent-code (job-result-opleidingseenheidcode last-job))
 
@@ -185,6 +189,68 @@
        (is (rio-opleidingseenheid parent-code) "Parent should still be accessible in RIO")
        (is child-code "Child should still exist")
        (is (rio-opleidingseenheid child-code) "Child should still be accessible in RIO")))
+
+    (testing "scenario [1f-2]: Test prune-relations by updating parent eduspec validTo from nil to actual date"
+      ;; Upsert bonusparent-program (without validTo)
+      (set! last-job (post-job :upsert :education-specifications "bonusparent-program"))
+      (set! bonus-parent-code (job-result-opleidingseenheidcode last-job))
+      (and
+       (is (job-done? last-job) "Bonus parent upsert should complete successfully")
+       (is bonus-parent-code "Bonus parent code should be set")
+
+       ;; Upsert bonuschild-program (without validTo)
+       (set! last-job (post-job :upsert :education-specifications "bonuschild-program"))
+       (set! bonus-child-code (job-result-opleidingseenheidcode last-job))
+       (is (job-done? last-job) "Bonus child upsert should complete successfully")
+       (is bonus-child-code "Bonus child code should be set")
+
+       ;; Verify relation exists between bonus parent and child
+       (is (rio-with-relation? bonus-parent-code bonus-child-code)
+           "Relation should exist between bonus parent and child")
+
+       ;; Get current relations for bonus parent - should have valid-to: nil
+       (set! original-relations (rio-relations bonus-parent-code))
+       (is (seq original-relations) "Bonus parent should have relations")
+
+       ;; Verify the relation has valid-to: nil
+       (is (some (fn [relation]
+                   (and (contains? (:opleidingseenheidcodes relation) bonus-child-code)
+                        (nil? (:valid-to relation))))
+                 original-relations)
+           "Relation should have valid-to: nil initially")
+
+       ;; Update bonusparent-program's validTo to a date in 2026
+       (update-in-remote-entity :education-specifications "bonusparent-program"
+                                #(assoc % :validTo "2026-08-31"))
+
+       ;; Perform upsert on bonusparent-program
+       (set! last-job (post-job :upsert :education-specifications "bonusparent-program"))
+       (is (job-done? last-job) "Bonus parent update job should complete successfully")
+
+       ;; Get updated relations for bonus parent after update
+       (set! updated-relations (rio-relations bonus-parent-code))
+
+       ;; Verify the relation now has valid-to set to 2026-08-31
+       (is (some (fn [relation]
+                   (and (contains? (:opleidingseenheidcodes relation) bonus-child-code)
+                        (= (:valid-to relation) "2026-08-31")))
+                 updated-relations)
+           "After update, relation should have valid-to 2026-08-31")
+
+       ;; Verify no relation with nil valid-to exists anymore
+       (is (not-any? (fn [relation]
+                       (and (contains? (:opleidingseenheidcodes relation) bonus-child-code)
+                            (nil? (:valid-to relation))))
+                     updated-relations)
+           "After update, no relation should have nil valid-to")
+
+       ;; The basic relation should still exist
+       (is (rio-with-relation? bonus-parent-code bonus-child-code)
+           "Relation should still exist after update")
+
+       ;; Verify both bonus parent and child still exist in RIO
+       (is (rio-opleidingseenheid bonus-parent-code) "Bonus parent should still be accessible in RIO")
+       (is (rio-opleidingseenheid bonus-child-code) "Bonus child should still be accessible in RIO")))
 
     (testing "scenario [1g]: Revert updating parent eduspec validFrom"
         ;; Update parent-program's validFrom to 1950-01-01 (after child's validFrom of 2016-12-15)
