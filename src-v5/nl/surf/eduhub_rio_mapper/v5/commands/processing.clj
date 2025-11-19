@@ -100,11 +100,12 @@
   [eduspec {:keys [valid-from valid-to] :as _relation}]
   (let [eduspec-valid-from (:validFrom eduspec)
         eduspec-valid-to   (:validTo eduspec)
-        valid-from-check (or (nil? eduspec-valid-from)
-                            (<= 0 (compare valid-from eduspec-valid-from)))
-        valid-to-check   (or (nil? valid-to)
-                            (nil? eduspec-valid-to)
-                            (>= 0 (compare valid-to eduspec-valid-to)))
+        valid-from-check (if (and valid-from eduspec-valid-from)
+                           (<= 0 (compare valid-from eduspec-valid-from))
+                           (nil? eduspec-valid-from))
+        valid-to-check   (if (and valid-to eduspec-valid-to)
+                           (>= 0 (compare valid-to eduspec-valid-to))
+                           (nil? eduspec-valid-to))
         is-valid (and valid-from-check valid-to-check)]
     is-valid))
 
