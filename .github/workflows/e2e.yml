@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: actions/cache@v4
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
@@ -24,7 +24,7 @@ jobs:
         echo "${PWD}/bin" >> $GITHUB_PATH
 
     - name: Start Redis
-      uses: supercharge/redis-github-action@1.8.0
+      uses: supercharge/redis-github-action@1.8.1
       with:
         redis-version: 6.2
 

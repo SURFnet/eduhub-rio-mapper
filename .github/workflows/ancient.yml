@@ -18,7 +18,7 @@ jobs:
         java-version: '21'
 
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Cache maven repository
       uses: actions/cache@v4
