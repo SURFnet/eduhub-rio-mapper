@@ -24,7 +24,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: "~/.m2/repository"
-        key: "${{ runner.os }}-clojure-${{ hashFiles('**/project.clj') }}"
+        key: "${{ runner.os }}-clojure-${{ hashFiles('**/deps.edn') }}"
 
     - name: Install clj runtime
       run: |
