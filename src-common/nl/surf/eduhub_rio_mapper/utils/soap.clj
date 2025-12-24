@@ -175,7 +175,16 @@
     document))
 
 (defn guard-valid-sexp [sexp validator]
-  (-> sexp clj-xml/sexp-as-element clj-xml/emit-str validator)
+  {:pre [(->> (flatten sexp)
+              (filter #(not (keyword? %)))
+              (filter #(not (string? %))))]}
+  #_(let [el (clj-xml/sexp-as-element sexp)
+        s (clj-xml/emit-str el)]
+    (validator s))
+  (-> sexp
+      clj-xml/sexp-as-element
+      clj-xml/emit-str
+      validator)
   sexp)
 
 (defn prepare-soap-call

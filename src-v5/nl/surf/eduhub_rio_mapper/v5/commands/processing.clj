@@ -34,6 +34,7 @@
     [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.v5.rio.relation-handler :as relation-handler]
     [nl.surf.eduhub-rio-mapper.v5.rio.updated-handler :as updated-handler]
+    [nl.surf.eduhub-rio-mapper.v5.specs.request :as request]
 ))
 
 (defn- extract-eduspec-from-result [result]
@@ -83,13 +84,14 @@
   (fn load-relations-phase [{::rio/keys [opleidingscode]
                              ::ooapi/keys [type]
                              :keys [institution-oin] :as request}]
+    {:pre [(or (nil? opleidingscode) (string? opleidingscode))]}
     (cond-> request
       (and opleidingscode
            (= type "education-specification"))
-            ;; Format: vector of relations, each relation is a map with:
-            ;; {:opleidingseenheidcodes #{string...}  ; set of opleidingseenheid codes
-            ;;  :valid-from LocalDate                 ; start date
-            ;;  :valid-to LocalDate}                  ; optional end date
+      ;; Format: vector of relations, each relation is a map with:
+      ;; {:opleidingseenheidcodes #{string...}  ; set of opleidingseenheid codes
+      ;;  :valid-from LocalDate                 ; start date
+      ;;  :valid-to LocalDate}                  ; optional end date
       (assoc :rio-relations
              (relation-handler/load-relation-data getter opleidingscode institution-oin)))))
 
