@@ -32,7 +32,7 @@
    {::ooapi/keys [id type]
     :keys        [token action institution-schac-home institution-name institution-oin trace-context] :as request}
    http-logging-enabled]
-  {:pre [type action institution-schac-home institution-oin
+  {:pre [id (string? id) (not= "" id) type action institution-schac-home institution-oin
          delete! update! dry-run! link!
          (boolean? http-logging-enabled)]}
   (let [log-context (assoc trace-context

@@ -194,7 +194,10 @@
   ([]
    (input-files (entities-dir)))
   ([dir]
-   (mapcat #(if (.isDirectory %) (input-files %) [%]) (.listFiles dir))))
+   (->> (.listFiles dir)
+        (filter #(or (.isDirectory %)
+                     (.endsWith (.getName %) ".json")))
+        (mapcat #(if (.isDirectory %) (input-files %) [%])))))
 
 (defn- file->base
   [file]
@@ -225,11 +228,13 @@
 
   See also `with-session`"
   []
-  (into {}
-        (->> (input-files)
-             (map file->key)
-             (set)
-             (map #(vector % (UUID/randomUUID))))))
+  (let [mapping (into {}
+                      (->> (input-files)
+                           (map file->key)
+                           (set)
+                           (map #(vector % (UUID/randomUUID)))))]
+    (prn "MAPPING" mapping)
+    mapping))
 
 (defn- replace-content-exprs
   [templ session]
