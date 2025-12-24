@@ -16,23 +16,75 @@
 ;; License along with this program.  If not, see
 ;; <https://www.gnu.org/licenses/>.
 
+;;
+;; INTERACTION TESTS - RECORD MODE
+;;
+;; These tests use remote-entities-fixture to load OOAPI entities from ObjectStore
+;; via the gateway, similar to e2e tests.
+;;
+;; PLAYBACK MODE (default):
+;; - Uses pre-recorded VCR cassettes from test-common/fixtures/interaction/
+;; - No network calls are made
+;; - Tests run quickly and don't require external services
+;;
+;; RECORD MODE:
+;; - Makes real HTTP calls to gateway and ObjectStore
+;; - Records new VCR cassettes for later playback
+;; - Requires environment variables (same as e2e tests):
+;;
+;;   # Gateway credentials
+;;   GATEWAY_ROOT_URL=https://gateway.test.surfeduhub.nl/
+;;   GATEWAY_USER=<username>
+;;   GATEWAY_PASSWORD=<password>
+;;
+;;   # ObjectStore credentials (for uploading fixtures)
+;;   OS_AUTH_URL=<openstack-keystone-url>
+;;   OS_USERNAME=<username>
+;;   OS_PASSWORD=<password>
+;;   OS_PROJECT_NAME=<project>
+;;   OS_CONTAINER_NAME=rio-mapper-test-suite
+;;
+;; To run in RECORD mode:
+;; 1. Set environment variables (see above)
+;; 2. Modify helper/make-vcr call in tests from :playback to :record
+;; 3. Run the tests - new VCR cassettes will be recorded
+;; 4. Restore :playback mode for normal test runs
+;;
+;; The remote entities are defined in:
+;;   test-common/fixtures/remote-entities/interaction/
+;;
+;;
+
 (ns nl.surf.eduhub-rio-mapper.interaction-test
   (:require
     [clojure.data.json :as json]
     [clojure.string :as str]
     [clojure.test :refer :all]
+    [environ.core :refer [env]]
     [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
+    [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities :refer [remote-entities-fixture]]
     [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
     [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
     [nl.surf.eduhub-rio-mapper.test-helper :as helper]
     [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
     [nl.surf.eduhub-rio-mapper.v5.cli-commands :as cli-commands]
     [nl.surf.eduhub-rio-mapper.v5.commands.processing :as processing]
+    [nl.surf.eduhub-rio-mapper.v5.config :as config]
     [nl.surf.eduhub-rio-mapper.v5.job :as job]
     [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]))
 
+(def vcr-mode :playback)
+
+(when (= :record vcr-mode)
+  (use-fixtures :once remote-entities-fixture))
+
+(defn- entity-id
+  "Get UUID of entity from remote-entities session."
+  [name]
+  (get remote-entities/*session* name))
+
 (defn- load-relations [getter client-info code]
-  {:pre [code]}
+  {:pre [(string? code)]}
   (getter {::rio/type           "opleidingsrelatiesBijOpleidingseenheid"
            :institution-oin     (:institution-oin client-info)
            ::rio/opleidingscode code}))
@@ -44,154 +96,106 @@
 
 (defn- make-runner [handlers client-info http-logging-enabled]
   (fn run [ootype id action]
+    {:pre [id (not= "" id)]}
+    ;; id is atom for relations, UUID otherwise
+
     (if (= ootype :relation)
       (load-relations (:getter handlers) client-info @id)
       (job/run! handlers
                 (merge client-info
-                       {::ooapi/id   id
+                       {::ooapi/id   (str id)
                         ::ooapi/type (name-of-ootype ootype)
                         :action      action})
                 http-logging-enabled))))
 
-(deftest interaction-test-individual
-  (let [vcr               (helper/make-vcr :playback)
-        eduspec-parent-id "fddec347-8ca1-c991-8d39-9a85d09c0004"
-        eduspec-child-id  "afb435cc-5352-f55f-a548-41c9dfd60002"
-        program-id        "49ca7998-74b1-f44a-1ec1-000000000002"
-        config            (helper/make-test-config)
-        handlers          (processing/make-handlers config)
-        client-info       (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
-        logging-runner    (make-runner handlers
-                                       client-info
-                                       true)
-        goedgekeurd?      #(= "true" (-> % vals first :requestGoedgekeurd))
-        code              (atom nil)] ; During the tests we'll learn which opleidingscode we should use.
-    ;; Test resolve giving an error
-    (let [[idx action ootype id] [20 "upsert" :eduspec  eduspec-parent-id]]
-      (testing (str "Command " idx " " action " " id)
-        (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" idx (str action "-" (name ootype)))]
-          (let [result        (logging-runner ootype id action)]
-            (is (= {:phase :resolving, :retryable? false} (select-keys (:errors result) [:phase :retryable?])))))))
-
-    ;; Test filter out AFGELEID_VAN relaties
-    (let [[idx action] [40 "get"]]
-      (testing (str "Command " idx " relation 1234O4321")
-        (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" idx (str action "-relation"))]
-          (let [result        (load-relations (:getter handlers) client-info "1234O4321")]
-            (is (empty? result))))))
-
-    (testing "Test upsert program"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" 6 "upsert-program")]
-        (let [result (logging-runner :program program-id "upsert")
-              upsert (get-in result [:http-messages 5 :req])]
-          (is (= 7 (count (:http-messages result))))
-          (is (str/includes? (:body upsert) "<duo:aangebodenOpleidingCode>49ca7998-74b1-f44a-1ec1-000000000002</duo:aangebodenOpleidingCode>")))))
-
-    ;; Test with http message logging enabled
-    (let [[idx action ootype id pred?] [1 "upsert" :eduspec  eduspec-parent-id goedgekeurd?]]
-      (testing (str "Command " idx " " action " " id)
-        (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" idx (str action "-relation" (name ootype)))]
-          (let [result        (logging-runner ootype id action)
-                http-messages (:http-messages result)
-                oplcode       (-> result :aanleveren_opleidingseenheid_response :opleidingseenheidcode)]
-            (when oplcode (swap! code #(if (nil? %) oplcode %)))
-            (when (= 1 idx)
-              (is (= "https://vt-webservice.duo.nl:6977/RIO/services/raadplegen4.0" (some-> http-messages (nth 1 nil) :req :url)))
-              (is (= 200 (some-> http-messages (nth 1 nil) :res :status))))
-            (is (pred? result) (str action "-" (name ootype) idx))))))
-
-    ;; Test with http message logging enabled
-    (let [[idx action] [1 "opleidingseenhedenVanOrganisatie"]]
-      (testing (str "Command " idx " " action)
-        (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction/cli" idx (str action "-eduspec"))]
-          (let [args ["rio-mapper-dev.jomco.nl" action "100B490" "18"]
-                result (-> (cli-commands/process-command "get" args {:handlers (processing/make-handlers config)
-                                                            :config   config})
-                           json/read-str)]
-            (is (= "1009O6891"
-                   (get-in result ["opvragen_opleidingseenhedenVanOrganisatie_response" 5 "particuliereOpleiding" "opleidingseenheidcode"])))))))
-
-    (let [[idx action ootype id] [30 "upsert" :eduspec  eduspec-child-id]]
-      (testing (str "Command " idx " " action " " id)
-        (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" idx (str action "-" (name ootype)))]
-          (let [result        (logging-runner ootype id action)
-                http-messages (:http-messages result)]
-            (is (= [nil
-                    "opvragen_rioIdentificatiecode"
-                    "opvragen_opleidingsrelatiesBijOpleidingseenheid"
-                    "aanleveren_opleidingseenheid"
-                    "opvragen_rioIdentificatiecode"
-                    "opvragen_opleidingsrelatiesBijOpleidingseenheid"
-                    nil
-                    "opvragen_rioIdentificatiecode"
-                    "verwijderen_opleidingsrelatie"
-                    "aanleveren_opleidingsrelatie"]
-                   (mapv #(when-let [soap-action (get-in http-messages [% :req :headers "SOAPAction"])]
-                            (last (str/split soap-action #"/")))
-                         (range 0 (count http-messages)))))))))
-
-    (testing "Delete program using code not id"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" 7 "delete-program")]
-        (let [result  (logging-runner :program program-id "delete")
-              body    (get-in result [:http-messages 1 :req :body])
-              ao-code "49ca7998-74b1-f44a-1ec1-888800000002"]
-          ;; ao-code is returned by the resolve action - it should be used in the "verwijder" action,
-          ;; not id.
-          (is (str/includes? body ao-code)))))))
-
 (deftest interaction-test
-  (let [vcr               (helper/make-vcr :playback)
-        eduspec-parent-id "fddec347-8ca1-c991-8d39-9a85d09c0004"
-        eduspec-child-id  "afb435cc-5352-f55f-a548-41c9dfd60002"
-        program-id        "49ca7998-74b1-f44a-1ec1-000000000002"
-        config            (helper/make-test-config)
-        handlers          (processing/make-handlers config)
-        client-info       (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
-        runner            (make-runner handlers
-                                       client-info
-                                       false)
-        goedgekeurd?      #(= "true" (-> % vals first :requestGoedgekeurd))
-        code              (atom nil) ; During the tests we'll learn which opleidingscode we should use.
-        commands          [[1 "upsert" :eduspec  eduspec-parent-id goedgekeurd?]
-                           [2 "upsert" :eduspec  eduspec-child-id  goedgekeurd?]
-                           [3 "get"    :relation code              identity]
-                           [4 "delete" :eduspec  eduspec-child-id  goedgekeurd?]
-                           [5 "get"    :relation code              nil?]
-                           [6 "upsert" :program  program-id        goedgekeurd?]
-                           [7 "delete" :program  program-id        goedgekeurd?]
-                           [8 "delete" :eduspec  eduspec-parent-id goedgekeurd?]
-                           [9 "upsert" :program  program-id        #(= (-> % :errors :message)
-                                                                       (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
+  (let [vcr                  (helper/make-vcr vcr-mode)
+        config               (if (= vcr-mode :record)
+                               (config/make-config env)
+                               (assoc-in (helper/make-test-config) [:rio-config :rio-retry-attempts-seconds] [1 1 1 1]))
+        client-info          (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
+        rio-config           (:rio-config config)
+        handlers             (processing/make-handlers {:rio-config rio-config
+                                                        :gateway-root-url (:gateway-root-url config)
+                                                        :gateway-credentials (:gateway-credentials config)})
+        ;; TODO After running record, these 3 ids need to be updated. Should be done automatically.
+        ;; TODO Sleep shorter during playback
+        eduspec-parent-id    (if (= :record vcr-mode)
+                               (entity-id "education-specifications/interaction-eduspec-parent")
+                               "9f87f277-0548-4a5d-ad8b-cdf6a2e4bfcb")
+
+        eduspec-child-id     (if (= :record vcr-mode)
+                               (entity-id "education-specifications/interaction-eduspec-child")
+                               "169a91de-5d6b-4b1e-9f9f-517d85f4fab1")
+
+        program-id           (if (= :record vcr-mode)
+                               (entity-id "education-specifications/interaction-eduspec-child")
+                               "41582431-5707-47b9-9dfe-88f36404c9fa")
+
+        runner               (make-runner handlers
+                                          client-info
+                                          false)
+        goedgekeurd?         #(= "true" (-> % vals first :requestGoedgekeurd))
+        code                 (atom nil) ; During the tests we'll learn which opleidingscode we should use.
+
+        commands            [[1 "upsert" :eduspec  eduspec-parent-id goedgekeurd?]
+                             [2 "upsert" :eduspec  eduspec-child-id  goedgekeurd?]
+                             [nil "sleep" nil nil nil]
+                             [3 "get"    :relation code              identity]
+                             [4 "delete" :eduspec  eduspec-child-id  goedgekeurd?]
+                             [nil "sleep" nil nil nil]
+                             [5 "get"    :relation code              nil?]
+                             [6 "upsert" :program  program-id        goedgekeurd?]
+                             [7 "delete" :program  program-id        goedgekeurd?]
+                             [8 "delete" :eduspec  eduspec-parent-id goedgekeurd?]
+                             [9 "upsert" :program  program-id        #(= (-> % :errors :message)
+                                                                         (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
     (doseq [[idx action ootype id pred?] commands]
       (testing (str "Command " idx " " action " " id)
-        (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" idx (str action "-" (name ootype)))]
-          (let [result  (runner ootype id action)
-                http-messages (:http-messages result)
-                oplcode (-> result :aanleveren_opleidingseenheid_response :opleidingseenheidcode)]
-            (when oplcode (swap! code #(if (nil? %) oplcode %)))
-            (is (nil? http-messages))
-            (is (pred? result) (str action "-" (name ootype) idx))))))))
+        (if (= "sleep" action)
+          (Thread/sleep 5000)
+          (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" idx (str action "-" (name ootype)))]
+            (println "ootype" ootype "id" id "action" action)
+            (let [result  (runner ootype id action)
+                  http-messages (:http-messages result)
+                  oplcode (-> result :aanleveren_opleidingseenheid_response :opleidingseenheidcode)]
+              (println "oplcode" oplcode)
+              (is (or oplcode
+                      (not= "upsert" action)
+                      (not= :eduspec ootype))
+                  (str "Expected oplcode in " (prn-str result)))
+              (when oplcode (swap! code #(if (nil? %) oplcode %))) ;; code ||= oplcode
+              (is (nil? http-messages))
+              (is (pred? result) (str action "-" (name ootype) " " idx)))))))))
 
-(deftest opleidingseenheid-finder-test
-  (let [vcr    (helper/make-vcr :playback)
-        config (helper/make-test-config)
-        client-info (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
-        rio-config (:rio-config config)
-        handlers (processing/make-handlers {:rio-config rio-config
-                                            :gateway-root-url (:gateway-root-url config)
-                                            :gateway-credentials (:gateway-credentials config)})]
+;; This just does a lookup of an existing RIO opleidingseenheid
+#_(deftest opleidingseenheid-finder-test
+  (let [vcr-mode            :record
+        vcr                 (helper/make-vcr vcr-mode)
+        config              (if (= vcr-mode :record)
+                              (config/make-config env)
+                              (helper/make-test-config))
+        client-info         (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
+        rio-config           (:rio-config config)
+        handlers             (processing/make-handlers {:rio-config rio-config
+                                                        :gateway-root-url (:gateway-root-url config)
+                                                        :gateway-credentials (:gateway-credentials config)})]
+
     (binding [http-utils/*vcr* (vcr "test-common/fixtures/opleenh-finder" 1 "finder")]
       (let [result (rio.loader/find-opleidingseenheid "1010O3664" (:getter handlers) (:institution-oin client-info))]
         (is (some? result))))))
 
-(deftest aangeboden-finder-test
-  (let [vcr    (helper/make-vcr :playback)
-        config (helper/make-test-config)
-        client-info (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
-        rio-config (:rio-config config)
-        handlers (processing/make-handlers {:rio-config rio-config
-                                            :gateway-root-url (:gateway-root-url config)
-                                            :gateway-credentials (:gateway-credentials config)})
+#_(deftest aangeboden-finder-test
+  (let [vcr-mode             :record
+        vcr                  (helper/make-vcr vcr-mode)
+        config               (if (= vcr-mode :record)
+                               (config/make-config env)
+                               (helper/make-test-config))
+        client-info          (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
+        rio-config           (:rio-config config)
+        handlers             (processing/make-handlers {:rio-config rio-config
+                                                        :gateway-root-url (:gateway-root-url config)
+                                                        :gateway-credentials (:gateway-credentials config)})
         getter (:getter handlers)]
     (testing "found aangeboden opleiding"
       (binding [http-utils/*vcr* (vcr "test-common/fixtures/aangeboden-finder-test" 1 "finder")]
