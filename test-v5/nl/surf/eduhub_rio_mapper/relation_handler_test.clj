@@ -113,10 +113,10 @@
                                  :read-url      "http://example.com"
                                  :update-url    "http://example.com"
                                  :credentials   (keystore/credentials
-                                                 "test-common/keystore.jks"
+                                                 "test/keystore.jks"
                                                  "xxxxxx"
                                                  "test-surf")}}]
-    (binding [client/request (constantly {:status 200 :body (slurp "test-common/fixtures/rio/create-relation.xml")})]
+    (binding [client/request (constantly {:status 200 :body (slurp "test-v5/fixtures/rio/create-relation.xml")})]
       (testing "child with one parent"
         (let [{:keys [missing superfluous]} (rh/update-relations (loader 1) job handlers)]
           (is (empty? superfluous))
@@ -137,7 +137,7 @@
   (testing "Valid call to delete relation"
     (let [sender-oin "4783648273648372"
           recipient-oin "5783648273648372"
-          credentials (keystore/credentials "test-common/keystore.jks" "xxxxxx" "test-surf")
+          credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf")
           actual (rh/relation-mutation
                    :delete
                    sender-oin
