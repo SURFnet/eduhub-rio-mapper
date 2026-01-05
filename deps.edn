@@ -62,6 +62,12 @@
                                 ring/ring-mock      {:mvn/version "RELEASE"}}
                 :main-opts     ["-m" "kaocha.runner" "--focus" ":common"]}
 
+  :test-v6 {:replace-paths ["src-v6" "src-common" "resources" "test-v5" "test-common"]
+            :jvm-opts      ["-Dclojure.main.report=stderr"]
+            :extra-deps    {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                            ring/ring-mock      {:mvn/version "RELEASE"}}
+            :main-opts     ["-m" "kaocha.runner" "--focus" ":common"]}
+
   :proof-specs {:extra-deps {nl.jomco/proof-specs {:mvn/version "RELEASE"}}
                 :main-opts  ["-m" "nl.jomco.proof-specs"
                              "--verbose"
