@@ -1,0 +1,97 @@
+{
+  "pageSize": 10,
+  "pageNumber": 1,
+  "items": [
+    {
+      "pendingNumberStudents": 5,
+      "academicSession": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "addresses": [
+        {
+          "countryCode": "NL",
+          "city": "Manderveen",
+          "geoLocation": {
+            "longitude": 21,
+            "latitude": 49
+          },
+          "addressType": "teaching",
+          "streetNumber": 84,
+          "postalCode": "3465IQ",
+          "street": "Kappeyne van de Coppellolaan",
+          "additional": ""
+        }
+      ],
+      "teachingLanguage": "nld",
+      "modeOfDelivery": [
+        "situated",
+        "distance-learning"
+      ],
+      "enrollStartDate": "1994-09-05",
+      "offeringType": "course",
+      "resultExpected": false,
+      "minNumberStudents": 3,
+      "startDate": "1994-09-05",
+      "flexibleEntryPeriodStart": "1994-09-05",
+      "enrollEndDate": "1995-01-31",
+      "endDate": "1995-01-31",
+      "primaryCode": {
+        "codeType": "offeringCode",
+        "code": "cafecafe-cafe-cafe-cafe-cafecafecafe"
+      },
+      "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "name": [
+        {
+          "language": "en-GB",
+          "value": "Some course offerings"
+        },
+        {
+          "language": "nl-NL",
+          "value": "Zomaar een cursus aanbod"
+        }
+      ],
+      "description": [
+        {
+          "language": "en-GB",
+          "value": ".."
+        },
+        {
+          "language": "nl-NL",
+          "value": ".."
+        }
+      ],
+      "link": "https://hogeschool-van-manderveen.nl/offerings/cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "course": "{{courses/some}}",
+      "otherCodes": [
+        {
+          "codeType": "offeringCode",
+          "code": "cafecafe-cafe-cafe-cafe-cafecafecafe"
+        }
+      ],
+      "enrolledNumberStudents": 57,
+      "flexibleEntryPeriodEnd": "2026-01-31",
+      "consumers": [
+        {
+          "alliances": [
+            {
+              "name": "ewuu",
+              "enrollmentUrl": "https://www.eigen-inschrijf-url.nl/schrijf-hier-in"
+            }
+          ],
+          "consumerKey": "eduxchange"
+        },
+        {
+          "consumerKey": "rio",
+          "requiredPermissionRegistration": "no",
+          "registrationStatus": "open"
+        }
+      ],
+      "offeringId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "programOffering": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "maxNumberStudents": 137,
+      "abbreviation": "MB",
+      "resultValueType": "0-100"
+    }
+  ],
+  "hasPreviousPage": false,
+  "hasNextPage": false,
+  "totalPages": 1
+}

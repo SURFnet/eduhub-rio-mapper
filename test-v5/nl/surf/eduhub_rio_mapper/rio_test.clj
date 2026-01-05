@@ -218,7 +218,7 @@
 
 ;; Differences between two consecutive signings of identical requests should be in timestamps, uuids and digests.
 (deftest only-differences-between-signed-requests-are-in-given-paths
-  (let [credentials (keystore/credentials "test-common/keystore.jks" "xxxxxx" "test-surf")
+  (let [credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf")
         rio-sexp [[:duo:onderwijsaanbiedercode "110A133"]
                   [:duo:peildatum "2022-06-22"]
                   [:duo:pagina "0"]]
@@ -230,7 +230,7 @@
             (filter
              (fn [[path _]] (not (volatile-paths-set path)))
              (collect-paths (xml-utils/xml-event-tree->edn (xml/parse-str xml)) [] [] true)))
-           (edn/read (PushbackReader. (io/reader (io/file "test-common/fixtures/rio/soap.edn"))))))
+           (edn/read (PushbackReader. (io/reader (io/file "test-v5/fixtures/rio/soap.edn"))))))
     ;; Do the two requests still differ in the same places?
     (let [[differences _ _] (data/diff (xml-utils/xml-event-tree->edn (xml/parse-str xml))
                                        (xml-utils/xml-event-tree->edn (xml/parse-str (soap/prepare-soap-call "opvragen_aangebodenOpleidingenVanOrganisatie" rio-sexp datamap credentials))))]
