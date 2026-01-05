@@ -4,7 +4,8 @@
   :docstring-no-summary {:level :warning}
   :used-underscored-binding {:level :warning}
   :refer-all {:exclude [clojure.test
-                        nl.surf.eduhub-rio-mapper.e2e-helper]}
+                        nl.surf.eduhub-rio-mapper.v5.e2e-helper
+                        nl.surf.eduhub-rio-mapper.v6.e2e-helper]}
   :uninitialized-var {:level :off}} ; bogus report on nl.surf.eduhub-rio-mapper.utils.redis
  :lint-as {nl.surf.eduhub-rio-mapper.utils.redis/defcmd clojure.core/def
            nl.surf.eduhub-rio-mapper.utils.redis/defcmd+ clojure.core/def}}
