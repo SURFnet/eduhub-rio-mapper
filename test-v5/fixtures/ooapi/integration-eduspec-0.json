@@ -1,0 +1,103 @@
+{
+  "level": "nt2-1",
+  "parent": "f2d020bc-5fac-b2e9-4ea7-4b35a08dfbeb",
+  "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
+  "educationSpecificationType": "privateProgram",
+  "educationSpecificationId": "790c6569-2bcc-d046-dae2-7b73e77231f3",
+  "validFrom": "2015-09-19",
+  "abbreviation": "CS",
+  "validTo": "2025-05-12",
+  "learningOutcomes": [
+    [
+      {
+        "language": "en-GB",
+        "value": "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
+      },
+      {
+        "language": "nl-NL",
+        "value": "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": "EN TRANSLATION: nieuw talent op het gebied van programmeren"
+      },
+      {
+        "language": "nl-NL",
+        "value": "NL VERTALING: nieuw talent op het gebied van programmeren"
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": "EN TRANSLATION: algemene empathie voor levende wezens"
+      },
+      {
+        "language": "nl-NL",
+        "value": "NL VERTALING: algemene empathie voor levende wezens"
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": "EN TRANSLATION: inzicht in de bijzondere eigenschappen van materialen"
+      },
+      {
+        "language": "nl-NL",
+        "value": "NL VERTALING: inzicht in de bijzondere eigenschappen van materialen"
+      }
+    ]
+  ],
+  "formalDocument": "diploma",
+  "sector": "higher professional education",
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "EN TRANSLATION: Computer Science"
+    },
+    {
+      "language": "nl-NL",
+      "value": "NL VERTALING: Computer Science"
+    }
+  ],
+  "primaryCode": {
+    "codeType": "identifier",
+    "code": "790c6569-2bcc-d046-dae2-7b73e77231f3"
+  },
+  "link": "https://universiteit-van-boxtel.nl/education-specifications/790c6569-2bcc-d046-dae2-7b73e77231f3",
+  "fieldsOfStudy": "0223",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": "EN TRANSLATION: We start simulating heat flow, and mass spectrometry. In this course is three-sided:- to broaden and deepen the subject of this Distance Learning MSc. This course focuses on designing and managing genetic resources."
+    },
+    {
+      "language": "nl-NL",
+      "value": "NL VERTALING: We start simulating heat flow, and mass spectrometry. In this course is three-sided:- to broaden and deepen the subject of this Distance Learning MSc. This course focuses on designing and managing genetic resources."
+    }
+  ],
+  "levelOfQualification": "3",
+  "consumers": [
+    {
+      "consumerKey": "rio",
+      "category": [
+        "agriculture_food_and_natural_environment",
+        "tourism_hospitality_and_recreation",
+        "healthcare_and_sport",
+        "behavior_and_society",
+        "economy",
+        "cross_sectoral",
+        "transport_and_logistics",
+        "education",
+        "technology_and_ict",
+        "language_and_culture",
+        "management_and_project_management"
+      ]
+    }
+  ],
+  "studyLoad": {
+    "value": 110,
+    "studyLoadUnit": "ects"
+  }
+}
