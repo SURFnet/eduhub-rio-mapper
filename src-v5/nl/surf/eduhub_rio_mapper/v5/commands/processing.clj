@@ -33,9 +33,7 @@
     [nl.surf.eduhub-rio-mapper.v5.ooapi.loader :as ooapi.loader]
     [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.v5.rio.relation-handler :as relation-handler]
-    [nl.surf.eduhub-rio-mapper.v5.rio.updated-handler :as updated-handler]
-    [nl.surf.eduhub-rio-mapper.v5.specs.request :as request]
-))
+    [nl.surf.eduhub-rio-mapper.v5.rio.updated-handler :as updated-handler]))
 
 (defn- extract-eduspec-from-result [result]
   (let [entity (:ooapi result)]

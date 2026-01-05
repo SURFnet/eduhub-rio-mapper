@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP:Header xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/"><wsa:To wsu:Id="Id-3d477adb-95e1-40d5-9025-7e4f2269ac14" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">http://www.w3.org/2005/08/addressing/anonymous?oin=0000000700025BE00000</wsa:To><wsa:Action wsu:Id="Id-da986da9-3edc-4411-a9aa-7e4f2269201c" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">http://duo.nl/contract/DUO_RIO_Beheren_OnderwijsOrganisatie_V4/verwijderen_opleidingseenheid</wsa:Action><wsa:MessageID wsu:Id="Id-bcce77b2-7b20-426d-b0db-7e4f2269c0fd" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">urn:uuid:a57f9a07-04a2-4943-9bb3-7e4f226907b9</wsa:MessageID><wsa:RelatesTo wsu:Id="Id-a22dcdf6-2e87-4ba2-9e37-7e4f2269941e" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">89d26f53-0ba5-43e2-8314-9c5449e27d57</wsa:RelatesTo><wsa:From wsu:Id="Id-1b718923-2de1-4f7c-95af-7e4f2269945e" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsa:Address>http://www.w3.org/2005/08/addressing/anonymous?oin=00000001800866472000</wsa:Address></wsa:From><wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><wsu:Timestamp wsu:Id="Timestamp-c62961e1-86b4-4256-9e21-7e4f2269451c" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsu:Created>2022-10-06T10:35:05Z</wsu:Created><wsu:Expires>2022-10-06T10:40:05Z</wsu:Expires></wsu:Timestamp><wsse:BinarySecurityToken wsu:Id="SecurityToken-12877efb-5023-4a51-b36e-7e4f22691e39" EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">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</wsse:BinarySecurityToken><Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+<SignedInfo>
+  <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+  <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+  <Reference URI="#Id-3d477adb-95e1-40d5-9025-7e4f2269ac14">
+    <Transforms>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </Transforms>
+    <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <DigestValue>Q5sWQFj5aN/FdUoBYOu7kI8fBttf/EAb1TqxAf2TBLg=</DigestValue>
+  </Reference>
+  <Reference URI="#Id-da986da9-3edc-4411-a9aa-7e4f2269201c">
+    <Transforms>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </Transforms>
+    <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <DigestValue>Bu6o6EVcDZzTZWnAvobY+zj+F5InBYQY5c+sSlHwuzg=</DigestValue>
+  </Reference>
+  <Reference URI="#Id-bcce77b2-7b20-426d-b0db-7e4f2269c0fd">
+    <Transforms>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </Transforms>
+    <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <DigestValue>tERwC6fXVhEQ5rBVn9wbE0qttrDH3Piu31TwbfQ3j8Q=</DigestValue>
+  </Reference>
+  <Reference URI="#Id-a22dcdf6-2e87-4ba2-9e37-7e4f2269941e">
+    <Transforms>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </Transforms>
+    <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <DigestValue>gZ/YBjmqRWb5bgdzCR64sRJTEtu7eDDZXiQoQ2L+e2s=</DigestValue>
+  </Reference>
+  <Reference URI="#Id-1b718923-2de1-4f7c-95af-7e4f2269945e">
+    <Transforms>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </Transforms>
+    <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <DigestValue>qHlo+wasJhHhGAQrEKEhiI6+x9GF1KMOPHpkgH439ME=</DigestValue>
+  </Reference>
+  <Reference URI="#Id-f1af8d30-b6af-47d4-8769-7e4f22699b67">
+    <Transforms>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </Transforms>
+    <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <DigestValue>qmm9UH5E9eLUOKu2N6kkec8+JZJw9zUdJJ7eaHVixwc=</DigestValue>
+  </Reference>
+  <Reference URI="#Timestamp-c62961e1-86b4-4256-9e21-7e4f2269451c">
+    <Transforms>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </Transforms>
+    <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <DigestValue>wNtCiXZGYNHR8fzNoGQyDY5dZttJog4niLJtKcjOLyk=</DigestValue>
+  </Reference>
+</SignedInfo>
+    <SignatureValue>Qn/wczVyuq+DyW5YNcVEYprhOmimJUuTjcIFqYP0SlRChtkyvxTePdHWuNu7PdPQCUi1Ad95fDAraR9E4HhvnKDuOxW7oVf/e1gdAsiutalFiR6vwBJ17iSBczpzgaWoStln7j90mrauh66TsOOewpzicBD4qoQrGr9jFkCwZya/d0dLfAXd1BmMGXJBj94yn7K8Gqw2383T8ye9uZq5G0dt9BIwgM3VKrmAjmcTRmpyKEi0gAwjVb4z6jXeYG9fZkUvSj/gsqVDvrwWLB/RW5q9VtWYbJ8+flH80t7dOQHyb8c8iNQ2XidJrZcFA5cvu+w0fsXpK9Eb1YG9PLL1F0xpEOlWhRrLwG2u2IWZWQL7U+T27p4+91fL78p6k1KBmxsHAQ9LO4BidBHd6gaDr001myrDJBIDfw2BZTXRNFp6Qk02MRdjPCo6IEUyxPdhPnTMy9yED38I14UsXJ7pWNyxUbZirWDW5dq2Lb+u9NDOr2lbDv1jdZkhSggMwBQ5Yb+VvxEgfdFWoFxLd1G27l8fxKbwo4GZN3S1YrpYXF0q5U0dzSvlPiBP3ZvP7xoEBTU11koN3xxtbVtwPFBsz2pPLsHb3ipwUaUsTswjEgUZi9TUiV84f08KfV4BxineRmgg5gk+W2xhgqCxKc6wKPDNiJ/wg941GHB8e6oyg18=</SignatureValue><KeyInfo><wsse:SecurityTokenReference xmlns=""><wsse:Reference URI="#SecurityToken-12877efb-5023-4a51-b36e-7e4f22691e39" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"/></wsse:SecurityTokenReference></KeyInfo></Signature></wsse:Security></SOAP:Header><SOAP-ENV:Body wsu:Id="Id-f1af8d30-b6af-47d4-8769-7e4f22699b67" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><ns2:verwijderen_opleidingseenheid_response xmlns:ns2="http://duo.nl/schema/DUO_RIO_Beheren_OnderwijsOrganisatie_V4"><ns2:identificatiecodeBedrijfsdocument>b0fc58bc-152e-471e-ac33-4fea02c85072</ns2:identificatiecodeBedrijfsdocument><ns2:verzendendeInstantie>00000001800866472000</ns2:verzendendeInstantie><ns2:ontvangendeInstantie>0000000700025BE00000</ns2:ontvangendeInstantie><ns2:datumTijdBedrijfsdocument>2022-10-06T10:35:04.147Z</ns2:datumTijdBedrijfsdocument><ns2:requestGoedgekeurd>true</ns2:requestGoedgekeurd></ns2:verwijderen_opleidingseenheid_response></SOAP-ENV:Body></SOAP-ENV:Envelope>
