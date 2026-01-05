@@ -105,6 +105,7 @@
     (fn [_ actual-request]
       (let [i                (swap! count-atom inc)
             fname            (numbered-file dir i)
+            _ (println fname)
             recording        (with-open [r (io/reader fname)] (edn/read (PushbackReader. r)))
             recorded-request (:request recording)]
         (doseq [property-path [[:url] [:method] [:headers "SOAPAction"]]]
@@ -137,7 +138,7 @@
 ;; The truststore used for unit tests has a different password than the official password.
 ;; The truststore (as opposed to the keystore) does not contain sensitive or private data.
 (defn make-test-config []
-  (config/make-config (assoc env :keystore "test-common/keystore.jks"
+  (config/make-config (assoc env :keystore "test/keystore.jks"
                                  :keystore-password "xxxxxx"
                                  :truststore-password "xxxxxx"
                                  :keystore-alias "test-surf")))

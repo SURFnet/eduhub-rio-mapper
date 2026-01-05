@@ -1,0 +1,106 @@
+{
+  "pageSize": 10,
+  "pageNumber": 1,
+  "hasPreviousPage": false,
+  "hasNextPage": false,
+  "totalPages": 1,
+  "items": [
+    {
+      "offeringId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "primaryCode": {
+        "codeType": "identifier",
+        "code": "1234qwe12"
+      },
+      "offeringType": "component",
+      "academicSession": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "name": [
+        {
+          "language": "en-GB",
+          "value": "Final written test for INFOMQNM for fall semseter 2020"
+        }
+      ],
+      "abbreviation": "Test-INFOMQNM-20FS",
+      "description": [
+        {
+          "language": "en-GB",
+          "value": ".."
+        }
+      ],
+      "teachingLanguage": "nld",
+      "modeOfDelivery": [
+        "situated"
+      ],
+      "maxNumberStudents": 200,
+      "enrolledNumberStudents": 150,
+      "pendingNumberStudents": 50,
+      "minNumberStudents": 15,
+      "resultExpected": true,
+      "resultValueType": "1-10",
+      "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
+      "otherCodes": [
+        {
+          "codeType": "identifier",
+          "code": "1234qwe12"
+        }
+      ],
+      "consumers": [
+        {
+          "consumerKey": "rio",
+          "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
+          "requiredPermissionRegistration": "yes",
+          "registrationStatus": "open"
+        }
+      ],
+      "ext": {},
+      "startDate": "2019-08-21",
+      "endDate": "2023-06-15",
+      "enrollStartDate": "2019-05-01",
+      "enrollEndDate": "2019-08-01",
+      "flexibleEntryPeriodStart": "2019-08-24",
+      "flexibleEntryPeriodEnd": "2019-09-24",
+      "addresses": [
+        {
+          "addressType": "postal",
+          "street": "Moreelsepark",
+          "streetNumber": "48",
+          "additional": [
+            {
+              "language": "en-GB",
+              "value": "On the other side of the road"
+            }
+          ],
+          "postalCode": "3511 EP",
+          "city": "Utrecht",
+          "countryCode": "NL",
+          "geolocation": {
+            "latitude": 52.089123,
+            "longitude": 5.113337
+          },
+          "ext": {}
+        }
+      ],
+      "priceInformation": [
+        {
+          "costType": "total costs",
+          "amount": "340.84",
+          "vatAmount": "40",
+          "amountWithoutVat": "300.84",
+          "currency": "EUR",
+          "displayAmount": [
+            {
+              "language": "nl-NL",
+              "value": "€380,84"
+            },
+            {
+              "language": "en-US",
+              "value": "$401.17"
+            }
+          ],
+          "ext": {}
+        }
+      ],
+      "program": "{{programs/bad-edu-location}}"
+    }
+  ],
+  "ext": {}
+}

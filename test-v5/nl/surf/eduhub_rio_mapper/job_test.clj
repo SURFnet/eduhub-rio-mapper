@@ -30,7 +30,7 @@
 
 (def dummy-handlers {:delete! identity, :update! identity, :dry-run! identity, :link! identity})
 
-(def dummy-job {::ooapi/id 0, ::ooapi/type 0, :action "delete", :institution-schac-home 0, :institution-oin 0})
+(def dummy-job {::ooapi/id "0", ::ooapi/type "0", :action "delete", :institution-schac-home 0, :institution-oin 0})
 
 (def config
   {:redis-conn       {:pool {} :spec {:uri (or (System/getenv "REDIS_URI") "redis://localhost")}}
