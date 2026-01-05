@@ -1,0 +1,262 @@
+{
+  "programId": "123e4567-e89b-12d3-a456-426614174004",
+  "primaryCode": {
+    "codeType": "crohoCreboCode",
+    "code": "string"
+  },
+  "programType": "course",
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "Biology"
+    }
+  ],
+  "abbreviation": "BIO",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": "The meaning of liff"
+    }
+  ],
+  "teachingLanguage": "nld",
+  "studyLoad": {
+    "studyLoadUnit": "ects",
+    "value": 3
+  },
+  "qualificationAwarded": "None",
+  "modeOfStudy": "full-time",
+  "modeOfDelivery": [
+    "situated"
+  ],
+  "duration": "P1DT30H4S",
+  "firstStartDate": "2019-08-24",
+  "levelOfQualification": "6",
+  "level": "master",
+  "sector": "university education",
+  "fieldsOfStudy": "0732",
+  "enrollment": [
+    {
+      "language": "en-GB",
+      "value": "enrollment through SIS. [The limited implementation of Git Hub Markdown syntax](#tag/formatting-and-displaying-results-from-API) MAY be used for rich text representation."
+    }
+  ],
+  "resources": [
+    "book to be announced",
+    "on-line resource x"
+  ],
+  "learningOutcomes": [
+    [
+      {
+        "language": "en-GB",
+        "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms and knowledge of liff."
+      }
+    ]
+  ],
+  "assessment": [
+    {
+      "language": "en-GB",
+      "value": "Exam on campus"
+    }
+  ],
+  "admissionRequirements": [
+    {
+      "language": "en-GB",
+      "value": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance"
+    }
+  ],
+  "qualificationRequirements": [
+    {
+      "language": "en-GB",
+      "value": "program that is a place holder for all courses that are made available for student mobility"
+    }
+  ],
+  "link": "https://bijvak.nl",
+  "educationSpecification": "1009O0996",
+  "otherCodes": [
+    {
+      "codeType": "crohoCreboCode",
+      "code": "59312"
+    }
+  ],
+  "addresses": [
+    {
+      "addressType": "postal",
+      "street": "Moreelsepark",
+      "streetNumber": "48",
+      "additional": [
+        {
+          "language": "en-GB",
+          "value": "On the other side of the road"
+        }
+      ],
+      "postalCode": "3511 EP",
+      "city": "Utrecht",
+      "countryCode": "NL",
+      "geolocation": {
+        "latitude": 52.089123,
+        "longitude": 5.113337
+      },
+      "ext": {}
+    }
+  ],
+  "parent": "123e4567-e89b-7777-a456-426614000001",
+  "children": [
+    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+  ],
+  "coordinators": [
+    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+  ],
+  "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
+  "consumers": [
+    {
+      "consumerKey": "rio",
+      "educationOffererCode": "110A133",
+      "educationLocationCode": "123X122",
+      "consentParticipationSTAP": "permission_granted",
+      "jointPartnerCodes": [
+        "122A113"
+      ],
+      "foreignPartners": [
+        "Oxford University"
+      ]
+    }
+  ],
+  "ext": {},
+  "validFrom": "2019-08-24",
+  "validTo": "2023-08-24",
+  "timelineOverrides": [
+    {
+      "validFrom": "2021-09-01",
+      "validTo": "2022-08-31",
+      "program": {
+        "primaryCode": {
+          "codeType": "crohoCreboCode",
+          "code": "string"
+        },
+        "programType": "program",
+        "name": [
+          {
+            "language": "en-GB",
+            "value": "Biology"
+          }
+        ],
+        "abbreviation": "BIO",
+        "description": [
+          {
+            "language": "en-GB",
+            "value": "The study of life"
+          }
+        ],
+        "teachingLanguage": "nld",
+        "studyLoad": {
+          "studyLoadUnit": "ects",
+          "value": 3
+        },
+        "qualificationAwarded": "None",
+        "modeOfStudy": "full-time",
+        "modeOfDelivery": [
+          "situated"
+        ],
+        "duration": "P1DT30H4S",
+        "firstStartDate": "2019-08-24",
+        "levelOfQualification": "6",
+        "level": "master",
+        "sector": "university education",
+        "fieldsOfStudy": "0732",
+        "enrollment": [
+          {
+            "language": "en-GB",
+            "value": "enrollment through SIS. [The limited implementation of Git Hub Markdown syntax](#tag/formatting-and-displaying-results-from-API) MAY be used for rich text representation."
+          }
+        ],
+        "resources": [
+          "book to be announced",
+          "on-line resource x"
+        ],
+        "learningOutcomes": [
+          [
+            {
+              "language": "en-GB",
+              "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
+            }
+          ]
+        ],
+        "assessment": [
+          {
+            "language": "en-GB",
+            "value": "Exam on campus"
+          }
+        ],
+        "admissionRequirements": [
+          {
+            "language": "en-GB",
+            "value": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance"
+          }
+        ],
+        "qualificationRequirements": [
+          {
+            "language": "en-GB",
+            "value": "program that is a place holder for all courses that are made available for student mobility"
+          }
+        ],
+        "link": "https://bijvak.nl",
+        "educationSpecification": "1009O0996",
+        "otherCodes": [
+          {
+            "codeType": "CROHO",
+            "code": "59312"
+          }
+        ],
+        "addresses": [
+          {
+            "addressType": "postal",
+            "street": "Moreelsepark",
+            "streetNumber": "48",
+            "additional": [
+              {
+                "language": "en-GB",
+                "value": "On the other side of the road"
+              }
+            ],
+            "postalCode": "3511 EP",
+            "city": "Utrecht",
+            "countryCode": "NL",
+            "geolocation": {
+              "latitude": 52.089123,
+              "longitude": 5.113337
+            },
+            "ext": {}
+          }
+        ],
+        "parent": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
+        "children": [
+          "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+        ],
+        "coordinators": [
+          "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+        ],
+        "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
+        "consumers": [
+          {
+            "consumerKey": "rio",
+            "educationOffererCode": "122A112",
+            "educationLocationCode": "123X122",
+            "consentParticipationSTAP": "permission_granted",
+            "jointPartnerCodes": [
+              "122A113"
+            ],
+            "foreignPartners": [
+              "Harvard University"
+            ],
+            "deficiency": "deficiencies",
+            "requirementsActivities": "requirements",
+            "propaedeuticPhase": "no_propaedeutic_phase",
+            "studyChoiceCheck": "no_study_choice_check",
+            "acceleratedRoute": "accelerated_route"
+          }
+        ],
+        "ext": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "alliances": [
+      {
+        "name": "lde",
+        "enrollmentForOwnStudents": "broker",
+        "type": "deepening",
+        "visibleForOwnStudents": true,
+        "selection": false,
+        "theme": "Humanities and Arts",
+        "enrollmentUrl": "https://www.eigen-inschrijf-url.nl/schrijf-hier-in"
+      }
+    ],
+    "consumerKey": "eduxchange"
+  },
+  {
+    "educationOffererCode": "122A112",
+    "acceleratedRoute": "no_accelerated_route",
+    "consentParticipationSTAP": "permission_not_granted",
+    "deficiency": "deficiencies",
+    "studyChoiceCheck": "no_study_choice_check",
+    "consumerKey": "rio",
+    "requirementsActivities": "requirements",
+    "propaedeuticPhase": "no_propaedeutic_phase",
+    "educationLocationCode": "123X122"
+  }
+]

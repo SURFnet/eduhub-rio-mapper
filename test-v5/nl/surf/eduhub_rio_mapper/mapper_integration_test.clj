@@ -33,7 +33,7 @@
 (def rio-opleidingsid "1234O1234")
 (def ooapi-id "f2d020bc-5fac-b2e9-4ea7-4b35a08dfbeb")
 (def config {:rio-config
-             {:credentials   (keystore/credentials "test-common/keystore.jks"
+             {:credentials   (keystore/credentials "test/keystore.jks"
                                                  "xxxxxx"
                                                  "test-surf")
               :recipient-oin "12345"

@@ -424,7 +424,7 @@
    :req (assoc req :headers (walk/stringify-keys (:headers req)))})
 
 (deftest status-http-messages
-  (let [http-message (-> (slurp "test-common/fixtures/http-messages-1.json")
+  (let [http-message (-> (slurp "test-v5/fixtures/http-messages-1.json")
                           (json/read-str :key-fn keyword)
                           :http-messages
                           first

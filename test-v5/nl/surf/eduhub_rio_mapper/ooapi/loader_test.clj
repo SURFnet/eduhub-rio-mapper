@@ -40,7 +40,7 @@
                       ::ooapi/type     "program-offerings"
                       ::ooapi/id       "6456b864-c121-bb61-fda2-109251a1c777"
                       :gateway-credentials (:gateway-credentials config)}]
-    (binding [http-utils/*vcr* (vcr "test-common/fixtures/ooapi-loader" 1 "offering")]
+    (binding [http-utils/*vcr* (vcr "test-v5/fixtures/ooapi-loader" 1 "offering")]
       (let [items (:items (ooapi-loader (merge client-info request {:page-size 2})))]
         (is (= 3 (count items)))))))
 
@@ -58,7 +58,7 @@
                       ::ooapi/id       "6456b864-c121-bb61-fda2-109251a1c777"
                       :gateway-credentials (:gateway-credentials config)}]
     ;; This education specification lacks an educationSpecificationId
-    (binding [http-utils/*vcr* (vcr "test-common/fixtures/ooapi-loader" 2 "eduspec")]
+    (binding [http-utils/*vcr* (vcr "test-v5/fixtures/ooapi-loader" 2 "eduspec")]
       (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]
         (is (= "Top level EducationSpecification object is missing these required fields: educationSpecificationId"
                (:origin (ex-data ex))))))))

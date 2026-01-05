@@ -57,8 +57,6 @@
 
 (ns nl.surf.eduhub-rio-mapper.interaction-test
   (:require
-    [clojure.data.json :as json]
-    [clojure.string :as str]
     [clojure.test :refer :all]
     [environ.core :refer [env]]
     [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
@@ -67,7 +65,6 @@
     [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
     [nl.surf.eduhub-rio-mapper.test-helper :as helper]
     [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
-    [nl.surf.eduhub-rio-mapper.v5.cli-commands :as cli-commands]
     [nl.surf.eduhub-rio-mapper.v5.commands.processing :as processing]
     [nl.surf.eduhub-rio-mapper.v5.config :as config]
     [nl.surf.eduhub-rio-mapper.v5.job :as job]
@@ -140,10 +137,8 @@
 
         commands            [[1 "upsert" :eduspec  eduspec-parent-id goedgekeurd?]
                              [2 "upsert" :eduspec  eduspec-child-id  goedgekeurd?]
-                             [nil "sleep" nil nil nil]
                              [3 "get"    :relation code              identity]
                              [4 "delete" :eduspec  eduspec-child-id  goedgekeurd?]
-                             [nil "sleep" nil nil nil]
                              [5 "get"    :relation code              nil?]
                              [6 "upsert" :program  program-id        goedgekeurd?]
                              [7 "delete" :program  program-id        goedgekeurd?]
@@ -152,21 +147,13 @@
                                                                          (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
     (doseq [[idx action ootype id pred?] commands]
       (testing (str "Command " idx " " action " " id)
-        (if (= "sleep" action)
-          (Thread/sleep 5000)
-          (binding [http-utils/*vcr* (vcr "test-common/fixtures/interaction" idx (str action "-" (name ootype)))]
-            (println "ootype" ootype "id" id "action" action)
-            (let [result  (runner ootype id action)
-                  http-messages (:http-messages result)
-                  oplcode (-> result :aanleveren_opleidingseenheid_response :opleidingseenheidcode)]
-              (println "oplcode" oplcode)
-              (is (or oplcode
-                      (not= "upsert" action)
-                      (not= :eduspec ootype))
-                  (str "Expected oplcode in " (prn-str result)))
-              (when oplcode (swap! code #(if (nil? %) oplcode %))) ;; code ||= oplcode
-              (is (nil? http-messages))
-              (is (pred? result) (str action "-" (name ootype) " " idx)))))))))
+        (binding [http-utils/*vcr* (vcr "test-v5/fixtures/interaction" idx (str action "-" (name ootype)))]
+          (let [result  (runner ootype id action)
+                http-messages (:http-messages result)
+                oplcode (-> result :aanleveren_opleidingseenheid_response :opleidingseenheidcode)]
+            (when oplcode (swap! code #(if (nil? %) oplcode %))) ;; code ||= oplcode
+            (is (nil? http-messages))
+            (is (pred? result) (str action "-" (name ootype) " " idx))))))))
 
 ;; This just does a lookup of an existing RIO opleidingseenheid
 #_(deftest opleidingseenheid-finder-test
@@ -181,7 +168,7 @@
                                                         :gateway-root-url (:gateway-root-url config)
                                                         :gateway-credentials (:gateway-credentials config)})]
 
-    (binding [http-utils/*vcr* (vcr "test-common/fixtures/opleenh-finder" 1 "finder")]
+    (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-finder" 1 "finder")]
       (let [result (rio.loader/find-opleidingseenheid "1010O3664" (:getter handlers) (:institution-oin client-info))]
         (is (some? result))))))
 
@@ -198,10 +185,10 @@
                                                         :gateway-credentials (:gateway-credentials config)})
         getter (:getter handlers)]
     (testing "found aangeboden opleiding"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/aangeboden-finder-test" 1 "finder")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangeboden-finder-test" 1 "finder")]
         (let [result (rio.loader/find-aangebodenopleiding "bd6cb46b-3f4e-49c2-a1f7-e24ae82b0672" getter (:institution-oin client-info))]
           (is (some? result)))))
     (testing "did not find aangeboden opleiding"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/aangeboden-finder-test" 2 "finder")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangeboden-finder-test" 2 "finder")]
         (let [result (rio.loader/find-aangebodenopleiding "bbbbbbbb-3f4e-49c2-a1f7-e24ae82b0673" getter (:institution-oin client-info))]
           (is (nil? result)))))))

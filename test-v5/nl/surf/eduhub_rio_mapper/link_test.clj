@@ -38,7 +38,7 @@
         link! (:link! handlers)]
 
     (testing "education-specifications"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/opleenh-link" 1 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-link" 1 "linker")]
         (let [result (link! (assoc client-info
                               ::ooapi/id "11111112-dfc3-4a30-874e-000000000001"
                               ::ooapi/type "education-specification"
@@ -49,7 +49,7 @@
                  (:link result))))))
 
     (testing "education-specifications without opleidingseenheidsleutel"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/opleenh-link" 2 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-link" 2 "linker")]
         (let [{:keys [link]}
               (link! (assoc client-info
                        ::ooapi/id "11111112-dfc3-4a30-874e-000000000001"
@@ -62,7 +62,7 @@
                  link)))))
 
     (testing "unlink education-specifications without opleidingseenheidsleutel"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/opleenh-link" 3 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-link" 3 "linker")]
         (let [{:keys [link rio-sexp]}
               (link! (assoc client-info
                        ::ooapi/type "education-specification"
@@ -76,7 +76,7 @@
                  link)))))
 
     (testing "courses"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/aangebodenopl-link" 1 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangebodenopl-link" 1 "linker")]
         (let [result (link! (assoc client-info
                               ::ooapi/id "11111111-dfc3-4a30-874e-000000000001"
                               ::ooapi/type "course"
@@ -85,7 +85,7 @@
                  (select-keys result [:link]))))))
 
     (testing "program"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/aangebodenopl-link" 2 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangebodenopl-link" 2 "linker")]
         (let [result (link! (assoc client-info
                               ::ooapi/id "11111111-dfc3-4a30-874e-000000000002"
                               ::ooapi/type "program"
@@ -94,7 +94,7 @@
                  (select-keys result [:link]))))))
 
     (testing "missing program"
-      (binding [http-utils/*vcr* (vcr "test-common/fixtures/aangebodenopl-link" 3 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangebodenopl-link" 3 "linker")]
         (let [request (assoc client-info
                         ::ooapi/id "11111111-dfc3-4a30-874e-000000000002"
                         ::ooapi/type "program"
