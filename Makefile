@@ -1,4 +1,4 @@
-.PHONY: all jar lint proof-specs test test-redis test-e2e test-all test-common create-common-test watson antq clean
+.PHONY: all jar lint proof-specs test test-redis test-e2e test-all test-v6 test-common create-common-test watson antq clean
 
 MAIN_CLASS=nl.surf.eduhub-rio-mapper.v5.main
 JAR_FILE=target/eduhub-rio-mapper.jar
@@ -32,6 +32,9 @@ test-all:
 
 test-common:
 	clojure -M:test-common
+
+test-v6:
+	clojure -M:test-v6
 
 watson:
 	clojure -M:watson
