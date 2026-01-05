@@ -25,7 +25,7 @@
 (def default-env {:surf-conext-introspection-endpoint "https://gateway.dev.surfnet.nl/",
                   :keystore-alias "default",
                   :gateway-password "default",
-                  :keystore "test-common/keystore.jks",
+                  :keystore "test/keystore.jks",
                   :clients-info-path "test/test-clients.json",
                   :rio-recipient-oin "default",
                   :rio-update-url "default",
