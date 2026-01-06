@@ -146,7 +146,7 @@
                                                                          (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
     (doseq [[idx action ootype id pred?] commands]
       (testing (str "Command " idx " " action " " id)
-        (binding [http-utils/*vcr* (vcr "test-v5/fixtures/interaction" idx (str action "-" (name ootype)))]
+        (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/interaction" idx (str action "-" (name ootype)))]
           (let [result  (runner ootype id action)
                 http-messages (:http-messages result)
                 oplcode (-> result :aanleveren_opleidingseenheid_response :opleidingseenheidcode)]
@@ -166,7 +166,7 @@
                                                         :gateway-root-url (:gateway-root-url config)
                                                         :gateway-credentials (:gateway-credentials config)})]
 
-    (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-finder" 1 "finder")]
+    (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/opleenh-finder" 1 "finder")]
       (let [result (rio.loader/find-opleidingseenheid "1010O3664" (:getter handlers) (:institution-oin client-info))]
         (is (some? result))))))
 
@@ -182,10 +182,10 @@
                                                         :gateway-credentials (:gateway-credentials config)})
         getter (:getter handlers)]
     (testing "found aangeboden opleiding"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangeboden-finder-test" 1 "finder")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/aangeboden-finder-test" 1 "finder")]
         (let [result (rio.loader/find-aangebodenopleiding "bd6cb46b-3f4e-49c2-a1f7-e24ae82b0672" getter (:institution-oin client-info))]
           (is (some? result)))))
     (testing "did not find aangeboden opleiding"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangeboden-finder-test" 2 "finder")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/aangeboden-finder-test" 2 "finder")]
         (let [result (rio.loader/find-aangebodenopleiding "bbbbbbbb-3f4e-49c2-a1f7-e24ae82b0673" getter (:institution-oin client-info))]
           (is (nil? result)))))))

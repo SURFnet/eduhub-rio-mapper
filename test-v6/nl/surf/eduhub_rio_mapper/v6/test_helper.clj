@@ -105,7 +105,6 @@
     (fn [_ actual-request]
       (let [i                (swap! count-atom inc)
             fname            (numbered-file dir i)
-            _ (println fname)
             recording        (with-open [r (io/reader fname)] (edn/read (PushbackReader. r)))
             recorded-request (:request recording)]
         (doseq [property-path [[:url] [:method] [:headers "SOAPAction"]]]
