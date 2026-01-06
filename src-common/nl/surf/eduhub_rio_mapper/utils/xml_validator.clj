@@ -51,9 +51,6 @@
       [^String xmldoc]
       {:pre [(string? xmldoc)]}
       (when-let [ex (problems xmldoc)]
-        (println "-----------------------------------------------------------------------------")
-        (println xmldoc)
-        (println "-----------------------------------------------------------------------------")
         (throw (ex-info (str "XSD validation error in document: " (ex-message ex) "; schema-path: " schema-path)
                         {:doc        xmldoc
                          :retryable? false}
