@@ -1,4 +1,4 @@
-.PHONY: all jar lint proof-specs test test-redis test-e2e test-all test-v6 test-common create-common-test watson antq clean
+.PHONY: all jar lint proof-specs test test-redis test-e2e test-v6 test-common create-common-test watson antq clean
 
 MAIN_CLASS=nl.surf.eduhub-rio-mapper.v5.main
 JAR_FILE=target/eduhub-rio-mapper.jar
@@ -18,23 +18,26 @@ lint:
 proof-specs:
 	clojure -M:proof-specs
 
-test: test-common
-	clojure -M:test $(TEST_OPTS) --skip-meta :redis --skip-meta :e2e
+test-v5: test-common
+	clojure -M:test-v5
 
-test-redis:
-	clojure -M:test $(TEST_OPTS) --focus-meta :redis
+test-v5-redis:
+	clojure -M:test-v5-redis
 
-test-e2e:
-	clojure -M:test $(TEST_OPTS) --focus-meta :e2e --no-capture-output
+test-v5-e2e:
+	clojure -M:test  --focus :v5-e2e --no-capture-output
 
-test-all:
-	clojure -M:test
+test-v6: test-common
+	clojure -M:test-v6
+
+test-v6-redis:
+	clojure -M:test-v6-redis
+
+test-v6-e2e:
+	clojure -M:test  --focus :v6-e2e --no-capture-output
 
 test-common:
-	clojure -M:test-common
-
-test-v6:
-	clojure -M:test-v6
+	clojure -M:test-common  --focus :common
 
 watson:
 	clojure -M:watson

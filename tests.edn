@@ -1,7 +1,20 @@
 #kaocha/v1
 {:tests [{:id :unit
           :test-paths ["test-v5" "test-common"]
-          :ns-patterns [".*-test$"]}
-         {:id :common
-          :test-paths ["test-common"]
-          :ns-patterns [".*-test$"]}]}
+          :kaocha.filter/skip-meta [:redis :e2e]}
+         {:id :v5-redis
+          :test-paths ["test-v5" "test-common"]
+          :kaocha.filter/focus-meta [:redis]}
+         {:id :v5-e2e
+          :test-paths ["test-v5" "test-common"]
+          :kaocha.filter/focus-meta [:e2e]}
+         {:id :v6
+          :test-paths ["test-v6" "test-common"]
+          :kaocha.filter/skip-meta [:redis :e2e]}
+         {:id :v6-redis
+          :test-paths ["test-v6" "test-common"]
+          :kaocha.filter/focus-meta [:redis]
+          :kaocha.filter/skip-meta [:e2e]}
+         {:id :v6-e2e
+          :test-paths ["test-v6" "test-common"]
+          :kaocha.filter/focus-meta [:e2e]}]}
