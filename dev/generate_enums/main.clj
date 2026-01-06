@@ -1,7 +1,7 @@
 (ns generate-enums.main
   (:require [clj-yaml.core :as yaml]
-            [clojure.string :as str]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as str]))
 
 (defn generate-enum
   "Generates a single enum definition as a string."
@@ -20,7 +20,7 @@
          "})\n\n")))
 
 (defn -main
-  "This turns the enumerables in the yaml files on open-education-api/specification into clojure sets"
+  "This turns the enumerables in the yaml files on open-education-api/specification into clojure sets."
   [specification-dir]
   (let [enum-path (io/file specification-dir "v5" "enumerations")
         schema-path (io/file specification-dir "v5" "schemas")
