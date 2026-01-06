@@ -1,6 +1,0 @@
-{:request
- {:method :get,
-  :url
-  "https://gateway.test.surfeduhub.nl/education-specifications/?returnTimelineOverrides=true",
-  :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"}},
- :response {:status 403, :body "Forbidden"}}
