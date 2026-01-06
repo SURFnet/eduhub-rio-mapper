@@ -1,5 +1,5 @@
 #kaocha/v1
-{:tests [{:id :unit
+{:tests [{:id :v5
           :test-paths ["test-v5" "test-common"]
           :kaocha.filter/skip-meta [:redis :e2e]}
          {:id :v5-redis
