@@ -67,6 +67,7 @@
     [nl.surf.eduhub-rio-mapper.v5.commands.processing :as processing]
     [nl.surf.eduhub-rio-mapper.v5.config :as config]
     [nl.surf.eduhub-rio-mapper.v5.job :as job]
+    [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.v5.test-helper :as helper]))
 
 (def vcr-mode :playback)
@@ -115,7 +116,6 @@
                                                         :gateway-root-url (:gateway-root-url config)
                                                         :gateway-credentials (:gateway-credentials config)})
         ;; TODO After running record, these 3 ids need to be updated. Should be done automatically.
-        ;; TODO Sleep shorter during playback
         eduspec-parent-id    (if (= :record vcr-mode)
                                (entity-id "education-specifications/interaction-eduspec-parent")
                                "9f87f277-0548-4a5d-ad8b-cdf6a2e4bfcb")
@@ -155,9 +155,8 @@
             (is (pred? result) (str action "-" (name ootype) " " idx))))))))
 
 ;; This just does a lookup of an existing RIO opleidingseenheid
-#_(deftest opleidingseenheid-finder-test
-  (let [vcr-mode            :record
-        vcr                 (helper/make-vcr vcr-mode)
+(deftest opleidingseenheid-finder-test
+  (let [vcr                 (helper/make-vcr vcr-mode)
         config              (if (= vcr-mode :record)
                               (config/make-config env)
                               (helper/make-test-config))
@@ -171,9 +170,8 @@
       (let [result (rio.loader/find-opleidingseenheid "1010O3664" (:getter handlers) (:institution-oin client-info))]
         (is (some? result))))))
 
-#_(deftest aangeboden-finder-test
-  (let [vcr-mode             :record
-        vcr                  (helper/make-vcr vcr-mode)
+(deftest aangeboden-finder-test
+  (let [vcr                  (helper/make-vcr vcr-mode)
         config               (if (= vcr-mode :record)
                                (config/make-config env)
                                (helper/make-test-config))
