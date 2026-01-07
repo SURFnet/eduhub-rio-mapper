@@ -18,6 +18,8 @@ lint:
 proof-specs:
 	clojure -M:proof-specs
 
+test: test-v5 test-v6
+
 test-v5: test-common
 	clojure -M:test-v5
 
