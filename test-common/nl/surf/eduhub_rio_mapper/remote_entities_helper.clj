@@ -69,7 +69,8 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [environ.core :refer [env]]
-            [nl.jomco.envopts :as envopts])
+            [nl.jomco.envopts :as envopts]
+            [nl.surf.eduhub-rio-mapper.utils.version :as version])
   (:import java.util.UUID))
 
 (def opts-spec
@@ -212,6 +213,7 @@
    (re-matches #"^([^/]+/[^./]+).*"
                (file->base file))))
 
+
 (defn make-session
   "Return a new session map of entity names to random ids.
 
@@ -233,7 +235,9 @@
                            (map file->key)
                            (set)
                            (map #(vector % (UUID/randomUUID)))))]
-    (prn "MAPPING" mapping)
+    ;; In record mode, this ENV var set to true, and the mapping is written in the fixtures/vcr dir as an edn file.
+    (when (= "true" (System/getenv "VCR_RECORD"))
+     (spit (str "test-" version/OOAPI-VERSION "/fixtures/vcr/mapping.edn") (prn-str (update-vals mapping str))))
     mapping))
 
 (defn- replace-content-exprs

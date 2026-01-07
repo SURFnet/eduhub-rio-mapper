@@ -27,10 +27,14 @@
   (:import [clojure.lang ExceptionInfo]
            [java.net URI]))
 
+(def vcr-mode (if (= "true" (System/getenv "VCR_RECORD"))
+                :record
+                :playback))
+
 ;; never mind trying to record
 ;; just create the vcr files manually
 (deftest test-offerings
-  (let [vcr  (helper/make-vcr :playback)
+  (let [vcr  (helper/make-vcr vcr-mode)
         config       (helper/make-test-config)
         ooapi-loader (ooapi.loader/make-ooapi-http-loader (URI. "https://jomco.github.io/rio-mapper-test-data/")
                                                           (:gateway-credentials config)
@@ -46,7 +50,7 @@
 
 ;; We test only one error here, to make sure that the validating loader includes the error from the spec-helper.
 (deftest test-invalid
-  (let [vcr  (helper/make-vcr :playback)
+  (let [vcr  (helper/make-vcr vcr-mode)
         config       (helper/make-test-config)
         ooapi-loader (ooapi.loader/validating-loader
                        (ooapi.loader/make-ooapi-http-loader (URI. "https://jomco.github.io/rio-mapper-test-data/")
