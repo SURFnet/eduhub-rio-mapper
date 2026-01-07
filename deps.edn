@@ -92,7 +92,7 @@
 
   :lint {:paths        []
          :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
-         :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-common" "test-v5" "test-common"]}
+         :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-v6" "src-common" "test-v5" "test-v6" "test-common"]}
 
   :package {:extra-paths ["target/classes"]}
   :uberjar {:replace-deps  {uberdeps/uberdeps   {:mvn/version "RELEASE"}
