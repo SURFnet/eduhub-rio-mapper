@@ -41,8 +41,7 @@
                       ::ooapi/id       "6456b864-c121-bb61-fda2-109251a1c777"
                       :gateway-credentials (:gateway-credentials config)}]
     (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 1 "offering")]
-      (let [data (ooapi-loader (merge client-info request {:page-size 2}))
-            _ (prn data)
+      (let [data (ooapi-loader (merge client-info request))
             items (:items data)]
         (is (= 3 (count items)))))))
 
@@ -50,10 +49,9 @@
 (deftest test-invalid
   (let [vcr  (helper/make-vcr :playback)
         config       (helper/make-test-config)
-        ooapi-loader (ooapi.loader/validating-loader
-                       (ooapi.loader/make-ooapi-http-loader (URI. "https://jomco.github.io/rio-mapper-test-data/")
-                                                            (:gateway-credentials config)
-                                                            config))
+        ooapi-loader (ooapi.loader/make-ooapi-http-loader (URI. "https://jomco.github.io/rio-mapper-test-data/")
+                                                          (:gateway-credentials config)
+                                                          config)
         client-info  (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         request      {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
                       ::ooapi/type     "programme"

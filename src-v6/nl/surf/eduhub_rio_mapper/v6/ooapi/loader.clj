@@ -19,7 +19,6 @@
 (ns nl.surf.eduhub-rio-mapper.v6.ooapi.loader
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io]
-            [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [nl.jomco.http-status-codes :as http-status]
             [nl.jomco.openapi.v3.validator :as validator]
@@ -27,15 +26,10 @@
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.v6.ooapi.base :as ooapi-base]
-            [nl.surf.eduhub-rio-mapper.v6.specs.request :as request]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
 
-;; This limit will be lifted later, to be replaced by pagination.
-;;
-;; See also https://trello.com/c/LtBQ8aaA/46
-
-(def ^:private max-offerings
-  "Maximum amount of course and program offerings that will be mapped."
+(def ^:private page-size
+  "Maximum amount of items to fetch in a single page."
   250)
 
 (defn- ooapi-type->path [ooapi-type id page]
@@ -46,8 +40,8 @@
                         "program"                 "programs/%s?returnTimelineOverrides=true"
                         "programme"               "programmes/%s?returnTimelineOverrides=true"
                         "course"                  "courses/%s?returnTimelineOverrides=true"
-                        "course-offerings"        (str "courses/%s/offerings?pageSize=" max-offerings "&consumer=rio" page-suffix)
-                        "program-offerings"       (str "programs/%s/offerings?pageSize=" max-offerings "&consumer=rio" page-suffix))]
+                        "course-offerings"        (str "courses/%s/offerings?pageSize=" page-size "&consumer=rio" page-suffix)
+                        "program-offerings"       (str "programs/%s/offerings?pageSize=" page-size "&consumer=rio" page-suffix))]
       (format path id))
     (case ooapi-type
       "education-specifications" "education-specifications"
@@ -56,6 +50,9 @@
       "courses"                  "courses")))
 
 (defn- wrap-ooapi-request->ring-request
+  "Middleware translating ::ooapi/request into ring-style HTTP request.
+
+  Returns the response body as the result."
   [handler]
   (fn [{::ooapi/keys [root-url type id]
         :keys        [institution-schac-home gateway-credentials connection-timeout page]
@@ -74,6 +71,11 @@
                                {:basic-auth [username password]})))))))
 
 (defn- wrap-ooapi-envelop
+  "Middleware unpacking OOAPI Gateway envelopes.
+
+  Assumes the 200 OK responses contain envelops, extracts the status
+  and body of the response for the given `institution-schac-home`,
+  replacing the status and body of the gateway response."
   [handler]
   (fn [{::ooapi/keys [type id] :keys [institution-schac-home] :as request}]
     (let [response (handler request)
@@ -99,7 +101,7 @@
                                                               :id id
                                                               :type type}))))))
 
-(def validator-context
+(def ^:private validator-context
   (-> "ooapiv6.json"
       io/resource
       io/reader
@@ -107,6 +109,7 @@
       (validator/validator-context {})))
 
 (defn- response-validator
+  "Return an OOAPI v6 response validator for requests at the given `root-url`."
   [root-url]
   (let [uri-prefix (string/replace root-url #"https?://[^/]*" "")]
     (-> validator-context
@@ -116,10 +119,17 @@
 ;; We validate according to the OOAPI v6. Disable some types from
 ;; validations since we're stil migrating from v5.
 
-(def disabled-validations
+(def ^:private disabled-validations
   #{"education-specification" "program" "program-offerings" "course" "course-offerings"})
 
 (defn- wrap-response-validator
+  "Middleware validating OOAPI responses.
+
+  When a response is not valid according to the OOAPI v6 spec, throws
+  an exception.
+
+  Requests for ::ooapi/type specifified in `disabled-validations` are
+  not validated."
   [handler]
   (fn [{root-url ::ooapi/root-url type ::ooapi/type :as request}]
     {:pre [root-url type]}
@@ -133,43 +143,50 @@
                            :response response}))))
       response)))
 
-(def ooapi-http-loader
+(def max-pages 50)
+
+(defn- wrap-pagination
+  "Middleware for fetching paged items.
+
+  If the response is paged (has a :pageNumber and :items), 
+  fetch all remaining pages and combine items in the result.
+
+  Fetches no more than `max-pages`."
+  [handler]
+  (fn [ooapi-request]
+    (loop [{:keys [items hasNextPage pageNumber] :as response} (handler ooapi-request)]
+      (if (and items pageNumber) ;; paged result
+        (if (and hasNextPage (< pageNumber max-pages))
+          (recur (-> (handler (assoc ooapi-request :page (inc pageNumber)))
+                     (update :items (fn [next-items]
+                                      (into items next-items)))))
+          response)
+        response))))
+
+;; This function fetches OOAPI data over http.
+;;
+;; It expects the request to contain ::ooapi/root-url,
+;; ::ooapi/id, ::ooapi/type, :gateway-credentials,
+;; institution-schac-home
+(def ^:private ooapi-http-loader
   (-> http-utils/send-http-request
       wrap-ooapi-envelop
       wrap-response-validator
-      wrap-ooapi-request->ring-request))
-
-;; For type "offerings", loads all pages and merges them into "items"
-(defn- ooapi-http-recursive-loader
-  [{:keys [page-size] :as ooapi-request} items]
-  {:pre [(s/valid? ::request/request ooapi-request)]}
-  (loop [next-page 2
-         current-page-size (count items)
-         all-items items]
-    (if (< current-page-size (or page-size max-offerings))
-      ;; Fewer items than maximum allowed means that this is the last page
-      {:items all-items}
-      ;; We need to iterate, not all offerings seen yet.
-      (let [next-items (-> ooapi-request
-                         (assoc :page next-page)
-                         ooapi-http-loader
-                         :items)]
-        (recur (inc next-page) (count next-items) (into all-items next-items))))))
-
-;; Returns function that takes context with the following keys:
-;; ::ooapi/root-url, ::ooapi/id, ::ooapi/type, :gateway-credentials, institution-schac-home
+      wrap-ooapi-request->ring-request
+      wrap-pagination))
 
 (defn make-ooapi-http-loader
+  "Returns an ooapi-loader function for the given configuration.
+
+  The returned loader takes a map with ::ooapi/id, ::ooapi/type
+  attributes"
   [root-url credentials rio-config]
   (fn wrapped-ooapi-http-loader [context]
     (let [request (assoc context
                          ::ooapi/root-url root-url
                          :gateway-credentials credentials
-                         :connection-timeout (:connection-timeout-millis rio-config))
-          response (ooapi-http-loader request)]
-      (if (#{"course-offerings" "program-offerings"} (::ooapi/type context))
-        (ooapi-http-recursive-loader request (:items response))
-        response))))
+                         :connection-timeout (:connection-timeout-millis rio-config))]
+      (ooapi-http-loader request))))
 
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
@@ -188,10 +205,6 @@
                ::ooapi/type (str type "-offerings"))
         (loader)
         :items)))
-
-(defn validating-loader
-  [loader]
-  loader)
 
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."

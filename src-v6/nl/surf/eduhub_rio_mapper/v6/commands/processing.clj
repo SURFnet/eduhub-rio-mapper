@@ -41,11 +41,10 @@
       entity)))
 
 (defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
-  (let [validating-loader (ooapi.loader/validating-loader ooapi-loader)]
-    (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
-      (logging/with-mdc
+  (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
+    (logging/with-mdc
         {:ooapi-type type :ooapi-id id}
-        (ooapi.loader/load-entities validating-loader request)))))
+      (ooapi.loader/load-entities ooapi-loader request))))
 
 ;; returns function that takes request
 ;; and returns request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
