@@ -1,6 +1,6 @@
 ;; This file is part of eduhub-rio-mapper
 ;;
-;; Copyright (C) 2022 SURFnet B.V.
+;; Copyright (C) 2022, 2026 SURFnet B.V.
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU Affero General Public License
@@ -18,17 +18,15 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.ooapi.loader
   (:require [clojure.data.json :as json]
+            [clojure.java.io :as io]
             [clojure.spec.alpha :as s]
+            [clojure.string :as string]
             [nl.jomco.http-status-codes :as http-status]
+            [nl.jomco.openapi.v3.validator :as validator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.v6.ooapi.base :as ooapi-base]
-            [nl.surf.eduhub-rio-mapper.v6.specs.course :as course]
-            [nl.surf.eduhub-rio-mapper.v6.specs.education-specification :as education-specification]
-            [nl.surf.eduhub-rio-mapper.v6.specs.helper :as spec-helper]
-            [nl.surf.eduhub-rio-mapper.v6.specs.offerings :as offerings]
-            [nl.surf.eduhub-rio-mapper.v6.specs.program :as program]
             [nl.surf.eduhub-rio-mapper.v6.specs.request :as request]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
 
@@ -45,49 +43,101 @@
     (let [page-suffix (if page (str "&pageNumber=" page) "")
           path        (case ooapi-type
                         "education-specification" "education-specifications/%s?returnTimelineOverrides=true"
-                        "program" "programs/%s?returnTimelineOverrides=true"
-                        "course" "courses/%s?returnTimelineOverrides=true"
-                        "course-offerings" (str "courses/%s/offerings?pageSize=" max-offerings "&consumer=rio" page-suffix)
-                        "program-offerings" (str "programs/%s/offerings?pageSize=" max-offerings "&consumer=rio" page-suffix))]
+                        "program"                 "programs/%s?returnTimelineOverrides=true"
+                        "programme"               "programmes/%s?returnTimelineOverrides=true"
+                        "course"                  "courses/%s?returnTimelineOverrides=true"
+                        "course-offerings"        (str "courses/%s/offerings?pageSize=" max-offerings "&consumer=rio" page-suffix)
+                        "program-offerings"       (str "programs/%s/offerings?pageSize=" max-offerings "&consumer=rio" page-suffix))]
       (format path id))
     (case ooapi-type
       "education-specifications" "education-specifications"
-      "programs" "programs"
-      "courses" "courses")))
+      "programmes"               "programmes"
+      "programs"                 "programs"
+      "courses"                  "courses")))
 
-(defn- ooapi-http-loader
-  [{::ooapi/keys [root-url type id]
-    :keys [institution-schac-home gateway-credentials connection-timeout page]
-    :as ooapi-request}]
-  {:pre [(s/valid? ::request/request ooapi-request)]}
-  (let [path    (ooapi-type->path type id page)
-        request (merge {:url                (str root-url path)
-                        :content-type       :json
-                        :method             :get
-                        :connection-timeout connection-timeout
-                        :headers            {"X-Route" (str "endpoint=" institution-schac-home)
-                                             "Accept"  "application/json; version=5"}}
-                       (when-let [{:keys [username password]} gateway-credentials]
-                         {:basic-auth [username password]}))
-        response-body (-> request http-utils/send-http-request :body (json/read-str :key-fn keyword))
-        response-code (get-in response-body [:gateway :endpoints (keyword institution-schac-home) :responseCode])]
-    (condp = response-code
-      http-status/not-found
-      (throw (ex-info "OOAPI object not found" {:status response-code
-                                                :id id
-                                                :type type}))
-      http-status/unauthorized
-      (throw (ex-info "Unauthorized for endpoint" {:status response-code
-                                                   :id id
-                                                   :type type}))
+(defn- wrap-ooapi-request->ring-request
+  [handler]
+  (fn [{::ooapi/keys [root-url type id]
+        :keys        [institution-schac-home gateway-credentials connection-timeout page]
+        :as          request}]
+    (let [url (str root-url (ooapi-type->path type id page))
+          uri (string/replace url #"\?.*" "")]
+      (:body (handler (merge request
+                             {:url                url
+                              :uri                uri ;; used by openapi-validator
+                              :content-type       :json
+                              :method             :get
+                              :connection-timeout connection-timeout
+                              :headers            {"X-Route" (str "endpoint=" institution-schac-home)
+                                                   "Accept"  "application/json; version=5"}}
+                             (when-let [{:keys [username password]} gateway-credentials]
+                               {:basic-auth [username password]})))))))
 
-      http-status/ok
-      (get-in response-body [:responses (keyword institution-schac-home)])
+(defn- wrap-ooapi-envelop
+  [handler]
+  (fn [{::ooapi/keys [type id] :keys [institution-schac-home] :as request}]
+    (let [response (handler request)
+          body (-> response :body (json/read-str :key-fn keyword))
+          status (get-in body [:gateway :endpoints (keyword institution-schac-home) :responseCode])]
+      (condp = status
+        http-status/not-found
+        (throw (ex-info "OOAPI object not found" {:status status
+                                                  :id id
+                                                  :type type}))
+        http-status/unauthorized
+        (throw (ex-info "Unauthorized for endpoint" {:status status
+                                                     :id id
+                                                     :type type}))
 
-      ;; else
-      (throw (ex-info "Endpoint returns unexpected status" {:status response-code
-                                                            :id id
-                                                            :type type})))))
+        http-status/ok
+        (assoc response
+               :status status
+               :body (get-in body [:responses (keyword institution-schac-home)]))
+
+        ;; else
+        (throw (ex-info "Endpoint returns unexpected status" {:status status
+                                                              :id id
+                                                              :type type}))))))
+
+(def validator-context
+  (-> "ooapiv6.json"
+      io/resource
+      io/reader
+      json/read
+      (validator/validator-context {})))
+
+(defn- response-validator
+  [root-url]
+  (let [uri-prefix (string/replace root-url #"https?://[^/]*" "")]
+    (-> validator-context
+        (assoc :uri-prefix uri-prefix)
+        (validator/response-validator))))
+
+;; We validate according to the OOAPI v6. Disable some types from
+;; validations since we're stil migrating from v5.
+
+(def disabled-validations
+  #{"education-specification" "program" "program-offerings" "course" "course-offerings"})
+
+(defn- wrap-response-validator
+  [handler]
+  (fn [{root-url ::ooapi/root-url type ::ooapi/type :as request}]
+    {:pre [root-url type]}
+    (let [validate-response (response-validator root-url)
+          response (handler request)]
+      (when-not (disabled-validations type)
+        (when-let [issues (validate-response {:request request :response response} [])]
+          (throw (ex-info "Error validating OOAPI Response"
+                          {:issues issues
+                           :request request
+                           :response response}))))
+      response)))
+
+(def ooapi-http-loader
+  (-> http-utils/send-http-request
+      wrap-ooapi-envelop
+      wrap-response-validator
+      wrap-ooapi-request->ring-request))
 
 ;; For type "offerings", loads all pages and merges them into "items"
 (defn- ooapi-http-recursive-loader
@@ -108,13 +158,14 @@
 
 ;; Returns function that takes context with the following keys:
 ;; ::ooapi/root-url, ::ooapi/id, ::ooapi/type, :gateway-credentials, institution-schac-home
+
 (defn make-ooapi-http-loader
   [root-url credentials rio-config]
   (fn wrapped-ooapi-http-loader [context]
     (let [request (assoc context
-                    ::ooapi/root-url root-url
-                    :gateway-credentials credentials
-                    :connection-timeout (:connection-timeout-millis rio-config))
+                         ::ooapi/root-url root-url
+                         :gateway-credentials credentials
+                         :connection-timeout (:connection-timeout-millis rio-config))
           response (ooapi-http-loader request)]
       (if (#{"course-offerings" "program-offerings"} (::ooapi/type context))
         (ooapi-http-recursive-loader request (:items response))
@@ -124,13 +175,6 @@
   [{::ooapi/keys [type id]}]
   (let [path (str "dev/fixtures/" type "-" id ".json")]
     (json/read-str (slurp path) :key-fn keyword)))
-
-(def type-to-spec-mapping
-  {"course"                  ::course/course
-   "program"                 ::program/program
-   "education-specification" ::education-specification/EducationSpecificationTopLevel
-   "course-offerings"        ::offerings/OfferingsRequest
-   "program-offerings"       ::offerings/OfferingsRequest})
 
 (defn load-offerings
   [loader {::ooapi/keys [id type] :as request}]
@@ -145,25 +189,9 @@
         (loader)
         :items)))
 
-(defn validate-entity [entity spec type]
-  (when-not (s/valid? spec entity)
-    (let [error-msg (str "Entity does not conform to OOAPI type " type)
-          origin    (spec-helper/check-spec-with-fallback entity spec type)]
-      (throw (ex-info (str error-msg "\n" origin)
-                      {:entity     entity
-                       :error      error-msg
-                       :origin     origin
-                       ;; retrying a failing spec won't help
-                       :retryable? false}))))
-  entity)
-
 (defn validating-loader
   [loader]
-  (fn wrapped-validating-loader [{::ooapi/keys [type] :as request}]
-    {:pre [type]}
-    (-> request
-        (loader)
-        (validate-entity (type-to-spec-mapping type) type))))
+  loader)
 
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
@@ -185,11 +213,6 @@
                                              ::ooapi/id (ooapi-base/education-specification-id entity))
                                       (loader)
                                       :educationSpecificationType))]
-
-    (when (and (not= type "education-specification")
-               (= "program" eduspec-type))
-      (validate-entity entity ::program/ProgramType "ProgramType")
-      (validate-entity rio-consumer ::program/ProgramConsumerType "ProgramConsumerType"))
     (cond-> request
       joint-program?
       (assoc
