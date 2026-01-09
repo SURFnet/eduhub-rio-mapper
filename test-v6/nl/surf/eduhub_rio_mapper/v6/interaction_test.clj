@@ -116,7 +116,7 @@
                                                         :gateway-credentials (:gateway-credentials config)})
         eduspec-parent-id    (vcr.helper/entity-name-to-id "education-specifications/interaction-eduspec-parent")
         eduspec-child-id     (vcr.helper/entity-name-to-id "education-specifications/interaction-eduspec-child")
-        program-id           (vcr.helper/entity-name-to-id "programs/interaction-program-some")
+        program-id           (vcr.helper/entity-name-to-id "programmes/interaction-programme-some")
 
         runner               (make-runner handlers
                                           client-info
@@ -199,27 +199,28 @@
         config       (if (= vcr.helper/vcr-mode :record)
                        (config/make-config env)
                        (helper/make-test-config))
-        ooapi-loader (ooapi.loader/validating-loader
-                      (ooapi.loader/make-ooapi-http-loader (:gateway-root-url config)
-                                                           (:gateway-credentials config)
-                                                           config))
+        ooapi-loader (ooapi.loader/make-ooapi-http-loader (:gateway-root-url config)
+                                                          (:gateway-credentials config)
+                                                          config)
+
         client-info  (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")]
+    (testing "programme"
+      (let [request      {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
+                          ::ooapi/type     "programme"
+                          ::ooapi/id       (vcr.helper/entity-name-to-id "programmes/interaction-programme-some")
+                          :gateway-credentials (:gateway-credentials config)}]
+        (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "programme")]
+          (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]
+            (is (= {:issue "schema-validation-error"
+                    :canonical-schema-path ["components" "schemas" "ProgrammeId" "required"]}
+                   (select-keys (first (:issues (ex-data ex)))
+                                [:issue :canonical-schema-path])))))))
+
     (testing "offerings"
       (let [request {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
-                     ::ooapi/type     "program-offerings"
-                     ::ooapi/id       (vcr.helper/entity-name-to-id "programs/interaction-program-some")
+                     ::ooapi/type     "programme-offerings"
+                     ::ooapi/id       (vcr.helper/entity-name-to-id "programmes/interaction-programme-some")
                      :gateway-credentials (:gateway-credentials config)}]
-        (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 1 "offering")]
-          (let [items (:items (ooapi-loader (merge client-info request {:page-size 2})))]
-            (is (= 3 (count items)))))))
-
-    ;; We test only one error here, to make sure that the validating loader includes the error from the spec-helper.
-    (testing "invalid-eduspec"
-      (let [request {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
-                     ::ooapi/type     "education-specification"
-                     ::ooapi/id       (vcr.helper/entity-name-to-id "education-specifications/bad-eduspec")
-                     :gateway-credentials (:gateway-credentials config)}]
-        (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "eduspec")]
-          (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]
-            (is (= "Top level EducationSpecification object is missing these required fields: educationSpecificationId"
-                   (:origin (ex-data ex))))))))))
+        (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/ooapi-loader" 1 "offering")]
+          (let [items (:items (ooapi-loader (merge client-info request)))]
+            (is (= 3 (count items)))))))))
