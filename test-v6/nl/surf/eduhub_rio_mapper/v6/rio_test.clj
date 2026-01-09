@@ -425,7 +425,7 @@
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
 
            (-> (ooapi.loader/load-entities
-                (ooapi.loader/validating-loader mode-of-delivery-loader)
+                mode-of-delivery-loader
                 {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
                ::ooapi/entity
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program"))))))
