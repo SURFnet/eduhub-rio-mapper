@@ -33,9 +33,7 @@
     [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
     [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]
-    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]
-    [nl.surf.eduhub-rio-mapper.v6.specs.request :as request]
-))
+    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]))
 
 (defn- extract-eduspec-from-result [result]
   (let [entity (:ooapi result)]
@@ -43,11 +41,10 @@
       entity)))
 
 (defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
-  (let [validating-loader (ooapi.loader/validating-loader ooapi-loader)]
-    (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
-      (logging/with-mdc
+  (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
+    (logging/with-mdc
         {:ooapi-type type :ooapi-id id}
-        (ooapi.loader/load-entities validating-loader request)))))
+      (ooapi.loader/load-entities ooapi-loader request))))
 
 ;; returns function that takes request
 ;; and returns request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code

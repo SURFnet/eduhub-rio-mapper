@@ -41,24 +41,26 @@
                       ::ooapi/id       "6456b864-c121-bb61-fda2-109251a1c777"
                       :gateway-credentials (:gateway-credentials config)}]
     (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 1 "offering")]
-      (let [items (:items (ooapi-loader (merge client-info request {:page-size 2})))]
+      (let [data (ooapi-loader (merge client-info request))
+            items (:items data)]
         (is (= 3 (count items)))))))
 
-;; We test only one error here, to make sure that the validating loader includes the error from the spec-helper.
+;; We test only one error here, to make sure that the validating loader includes the OpenAPI error
 (deftest test-invalid
   (let [vcr  (helper/make-vcr :playback)
         config       (helper/make-test-config)
-        ooapi-loader (ooapi.loader/validating-loader
-                       (ooapi.loader/make-ooapi-http-loader (URI. "https://jomco.github.io/rio-mapper-test-data/")
-                                                            (:gateway-credentials config)
-                                                            config))
+        ooapi-loader (ooapi.loader/make-ooapi-http-loader (URI. "https://jomco.github.io/rio-mapper-test-data/")
+                                                          (:gateway-credentials config)
+                                                          config)
         client-info  (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         request      {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
-                      ::ooapi/type     "education-specification"
+                      ::ooapi/type     "programme"
                       ::ooapi/id       "6456b864-c121-bb61-fda2-109251a1c777"
                       :gateway-credentials (:gateway-credentials config)}]
     ;; This education specification lacks an educationSpecificationId
-    (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "eduspec")]
+    (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "programme")]
       (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]
-        (is (= "Top level EducationSpecification object is missing these required fields: educationSpecificationId"
-               (:origin (ex-data ex))))))))
+        (is (= {:issue "schema-validation-error"
+                :canonical-schema-path ["components" "schemas" "ProgrammeId" "required"]}
+               (select-keys (first (:issues (ex-data ex)))
+                            [:issue :canonical-schema-path])))))))

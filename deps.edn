@@ -19,6 +19,7 @@
          compojure/compojure            {:mvn/version "1.7.2"}
          nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
          nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
+         nl.jomco/openapi-v3-validator  {:mvn/version "0.2.6"}
 
          ;; interface
          nl.jomco/envopts     {:mvn/version "0.0.7"}
@@ -36,7 +37,7 @@
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.10"}}
 
  :aliases
- {:dev {:extra-paths ["dev"]
+ {:dev {:extra-paths ["dev" "test-v6" "src-v6"] ;; include v6 paths when running in the REPL
         :extra-deps  {clj-commons/clj-yaml {:mvn/version "RELEASE"}
                       expound/expound      {:mvn/version "RELEASE"}}}
 
@@ -92,7 +93,7 @@
 
   :lint {:paths        []
          :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
-         :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-common" "test-v5" "test-common"]}
+         :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-v6" "src-common" "test-v5" "test-v6" "test-common"]}
 
   :package {:extra-paths ["target/classes"]}
   :uberjar {:replace-deps  {uberdeps/uberdeps   {:mvn/version "RELEASE"}
