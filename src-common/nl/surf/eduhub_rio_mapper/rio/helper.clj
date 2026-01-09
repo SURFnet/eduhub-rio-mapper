@@ -23,9 +23,16 @@
             [clojure.tools.logging :as log])
   (:import [java.io PushbackReader]))
 
-(def specifications (edn/read (PushbackReader. (io/reader (io/resource "ooapi-mappings.edn")))))
-(def xsd-beheren (edn/read (PushbackReader. (io/reader (io/resource "beheren-schema.edn")))))
-(def xsd-types (edn/read (PushbackReader. (io/reader (io/resource "beheren-types.edn")))))
+(defn edn-read-file [fname]
+  (with-open [r (PushbackReader. (io/reader fname))]
+    (edn/read r)))
+
+(defn edn-read-resource [resource]
+  (edn/read (PushbackReader. (io/reader (io/resource resource)))))
+
+(def specifications (edn-read-resource "ooapi-mappings.edn"))
+(def xsd-beheren (edn-read-resource "beheren-schema.edn"))
+(def xsd-types (edn-read-resource "beheren-types.edn"))
 
 (defn ooapi-mapping
   "Look up the matching rio key for given ooapi key (or keys) of rio type `name` (ooapi-mappings.edn)."

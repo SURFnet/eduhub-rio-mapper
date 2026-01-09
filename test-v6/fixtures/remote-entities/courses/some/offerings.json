@@ -4,10 +4,10 @@
   "items": [
     {
       "pendingNumberStudents": 5,
-      "academicSession": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "academicSessionId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "addresses": [
         {
-          "countryCode": "NL",
+          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
           "city": "Manderveen",
           "geoLocation": {
             "longitude": 21,
@@ -84,7 +84,7 @@
           "registrationStatus": "open"
         }
       ],
-      "offeringId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "programmeOfferingId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "programOffering": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "maxNumberStudents": 137,
       "abbreviation": "MB",
