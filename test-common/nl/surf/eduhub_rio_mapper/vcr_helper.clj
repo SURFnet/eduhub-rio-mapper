@@ -1,3 +1,34 @@
+;; This file is part of eduhub-rio-mapper
+;;
+;; Copyright (C) 2026 SURFnet B.V.
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU Affero General Public License
+;; as published by the Free Software Foundation, either version 3 of
+;; the License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Affero General Public License for more details.
+;;
+;; You should have received a copy of the GNU Affero General Public
+;; License along with this program.  If not, see
+;; <https://www.gnu.org/licenses/>.
+
+;; Comparison with e2e tests:
+;; e2e tests contact the RIO test environment (KIT) for each RIO call.
+;; e2e tests use the entire stack, including web server and worker.
+;; vcr tests only contact RIO during record mode.
+;; This leads to some important differences:
+;; - vcr playback tests are much faster (about 50x)
+;; - vcr playback tests work when RIO is offline (after 17 and during weekends) or down
+;; - vcr tests (both modes) show the actual exceptions; e2e tests access the api and that's a black box from their view
+;; - vcr tests cannot be run in record mode from github actions
+;; - vcr tests do not test the worker or the api
+;; - e2e tests are somewhat more resilient - vcr tests expect an exact sequence of http calls.
+;; - vcr tests need to be re-recorded regularly (make record)
+
 (ns nl.surf.eduhub-rio-mapper.vcr-helper
   (:require
    [clojure.edn :as edn]
@@ -26,11 +57,15 @@
   (get remote-entities/*session* name))
 
 (defn entity-name-to-id [n]
+  {:post [(not (empty? %))]}
   (let [id (if (= vcr-mode :record)
-             (str (entity-id n))
+             (some-> n entity-id str)
              (get vcr-mapping n))]
     (when (nil? id)
-      (throw (ex-info "missing entity name" {:name n})))
+      (let [err (if (= vcr-mode :record)
+                  "Entity name not present in remote entities"
+                  "Entity name not present in vcr/mapping.edn")]
+        (throw (ex-info err {:name n}))))
     id))
 
 
@@ -64,7 +99,11 @@
   (let [count-atom (atom 0)
         dir        (numbered-file root idx)]
     (fn [_ actual-request]
-      (let [i                (swap! count-atom inc)
+      (let [url              (cond-> (:url actual-request)
+                               (not remote-entities/programme-supported?)
+                               (remote-entities/convert-url-to-v5))
+            actual-request   (assoc actual-request :url url)
+            i                (swap! count-atom inc)
             fname            (numbered-file dir i)
             recording        (with-open [r (io/reader fname)] (edn/read (PushbackReader. r)))
             recorded-request (:request recording)]
@@ -78,15 +117,22 @@
 (defn- make-recorder [root idx desc]
   (let [mycounter (atom 0)]
     (fn [handler request]
-      (let [response  (handler request)
-            counter   (swap! mycounter inc)
-            file-name (str root "/" idx "-" desc "/" counter "-" (req-name request) ".edn")
-            headers   (select-keys (:headers request) ["SOAPAction" "X-Route"])]
+      (let [url          (cond-> (:url request)
+                           (not remote-entities/programme-supported?)
+                           (remote-entities/convert-url-to-v5))
+            request      (assoc request :url url)
+            response     (handler request)
+            content-type (get (:headers response) "Content-Type")
+            counter      (swap! mycounter inc)
+            file-name    (str root "/" idx "-" desc "/" counter "-" (req-name request) ".edn")
+            headers      (select-keys (:headers request) ["SOAPAction" "X-Route"])]
         (io/make-parents file-name)
         (with-open [w (io/writer file-name)]
           (pprint {:request  (assoc (select-keys request [:method :url :body])
                                     :headers headers)
-                   :response (select-keys response [:status :body])}
+                   :response (assoc (select-keys response [:status :body])
+                                    ;; ooapi validation expects exactly "application/json"
+                                    :headers {"content-type" content-type})}
                   w))
         response))))
 

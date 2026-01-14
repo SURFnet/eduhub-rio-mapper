@@ -11,7 +11,7 @@
           {:id                       :v5-e2e
            :test-paths               ["test-v5" "test-common"]
            :kaocha.filter/focus-meta [:e2e]}
-          {:id                       :v5-record
+          {:id                       :v5-vcr
            :test-paths               ["test-v5" "test-common"]
            :kaocha.filter/focus-meta [:vcr]}
 
@@ -24,6 +24,6 @@
           {:id                       :v6-e2e
            :test-paths               ["test-v6" "test-common"]
            :kaocha.filter/focus-meta [:e2e]}
-          {:id                       :v6-e2e
+          {:id                       :v6-vcr
            :test-paths               ["test-v6" "test-common"]
-           :kaocha.filter/focus-meta [:e2e]}]}
+           :kaocha.filter/focus-meta [:vcr]}]}

@@ -10,7 +10,7 @@
   "validTo" : "2050-11-10",
   "firstStartDate" : "1994-09-05",
   "addresses" : [ {
-    "countryCode" : "NL",
+    "countryCode" : { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
     "city" : "Manderveen",
     "geoLocation" : {
       "longitude" : 21,

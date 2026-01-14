@@ -141,9 +141,9 @@
                                                                          (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
     (doseq [[idx action ootype id pred?] commands]
       (testing (str "Command " idx " " action " " id)
-        (if (and (= "sleep" action)
-                 (= vcr.helper/vcr-mode :record))
-          (Thread/sleep 5000)
+      (if (= "sleep" action)
+          (when (= vcr.helper/vcr-mode :record)
+            (Thread/sleep 5000))
           (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/interaction" idx (str action "-" (name ootype)))]
             (let [result  (runner ootype id action)
                   http-messages (:http-messages result)
@@ -221,6 +221,6 @@
                      ::ooapi/type     "programme-offerings"
                      ::ooapi/id       (vcr.helper/entity-name-to-id "programmes/interaction-programme-some")
                      :gateway-credentials (:gateway-credentials config)}]
-        (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/ooapi-loader" 1 "offering")]
+        (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 1 "offering")]
           (let [items (:items (ooapi-loader (merge client-info request)))]
             (is (= 3 (count items)))))))))

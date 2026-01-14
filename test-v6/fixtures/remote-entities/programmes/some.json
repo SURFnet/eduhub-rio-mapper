@@ -22,7 +22,7 @@
   "validFrom": "2008-10-18",
   "addresses": [
     {
-      "countryCode": "NL",
+      "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
       "city": "Morra",
       "geoLocation": {
         "longitude": 88,
@@ -48,7 +48,7 @@
   ],
   "duration": "P1DT30H4S",
   "qualificationAwarded": "Phd",
-  "link": "https://universiteit-van-morra.nl/programs/{{programs/some}}",
+  "link": "https://universiteit-van-morra.nl/programs/{{programmes/some}}",
   "coordinators": [
     "cafecafe-cafe-cafe-cafe-cafecafecafe"
   ],
@@ -109,7 +109,7 @@
       "educationLocationCode": "107X215"
     }
   ],
-  "programId": "{{programs/some}}",
+  "programId": "{{programmes/some}}",
   "firstStartDate": "2010-01-31",
   "resources": [
     "Lelieveldt, H. Course guide. Sage.Miles, M.",

@@ -12,7 +12,7 @@
   "validFrom": "2018-10-18",
   "addresses": [
     {
-      "countryCode": "NL",
+      "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
       "city": "Morra",
       "geoLocation": {
         "longitude": 88,
@@ -104,11 +104,11 @@
       "propaedeuticPhase": "no_propaedeutic_phase"
     }
   ],
-  "programId": "{{programs/interaction-program-some}}",
+  "programId": "{{programmes/interaction-programme-some}}",
   "programType": "program",
   "firstStartDate": "2020-01-31",
   "qualificationAwarded": "Phd",
-  "link": "https://universiteit-van-morra.nl/programs/{{programs/interaction-program-some}}",
+  "link": "https://universiteit-van-morra.nl/programs/{{programmes/interaction-programme-some}}",
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
