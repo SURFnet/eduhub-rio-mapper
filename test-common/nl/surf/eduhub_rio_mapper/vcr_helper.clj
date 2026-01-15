@@ -37,8 +37,7 @@
    [clojure.string :as str]
    [clojure.test :refer :all]
    [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities]
-   [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
-   [nl.surf.eduhub-rio-mapper.utils.version :as version])
+   [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper])
   (:import
    [java.io PushbackReader]))
 
@@ -48,26 +47,26 @@
 
 (def vcr-mapping
   (when (= vcr-mode :playback)
-    (let [fixtures-dir (str "test-" version/OOAPI-VERSION "/fixtures")]
-      (rio.helper/edn-read-file (str fixtures-dir "/vcr/mapping.edn")))))
+    (let [fixture-dir #(rio.helper/edn-read-file (str "test-" (name %) "/fixtures" "/vcr/mapping.edn"))]
+      {:v5 (fixture-dir :v5)
+       :v6 (fixture-dir :v6)})))
 
 (defn- entity-id
   "Get UUID of entity from remote-entities session."
   [name]
   (get remote-entities/*session* name))
 
-(defn entity-name-to-id [n]
+(defn entity-name-to-id [n version]
   {:post [(not (empty? %))]}
   (let [id (if (= vcr-mode :record)
              (some-> n entity-id str)
-             (get vcr-mapping n))]
+             (get (version vcr-mapping) n))]
     (when (nil? id)
       (let [err (if (= vcr-mode :record)
                   "Entity name not present in remote entities"
                   "Entity name not present in vcr/mapping.edn")]
         (throw (ex-info err {:name n}))))
     id))
-
 
 (defn- ls [dir-name]
   (map #(.getName %) (.listFiles (io/file dir-name))))

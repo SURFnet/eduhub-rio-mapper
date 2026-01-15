@@ -104,6 +104,9 @@
                         :action      action})
                 http-logging-enabled))))
 
+(defn- entity-name-to-id [name]
+  (vcr.helper/entity-name-to-id name :v5))
+
 (deftest ^:vcr interaction-test
   (let [vcr                  (vcr.helper/make-vcr)
         config               (if (= vcr.helper/vcr-mode :record)
@@ -114,9 +117,9 @@
         handlers             (processing/make-handlers {:rio-config rio-config
                                                         :gateway-root-url (:gateway-root-url config)
                                                         :gateway-credentials (:gateway-credentials config)})
-        eduspec-parent-id    (vcr.helper/entity-name-to-id "education-specifications/interaction-eduspec-parent")
-        eduspec-child-id     (vcr.helper/entity-name-to-id "education-specifications/interaction-eduspec-child")
-        program-id           (vcr.helper/entity-name-to-id "programs/interaction-program-some")
+        eduspec-parent-id    (entity-name-to-id "education-specifications/interaction-eduspec-parent")
+        eduspec-child-id     (entity-name-to-id "education-specifications/interaction-eduspec-child")
+        program-id           (entity-name-to-id "programs/interaction-program-some")
 
         runner               (make-runner handlers
                                           client-info
@@ -207,7 +210,7 @@
     (testing "offerings"
       (let [request {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
                      ::ooapi/type     "program-offerings"
-                     ::ooapi/id       (vcr.helper/entity-name-to-id "programs/interaction-program-some")
+                     ::ooapi/id       (entity-name-to-id "programs/interaction-program-some")
                      :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/ooapi-loader" 1 "offering")]
           (let [items (:items (ooapi-loader (merge client-info request {:page-size 2})))]
@@ -217,7 +220,7 @@
     (testing "invalid-eduspec"
       (let [request {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
                      ::ooapi/type     "education-specification"
-                     ::ooapi/id       (vcr.helper/entity-name-to-id "education-specifications/bad-eduspec")
+                     ::ooapi/id       (entity-name-to-id "education-specifications/bad-eduspec")
                      :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/ooapi-loader" 2 "eduspec")]
           (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]

@@ -21,32 +21,32 @@ proof-specs:
 test: test-v5 test-v6
 
 test-v5: test-common
-	OOAPI_VERSION=v5 clojure -M:test-v5
+	clojure -M:test-v5
 
 test-v5-redis:
-	OOAPI_VERSION=v5 clojure -M:test-v5-redis
+	clojure -M:test-v5-redis
 
 test-v5-e2e:
-	OOAPI_VERSION=v5 clojure -M:test-v5-e2e --no-capture-output
+	clojure -M:test-v5-e2e --no-capture-output
 
 playback-v5:
-	OOAPI_VERSION=v5 clojure -M:test-vcr-v5
+	clojure -M:test-vcr-v5
 
 record-v5:
 	rm -rf test-v5/fixtures/vcr/*
 	OOAPI_VERSION=v5 VCR_RECORD=true clojure -M:test-vcr-v5
 
 test-v6: test-common
-	OOAPI_VERSION=v6 clojure -M:test-v6
+	clojure -M:test-v6
 
 test-v6-redis:
-	OOAPI_VERSION=v6 clojure -M:test-v6-redis
+	clojure -M:test-v6-redis
 
 test-v6-e2e:
-	OOAPI_VERSION=v6 clojure -M:test-v6-e2e --no-capture-output
+	clojure -M:test-v6-e2e --no-capture-output
 
 playback-v6:
-	OOAPI_VERSION=v6 clojure -M:test-vcr-v6
+	clojure -M:test-vcr-v6
 
 record-v6:
 	rm -rf test-v6/fixtures/vcr/*
