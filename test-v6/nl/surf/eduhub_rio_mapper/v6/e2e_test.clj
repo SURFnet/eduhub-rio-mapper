@@ -49,7 +49,7 @@
     (is (= http-status/not-found (:status (post-job :upsert "not-a-valid-type" (UUID/randomUUID))))))
 
   (testing "scenario [3b]: Test /job/upsert with an edspec parent with an invalid type attribute. You can expect 'error'."
-    (let [job (post-job :upsert :education-specifications "bad-type")]
+    (let [job (post-job :upsert :education-specifications "specification-bad-type")]
       (and
        (is (job-error? job))
        (is (= "fetching-ooapi" (job-result job :phase)))))))
@@ -57,7 +57,7 @@
 (deftest ^:e2e test-program-without-eduspecs
   (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
     (and
-     (is (nil? (rio-resolve "education-specification" (ooapi-id :education-specifications "dorothy"))))
+     (is (nil? (rio-resolve "education-specification" (ooapi-id :education-specifications "specification-dorothy"))))
      (let [job (post-job :upsert :programs "jack")]
        (and
         (is (job-error? job))
@@ -66,7 +66,7 @@
 
 (deftest ^:e2e test-upsert-eduspec-dry-run
   (testing "scenario [1a]: Test /job/dry-run to see the difference between the edspec parent in OOAPI en de opleidingeenheid in RIO. You can expect RIO to be empty, when you start fresh."
-    (let [job (post-job :dry-run/upsert :education-specifications "orphan-eduspec")]
+    (let [job (post-job :dry-run/upsert :education-specifications "specification-orphan-eduspec")]
       (and
        (is (job-done? job))
        (is (job-dry-run-not-found? job))))))
@@ -87,7 +87,7 @@
 
 (deftest ^:e2e test-program-with-eduspecs
   ;; insert eduspec "parent-program"
-  (binding [last-job (post-job :upsert :education-specifications "parent-program")
+  (binding [last-job (post-job :upsert :education-specifications "specification-parent-program")
             parent-code nil
             child-code nil
             generated-sleutel nil
@@ -126,7 +126,7 @@
                (get-in-xml last-xml ["hoOpleiding" "hoOpleidingPeriode" "studielasteenheid"]))))))
 
     (testing "scenario [1a]: Test /job/dry-run to see the difference between the edspec parent in OOAPI en de opleidingeenheid in RIO. You can expect them to be the same."
-      (set! last-job (post-job :dry-run/upsert :education-specifications "parent-program"))
+      (set! last-job (post-job :dry-run/upsert :education-specifications "specification-parent-program"))
       (and
        (is (job-done? last-job))
        (is (job-dry-run-found? last-job))
@@ -134,7 +134,7 @@
 
       ;; insert eduspec "child-program"
     (testing "scenario [1c]: Test /job/upsert with the edspec child. You can expect 'done' and a variant in RIO is inserted met een relatie met de parent."
-      (set! last-job (post-job :upsert :education-specifications "child-program"))
+      (set! last-job (post-job :upsert :education-specifications "specification-child-program"))
       (set! child-code (job-result-opleidingseenheidcode last-job))
       (set! generated-sleutel (UUID/randomUUID))
       (and
@@ -155,11 +155,11 @@
        (is (seq original-relations) "Parent should have relations before update")
 
           ;; Update parent-program's validFrom to 2017-01-01 (after child's validFrom of 2016-12-15)
-       (update-in-remote-entity :education-specifications "parent-program"
+       (update-in-remote-entity :education-specifications "specification-parent-program"
                                 #(assoc % :validFrom "2017-01-01"))
 
           ;; Perform upsert on parent-program (this will be an UPDATE since it already exists)
-       (set! last-job (post-job :upsert :education-specifications "parent-program"))
+       (set! last-job (post-job :upsert :education-specifications "specification-parent-program"))
 
        (is (job-done? last-job) "Parent update job should complete successfully")
 
@@ -191,15 +191,15 @@
        (is (rio-opleidingseenheid child-code) "Child should still be accessible in RIO")))
 
     (testing "scenario [1f-2]: Test prune-relations by updating parent eduspec validTo from nil to actual date"
-      ;; Upsert bonusparent-program (without validTo)
-      (set! last-job (post-job :upsert :education-specifications "bonusparent-program"))
+      ;; Upsert specification-bonusparent-program (without validTo)
+      (set! last-job (post-job :upsert :education-specifications "specification-bonusparent-program"))
       (set! bonus-parent-code (job-result-opleidingseenheidcode last-job))
       (and
        (is (job-done? last-job) "Bonus parent upsert should complete successfully")
        (is bonus-parent-code "Bonus parent code should be set")
 
-       ;; Upsert bonuschild-program (without validTo)
-       (set! last-job (post-job :upsert :education-specifications "bonuschild-program"))
+       ;; Upsert specification-bonuschild-program (without validTo)
+       (set! last-job (post-job :upsert :education-specifications "specification-bonuschild-program"))
        (set! bonus-child-code (job-result-opleidingseenheidcode last-job))
        (is (job-done? last-job) "Bonus child upsert should complete successfully")
        (is bonus-child-code "Bonus child code should be set")
@@ -220,11 +220,11 @@
            "Relation should have valid-to: nil initially")
 
        ;; Update bonusparent-program's validTo to a date in 2026
-       (update-in-remote-entity :education-specifications "bonusparent-program"
+       (update-in-remote-entity :education-specifications "specification-bonusparent-program"
                                 #(assoc % :validTo "2026-08-31"))
 
        ;; Perform upsert on bonusparent-program
-       (set! last-job (post-job :upsert :education-specifications "bonusparent-program"))
+       (set! last-job (post-job :upsert :education-specifications "specification-bonusparent-program"))
        (is (job-done? last-job) "Bonus parent update job should complete successfully")
 
        ;; Get updated relations for bonus parent after update
@@ -254,11 +254,11 @@
 
     (testing "scenario [1g]: Revert updating parent eduspec validFrom"
         ;; Update parent-program's validFrom to 1950-01-01 (after child's validFrom of 2016-12-15)
-      (update-in-remote-entity :education-specifications "parent-program"
+      (update-in-remote-entity :education-specifications "specification-parent-program"
                                #(assoc % :validFrom "1950-01-01"))
 
         ;; Perform upsert on parent-program (this will be an UPDATE since it already exists)
-      (set! last-job (post-job :upsert :education-specifications "parent-program"))
+      (set! last-job (post-job :upsert :education-specifications "specification-parent-program"))
       (is (job-done? last-job) "Parent update job should complete successfully"))
 
       ;; link eduspec "parent-program" to new sleutel
@@ -290,7 +290,7 @@
 
       ;; link eduspec "parent-program" to old sleutel
     (testing "scenario [2b]: Test /job/link to reset the edspec parent to the old 'eigen sleutel'."
-      (set! last-job (post-job :link parent-code :education-specifications "parent-program"))
+      (set! last-job (post-job :link parent-code :education-specifications "specification-parent-program"))
       (and
        (is (job-done? last-job))
        (is (job-has-diffs? last-job))
@@ -382,7 +382,7 @@
               (eigen-aangeboden-opleiding-sleutel program-id)))))
 
     (testing "scenario [1e] Delete child eduspec."
-      (set! last-job (post-job :delete :education-specifications "child-program"))
+      (set! last-job (post-job :delete :education-specifications "specification-child-program"))
       (and
        (is (job-done? last-job))
        (is (nil? (rio-resolve "education-specification" child-code)))))))
@@ -390,7 +390,7 @@
 (def ^:dynamic course-id nil)
 
 (deftest ^:e2e test-course-with-eduspecs
-  (binding [last-job (post-job :upsert :education-specifications "parent-course")
+  (binding [last-job (post-job :upsert :education-specifications "specification-parent-course")
             course-id nil
             generated-sleutel nil
             parent-code nil
@@ -503,10 +503,10 @@
     (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
       ;; insert eduspec with type "variant", then create relation. Delete after use
       (and
-       (set! last-job (post-job :upsert :education-specifications "accredited-variant"))
+       (set! last-job (post-job :upsert :education-specifications "specification-accredited-variant"))
        (set! variant-code (job-result-opleidingseenheidcode last-job))
        (is (rio-with-relation? parent-code variant-code))
-       (set! last-job (post-job :delete :education-specifications "accredited-variant"))
+       (set! last-job (post-job :delete :education-specifications "specification-accredited-variant"))
        (is (nil? (rio-resolve "education-specification" parent-code)))))))
 
 (defn- set-education-unit-code-in-consumer [consumer unit-code]
@@ -537,7 +537,7 @@
 
 (deftest ^:e2e test-joint-program
   ;; insert eduspec "joint"
-  (binding [last-job (post-job :upsert :education-specifications "joint")
+  (binding [last-job (post-job :upsert :education-specifications "specification-joint")
             parent-code nil
             program-code nil
             last-xml nil

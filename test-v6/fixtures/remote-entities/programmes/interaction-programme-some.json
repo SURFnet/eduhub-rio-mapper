@@ -46,7 +46,7 @@
     "studyLoadUnit": "ects"
   },
   "fieldsOfStudy": "0612",
-  "educationSpecification": "{{education-specifications/interaction-eduspec-parent}}",
+  "educationSpecification": "{{education-specifications/specification-interaction-eduspec-parent}}",
   "name": [
     {
       "language": "en-GB",

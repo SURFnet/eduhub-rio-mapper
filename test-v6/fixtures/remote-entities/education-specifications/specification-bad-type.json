@@ -3,7 +3,7 @@
   "children": [],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "educationSpecificationType": "badType",
-  "educationSpecificationId": "{{education-specifications/bad-type}}",
+  "educationSpecificationId": "{{education-specifications/specification-bad-type}}",
   "validFrom": "1950-09-20",
   "abbreviation": "1T",
   "validTo": "2060-08-28",
@@ -43,9 +43,9 @@
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{education-specifications/bad-type}}"
+    "code": "{{education-specifications/specification-bad-type}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/bad-type}}",
+  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/specification-bad-type}}",
   "fieldsOfStudy": "0912",
   "description": [
     {
