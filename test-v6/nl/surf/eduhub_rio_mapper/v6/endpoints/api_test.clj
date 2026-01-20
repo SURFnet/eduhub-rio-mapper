@@ -61,7 +61,7 @@
                                      (authenticated-request path)
                                      (assoc :institution-schac-home "edu.nl")
                                      api-routes)]
-        (is (= http-status/ok status))
+        (is (= http-status/created status))
         (is (= expected-job job)))
 
     {:action                 "upsert"
