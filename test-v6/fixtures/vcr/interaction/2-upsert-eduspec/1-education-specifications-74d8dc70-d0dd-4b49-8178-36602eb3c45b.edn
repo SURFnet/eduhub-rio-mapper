@@ -1,7 +1,7 @@
 {:request
  {:method :get,
   :url
-  "https://gateway.test.surfeduhub.nl/education-specifications/74d8dc70-d0dd-4b49-8178-36602eb3c45b?returnTimelineOverrides=true",
+  "https://gateway.test.surfeduhub.nl/programs/74d8dc70-d0dd-4b49-8178-36602eb3c45b?returnTimelineOverrides=true",
   :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"}},
  :response
  {:status 200,

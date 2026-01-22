@@ -14,7 +14,7 @@
     "value": 128,
     "studyLoadUnit": "ects"
   },
-  "parent": "{{education-specifications/specification-interaction-eduspec-parent}}",
+  "parent": "{{programmes/specification-interaction-eduspec-parent}}",
   "fieldsOfStudy": "0612",
   "name": [
     {
@@ -29,7 +29,7 @@
   "sector": "higher professional education",
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{education-specifications/specification-interaction-eduspec-child}}"
+    "code": "{{programmes/specification-interaction-eduspec-child}}"
   },
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "level": "bachelor",
@@ -45,7 +45,7 @@
       ]
     }
   ],
-  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/specification-interaction-eduspec-child}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-eduspec-child}}",
   "validTo": "2025-04-25",
   "learningOutcomes": [
     [
@@ -61,6 +61,6 @@
   ],
   "abbreviation": "OT",
   "formalDocument": "diploma",
-  "educationSpecificationId": "{{education-specifications/specification-interaction-eduspec-child}}",
-  "educationSpecificationType": "program"
+  "programmeId": "{{programmes/specification-interaction-eduspec-child}}",
+  "programmeType": "programme"
 }

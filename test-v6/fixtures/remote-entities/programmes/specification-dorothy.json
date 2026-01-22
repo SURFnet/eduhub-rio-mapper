@@ -1,9 +1,9 @@
 {
   "level": "bachelor",
-  "children": ["{{education-specifications/specification-child-program}}"],
+  "children": [],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
-  "educationSpecificationType": "program",
-  "educationSpecificationId": "{{education-specifications/specification-joint}}",
+  "programmeType": "programme",
+  "programmeId": "{{programmes/specification-dorothy}}",
   "validFrom": "1950-09-20",
   "abbreviation": "1T",
   "validTo": "2060-08-28",
@@ -43,9 +43,9 @@
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{education-specifications/specification-joint}}"
+    "code": "{{programmes/specification-dorothy}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/specification-joint}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-dorothy}}",
   "fieldsOfStudy": "0912",
   "description": [
     {

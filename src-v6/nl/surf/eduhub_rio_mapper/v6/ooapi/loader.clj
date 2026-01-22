@@ -37,7 +37,7 @@
   (if id
     (let [page-suffix (if page (str "&pageNumber=" page) "")
           path        (case ooapi-type
-                        "education-specification" "education-specifications/%s?returnTimelineOverrides=true"
+                        "education-specification" "programs/%s?returnTimelineOverrides=true"
                         ;; TODO remove program variant
                         "program"                 "programs/%s?returnTimelineOverrides=true"
                         "programme"               "programmes/%s?returnTimelineOverrides=true"
@@ -47,7 +47,7 @@
                         "programme-offerings"     (str "programmes/%s/programme-offerings?pageSize=" page-size "&consumer=rio" page-suffix))]
       (format path id))
     (case ooapi-type
-      "education-specifications" "education-specifications"
+      "education-specifications" "programmes"
       "programmes"               "programmes"
       "programs"                 "programs"
       "courses"                  "courses")))
@@ -151,7 +151,7 @@
 (defn- wrap-pagination
   "Middleware for fetching paged items.
 
-  If the response is paged (has a :pageNumber and :items), 
+  If the response is paged (has a :pageNumber and :items),
   fetch all remaining pages and combine items in the result.
 
   Fetches no more than `max-pages`."
