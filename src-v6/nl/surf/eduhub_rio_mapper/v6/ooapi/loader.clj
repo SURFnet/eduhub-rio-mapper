@@ -20,6 +20,7 @@
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io]
             [clojure.string :as string]
+            [clojure.walk :as walk]
             [nl.jomco.http-status-codes :as http-status]
             [nl.jomco.openapi.v3.validator :as validator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
@@ -37,11 +38,13 @@
     (let [page-suffix (if page (str "&pageNumber=" page) "")
           path        (case ooapi-type
                         "education-specification" "education-specifications/%s?returnTimelineOverrides=true"
+                        ;; TODO remove program variant
                         "program"                 "programs/%s?returnTimelineOverrides=true"
                         "programme"               "programmes/%s?returnTimelineOverrides=true"
                         "course"                  "courses/%s?returnTimelineOverrides=true"
-                        "course-offerings"        (str "courses/%s/offerings?pageSize=" page-size "&consumer=rio" page-suffix)
-                        "program-offerings"       (str "programs/%s/offerings?pageSize=" page-size "&consumer=rio" page-suffix))]
+                        "course-offerings"        (str "courses/%s/course-offerings?pageSize=" page-size "&consumer=rio" page-suffix)
+                        "program-offerings"       (str "programs/%s/offerings?pageSize=" page-size "&consumer=rio" page-suffix)
+                        "programme-offerings"     (str "programmes/%s/programme-offerings?pageSize=" page-size "&consumer=rio" page-suffix))]
       (format path id))
     (case ooapi-type
       "education-specifications" "education-specifications"
@@ -136,7 +139,7 @@
     (let [validate-response (response-validator root-url)
           response (handler request)]
       (when-not (disabled-validations type)
-        (when-let [issues (validate-response {:request request :response response} [])]
+        (when-let [issues (validate-response {:request request :response (update response :body walk/stringify-keys)} [])]
           (throw (ex-info "Error validating OOAPI Response"
                           {:issues issues
                            :request request

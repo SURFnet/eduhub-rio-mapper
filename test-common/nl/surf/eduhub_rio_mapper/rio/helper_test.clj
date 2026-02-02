@@ -75,10 +75,12 @@
                          "aangebodenHOOpleiding"))))
 
   (testing "->xml with number type kenmerken"
-    (let [result (helper/->xml {:deelnemersplaatsen 100
-                                :eigenAangebodenOpleidingSleutel "1234-abcdef-98765432"}
-                               "aangebodenHOOpleiding")]
-      (is [] result)))
+    (let [result (helper/->xml {:deelnemersplaatsen 100}
+                               "AangebodenHOOpleidingCohort")]
+      (is (= [:duo:AangebodenHOOpleidingCohort
+              [:duo:kenmerken
+               [:duo:kenmerknaam "deelnemersplaatsen"]
+               [:duo:kenmerkwaardeGetal 100]]] result))))
 
   (testing "->xml with multiple different kenmerk types"
     (is (= [:duo:aangebodenHOOpleiding
