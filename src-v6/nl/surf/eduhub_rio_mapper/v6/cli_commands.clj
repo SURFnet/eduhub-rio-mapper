@@ -98,9 +98,12 @@
                             ::ooapi/id              old-uuid
                             ::ooapi/entity          eduspec}
                 rio-code   (-> insert-req insert! :aanleveren_opleidingseenheid_response :opleidingseenheidcode)
+                _ (println "INSERTED: RIO CODE" rio-code)
                 link-req   (merge insert-req {::ooapi/id new-uuid ::rio/opleidingscode rio-code})]
             (link! link-req)
+            (println "LINKED")
             (let [rio-obj        (rio.loader/find-rio-object rio-code getter (:institution-oin client-info) "opleidingseenheid")
+                  _ (println "LOADED RIO OBJECT")
                   nieuwe-sleutel (->> rio-obj
                                       :content
                                       (filter #(= :kenmerken (:tag %)))

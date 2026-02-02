@@ -23,8 +23,7 @@
             [nl.surf.eduhub-rio-mapper.specs.mutation :as-alias mutation]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-            [nl.surf.eduhub-rio-mapper.v6.specs.relations :as relations]
-            [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
+            [nl.surf.eduhub-rio-mapper.v6.specs.relations :as relations]))
 
 (defn- narrow-valid-daterange
   "The relation's valid-from and valid-to is stricter than that of the parent or child.
@@ -127,9 +126,8 @@
                          (add-rio-code es)))
         eduspec (add-rio-code eduspec)]
     (when eduspec
-      (let [actual (load-relation-data getter (::rio/opleidingscode eduspec) institution-oin)
-            rio-consumer (ooapi-utils/extract-rio-consumer (:consumers eduspec))]
-        (when-let [[rel-dir entity] (case (:educationSpecificationSubType rio-consumer)
+      (let [actual (load-relation-data getter (::rio/opleidingscode eduspec) institution-oin)]
+        (when-let [[rel-dir entity] (case (:educationSpecificationSubType (:consumer eduspec))
                                       "variant" [:child (load-eduspec (:parent eduspec))]
                                       nil       [:parent (->> (keep load-eduspec (:children eduspec))
                                                               (filter #(s/valid? ::relations/child %)))]

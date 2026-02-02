@@ -14,8 +14,8 @@
 
 (defn level-sector-map-to-rio?
   "True if we can map the given level and sector to RIO."
-  [{:keys [level sector educationSpecificationType]}]
-  (or (= "privateProgram" educationSpecificationType)
+  [{:keys [level sector consumer]}]
+  (or (= "privateProgramme" (:specificationType consumer))
       (some? (rio-helper/level-sector-mapping level sector))))
 
 (defn get-localized-value-exclusive
@@ -56,39 +56,9 @@
          (sort-by attr-key)
          last)))
 
-(defn extract-rio-consumer
-  "Find the first consumer with a consumerKey equal to 'rio' or return nil."
-  [consumers]
-  (some->> consumers
-           (filter #(= (:consumerKey %) "rio"))
-           first))
-
 (defn valid-date? [date]
   (and (string? date)
        (try (let [d (LocalDate/parse date date-format)]
               ;; XSD schema does not accept "Year zero".
               (not (zero? (.getYear d))))
             (catch DateTimeParseException _ false))))
-
-(defn has-mode-of-delivery? [x]
-  (or (:modeOfDelivery x)
-      (some #(and (:modeOfDelivery %)
-                  (= "rio" (:consumerKey %)))
-            (:consumers x))))
-
-(defn has-registration-status? [x]
-  (some #(and (#{"open" "closed"} (:registrationStatus %))
-              (= "rio" (:consumerKey %)))
-        (:consumers x)))
-
-(defn valid-type-and-subtype?
-  "EducationSpecification should only have subType if type is 'program'."
-  [{:keys [educationSpecificationType consumers]}]
-  (let [{:keys [educationSpecificationSubType] :as rio-consumer} (extract-rio-consumer consumers)]
-    (or (and (= educationSpecificationType "program")
-             (= educationSpecificationSubType "variant"))
-        (not (contains? rio-consumer :educationSpecificationSubType)))))
-
-(defn not-equal-to-parent?
-  [{:keys [educationSpecificationId parent]}]
-  (not= educationSpecificationId parent))

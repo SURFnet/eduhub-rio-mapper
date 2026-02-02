@@ -75,7 +75,7 @@
             (first (:content v))))))
 
 (defn summarize-eduspec [eduspec]
-  (let [current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods eduspec :educationSpecification) :validFrom)]
+  (let [current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods eduspec :programme) :validFrom)]
     {:begindatum                    (:validFrom current-period),
      :naamLang                      (ooapi-utils/get-localized-value (:name current-period) dutch-locales),
      :naamKort                      (:abbreviation current-period),
@@ -86,10 +86,7 @@
 (defn summarize-course-program [course-program]
   (let [ooapi-type (if (:courseId course-program) :course :program)
         current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods course-program ooapi-type) :validFrom)
-        consumer (->> course-program
-                      :consumers
-                      (filter #(= "rio" (:consumerKey %)))
-                      first)]
+        consumer (:consumer course-program)]
     {:begindatum                   (:validFrom current-period)
      :onderwijsaanbiedercode       (:educationOffererCode consumer)
      :onderwijslocatiecode         (:educationLocationCode consumer)

@@ -21,23 +21,22 @@
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
 
-(def ^:private education-specification-type-mapping
-  {"course"         "hoOnderwijseenheid"
-   "program"        "hoOpleiding"
-   "privateProgram" "particuliereOpleiding"
-   "cluster"        "hoOnderwijseenhedencluster"})
+(def ^:private programme-specification-type-mapping
+  {"course"           "hoOnderwijseenheid"
+   "programme"        "hoOpleiding"
+   "privateProgramme" "particuliereOpleiding"
+   "cluster"          "hoOnderwijseenhedencluster"})
 
-(defn- program-subtype-mapping [consumers]
-  (when-let [rio-consumer (some->> consumers (filter #(= (:consumerKey %) "rio")) first)]
-    (when (= "variant" (:educationSpecificationSubType rio-consumer)) "VARIANT")))
+(defn- program-subtype-mapping [consumer]
+  (when (= "variant" (:educationSpecificationSubType consumer)) "VARIANT"))
 
-(defn- soort-mapping [{:keys [educationSpecificationType consumers]}]
-  (case educationSpecificationType
+(defn- soort-mapping [{:keys [consumer]}]
+  (case (:specificationType consumer)
     "cluster" "HOEC"
-    "program" (or (program-subtype-mapping consumers) "OPLEIDING")
+    "programme" (or (program-subtype-mapping consumer) "OPLEIDING")
     nil))
 
-(defn- education-specification-timeline-override-adapter
+(defn- programme-specification-timeline-override-adapter
   [{:keys [abbreviation description formalDocument name studyLoad validFrom] :as eduspec}]
   (fn [pk]
     (case pk
@@ -50,20 +49,21 @@
       :studielasteenheid (rio-helper/ooapi-mapping "studielasteenheid" (:studyLoadUnit studyLoad))
       :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))
 
-(def ^:private mapping-eduspec->opleidingseenheid
-  {:eigenOpleidingseenheidSleutel #(some-> % :educationSpecificationId str/lower-case)
+(def ^:private mapping-progspec->opleidingseenheid
+  {:eigenOpleidingseenheidSleutel #(some-> % :programmeId str/lower-case)
    :opleidingseenheidcode         :rioCode})
 
-(defn- education-specification-adapter
-  [{:keys [validFrom validTo formalDocument level levelOfQualification sector fieldsOfStudy timelineOverrides educationSpecificationType] :as eduspec}
-   {:keys [category] :as _rio-consumer}]
+(defn- programme-specification-adapter
+  [{:keys [validFrom validTo formalDocument level levelOfQualification sector fieldsOfStudy timelineOverrides] :as progspec}
+   {:keys [category] :as rio-consumer}]
   (fn [opl-eenh-attr-name]
-    (let [periods     (ooapi-utils/ooapi-to-periods eduspec :educationSpecification)
-          translation (mapping-eduspec->opleidingseenheid opl-eenh-attr-name)
+    (let [programme-type (:specificationType rio-consumer)
+          periods     (ooapi-utils/ooapi-to-periods progspec :programme)
+          translation (mapping-progspec->opleidingseenheid opl-eenh-attr-name)
           ;; As of November 1st, 2025, RIO no longer returns NLQF/EQF fields for Particuliere Opleidingen
-          is-private-program? (= educationSpecificationType "privateProgram")]
+          is-private-program? (= programme-type "privateProgramme")]
       (if translation
-        (translation eduspec)
+        (translation progspec)
         (case opl-eenh-attr-name
           ;; The main education specification object represents the current situation, while the timelineOverrides
           ;; specify past and future states. However, in RIO's opleidingseenheid, the main object's begindatum and
@@ -77,14 +77,16 @@
           :eqf (when-not is-private-program? (rio-helper/ooapi-mapping "eqf" levelOfQualification))
           :niveau (rio-helper/level-sector-mapping level sector)
           :nlqf (when-not is-private-program? (rio-helper/ooapi-mapping "nlqf" levelOfQualification))
-          ;; eduspec itself is used to represent the main object without adaptations from timelineOverrides.
-          :periodes (mapv education-specification-timeline-override-adapter periods)
-          :soort (soort-mapping eduspec)
+          ;; progspec itself is used to represent the main object without adaptations from timelineOverrides.
+          :periodes (mapv programme-specification-timeline-override-adapter periods)
+          :soort (soort-mapping progspec)
           :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))))
 
 (defn education-specification->opleidingseenheid
-  "Converts a education specification into the right kind of Opleidingseenheid."
-  [eduspec]
-  (-> (education-specification-adapter eduspec (ooapi-utils/extract-rio-consumer (:consumers eduspec)))
+  "Converts a programme specification into the right kind of Opleidingseenheid."
+  [{:keys [consumer] :as progspec}]
+  (when (nil? (:specificationType consumer))
+    (throw (ex-info "No specificationType in rio-consumer" {:rio-consumer consumer})))
+  (-> (programme-specification-adapter progspec consumer)
       rio-helper/wrapper-periodes-cohorten
-      (rio-helper/->xml (education-specification-type-mapping (:educationSpecificationType eduspec)))))
+      (rio-helper/->xml (programme-specification-type-mapping (:specificationType consumer)))))

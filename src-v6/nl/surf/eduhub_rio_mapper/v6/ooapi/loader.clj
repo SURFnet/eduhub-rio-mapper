@@ -209,30 +209,33 @@
         (loader)
         :items)))
 
+(defn- programme-type [entity]
+  (-> entity :consumer :specificationType))
+
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
   [loader {::ooapi/keys [type] :as request}]
   (let [entity                  (loader request)
-        rio-consumer            (ooapi-utils/extract-rio-consumer (:consumers entity))
-        joint-program?          (= "true" (str (:jointProgram rio-consumer)))
+        consumer                (:consumer entity)
+        joint-program?          (= "true" (str (:jointProgram consumer)))
         offerings               (load-offerings loader request)
         eduspec-type            (cond
                                   joint-program?
                                   "program"
 
                                   (= type "education-specification")
-                                  (:educationSpecificationType entity)
+                                  (:specificationType consumer)
 
                                   :else
                                   (-> request
                                       (assoc ::ooapi/type "education-specification"
                                              ::ooapi/id (ooapi-base/education-specification-id entity))
                                       (loader)
-                                      :educationSpecificationType))]
+                                      programme-type))]
     (cond-> request
       joint-program?
       (assoc
-       ::rio/opleidingscode (:educationUnitCode rio-consumer))
+       ::rio/opleidingscode (:educationUnitCode consumer))
 
       :always
       (assoc

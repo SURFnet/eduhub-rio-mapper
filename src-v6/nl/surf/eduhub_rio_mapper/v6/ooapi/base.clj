@@ -5,5 +5,6 @@
 
   Takes an EducationSpecification or a Course or a Program"
   [entity]
-  (or (:educationSpecification entity)
-      (:educationSpecificationId entity)))
+  ;; TODO
+  (or (:rootId entity)        ;; programme/course
+      (:programmeId entity))) ;; programme type specification

@@ -509,15 +509,10 @@
        (set! last-job (post-job :delete :education-specifications "specification-accredited-variant"))
        (is (nil? (rio-resolve "education-specification" parent-code)))))))
 
-(defn- set-education-unit-code-in-consumer [consumer unit-code]
+(defn- set-education-unit-code-in-consumer [unit-code consumer ]
   (if (not= "rio" (:consumerKey consumer))
     consumer
     (assoc consumer :educationUnitCode unit-code)))
-
-(defn- set-education-unit-code-in-rio-consumer [consumers unit-code]
-  (mapv
-   #(set-education-unit-code-in-consumer % unit-code)
-   consumers))
 
 (deftest ^:e2e test-update-remote-entities
   ;; insert eduspec "joint"
@@ -525,7 +520,7 @@
             last-xml nil
             original-rio-sleutel nil]
     (update-in-remote-entity :programs "joint"
-                             #(update % :consumers set-education-unit-code-in-rio-consumer parent-code))
+                             #(update % :consumer set-education-unit-code-in-consumer parent-code))
     (update-in-remote-entity :programs "joint" #(dissoc % :educationSpecification))
 
     (let [cfg (remote-helper/config)
@@ -533,7 +528,7 @@
           path (str "programs/" (ooapi-id :programs "joint"))
           container-name (:container-name cfg)
           updated-program (remote-helper/os-get-object  info container-name {:path path})]
-      (is (= parent-code (get-in updated-program [:consumers 1 :educationUnitCode]))))))
+      (is (= parent-code (get-in updated-program [:consumer :educationUnitCode]))))))
 
 (deftest ^:e2e test-joint-program
   ;; insert eduspec "joint"
@@ -553,7 +548,7 @@
 
       ;; great! we have the rio code
       ;; now we update the fixture and add `:educationUnitCode rio-code` to the rio consumer.
-     (update-in-remote-entity :programs "joint" #(update % :consumers set-education-unit-code-in-rio-consumer parent-code))
+     (update-in-remote-entity :programs "joint" #(update % :consumer set-education-unit-code-in-consumer parent-code))
      (update-in-remote-entity :programs "joint" #(dissoc % :educationSpecification))
 
       ;; Now that the ooapi entity has been updated, we can upsert the program.

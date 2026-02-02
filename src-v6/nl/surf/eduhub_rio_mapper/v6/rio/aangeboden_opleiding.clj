@@ -66,9 +66,9 @@
    :toelichtingVereisteToestemming :explanationRequiredPermission})
 
 (defn- course-program-timeline-override-adapter
-  [{:keys [name description validFrom abbreviation link consumers] :as _periode}]
+  [{:keys [name description validFrom abbreviation link consumer] :as _periode}]
   (let [{:keys [acceleratedRoute deficiency foreignPartners jointPartnerCodes propaedeuticPhase
-                requirementsActivities studyChoiceCheck]} (ooapi-utils/extract-rio-consumer consumers)]
+                requirementsActivities studyChoiceCheck]} consumer]
     (fn [pk]
       (case pk
         :begindatum validFrom
@@ -105,10 +105,9 @@
     (first (filter seq mapped-values))))
 
 (defn- course-program-offering-adapter
-  [{:keys [consumers startDate modeOfDelivery priceInformation
+  [{:keys [consumer startDate modeOfDelivery priceInformation
            flexibleEntryPeriodStart flexibleEntryPeriodEnd] :as offering}]
-  (let [{:keys [registrationStatus requiredPermissionRegistration]
-         :as   rio-consumer} (ooapi-utils/extract-rio-consumer consumers)]
+  (let [{:keys [registrationStatus requiredPermissionRegistration]} consumer]
     (fn [ck]
       (if-let [translation (mapping-offering->cohort ck)]
         (translation offering)
@@ -118,7 +117,7 @@
           :cohortstatus (rio-helper/ooapi-mapping "cohortStatus" registrationStatus)
           :flexibeleInstroom (and flexibleEntryPeriodStart {:beginInstroomperiode flexibleEntryPeriodStart
                                                   :eindeInstroomperiode flexibleEntryPeriodEnd})
-          :opleidingsvorm (extract-opleidingsvorm modeOfDelivery rio-consumer)
+          :opleidingsvorm (extract-opleidingsvorm modeOfDelivery consumer)
           :prijs (mapv (fn [h] {:soort (rio-helper/ooapi-mapping "soort" (:costType h)) :bedrag (:amount h)})
              priceInformation)
           :toestemmingVereistVoorAanmelding (rio-helper/ooapi-mapping "toestemmingVereistVoorAanmelding"
@@ -129,11 +128,10 @@
   "Given a course or program, a rio-consumer object and an id, return a function.
    This function, given a attribute name from the RIO namespace, returns the corresponding value from the course or program,
    translated if necessary to the RIO domain."
-  [{:keys [rioCode validFrom validTo offerings level modeOfStudy sector fieldsOfStudy consumers teachingLanguage timelineOverrides] :as course-program}
+  [{:keys [rioCode validFrom validTo offerings level modeOfStudy sector fieldsOfStudy consumer teachingLanguage timelineOverrides] :as course-program}
    opleidingscode
    ooapi-type]
-  (let [rio-consumer (ooapi-utils/extract-rio-consumer consumers)
-        duration-map (some-> rio-consumer :duration parse-duration)
+  (let [duration-map (some-> consumer :duration parse-duration)
         id           ((if (= :course ooapi-type) :courseId :programId) course-program)
         periods      (map #(assoc (ooapi-type %)
                              :validFrom (:validFrom %)
@@ -142,8 +140,8 @@
     (fn [k] {:pre [(keyword? k)]}
       (if-let [[translation consumer] (mapping-course-program->aangeboden-opleiding k)]
         (if (ooapi-mapping? (name k))
-          (rio-helper/ooapi-mapping (name k) (translation (if consumer rio-consumer course-program)))
-          (translation (if consumer rio-consumer course-program)))
+          (rio-helper/ooapi-mapping (name k) (translation (if consumer consumer course-program)))
+          (translation (if consumer consumer course-program)))
         (case k
           :opleidingseenheidSleutel opleidingscode
           ;; Required field. If found in the resolve phase, will be added to the entity under the rioCode key,
@@ -159,7 +157,7 @@
           :vorm (rio-helper/ooapi-mapping "vorm" modeOfStudy)
           :voertaal (rio-helper/ooapi-mapping
                       "voertaal"
-                      (or (:teachingLanguages rio-consumer)
+                      (or (:teachingLanguages consumer)
                           teachingLanguage))
 
           :cohorten (mapv #(course-program-offering-adapter %)
@@ -171,7 +169,7 @@
 
           ;; These are in the xsd but ignored by us
           :eigenAangebodenOpleidingSleutel (some-> id str/lower-case) ;; resolve to the ooapi id
-          :laatsteInstroomdatum (:lastStartDate rio-consumer)
+          :laatsteInstroomdatum (:lastStartDate consumer)
           :opleidingserkenningSleutel nil
           :voVakerkenningSleutel nil)))))
 

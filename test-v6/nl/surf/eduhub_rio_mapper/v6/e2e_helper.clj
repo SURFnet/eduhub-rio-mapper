@@ -475,6 +475,7 @@
         (:kenmerkwaardeTekst $)))
 
 (defn eigen-opleidingseenheid-sleutel [rio-code]
+  {:pre [(string? rio-code)]}
   (kenmerken-tekst-opleidingseenheid rio-code "eigenOpleidingseenheidSleutel"))
 
 (defn rio-aangebodenopleiding

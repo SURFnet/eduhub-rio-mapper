@@ -142,7 +142,8 @@
   {:pre [read-url]}
   (fn resolver
     [type id institution-oin]
-    {:pre [institution-oin]}
+    {:pre [institution-oin
+           (string? id)]}
     (when id
       (logging/with-mdc
         {:soap-action "opvragen_rioIdentificatiecode" :ooapi-id id}

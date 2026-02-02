@@ -336,7 +336,7 @@
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
 
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
-               (assoc-in [:consumers 0 :lastStartDate] "2022-08-24")
+               (assoc-in [:consumer :lastStartDate] "2022-08-24")
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
 
   (testing "program with laatsteInstroomdatum and multiple teaching languages"
@@ -377,8 +377,8 @@
 
          ;; teaching languages in rio consumer override teaching language in program
          (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
-             (assoc-in [:consumers 0 :lastStartDate] "2022-08-24")
-             (assoc-in [:consumers 0 :teachingLanguages] ["nld", "eng"])
+             (assoc-in [:consumer :lastStartDate] "2022-08-24")
+             (assoc-in [:consumer :teachingLanguages] ["nld", "eng"])
              (assoc :teachingLanguages "fra")
              (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
 
@@ -398,16 +398,16 @@
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
-               (assoc-in [:offerings 0 :consumers 0 :modeOfDelivery] ["coaching"])
+               (assoc-in [:offerings 0 :consumer :modeOfDelivery] ["coaching"])
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
 
-  (testing "program with mode of delivery in consumers"
+  (testing "program with mode of delivery in consumer"
     (let [mode-of-delivery-loader
           #(let [json (ooapi.loader/ooapi-file-loader %)]
              (if (#{"program-offerings" "course-offerings"} (::ooapi/type %))
                (-> json
                    (update-in [:items 0] dissoc :modeOfDelivery)
-                   (assoc-in [:items 0 :consumers 0 :modeOfDelivery] ["coaching"]))
+                   (assoc-in [:items 0 :consumer :modeOfDelivery] ["coaching"]))
                json))]
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
