@@ -23,6 +23,16 @@
     </encoder>
   </appender>
 
+  <appender name="DEBUG_FILE" class="ch.qos.logback.core.FileAppender">
+      <file>logs/debug.log</file>
+      <encoder>
+          <pattern>%d{HH:mm:ss.SSS} - %msg %n</pattern>
+      </encoder>
+  </appender>
+  <logger name="nl.surf.eduhub-rio-mapper.debug" level="DEBUG" additivity="false">
+      <appender-ref ref="DEBUG_FILE" />
+  </logger>
+
   <!--
       Example tweaks for setting log levels on specific packages
   -->
