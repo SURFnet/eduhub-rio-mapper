@@ -69,6 +69,12 @@
                               ring/ring-mock      {:mvn/version "RELEASE"}}
                 :main-opts   ["-m" "kaocha.runner" "--focus" ":v5-redis"]}
 
+  :test-vcr-v5 {:extra-paths ["test-v5" "test-common"]
+              :jvm-opts    ["-Dclojure.main.report=stderr"]
+              :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                            ring/ring-mock      {:mvn/version "RELEASE"}}
+              :main-opts   ["-m" "kaocha.runner" "--focus" ":v5-vcr"]}
+
   :test-common {:replace-paths ["src-common" "test-common" "resources"]
                 :jvm-opts      ["-Dclojure.main.report=stderr"]
                 :extra-deps    {lambdaisland/kaocha {:mvn/version "RELEASE"}
@@ -92,6 +98,12 @@
                   :extra-deps    {lambdaisland/kaocha {:mvn/version "RELEASE"}
                                   ring/ring-mock      {:mvn/version "RELEASE"}}
                   :main-opts     ["-m" "kaocha.runner" "--focus" ":v6-redis"]}
+
+  :test-vcr-v6 {:replace-paths ["src-v6" "src-common" "resources" "test-v6" "test-common"]
+              :jvm-opts    ["-Dclojure.main.report=stderr"]
+              :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                            ring/ring-mock      {:mvn/version "RELEASE"}}
+              :main-opts   ["-m" "kaocha.runner" "--focus" ":v6-vcr"]}
 
   :proof-specs {:extra-deps {nl.jomco/proof-specs {:mvn/version "RELEASE"}}
                 :main-opts  ["-m" "nl.jomco.proof-specs"

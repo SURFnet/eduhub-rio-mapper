@@ -24,11 +24,15 @@
     [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
     [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
     [nl.surf.eduhub-rio-mapper.v5.commands.processing :as processing]
-    [nl.surf.eduhub-rio-mapper.v5.test-helper :as helper])
+    [nl.surf.eduhub-rio-mapper.v5.test-helper :as helper]
+    [nl.surf.eduhub-rio-mapper.vcr-helper :as vcr.helper])
   (:import [clojure.lang ExceptionInfo]))
 
+;;; TODO link-test should allow recording, but that means inserting two specifications into RIO first.
+;;; For the time being, we'll use playback-only.
+
 (deftest link-test
-  (let [vcr    (helper/make-vcr :playback)
+  (let [vcr    (vcr.helper/make-vcr)
         config (helper/make-test-config)
         client-info (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
         rio-config (:rio-config config)
@@ -38,7 +42,7 @@
         link! (:link! handlers)]
 
     (testing "education-specifications"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/opleenh-link" 1 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-link" 1 "linker")]
         (let [result (link! (assoc client-info
                               ::ooapi/id "11111112-dfc3-4a30-874e-000000000001"
                               ::ooapi/type "education-specification"
@@ -49,7 +53,7 @@
                  (:link result))))))
 
     (testing "education-specifications without opleidingseenheidsleutel"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/opleenh-link" 2 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-link" 2 "linker")]
         (let [{:keys [link]}
               (link! (assoc client-info
                        ::ooapi/id "11111112-dfc3-4a30-874e-000000000001"
@@ -62,7 +66,7 @@
                  link)))))
 
     (testing "unlink education-specifications without opleidingseenheidsleutel"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/opleenh-link" 3 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/opleenh-link" 3 "linker")]
         (let [{:keys [link rio-sexp]}
               (link! (assoc client-info
                        ::ooapi/type "education-specification"
@@ -76,7 +80,7 @@
                  link)))))
 
     (testing "courses"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/aangebodenopl-link" 1 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangebodenopl-link" 1 "linker")]
         (let [result (link! (assoc client-info
                               ::ooapi/id "11111111-dfc3-4a30-874e-000000000001"
                               ::ooapi/type "course"
@@ -85,7 +89,7 @@
                  (select-keys result [:link]))))))
 
     (testing "program"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/aangebodenopl-link" 2 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangebodenopl-link" 2 "linker")]
         (let [result (link! (assoc client-info
                               ::ooapi/id "11111111-dfc3-4a30-874e-000000000002"
                               ::ooapi/type "program"
@@ -94,7 +98,7 @@
                  (select-keys result [:link]))))))
 
     (testing "missing program"
-      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/aangebodenopl-link" 3 "linker")]
+      (binding [http-utils/*vcr* (vcr "test-v5/fixtures/aangebodenopl-link" 3 "linker")]
         (let [request (assoc client-info
                         ::ooapi/id "11111111-dfc3-4a30-874e-000000000002"
                         ::ooapi/type "program"
