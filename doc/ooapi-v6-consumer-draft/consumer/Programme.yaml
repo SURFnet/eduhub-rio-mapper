@@ -34,14 +34,6 @@ properties:
       onderwijslocatiecode
       Een betekenisloze identifier voor een onderwijslocatie in de Registratie Instellingen en Opleidingen.
     pattern: ^(?:\d{3}X\d{3})$
-  consentParticipationSTAP:
-    type: string
-    description: |
-      toestemmingDeelnameSTAP
-      Geeft aan of een AangebodenOpleiding beschikbaar is in het kader van de STAP-regeling en voorkomt in het Scholingsregister.
-    enum:
-      - permission_granted
-      - permission_not_granted
   jointPartnerCodes:
     type: array
     items:
@@ -152,6 +144,13 @@ properties:
     example:
       - business_and_project_support
       - economy
+  jointProgramme:
+    type: boolean
+    description: Indicates whether the programme is part of a joint degree. To be used together with educationUnitCode to specify the corresponding RIO HoOpleiding
+  educationUnitCode:
+    type: string
+    description: To be used together with jointProgramme. Specifies the RIO O-code to be used to link the joint programme to the correct HoOpleiding.
+    example: 1234O5678
   lastStartDateTime:
     type: string
     description: The start date on which participants can last enter the Course.
