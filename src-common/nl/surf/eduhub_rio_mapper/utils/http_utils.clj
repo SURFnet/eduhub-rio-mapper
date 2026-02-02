@@ -20,7 +20,8 @@
   (:require [clj-http.client :as http]
             [clojure.tools.logging :as log]
             [nl.jomco.http-status-codes :as http-status]
-            [nl.jomco.ring-trace-context :as trace-context]))
+            [nl.jomco.ring-trace-context :as trace-context])
+  (:import [java.security.cert CertificateExpiredException]))
 
 ;; middleware to add to the http client
 
@@ -85,6 +86,13 @@
                         {:request request, :response response})))
       response)))
 
+(defn- wrap-certificate-expired [handler]
+  (fn certificate-erpired [request]
+    (try
+      (handler request)
+      (catch CertificateExpiredException _ex
+        (throw (ex-info "Certificate Expired" {:url (:url request)}))))))
+
 (def ^{:arglists '([{:keys [url method] :as request}])} ;; set argument documention
   send-http-request
   "Sends an http request using `clj-http.client/request`.
@@ -95,4 +103,5 @@
       wrap-outgoing-request-logging
       wrap-request-options
       wrap-errors
+      wrap-certificate-expired
       trace-context/wrap-new-trace-context))
