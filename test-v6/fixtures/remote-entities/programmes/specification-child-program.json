@@ -2,7 +2,7 @@
   "level": "bachelor",
   "parent": "{{programmes/specification-parent-program}}",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
-  "programmeType": "programme",
+  "programmeType": "specification",
   "programmeId": "{{programmes/specification-child-program}}",
   "validFrom": "2016-12-15",
   "abbreviation": "OT",
@@ -48,24 +48,23 @@
     }
   ],
   "levelOfQualification": "6",
-  "consumers": [
-    {
-      "consumerKey": "rio",
-      "educationSpecificationSubType": "variant",
-      "category": [
-        "business_and_project_support",
-        "hobby_and_leisure_time",
-        "technology_and_ict",
-        "transport_and_logistics",
-        "law",
-        "agriculture_food_and_natural_environment",
-        "healthcare_and_sport",
-        "tourism_hospitality_and_recreation"
-      ]
-    }
-  ],
   "studyLoad": {
     "value": 128,
     "studyLoadUnit": "ects"
+  },
+  "consumer": {
+    "consumerKey": "rio",
+    "educationSpecificationSubType": "variant",
+    "category": [
+      "business_and_project_support",
+      "hobby_and_leisure_time",
+      "technology_and_ict",
+      "transport_and_logistics",
+      "law",
+      "agriculture_food_and_natural_environment",
+      "healthcare_and_sport",
+      "tourism_hospitality_and_recreation"
+    ],
+    "specificationType": "programme"
   }
 }
