@@ -33,8 +33,8 @@
   (let [valid-from (last (sort (map :validFrom [parent child])))
         valid-to (first (sort (keep :validTo [parent child])))]
     (assoc relation
-      :valid-from valid-from
-      :valid-to valid-to)))
+           :valid-from valid-from
+           :valid-to valid-to)))
 
 (defn- turn-into-relations [{:keys [parent child] :as relation}]
   {:pre  [(::rio/opleidingscode parent)
@@ -43,7 +43,7 @@
           (:validFrom child)]
    :post [(s/valid? ::relations/relation %)]}
   (assoc (select-keys relation [:valid-from :valid-to])
-    :opleidingseenheidcodes (set [(::rio/opleidingscode parent) (::rio/opleidingscode child)])))
+         :opleidingseenheidcodes (set [(::rio/opleidingscode parent) (::rio/opleidingscode child)])))
 
 (defn- expected-relations [parent children]
   {:post [(s/valid? ::relations/relation-vector (vec %))]}
@@ -55,17 +55,13 @@
 (defn relation-differences
   "Returns the diff between actual relations and expected relations."
   [main-entity rel-dir secondary-entity actual]
-  {:pre [(s/valid? (s/nilable ::relations/relation-collection) actual)]
+  {:pre [main-entity secondary-entity (s/valid? (s/nilable ::relations/relation-collection) actual)]
    :post [(s/valid? ::relations/relation-diff %)]}
   ;; If rel-dir is :child, main-entity is child, secondary-entity is parent,
   ;; otherwise main-entity is parent, secondary entity is children (plural)
   (let [parent   (if (= rel-dir :child) secondary-entity main-entity)
         children (if (= rel-dir :child) [main-entity] secondary-entity)
-        expected
-           (if (= rel-dir :child)
-             (when (s/valid? ::relations/parent parent)
-               (expected-relations parent children))
-             (expected-relations parent children))]
+        expected (expected-relations parent children)]
     {:missing     (set/difference (set expected) (set actual))
      :superfluous (set/difference (set actual) (set expected))}))
 
@@ -92,7 +88,7 @@
                             [:duo:opleidingseenheidcode code-2]
                             [:duo:begindatum valid-from]])]
     {:action     (case mutate-type :insert "aanleveren_opleidingsrelatie"
-                                   :delete "verwijderen_opleidingsrelatie")
+                       :delete "verwijderen_opleidingsrelatie")
      :sender-oin institution-oin
      :rio-sexp   rio-sexp}))
 
@@ -111,28 +107,34 @@
           (mutator/mutate! rio-config)))))
 
 (defn relation-mutations
-  [eduspec {:keys [institution-oin institution-schac-home] :as _job} {:keys [getter resolver ooapi-loader]}]
-  (let [add-rio-code (fn add-rio-code [entity]
-                       (when entity
-                         (if (::rio/opleidingscode entity)
-                           entity
-                           (when-let [rio-code (resolver "education-specification" (:educationSpecificationId entity) institution-oin)]
-                             (assoc entity ::rio/opleidingscode rio-code)))))
-        load-eduspec (fn load-eduspec [id]
-                       {:pre [id]}
-                       (let [es (ooapi-loader {::ooapi/type            "education-specification"
-                                               ::ooapi/id              id
-                                               :institution-schac-home institution-schac-home})]
-                         (add-rio-code es)))
-        eduspec (add-rio-code eduspec)]
-    (when eduspec
-      (let [actual (load-relation-data getter (::rio/opleidingscode eduspec) institution-oin)]
-        (when-let [[rel-dir entity] (case (:educationSpecificationSubType (:consumer eduspec))
-                                      "variant" [:child (load-eduspec (:parent eduspec))]
-                                      nil       [:parent (->> (keep load-eduspec (:children eduspec))
-                                                              (filter #(s/valid? ::relations/child %)))]
-                                      nil)]
-          (relation-differences eduspec rel-dir entity actual))))))
+  ([eduspec job handlers]
+   {:pre [eduspec]}
+   (relation-mutations eduspec
+                       :programmeId
+                       (-> eduspec :consumer :variantOf)
+                       (:children eduspec)
+                       job
+                       handlers))
+  ([eduspec primary-key variant-of variants {:keys [institution-oin institution-schac-home] :as _job} {:keys [getter resolver ooapi-loader]}]
+   {:pre [eduspec]}
+   (let [add-rio-code (fn add-rio-code [entity]
+                        (if (::rio/opleidingscode entity)
+                          entity
+                          (when-let [rio-code (resolver "education-specification" (primary-key entity) institution-oin)]
+                            (assoc entity ::rio/opleidingscode rio-code))))
+         load-eduspec (fn load-eduspec [id]
+                        {:pre [id]}
+                        (when-let [es (ooapi-loader {::ooapi/type            "education-specification"
+                                                     ::ooapi/id              id
+                                                     :institution-schac-home institution-schac-home})]
+                          (add-rio-code es)))
+         eduspec (add-rio-code eduspec)
+         actual (load-relation-data getter (::rio/opleidingscode eduspec) institution-oin)
+         [rel-dir entity] (if variant-of
+                            [:child (load-eduspec variant-of)]
+                            [:parent (->> (keep load-eduspec variants)
+                                          (filter #(s/valid? ::relations/child %)))])]
+     (relation-differences eduspec rel-dir entity actual))))
 
 (defn mutate-relations!
   [{:keys [missing superfluous] :as diff} {:keys [institution-oin] :as _job} {:keys [rio-config] :as _handlers}]

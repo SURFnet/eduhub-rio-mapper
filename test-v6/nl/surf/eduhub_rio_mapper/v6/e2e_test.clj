@@ -509,7 +509,7 @@
        (set! last-job (post-job :delete :education-specifications "specification-accredited-variant"))
        (is (nil? (rio-resolve "education-specification" parent-code)))))))
 
-(defn- set-education-unit-code-in-consumer [unit-code consumer ]
+(defn- set-education-unit-code-in-consumer [unit-code consumer]
   (if (not= "rio" (:consumerKey consumer))
     consumer
     (assoc consumer :educationUnitCode unit-code)))

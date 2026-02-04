@@ -37,17 +37,17 @@
   English (international).  If still none found take the first."
   [attr & [locales]]
   (or
-    (get-localized-value-exclusive attr (concat locales ["en"]))
-    (-> attr first :value)))
+   (get-localized-value-exclusive attr (concat locales ["en"]))
+   (-> attr first :value)))
 
 (defn ooapi-to-periods [{:keys [timelineOverrides] :as ooapi} entity-key]
   (as-> timelineOverrides $
-        (map
-          #(assoc (entity-key %)
+    (map
+     #(assoc (entity-key %)
              :validFrom (:validFrom %)
              :validTo (:validTo %))
-          $)
-        (conj $ ooapi)))
+     $)
+    (conj $ ooapi)))
 
 (defn current-period [periods attr-key]
   (let [current-date (.format date-format (LocalDate/now))]

@@ -25,9 +25,7 @@
             [nl.jomco.openapi.v3.validator :as validator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-            [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
-            [nl.surf.eduhub-rio-mapper.v6.ooapi.base :as ooapi-base]
-            [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
+            [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]))
 
 (def ^:private page-size
   "Maximum amount of items to fetch in a single page."
@@ -229,7 +227,7 @@
                                   :else
                                   (-> request
                                       (assoc ::ooapi/type "education-specification"
-                                             ::ooapi/id (ooapi-base/education-specification-id entity))
+                                             ::ooapi/id (-> entity :consumer :specificationId))
                                       (loader)
                                       programme-type))]
     (cond-> request

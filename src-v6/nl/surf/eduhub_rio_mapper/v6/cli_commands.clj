@@ -51,9 +51,9 @@
     (assert (rio.loader/valid-get-types type))
     (-> (when pagina {:pagina pagina})
         (assoc
-          key-name id
-          :response-type response-type
-          ::rio/type type))))
+         key-name id
+         :response-type response-type
+         ::rio/type type))))
 
 (defn parse-client-info-args [args clients]
   (let [[client-id & rest-args] args
@@ -81,14 +81,14 @@
 
     "test-rio"
     (let [[client-info _args] (parse-client-info-args args clients)
-          old-uuid     (UUID/randomUUID)
-          new-uuid     (UUID/randomUUID)
+          old-uuid     (str (UUID/randomUUID))
+          new-uuid     (str (UUID/randomUUID))
 
           eduspec (-> "eduspec-test-rio.json"
                       io/resource
                       slurp
                       (json/read-str :key-fn keyword)
-                      (assoc :educationSpecificationId old-uuid))]
+                      (assoc-in [:consumer :specificationId] old-uuid))]
 
       (binding [*http-messages* (atom [])]
         (try
@@ -112,7 +112,7 @@
                                       (filter #(= "eigenOpleidingseenheidSleutel" (:kenmerknaam %)))
                                       first
                                       :kenmerkwaardeTekst)]
-              (when (not= nieuwe-sleutel (str new-uuid))
+              (when (not= nieuwe-sleutel new-uuid)
                 (println "old uuid " old-uuid)
                 (println "new uuid " new-uuid)
                 (throw (ex-info "Failed to set eigenOpleidingseenheidSleutel" {:rio-queue-status :down}))))
@@ -131,7 +131,7 @@
     "get"
     (let [[client-info rest-args] (parse-client-info-args args clients)]
       (getter (assoc (parse-getter-args rest-args)
-                :institution-oin (:institution-oin client-info))))
+                     :institution-oin (:institution-oin client-info))))
 
     ("show" "dry-run-upsert")
     (let [[client-info [type id]] (parse-client-info-args args clients)
@@ -157,8 +157,8 @@
     ("upsert" "delete" "delete-by-code")
     (let [[client-info [type id rest-args]] (parse-client-info-args args clients)
           job (merge (assoc client-info
-                       ::ooapi/type type
-                       :args rest-args)
+                            ::ooapi/type type
+                            :args rest-args)
                      (if (= "delete-by-code" command)
                        (let [name-id (if (= type "education-specification")
                                        ::rio/opleidingscode

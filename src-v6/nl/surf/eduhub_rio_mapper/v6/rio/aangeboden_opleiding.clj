@@ -116,10 +116,10 @@
           :cohortcode (-> offering :primaryCode :code)
           :cohortstatus (rio-helper/ooapi-mapping "cohortStatus" registrationStatus)
           :flexibeleInstroom (and flexibleEntryPeriodStart {:beginInstroomperiode flexibleEntryPeriodStart
-                                                  :eindeInstroomperiode flexibleEntryPeriodEnd})
+                                                            :eindeInstroomperiode flexibleEntryPeriodEnd})
           :opleidingsvorm (extract-opleidingsvorm modeOfDelivery consumer)
           :prijs (mapv (fn [h] {:soort (rio-helper/ooapi-mapping "soort" (:costType h)) :bedrag (:amount h)})
-             priceInformation)
+                       priceInformation)
           :toestemmingVereistVoorAanmelding (rio-helper/ooapi-mapping "toestemmingVereistVoorAanmelding"
                                                                       requiredPermissionRegistration)
           :vastInstroommoment (when (nil? flexibleEntryPeriodStart) {:instroommoment startDate}))))))
@@ -134,8 +134,8 @@
   (let [duration-map (some-> consumer :duration parse-duration)
         id           ((if (= :course ooapi-type) :courseId :programId) course-program)
         periods      (map #(assoc (ooapi-type %)
-                             :validFrom (:validFrom %)
-                             :validTo   (:validTo %))
+                                  :validFrom (:validFrom %)
+                                  :validTo   (:validTo %))
                           timelineOverrides)]
     (fn [k] {:pre [(keyword? k)]}
       (if-let [[translation consumer] (mapping-course-program->aangeboden-opleiding k)]
@@ -156,9 +156,9 @@
           :niveau (rio-helper/level-sector-mapping level sector)
           :vorm (rio-helper/ooapi-mapping "vorm" modeOfStudy)
           :voertaal (rio-helper/ooapi-mapping
-                      "voertaal"
-                      (or (:teachingLanguages consumer)
-                          teachingLanguage))
+                     "voertaal"
+                     (or (:teachingLanguages consumer)
+                         teachingLanguage))
 
           :cohorten (mapv #(course-program-offering-adapter %)
                           offerings)

@@ -54,7 +54,7 @@
   },
   "consumer": {
     "consumerKey": "rio",
-    "educationSpecificationSubType": "variant",
+    "variantOf": "{{programmes/specification-parent-program}}",
     "category": [
       "business_and_project_support",
       "hobby_and_leisure_time",

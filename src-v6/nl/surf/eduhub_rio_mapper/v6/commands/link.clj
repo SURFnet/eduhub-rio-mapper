@@ -45,9 +45,9 @@
 (defn- xmlclj->duo-hiccup [x]
   {:pre [x (:tag x)]}
   (into
-    [(duo-keyword (:tag x))]
-    (mapv #(if (:tag %) (xmlclj->duo-hiccup %) %)
-          (:content x))))
+   [(duo-keyword (:tag x))]
+   (mapv #(if (:tag %) (xmlclj->duo-hiccup %) %)
+         (:content x))))
 
 (defn- sleutel-finder [sleutel-name]
   (fn [element]
@@ -68,11 +68,11 @@
   (let [value
         (some #(and (sequential? %)
                     (or
-                      (and (= (duo-keyword k) (first %))
-                           (last %))
-                      (and (= :duo:kenmerken (first %))
-                           (= (name k) (get-in % [1 1]))
-                           (get-in % [2 1]))))
+                     (and (= (duo-keyword k) (first %))
+                          (last %))
+                     (and (= :duo:kenmerken (first %))
+                          (= (name k) (get-in % [1 1]))
+                          (get-in % [2 1]))))
               rio-obj)]
     (or value
         (when (and (= k :eigenAangebodenOpleidingSleutel)

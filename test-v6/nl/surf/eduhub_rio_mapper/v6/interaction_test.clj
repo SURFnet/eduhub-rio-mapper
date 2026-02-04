@@ -94,8 +94,11 @@
     {:pre [id (not= "" id)]}
     ;; id is atom for relations, UUID otherwise
 
+    (when (= ootype :relation))
     (if (= ootype :relation)
-      (load-relations (:getter handlers) client-info @id)
+      (let [r (load-relations (:getter handlers) client-info @id)]
+        (spit "relations.log" (prn-str {:result r, :msg "load relations", :id @id}))
+        r)
       (job/run! handlers
                 (merge client-info
                        {::ooapi/id   (str id)
@@ -130,22 +133,22 @@
         code                 (atom nil) ; During the tests we'll learn which opleidingscode we should use.
 
         commands            [[1 "upsert" :eduspec  eduspec-parent-id goedgekeurd?]
-                             #_[2 "upsert" :eduspec  eduspec-child-id  goedgekeurd?]
+                             [2 "upsert" :eduspec  eduspec-child-id  goedgekeurd?]
                              ;; TODO upsert shouldn't be final until relation updates have been observed
                              ;; but now, RIO needs 5 seconds for the changes to be visible, therefore sleep in record mode
-                             #_[nil "sleep" nil nil nil]
-                             #_[3 "get"    :relation code              identity]
-                             #_[4 "delete" :eduspec  eduspec-child-id  goedgekeurd?]
-                             #_[nil "sleep" nil nil nil]
-                             #_[5 "get"    :relation code              nil?]
-                             #_[6 "upsert" :program  program-id        goedgekeurd?]
-                             #_[7 "delete" :program  program-id        goedgekeurd?]
-                             #_[8 "delete" :eduspec  eduspec-parent-id goedgekeurd?]
-                             #_[9 "upsert" :program  program-id        #(= (-> % :errors :message)
+                             [nil "sleep" nil nil nil]
+                             [3 "get"    :relation code              identity]
+                             [4 "delete" :eduspec  eduspec-child-id  goedgekeurd?]
+                             [nil "sleep" nil nil nil]
+                             [5 "get"    :relation code              nil?]
+                             [6 "upsert" :program  program-id        goedgekeurd?]
+                             [7 "delete" :program  program-id        goedgekeurd?]
+                             [8 "delete" :eduspec  eduspec-parent-id goedgekeurd?]
+                             [9 "upsert" :program  program-id        #(= (-> % :errors :message)
                                                                          (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
     (doseq [[idx action ootype id pred?] commands]
       (testing (str "Command " idx " " action " " id)
-      (if (= "sleep" action)
+        (if (= "sleep" action)
           (when (= vcr.helper/vcr-mode :record)
             (Thread/sleep 5000))
           (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/interaction" idx (str action "-" (name ootype)))]

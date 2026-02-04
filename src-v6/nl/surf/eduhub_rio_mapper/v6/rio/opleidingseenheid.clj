@@ -27,13 +27,10 @@
    "privateProgramme" "particuliereOpleiding"
    "cluster"          "hoOnderwijseenhedencluster"})
 
-(defn- program-subtype-mapping [consumer]
-  (when (= "variant" (:educationSpecificationSubType consumer)) "VARIANT"))
-
 (defn- soort-mapping [{:keys [consumer]}]
   (case (:specificationType consumer)
     "cluster" "HOEC"
-    "programme" (or (program-subtype-mapping consumer) "OPLEIDING")
+    "programme" (if (:variantOf consumer) "VARIANT" "OPLEIDING")
     nil))
 
 (defn- programme-specification-timeline-override-adapter

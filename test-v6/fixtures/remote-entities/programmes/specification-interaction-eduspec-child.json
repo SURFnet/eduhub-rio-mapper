@@ -54,7 +54,7 @@
   "programmeType": "specification",
   "consumer": {
     "consumerKey": "rio",
-    "educationSpecificationSubType": "variant",
+    "variantOf": "{{programmes/specification-interaction-eduspec-parent}}",
     "category": [
       "agriculture_food_and_natural_environment",
       "healthcare_and_sport",

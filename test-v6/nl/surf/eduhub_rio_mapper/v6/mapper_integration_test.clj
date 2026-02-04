@@ -18,15 +18,15 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.mapper-integration-test
   (:require
-    [clj-http.client :as client]
-    [clojure.java.io :as io]
-    [clojure.string :as str]
-    [clojure.test :refer :all]
-    [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
-    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-    [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
-    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]
-    [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper :refer [load-json]])
+   [clj-http.client :as client]
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [clojure.test :refer :all]
+   [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
+   [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+   [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
+   [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]
+   [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper :refer [load-json]])
   (:import [clojure.lang ExceptionInfo]))
 
 (def institution-oin "123O321")
@@ -34,8 +34,8 @@
 (def ooapi-id "f2d020bc-5fac-b2e9-4ea7-4b35a08dfbeb")
 (def config {:rio-config
              {:credentials   (keystore/credentials "test/keystore.jks"
-                                                 "xxxxxx"
-                                                 "test-surf")
+                                                   "xxxxxx"
+                                                   "test-surf")
               :recipient-oin "12345"
               :read-url      "http://example.com"
               :update-url    "http://example.com"}})
@@ -106,7 +106,6 @@
     (is (= "790c6569-2bcc-d046-dae2-7b73e77231f3" (get-in actual [:rio-sexp 0 4 2 1])))
     (is (= "EN TRANSLATION: Computer Science" (-> actual :ooapi :name first :value)))))
 
-
 (deftest test-make-eduspec-0
   (let [actual (:result (simulate-upsert (mock-ooapi-loader eduspec-req-0)
                                          (slurp (io/resource "fixtures/rio/integration-eduspec-0.xml"))
@@ -131,15 +130,15 @@
         goedgekeurd? (fn [result] (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))
         extract-opleidingseenheidsleutel (fn [mutation]
                                            (first
-                                             (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
-                                                     (-> mutation :rio-sexp first))))
+                                            (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
+                                                    (-> mutation :rio-sexp first))))
         set-joint-program-in-consumer (fn [entity unit-code]
-                                         (update entity
-                                                    :consumer
-                                                    merge
-                                                    (cond-> {:jointProgram true}
-                                                            unit-code
-                                                            (assoc :educationUnitCode unit-code))))]
+                                        (update entity
+                                                :consumer
+                                                merge
+                                                (cond-> {:jointProgram true}
+                                                  unit-code
+                                                  (assoc :educationUnitCode unit-code))))]
 
     (testing "fake joint program"
       ;; after loading program, set jointProgram to true

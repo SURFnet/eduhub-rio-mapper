@@ -21,7 +21,6 @@
             [nl.surf.eduhub-rio-mapper.specs.mutation :as mutation]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as-alias ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-            [nl.surf.eduhub-rio-mapper.v6.ooapi.base :as ooapi-base]
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opl]
             [nl.surf.eduhub-rio-mapper.v6.rio.opleidingseenheid :as opl-eenh]
             [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]))
@@ -47,7 +46,7 @@
     ;; If we're not inserting a new education-specification or a
     ;; relation we need a rio code (from an earlier inserted
     ;; education-specification).
-    (let [id (ooapi-base/education-specification-id entity)]
+    (let [id (-> entity :consumer :specificationId)]
       (throw (ex-info (str "Education specification " id " not yet known by RIO updating " type)
                       {:entity     entity
                        :retryable? false})))

@@ -34,11 +34,11 @@
 (defn generate-diff-ooapi-rio [& {:keys [rio-summary ooapi-summary]}]
   (reduce (fn [h k]
             (assoc h k
-                     (if (= (k rio-summary) (k ooapi-summary))
-                       {:diff false}
-                       {:diff     true
-                        :current  (k rio-summary)
-                        :proposed (k ooapi-summary)})))
+                   (if (= (k rio-summary) (k ooapi-summary))
+                     {:diff false}
+                     {:diff     true
+                      :current  (k rio-summary)
+                      :proposed (k ooapi-summary)})))
           {}
           (into (set (keys ooapi-summary)) (keys rio-summary))))
 
@@ -66,13 +66,13 @@
 
 (defn- kenmerk-content [xmlspec naam kenmerk-type]
   (xml-utils/find-in-xmlseq
-    xmlspec
-    #(let [[n v] (:content %)]
-       (and (= :kenmerken (:tag %))
-            (= :kenmerknaam (:tag n))
-            (= naam (first (:content n)))
-            (= kenmerk-type (:tag v))
-            (first (:content v))))))
+   xmlspec
+   #(let [[n v] (:content %)]
+      (and (= :kenmerken (:tag %))
+           (= :kenmerknaam (:tag n))
+           (= naam (first (:content n)))
+           (= kenmerk-type (:tag v))
+           (first (:content v))))))
 
 (defn summarize-eduspec [eduspec]
   (let [current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods eduspec :programme) :validFrom)]
@@ -81,7 +81,7 @@
      :naamKort                      (:abbreviation current-period),
      :internationaleNaam            (ooapi-utils/get-localized-value (:name current-period)),
      :omschrijving                  (ooapi-utils/get-localized-value (:description current-period) dutch-locales),
-     :eigenOpleidingseenheidSleutel (:educationSpecificationId eduspec)}))
+     :eigenOpleidingseenheidSleutel (-> eduspec :consumer :specificationId)}))
 
 (defn summarize-course-program [course-program]
   (let [ooapi-type (if (:courseId course-program) :course :program)
@@ -119,7 +119,7 @@
         current-period (ooapi-utils/current-period period-data :begindatum)
         ooapi-id (kenmerk-content (xml-seq opleidingseenheid) "eigenOpleidingseenheidSleutel" :kenmerkwaardeTekst)]
     (assoc current-period
-      :eigenOpleidingseenheidSleutel ooapi-id)))
+           :eigenOpleidingseenheidSleutel ooapi-id)))
 
 (defn summarize-aangebodenopleiding-xml [rio-obj]
   (when rio-obj
@@ -137,7 +137,7 @@
           cohorten    (xml-utils/find-all-in-xmlseq (xml-seq rio-obj)
                                                     #(when (contains? cohortnamen (:tag %)) %))]
       (assoc (merge current-period rio-summary)
-        :cohorten (->> cohorten
-                       (mapv (comp summarize-cohort-xml xml-seq))
-                       (sort-by :cohortcode)
-                       vec)))))
+             :cohorten (->> cohorten
+                            (mapv (comp summarize-cohort-xml xml-seq))
+                            (sort-by :cohortcode)
+                            vec)))))

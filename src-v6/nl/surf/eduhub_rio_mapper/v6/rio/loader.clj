@@ -19,18 +19,18 @@
 (ns nl.surf.eduhub-rio-mapper.v6.rio.loader
   "Gets the RIO opleidingscode given an OOAPI entity ID."
   (:require
-    [clojure.data.json :as json]
-    [clojure.data.xml :as clj-xml]
-    [clojure.spec.alpha :as s]
-    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-    [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-    [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
-    [nl.surf.eduhub-rio-mapper.utils.logging :as logging]
-    [nl.surf.eduhub-rio-mapper.utils.rio-utils :as rio-utils]
-    [nl.surf.eduhub-rio-mapper.utils.soap :as soap]
-    [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
-    [nl.surf.eduhub-rio-mapper.utils.xml-validator :as xml-validator]
-    [nl.surf.eduhub-rio-mapper.v6.specs.relations :as relations])
+   [clojure.data.json :as json]
+   [clojure.data.xml :as clj-xml]
+   [clojure.spec.alpha :as s]
+   [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+   [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
+   [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
+   [nl.surf.eduhub-rio-mapper.utils.logging :as logging]
+   [nl.surf.eduhub-rio-mapper.utils.rio-utils :as rio-utils]
+   [nl.surf.eduhub-rio-mapper.utils.soap :as soap]
+   [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
+   [nl.surf.eduhub-rio-mapper.utils.xml-validator :as xml-validator]
+   [nl.surf.eduhub-rio-mapper.v6.specs.relations :as relations])
   (:import (org.w3c.dom Element)))
 
 (def aangeboden-opleiding-type "aangebodenOpleiding")
@@ -143,28 +143,28 @@
   (fn resolver
     [type id institution-oin]
     {:pre [institution-oin
+           (some? id)
            (string? id)]}
-    (when id
-      (logging/with-mdc
-        {:soap-action "opvragen_rioIdentificatiecode" :ooapi-id id}
-        (let [xml (soap/prepare-soap-call "opvragen_rioIdentificatiecode"
-                                          [[(case type
-                                              "education-specification" :duo:eigenOpleidingseenheidSleutel
-                                              ("course" "program") :duo:eigenAangebodenOpleidingSleutel)
-                                            id]]
-                                          (make-datamap institution-oin recipient-oin)
-                                          credentials)
-              request {:url read-url
-                       :method :post
-                       :body xml
-                       :headers {"SOAPAction" (str contract "/opvragen_rioIdentificatiecode")}
-                       :connection-timeout connection-timeout-millis
-                       :content-type :xml}
-              tag "ns2:opvragen_rioIdentificatiecode_response"]
-          (-> (http-utils/send-http-request (merge credentials request))
-              (guard-getter-response "rioIdentificatiecode" tag)
-              (extract-body-element tag)
-              rio-resolver-response))))))
+    (logging/with-mdc
+      {:soap-action "opvragen_rioIdentificatiecode" :ooapi-id id}
+      (let [xml (soap/prepare-soap-call "opvragen_rioIdentificatiecode"
+                                        [[(case type
+                                            "education-specification" :duo:eigenOpleidingseenheidSleutel
+                                            ("course" "program") :duo:eigenAangebodenOpleidingSleutel)
+                                          id]]
+                                        (make-datamap institution-oin recipient-oin)
+                                        credentials)
+            request {:url read-url
+                     :method :post
+                     :body xml
+                     :headers {"SOAPAction" (str contract "/opvragen_rioIdentificatiecode")}
+                     :connection-timeout connection-timeout-millis
+                     :content-type :xml}
+            tag "ns2:opvragen_rioIdentificatiecode_response"]
+        (-> (http-utils/send-http-request (merge credentials request))
+            (guard-getter-response "rioIdentificatiecode" tag)
+            (extract-body-element tag)
+            rio-resolver-response)))))
 
 (defn- valid-onderwijsbestuurcode? [code]
   {:pre [code]}
@@ -286,9 +286,9 @@
     (let [tag              (str "ns2:opvragen_" type "_response")
           response-body    (-> request-template
                                (assoc
-                                 :method       :post
-                                 :body         (soap-call-fn (generate-rio-sexp-request rio-get-data))
-                                 :content-type :xml)
+                                :method       :post
+                                :body         (soap-call-fn (generate-rio-sexp-request rio-get-data))
+                                :content-type :xml)
                                http-utils/send-http-request
                                (guard-getter-response type tag))
           body-element     (extract-body-element response-body tag)
@@ -310,8 +310,8 @@
         :as        rio-get-data}]
     (let [soap-action          (str "opvragen_" type)
           request-template     (assoc credentials
-                                 :url read-url
-                                 :headers {"SOAPAction" (str contract "/" soap-action)})
+                                      :url read-url
+                                      :headers {"SOAPAction" (str contract "/" soap-action)})
           prepare-soap-call-fn (fn [rio-sexp]
                                  (soap/prepare-soap-call soap-action
                                                          rio-sexp
