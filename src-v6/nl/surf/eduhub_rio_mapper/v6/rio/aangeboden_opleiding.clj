@@ -133,16 +133,16 @@
    opleidingscode
    ooapi-type]
   (let [duration-map (some-> consumer :duration parse-duration)
-        id           ((if (= :course ooapi-type) :courseId :programId) course-program)
+        id           ((if (= :course ooapi-type) :courseId :programmeId) course-program)
         periods      (map #(assoc (ooapi-type %)
                                   :validFrom (:validFrom %)
                                   :validTo   (:validTo %))
                           timelineOverrides)]
     (fn [k] {:pre [(keyword? k)]}
-      (if-let [[translation consumer] (mapping-course-program->aangeboden-opleiding k)]
+      (if-let [[translation consumer?] (mapping-course-program->aangeboden-opleiding k)]
         (if (ooapi-mapping? (name k))
-          (rio-helper/ooapi-mapping (name k) (translation (if consumer consumer course-program)))
-          (translation (if consumer consumer course-program)))
+          (rio-helper/ooapi-mapping (name k) (translation (if consumer? consumer course-program)))
+          (translation (if consumer? consumer course-program)))
         (case k
           :opleidingseenheidSleutel opleidingscode
           ;; Required field. If found in the resolve phase, will be added to the entity under the rioCode key,

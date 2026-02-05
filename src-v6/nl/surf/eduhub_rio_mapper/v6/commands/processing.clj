@@ -52,16 +52,12 @@
                       ::ooapi/keys [type id entity]
                       ::rio/keys [opleidingscode] :as request}]
     {:pre [institution-oin id]}
-    (when (and (not= type "education-specification")
-               (nil? opleidingscode)
-               (nil? (-> entity :consumer :specificationId)))
-      (throw (ex-info (str "missing id for type " type " entity:" (prn-str entity)) {})))
     (let [resolve-eduspec (= type "education-specification")
           edu-id          (if (= type "education-specification")
                             id
                             (-> entity :consumer :specificationId))
           oe-code         (or opleidingscode
-                              (resolver "education-specification" edu-id institution-oin))
+                              (when edu-id (resolver "education-specification" edu-id institution-oin)))
           ao-code         (when-not resolve-eduspec (resolver type id institution-oin))]
       ;; Inserting a course or program while the education
       ;; specification has not been added to RIO will throw an error.

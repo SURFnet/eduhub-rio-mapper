@@ -94,11 +94,8 @@
     {:pre [id (not= "" id)]}
     ;; id is atom for relations, UUID otherwise
 
-    (when (= ootype :relation))
     (if (= ootype :relation)
-      (let [r (load-relations (:getter handlers) client-info @id)]
-        (spit "relations.log" (prn-str {:result r, :msg "load relations", :id @id}))
-        r)
+      (load-relations (:getter handlers) client-info @id)
       (job/run! handlers
                 (merge client-info
                        {::ooapi/id   (str id)
@@ -166,7 +163,7 @@
               (is (pred? result) (str action "-" (name ootype) " " idx)))))))))
 
 ;; This just does a lookup of an existing RIO opleidingseenheid
-(deftest ^:vcrx opleidingseenheid-finder-test
+(deftest ^:vcr opleidingseenheid-finder-test
   (let [vcr                 (vcr.helper/make-vcr)
         config              (if (= vcr.helper/vcr-mode :record)
                               (config/make-config env)
@@ -181,7 +178,7 @@
       (let [result (rio.loader/find-opleidingseenheid "1010O3664" (:getter handlers) (:institution-oin client-info))]
         (is (some? result))))))
 
-(deftest ^:vcrx aangeboden-finder-test
+(deftest ^:vcr aangeboden-finder-test
   (let [vcr                  (vcr.helper/make-vcr)
         config               (if (= vcr.helper/vcr-mode :record)
                                (config/make-config env)
@@ -201,7 +198,7 @@
         (let [result (rio.loader/find-aangebodenopleiding "bbbbbbbb-3f4e-49c2-a1f7-e24ae82b0673" getter (:institution-oin client-info))]
           (is (nil? result)))))))
 
-(deftest ^:vcrx test-ooapi-loader
+(deftest ^:vcr test-ooapi-loader
   (let [vcr          (vcr.helper/make-vcr)
         config       (if (= vcr.helper/vcr-mode :record)
                        (config/make-config env)
@@ -214,7 +211,7 @@
     (testing "programme"
       (let [request      {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
                           ::ooapi/type     "programme"
-                          ::ooapi/id       (entity-name-to-id "programmes/interaction-programme-some")
+                          ::ooapi/id       (entity-name-to-id "programmes/v5-program")
                           :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "programme")]
           (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]

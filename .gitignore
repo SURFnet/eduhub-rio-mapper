@@ -20,4 +20,4 @@
 pom.xml
 pom.xml.asc
 profiles.clj
-test-v6/fixtures/remote-entities/programmes/cv.rb
+test-v6/fixtures/remote-entities/programmes/*.rb
