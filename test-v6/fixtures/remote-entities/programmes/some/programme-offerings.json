@@ -43,14 +43,6 @@
           "code": "1234qwe12"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "open"
-        }
-      ],
       "ext": {},
       "startDate": "2019-08-21",
       "endDate": "2023-06-15",
@@ -71,7 +63,12 @@
           ],
           "postalCode": "3511 EP",
           "city": "Utrecht",
-          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+          "countryCode": {
+            "iso3166-1-alpha2": "NL",
+            "iso3166-1-alpha3": "NLD",
+            "iso3166-2": "BQ-BO",
+            "iso3166-3": "ANHH"
+          },
           "geolocation": {
             "latitude": 52.089123,
             "longitude": 5.113337
@@ -99,7 +96,13 @@
           "ext": {}
         }
       ],
-      "program": "{{programmes/some}}"
+      "program": "{{programmes/some}}",
+      "consumer": {
+        "consumerKey": "rio",
+        "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "open"
+      }
     },
     {
       "programmeOfferingId": "fadefade-fade-fade-fade-fadefadefade",
@@ -139,14 +142,6 @@
           "code": "1234poi12"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "open"
-        }
-      ],
       "ext": {},
       "startDate": "2019-08-25",
       "endDate": "2023-06-15",
@@ -167,7 +162,12 @@
           ],
           "postalCode": "3511 EP",
           "city": "Utrecht",
-          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+          "countryCode": {
+            "iso3166-1-alpha2": "NL",
+            "iso3166-1-alpha3": "NLD",
+            "iso3166-2": "BQ-BO",
+            "iso3166-3": "ANHH"
+          },
           "geolocation": {
             "latitude": 52.089123,
             "longitude": 5.113337
@@ -195,7 +195,13 @@
           "ext": {}
         }
       ],
-      "program": "{{programmes/some}}"
+      "program": "{{programmes/some}}",
+      "consumer": {
+        "consumerKey": "rio",
+        "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "open"
+      }
     },
     {
       "programmeOfferingId": "beadbead-bead-bead-bead-beadbeadbead",
@@ -235,14 +241,6 @@
           "code": "1234asd12"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "open"
-        }
-      ],
       "ext": {},
       "startDate": "2019-08-29",
       "endDate": "2023-06-15",
@@ -263,7 +261,12 @@
           ],
           "postalCode": "3511 EP",
           "city": "Utrecht",
-          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+          "countryCode": {
+            "iso3166-1-alpha2": "NL",
+            "iso3166-1-alpha3": "NLD",
+            "iso3166-2": "BQ-BO",
+            "iso3166-3": "ANHH"
+          },
           "geolocation": {
             "latitude": 52.089123,
             "longitude": 5.113337
@@ -291,7 +294,14 @@
           "ext": {}
         }
       ],
-      "program": "{{programmes/some}}"
-    }],
+      "program": "{{programmes/some}}",
+      "consumer": {
+        "consumerKey": "rio",
+        "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "open"
+      }
+    }
+  ],
   "ext": {}
 }
