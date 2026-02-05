@@ -50,6 +50,7 @@
   {"course"         "aangebodenHOOpleidingsonderdeel"
    "cluster"        "aangebodenHOOpleidingsonderdeel"
    "program"        "aangebodenHOOpleiding"
+   "programme"      "aangebodenHOOpleiding"
    "privateProgram" "aangebodenParticuliereOpleiding"})
 
 (def ^:private mapping-course-program->aangeboden-opleiding

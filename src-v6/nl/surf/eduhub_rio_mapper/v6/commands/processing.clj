@@ -52,6 +52,10 @@
                       ::ooapi/keys [type id entity]
                       ::rio/keys [opleidingscode] :as request}]
     {:pre [institution-oin id]}
+    (when (and (not= type "education-specification")
+               (nil? opleidingscode)
+               (nil? (-> entity :consumer :specificationId)))
+      (throw (ex-info (str "missing id for type " type " entity:" (prn-str entity)) {})))
     (let [resolve-eduspec (= type "education-specification")
           edu-id          (if (= type "education-specification")
                             id

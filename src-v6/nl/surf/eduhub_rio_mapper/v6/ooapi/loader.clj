@@ -213,6 +213,9 @@
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
   [loader {::ooapi/keys [type] :as request}]
+  {:post [(some? (::ooapi/entity %))
+          (not-empty (::ooapi/entity %))]}
+  (spit "load-entity.log" (str (prn-str request) "\n\n") :append true)
   (let [entity                  (loader request)
         consumer                (:consumer entity)
         joint-program?          (= "true" (str (:jointProgram consumer)))
