@@ -31,6 +31,7 @@
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opl]
             [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.v6.rio.opleidingseenheid :as opl-eenh]
+            [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]
             [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper])
   (:import java.io.PushbackReader))
 
@@ -59,7 +60,7 @@
     "1009O1234"
     "12345678-9abc-def0-1234-56789abcdef0"))
 
-(deftest ^:pickme test-and-validate-entities
+(deftest test-and-validate-entities
   (are [updated]
        (is (-> updated
                (helper/test-handler test-resolver ooapi.loader/ooapi-file-loader)
@@ -171,6 +172,14 @@
    [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
    [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]])
 
+(def program-period-2-no-timeline-consumer
+  [:duo:aangebodenHOOpleidingPeriode
+   [:duo:begindatum "2021-09-01"]
+   [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Biology"]
+   [:duo:eigenOmschrijving "The study of life"]
+   [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
+   [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]])
+
 (def program-cohort-1
   [:duo:aangebodenHOOpleidingCohort
    [:duo:cohortcode "1234qwe12"]
@@ -216,6 +225,16 @@
    [:duo:kenmerken [:duo:kenmerknaam "buitenlandsePartner"] [:duo:kenmerkwaardeTekst "Harvard University"]]
    [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]])
 
+(def course-period-2-no-timeline-consumer
+  [:duo:aangebodenHOOpleidingsonderdeelPeriode
+   [:duo:begindatum "2021-09-01"]
+   [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Academic and Professional Writing"]
+   [:duo:eigenNaamInternationaal "OVERRIDE Academic and Professional Writing"]
+   [:duo:eigenOmschrijving
+    "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."]
+   [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "INFOMQNM"]]
+   [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM"]]])
+
 ;; Differences between two consecutive signings of identical requests should be in timestamps, uuids and digests.
 (deftest only-differences-between-signed-requests-are-in-given-paths
   (let [credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf")
@@ -242,7 +261,7 @@
        (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader)
        ::ooapi/entity))
 
-(deftest ^:pickme to-rio-obj
+(deftest to-rio-obj
   (testing "eduspec"
     (is (= [:duo:hoOpleiding
             [:duo:begindatum "2019-08-24"]
@@ -269,7 +288,7 @@
             [:duo:einddatum "2024-08-24"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
             course-period-1
-            course-period-2
+            course-period-2-no-timeline-consumer
             [:duo:aangebodenHOOpleidingsonderdeelPeriode
              [:duo:begindatum "2022-09-01"]]
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "30010000-0000-0000-0000-000000000000"]]
@@ -277,9 +296,9 @@
 
            (-> {::ooapi/id "30010000-0000-0000-0000-000000000000" ::ooapi/type "course"}
                ooapi.loader/ooapi-file-loader
-               (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" "course")))))
+               (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" {::ooapi-v6/specification-type "course"})))))
 
-  #_(testing "course"
+  (testing "course"
     (is (= [:duo:aangebodenHOOpleidingsonderdeel
             [:duo:aangebodenOpleidingCode "30010000-0000-0000-0000-000000000001"]
             [:duo:onderwijsaanbiedercode "123A321"]
@@ -298,9 +317,9 @@
 
            (-> {::ooapi/id "30010000-0000-0000-0000-000000000001" ::ooapi/type "course"}
                ooapi.loader/ooapi-file-loader
-               (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" "course")))))
+               (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" {::ooapi-v6/specification-type "course"}))))
 
-  #_(testing "program"
+  (testing "program"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -310,7 +329,7 @@
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
             program-period-1
-            program-period-2
+            program-period-2-no-timeline-consumer
             [:duo:aangebodenHOOpleidingCohort
              [:duo:cohortcode "1234qwe12"]
              [:duo:cohortstatus "O"]
@@ -337,9 +356,9 @@
 
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
                (assoc-in [:consumer :lastStartDate] "2022-08-24")
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
+               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
-  #_(testing "program with laatsteInstroomdatum and multiple teaching languages"
+  (testing "program with laatsteInstroomdatum and multiple teaching languages"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -349,7 +368,7 @@
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
             program-period-1
-            program-period-2
+            program-period-2-no-timeline-consumer
             [:duo:aangebodenHOOpleidingCohort
              [:duo:cohortcode "1234qwe12"]
              [:duo:cohortstatus "O"]
@@ -380,9 +399,9 @@
                (assoc-in [:consumer :lastStartDate] "2022-08-24")
                (assoc-in [:consumer :teachingLanguages] ["nld", "eng"])
                (assoc :teachingLanguages "fra")
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
+               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
-  #_(testing "program with nonstandard mode of delivery"
+  (testing "program with nonstandard mode of delivery"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -392,16 +411,16 @@
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
             program-period-1
-            program-period-2
+            program-period-2-no-timeline-consumer
             program-cohort-1
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
                (assoc-in [:offerings 0 :consumer :modeOfDelivery] ["coaching"])
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
+               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
-  #_(testing "program with mode of delivery in consumer"
+  (testing "program with mode of delivery in consumer"
     (let [mode-of-delivery-loader
           #(let [json (ooapi.loader/ooapi-file-loader %)]
              (if (#{"program-offerings" "course-offerings"} (::ooapi/type %))
@@ -418,7 +437,7 @@
               [:duo:einddatum "2022-08-31"]
               [:duo:opleidingseenheidSleutel "1234O1234"]
               program-period-1
-              program-period-2
+              program-period-2-no-timeline-consumer
               program-cohort-1
               [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
               [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
@@ -428,9 +447,9 @@
                   mode-of-delivery-loader
                   {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
                  ::ooapi/entity
-                 (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program"))))))
+                 (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"}))))))
 
-  #_(testing "private program does not include nlqf and eqf fields"
+  (testing "private program does not include nlqf and eqf fields"
     (let [result (-> {::ooapi/id "10020000-0000-0000-0000-000000000000" ::ooapi/type "education-specification"}
                      ooapi.loader/ooapi-file-loader
                      opl-eenh/education-specification->opleidingseenheid)
@@ -440,4 +459,4 @@
                            set)]
       (is (not (contains? result-keys :duo:nlqf)) "Private program should not have nlqf field")
       (is (not (contains? result-keys :duo:eqf)) "Private program should not have eqf field")
-      (is (= (first result) :duo:particuliereOpleiding) "Result should be a particuliereOpleiding"))))
+      (is (= (first result) :duo:particuliereOpleiding) "Result should be a particuliereOpleiding")))))

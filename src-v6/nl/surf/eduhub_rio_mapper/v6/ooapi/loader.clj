@@ -193,8 +193,9 @@
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
   {:pre [type id]}
-  (let [path (str "test-v6/fixtures/ooapi-loader/" type "-" id ".json")]
-    (json/read-str (slurp path) :key-fn keyword)))
+  (let [path (str "test-v6/fixtures/ooapi-loader/" type "-" id ".json")
+        json (json/read-str (slurp path) :key-fn keyword)]
+    json))
 
 (defn load-offerings
   [loader {::ooapi/keys [id type] :as request}]
