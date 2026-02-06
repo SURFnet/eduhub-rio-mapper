@@ -19,6 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding
   (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
+            [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils])
   (:import [java.time Period Duration]))
 
@@ -46,12 +47,13 @@
 (defn ooapi-mapping? [name]
   (boolean (get-in rio-helper/specifications [:mappings name])))
 
-(def education-specification-type-mapping
+;; keys are ::ooapi/specification-type
+(def specification-type-mapping
   {"course"         "aangebodenHOOpleidingsonderdeel"
    "cluster"        "aangebodenHOOpleidingsonderdeel"
-   "program"        "aangebodenHOOpleiding"
    "programme"      "aangebodenHOOpleiding"
-   "privateProgram" "aangebodenParticuliereOpleiding"})
+   "private"        "aangebodenParticuliereOpleiding"
+   "variant"        "aangebodenHOOpleiding"})
 
 (def ^:private mapping-course-program->aangeboden-opleiding
   {:buitenlandsePartner [:foreignPartners true]
@@ -176,8 +178,8 @@
 
 (defn ->aangeboden-opleiding
   "Converts a program or course into the right kind of AangebodenOpleiding."
-  [course-program ooapi-type opleidingscode education-specification-type]
-  {:pre [(string? education-specification-type)]}
+  [course-program ooapi-type opleidingscode {::ooapi-v6/keys [specification-type]}]
+  {:pre [(string? specification-type)]}
   (-> (course-program-adapter course-program opleidingscode ooapi-type)
       rio-helper/wrapper-periodes-cohorten
-      (rio-helper/->xml (education-specification-type-mapping education-specification-type))))
+      (rio-helper/->xml (specification-type-mapping specification-type))))

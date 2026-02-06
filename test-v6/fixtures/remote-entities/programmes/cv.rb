@@ -2,6 +2,8 @@ require 'json'
 
 j = ARGV[0].then { File.read it }.then { JSON.parse it }
 
+raise ARGV[0] if j.is_a?(Array)
+
 if cs = j['consumers']
   j.delete('consumers')
   c = cs.detect { it["consumerKey"] == 'rio' }
@@ -11,13 +13,30 @@ end
 
 if j['programType']
   j['programmeType'] = j.delete('programType')
+  if j['programmeType'] == 'program'
+    j['programmeType'] = 'programme'
+  end
 end
 
+j['consumer'] ||= { "consumerKey": "rio" }
 c = j['consumer']
 
 if es = j['educationSpecification']
   j.delete('educationSpecification')
   c['specificationId'] = es
+end
+
+if spectype = j['educationSpecificationType']
+  j.delete('educationSpecificationType')
+  if spectype == 'program'
+    spectype = 'programme'
+  end
+  c['specificationType'] = spectype
+  j['programmeType'] = 'specification'
+  if c['educationSpecificationSubType'] == 'variant'
+    c.delete('educationSpecificationSubType')
+    c['variantOf'] = j['parent']
+  end
 end
 
 if j['programId']

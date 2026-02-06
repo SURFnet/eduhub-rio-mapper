@@ -133,7 +133,7 @@
          [rel-dir entity] (if variant-of
                             [:child (load-eduspec variant-of)]
                             [:parent (->> (keep load-eduspec variants)
-                                          (filter #(s/valid? ::relations/child %)))])]
+                                          (filter #(get-in % [:consumer :specificationType])))])]
      (relation-differences eduspec rel-dir entity actual))))
 
 (defn mutate-relations!

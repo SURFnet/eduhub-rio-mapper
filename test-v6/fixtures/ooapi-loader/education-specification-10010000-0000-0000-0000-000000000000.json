@@ -1,5 +1,5 @@
 {
-  "educationSpecificationId": "fddec347-8ca1-c991-8d39-9a85d09c0001",
+  "programmeId": "10010000-0000-0000-0000-000000000000",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "string"
@@ -13,18 +13,18 @@
   "name": [
     {
       "language": "en-GB",
-      "value": "Bachelor Chemical technology"
+      "value": "Bachelor Petrochemical technology"
     },
     {
-      "language": "nl-BE",
-      "value": "Bachelor Chemische technologie"
+      "language": "nl-NL",
+      "value": "Bachelor Petrochemische technologie"
     }
   ],
-  "abbreviation": "B Scheikundige Technologie",
+  "abbreviation": "B Petrochem Tech",
   "description": [
     {
       "language": "en-GB",
-      "value": "NL VERTALING: There is a 12 credits course which offers student the opportunity to experience in the domain will be paid to the depletion of fossil resources to biomass resources for energy, raw materials and tree form. The course addresses the question if and how this relates to material struggles over natural resources and its relationship to economic and technological domains;- solving optimization problems is climate change. Within a theoretical stance to support making conscious study and career choices."
+      "value": "program that is a place holder for all courses that are made available for student mobility"
     }
   ],
   "formalDocument": "diploma",
@@ -40,11 +40,11 @@
     [
       {
         "language": "en-GB",
-        "value": "Executable knowledge of Chemical technology, including: Acquire knowledge of research paradigms."
+        "value": "Executable knowledge of Petrochemical technology, including: Acquire knowledge of research paradigms."
       }
     ]
   ],
-  "link": "https://bijvak.nl",
+  "link": "https://shell.nl",
   "parent": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
   "children": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
@@ -52,7 +52,21 @@
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "ext": {},
   "validFrom": "2019-08-24",
-  "validTo": "2019-08-24",
+  "validTo": "2022-08-29",
+  "timelineOverrides": [
+    {
+      "validFrom": "2020-08-25",
+      "validTo": "2021-08-24",
+      "programme": {
+        "name": [
+          {
+            "language": "en-GB",
+            "value": "OVERRIDE Bachelor Petrochemical technology"
+          }
+        ]
+      }
+    }
+  ],
   "consumer": {
     "consumerKey": "rio",
     "specificationType": "programme",

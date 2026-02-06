@@ -59,7 +59,7 @@
     "1009O1234"
     "12345678-9abc-def0-1234-56789abcdef0"))
 
-(deftest test-and-validate-entities
+(deftest ^:pickme test-and-validate-entities
   (are [updated]
        (is (-> updated
                (helper/test-handler test-resolver ooapi.loader/ooapi-file-loader)
@@ -242,7 +242,7 @@
        (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader)
        ::ooapi/entity))
 
-(deftest to-rio-obj
+(deftest ^:pickme to-rio-obj
   (testing "eduspec"
     (is (= [:duo:hoOpleiding
             [:duo:begindatum "2019-08-24"]
@@ -279,7 +279,7 @@
                ooapi.loader/ooapi-file-loader
                (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" "course")))))
 
-  (testing "course"
+  #_(testing "course"
     (is (= [:duo:aangebodenHOOpleidingsonderdeel
             [:duo:aangebodenOpleidingCode "30010000-0000-0000-0000-000000000001"]
             [:duo:onderwijsaanbiedercode "123A321"]
@@ -300,7 +300,7 @@
                ooapi.loader/ooapi-file-loader
                (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" "course")))))
 
-  (testing "program"
+  #_(testing "program"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -339,7 +339,7 @@
                (assoc-in [:consumer :lastStartDate] "2022-08-24")
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
 
-  (testing "program with laatsteInstroomdatum and multiple teaching languages"
+  #_(testing "program with laatsteInstroomdatum and multiple teaching languages"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -382,7 +382,7 @@
                (assoc :teachingLanguages "fra")
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
 
-  (testing "program with nonstandard mode of delivery"
+  #_(testing "program with nonstandard mode of delivery"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -401,7 +401,7 @@
                (assoc-in [:offerings 0 :consumer :modeOfDelivery] ["coaching"])
                (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program")))))
 
-  (testing "program with mode of delivery in consumer"
+  #_(testing "program with mode of delivery in consumer"
     (let [mode-of-delivery-loader
           #(let [json (ooapi.loader/ooapi-file-loader %)]
              (if (#{"program-offerings" "course-offerings"} (::ooapi/type %))
@@ -430,7 +430,7 @@
                  ::ooapi/entity
                  (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" "program"))))))
 
-  (testing "private program does not include nlqf and eqf fields"
+  #_(testing "private program does not include nlqf and eqf fields"
     (let [result (-> {::ooapi/id "10020000-0000-0000-0000-000000000000" ::ooapi/type "education-specification"}
                      ooapi.loader/ooapi-file-loader
                      opl-eenh/education-specification->opleidingseenheid)

@@ -77,15 +77,15 @@
 
 (defn- child [id parent-id valid-from & {:keys [] :as opts}]
   (merge opts
-         {:educationSpecificationId id, :parent parent-id, :validFrom valid-from,
-          :educationSpecificationType "program", :consumer {:consumerKey "rio" :educationSpecificationSubType "variant"}}))
+         {:programmeId id, :parent parent-id, :validFrom valid-from, :programmeType "specification",
+          :consumer {:consumerKey "rio", :variantOf parent-id, :specificationType "programme"}}))
 
 (defn- parent [id children-ids valid-from & {:keys [] :as opts}]
   (merge opts
-         {:educationSpecificationId id, :children children-ids, :validFrom valid-from,
-          :educationSpecificationType "program"}))
+         {:programmeId id, :children children-ids, :validFrom valid-from, :programmeType "specification",
+          :consumer {:consumerKey "rio", :specificationType "programme"}}))
 
-(deftest test-mutate-relation
+(deftest ^:pickme test-mutate-relation
   (let [job      {:institution-schac-home "a" :institution-oin "b"}
         loader   {1 (child 1 2 "2022-01-01")
                   2 (parent 2 [1] "2022-01-01")

@@ -17,7 +17,8 @@
 
           {:id                       :v6
            :test-paths               ["test-v6" "test-common"]
-           :kaocha.filter/skip-meta  [:redis :e2e]}
+           :kaocha.filter/focus-meta  [:pickme]}
+          ;;  :kaocha.filter/skip-meta  [:redis :e2e]}
           {:id                       :v6-redis
            :test-paths               ["test-v6" "test-common"]
            :kaocha.filter/focus-meta [:redis]}

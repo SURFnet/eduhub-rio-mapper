@@ -12,12 +12,6 @@
        true
        (catch IllegalArgumentException _ false)))
 
-(defn level-sector-map-to-rio?
-  "True if we can map the given level and sector to RIO."
-  [{:keys [level sector consumer]}]
-  (or (= "privateProgramme" (:specificationType consumer))
-      (some? (rio-helper/level-sector-mapping level sector))))
-
 (defn get-localized-value-exclusive
   "Get localized value from LanguageTypedString.
 

@@ -21,7 +21,7 @@
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opleiding]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
 
-(def aangeboden-opleiding-namen (->> aangeboden-opleiding/education-specification-type-mapping
+(def aangeboden-opleiding-namen (->> aangeboden-opleiding/specification-type-mapping
                                      vals
                                      (map keyword)
                                      set))

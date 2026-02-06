@@ -25,7 +25,8 @@
             [nl.jomco.openapi.v3.validator :as validator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-            [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]))
+            [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
+            [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]))
 
 (def ^:private page-size
   "Maximum amount of items to fetch in a single page."
@@ -67,7 +68,7 @@
                               :method             :get
                               :connection-timeout connection-timeout
                               :headers            {"X-Route" (str "endpoint=" institution-schac-home)
-                                                   "Accept"  "application/json; version=5"}}
+                                                   "Accept"  "application/json; version=6"}}
                              (when-let [{:keys [username password]} gateway-credentials]
                                {:basic-auth [username password]})))))))
 
@@ -191,7 +192,8 @@
 
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
-  (let [path (str "dev/fixtures/" type "-" id ".json")]
+  {:pre [type id]}
+  (let [path (str "test-v6/fixtures/ooapi-loader/" type "-" id ".json")]
     (json/read-str (slurp path) :key-fn keyword)))
 
 (defn load-offerings
@@ -207,9 +209,6 @@
         (loader)
         :items)))
 
-(defn- programme-type [entity]
-  (-> entity :consumer :specificationType))
-
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
   [loader {::ooapi/keys [type] :as request}]
@@ -221,7 +220,7 @@
         offerings               (load-offerings loader request)
         eduspec-type            (cond
                                   joint-program?
-                                  "program"
+                                  "programme"
 
                                   (= type "education-specification")
                                   (:specificationType consumer)
@@ -229,9 +228,9 @@
                                   :else
                                   (-> request
                                       (assoc ::ooapi/type "education-specification"
-                                             ::ooapi/id (-> entity :consumer :specificationId))
+                                             ::ooapi/id (:specificationId consumer))
                                       (loader)
-                                      programme-type))]
+                                      (get-in [:consumer :specificationType])))]
     (cond-> request
       joint-program?
       (assoc
@@ -240,4 +239,4 @@
       :always
       (assoc
        ::ooapi/entity (assoc entity :offerings offerings)
-       ::ooapi/education-specification-type eduspec-type))))
+       ::ooapi-v6/specification-type eduspec-type))))

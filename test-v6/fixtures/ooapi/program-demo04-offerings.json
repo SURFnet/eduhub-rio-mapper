@@ -38,13 +38,6 @@
           "code": "null"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "closed"
-        }
-      ],
       "enrolledNumberStudents": 47,
       "organization": "5563f5d6-4f6c-bba6-c5cb-e22e6c39c2fc",
       "minNumberStudents": 3,
@@ -64,7 +57,12 @@
       "endDate": "2019-01-31",
       "academicSession": "373500c0-ce95-4956-664e-1c8776b9e195",
       "startDate": "2003-09-01",
-      "flexibleEntryPeriodEnd": "2019-01-31"
+      "flexibleEntryPeriodEnd": "2019-01-31",
+      "consumer": {
+        "consumerKey": "rio",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "closed"
+      }
     },
     {
       "program": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -102,12 +100,6 @@
           "code": "null"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "registrationStatus": "open"
-        }
-      ],
       "enrolledNumberStudents": 31,
       "organization": "5563f5d6-4f6c-bba6-c5cb-e22e6c39c2fc",
       "minNumberStudents": 3,
@@ -128,7 +120,11 @@
       "endDate": "2012-08-31",
       "academicSession": "f746c96d-ae3f-255a-6b55-ab8f3834e63e",
       "startDate": "2011-02-07",
-      "flexibleEntryPeriodEnd": "2012-08-31"
+      "flexibleEntryPeriodEnd": "2012-08-31",
+      "consumer": {
+        "consumerKey": "rio",
+        "registrationStatus": "open"
+      }
     },
     {
       "program": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -166,13 +162,6 @@
           "code": "null"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "open"
-        }
-      ],
       "enrolledNumberStudents": 76,
       "organization": "5563f5d6-4f6c-bba6-c5cb-e22e6c39c2fc",
       "minNumberStudents": 2,
@@ -192,7 +181,12 @@
       "endDate": "2019-01-31",
       "academicSession": "373500c0-ce95-4956-664e-1c8776b9e195",
       "startDate": "2003-09-01",
-      "flexibleEntryPeriodEnd": "2019-01-31"
+      "flexibleEntryPeriodEnd": "2019-01-31",
+      "consumer": {
+        "consumerKey": "rio",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "open"
+      }
     },
     {
       "program": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -230,13 +224,6 @@
           "code": "null"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "requiredPermissionRegistration": "no",
-          "registrationStatus": "open"
-        }
-      ],
       "enrolledNumberStudents": 81,
       "organization": "5563f5d6-4f6c-bba6-c5cb-e22e6c39c2fc",
       "minNumberStudents": 3,
@@ -255,7 +242,12 @@
       "endDate": "2012-08-31",
       "academicSession": "f746c96d-ae3f-255a-6b55-ab8f3834e63e",
       "startDate": "2011-02-07",
-      "flexibleEntryPeriodEnd": "2012-08-31"
+      "flexibleEntryPeriodEnd": "2012-08-31",
+      "consumer": {
+        "consumerKey": "rio",
+        "requiredPermissionRegistration": "no",
+        "registrationStatus": "open"
+      }
     },
     {
       "program": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -293,12 +285,6 @@
           "code": "null"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "registrationStatus": "closed"
-        }
-      ],
       "enrolledNumberStudents": 35,
       "organization": "5563f5d6-4f6c-bba6-c5cb-e22e6c39c2fc",
       "minNumberStudents": 2,
@@ -319,7 +305,11 @@
       "endDate": "2015-08-31",
       "academicSession": "2b616db4-c6f4-ef58-7997-2c28974651d0",
       "startDate": "1991-09-02",
-      "flexibleEntryPeriodEnd": "2015-08-31"
+      "flexibleEntryPeriodEnd": "2015-08-31",
+      "consumer": {
+        "consumerKey": "rio",
+        "registrationStatus": "closed"
+      }
     },
     {
       "program": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -357,13 +347,6 @@
           "code": "null"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "closed"
-        }
-      ],
       "enrolledNumberStudents": 98,
       "organization": "5563f5d6-4f6c-bba6-c5cb-e22e6c39c2fc",
       "minNumberStudents": 5,
@@ -383,7 +366,12 @@
       "endDate": "2019-01-31",
       "academicSession": "373500c0-ce95-4956-664e-1c8776b9e195",
       "startDate": "2003-09-01",
-      "flexibleEntryPeriodEnd": "2019-01-31"
+      "flexibleEntryPeriodEnd": "2019-01-31",
+      "consumer": {
+        "consumerKey": "rio",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "closed"
+      }
     }
   ],
   "hasPreviousPage": false,

@@ -26,6 +26,7 @@
    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
    [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]
+   [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]
    [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper :refer [load-json]])
   (:import [clojure.lang ExceptionInfo]))
 
@@ -47,12 +48,6 @@
       ("course" "program") (load-json program-course)
       (load-json offerings))))
 
-(defn mock-ooapi-loader-simple [{:keys [eduspec program-course offerings]} ooapi-type]
-  (case ooapi-type
-    "education-specification" (load-json eduspec)
-    ("course" "program") (load-json program-course)
-    (load-json offerings)))
-
 (defn- test-resolver [ootype]
   (if (= ootype "education-specification")
     rio-opleidingsid
@@ -65,7 +60,7 @@
           mutation       (handle-updated {::ooapi/id ooapi-id
                                           ::ooapi/type ooapi-type
                                           :institution-oin institution-oin
-                                          ::ooapi/education-specification-type "program"})]
+                                          ::ooapi-v6/specification-type "programme"})]
       {:result (mutator/mutate! mutation (:rio-config config))
        :mutation mutation})))
 

@@ -1,5 +1,5 @@
 {
-  "courseId": "123e4567-e89b-12d3-a456-426614174000",
+  "courseId": "30010000-0000-0000-0000-000000000000",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "string"
@@ -23,7 +23,7 @@
   "description": [
     {
       "language": "en-GB",
-      "value": "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R. As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."
+      "value": "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."
     }
   ],
   "teachingLanguage": "nld",
@@ -91,7 +91,7 @@
   "consumer":
     {
       "consumerKey": "rio",
-      "specificationId": "9fa40013-369e-4f7a-839b-5bf76128b51e",
+      "specificationId": "10030000-0000-0000-0000-000000000000",
       "educationOffererCode": "123A321",
       "educationLocationCode": "334X123",
       "jointPartnerCodes": [
@@ -110,7 +110,7 @@
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "validFrom": "2019-08-24",
-  "validTo": "2019-08-24",
+  "validTo": "2024-08-24",
   "timelineOverrides": [
     {
       "validFrom": "2021-09-01",
@@ -123,7 +123,7 @@
         "name": [
           {
             "language": "en-GB",
-            "value": "Academic and Professional Writing"
+            "value": "OVERRIDE Academic and Professional Writing"
           }
         ],
         "abbreviation": "INFOMQNM",
@@ -204,7 +204,7 @@
             "code": "string"
           }
         ],
-        "ext": {},
+      "ext": {},
         "programs": [
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
@@ -213,6 +213,11 @@
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387"
       }
+    },
+    {
+      "validFrom": "2022-09-01",
+      "validTo": "2023-08-31",
+      "course": {}
     }
   ]
 }

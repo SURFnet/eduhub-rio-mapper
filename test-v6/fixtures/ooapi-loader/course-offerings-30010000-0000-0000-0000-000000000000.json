@@ -28,6 +28,7 @@
       ],
       "teachingLanguage": "nld",
       "modeOfDelivery": [
+        "on campus",
         "situated"
       ],
       "maxNumberStudents": 200,
@@ -45,7 +46,7 @@
       ],
       "ext": {},
       "startDate": "2019-08-21",
-      "endDate": "2023-06-15",
+      "endDate": "2019-10-23",
       "enrollStartDate": "2019-05-01",
       "enrollEndDate": "2019-08-01",
       "flexibleEntryPeriodStart": "2019-08-24",
@@ -91,7 +92,8 @@
           "ext": {}
         }
       ],
-      "program": "9d904916-95ab-4cd6-a597-6e333dcf718f",
+      "course": "4c88e8b1-8fa9-4021-9bad-b22efe4d02eb",
+      "programOffering": "8ac6982d-28e6-4714-8f27-4da24a40a52a",
       "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
       "consumer": {
         "consumerKey": "rio",

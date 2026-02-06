@@ -24,7 +24,7 @@
 (def ^:private programme-specification-type-mapping
   {"course"           "hoOnderwijseenheid"
    "programme"        "hoOpleiding"
-   "privateProgramme" "particuliereOpleiding"
+   "private"          "particuliereOpleiding"
    "cluster"          "hoOnderwijseenhedencluster"})
 
 (defn- soort-mapping [{:keys [consumer]}]
@@ -58,7 +58,7 @@
           periods     (ooapi-utils/ooapi-to-periods progspec :programme)
           translation (mapping-progspec->opleidingseenheid opl-eenh-attr-name)
           ;; As of November 1st, 2025, RIO no longer returns NLQF/EQF fields for Particuliere Opleidingen
-          is-private-program? (= programme-type "privateProgramme")]
+          is-private-program? (= programme-type "private")]
       (if translation
         (translation progspec)
         (case opl-eenh-attr-name
