@@ -85,7 +85,7 @@
          {:programmeId id, :children children-ids, :validFrom valid-from, :programmeType "specification",
           :consumer {:consumerKey "rio", :specificationType "programme"}}))
 
-(deftest ^:pickme test-mutate-relation
+(deftest test-mutate-relation
   (let [job      {:institution-schac-home "a" :institution-oin "b"}
         loader   {1 (child 1 2 "2022-01-01")
                   2 (parent 2 [1] "2022-01-01")

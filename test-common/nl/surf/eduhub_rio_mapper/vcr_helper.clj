@@ -76,11 +76,21 @@
   (assert (< (count list) 2) (prn-str list))
   (first list))
 
+(defn- numbered-dir [basedir nr]
+  {:post [(some? %)]}
+  (let [dirname (->> basedir
+                      (ls)
+                      (filter #(.startsWith % (str nr "-")))
+                      (only-one-if-any))]
+    (when-not dirname (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
+    (str basedir "/" dirname)))
+
 (defn- numbered-file [basedir nr]
   {:post [(some? %)]}
   (let [filename (->> basedir
                       (ls)
                       (filter #(.startsWith % (str nr "-")))
+                      (filter #(.endsWith % ".edn"))
                       (only-one-if-any))]
     (when-not filename (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
     (str basedir "/" filename)))
@@ -102,7 +112,7 @@
 
 (defn- make-playbacker [root idx _]
   (let [count-atom (atom 0)
-        dir        (numbered-file root idx)]
+        dir        (numbered-dir root idx)]
     (fn [_ actual-request]
       (let [url              (cond-> (:url actual-request)
                                (not remote-entities/programme-supported?)

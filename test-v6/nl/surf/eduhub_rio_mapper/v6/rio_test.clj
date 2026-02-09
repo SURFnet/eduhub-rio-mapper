@@ -172,14 +172,6 @@
    [:duo:kenmerken [:duo:kenmerknaam "studiekeuzecheck"] [:duo:kenmerkwaardeEnumeratiewaarde "GEEN_STUDIEKEUZE_CHECK"]]
    [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]])
 
-(def program-period-2-no-timeline-consumer
-  [:duo:aangebodenHOOpleidingPeriode
-   [:duo:begindatum "2021-09-01"]
-   [:duo:eigenNaamAangebodenOpleiding "OVERRIDE Biology"]
-   [:duo:eigenOmschrijving "The study of life"]
-   [:duo:kenmerken [:duo:kenmerknaam "eigenNaamKort"] [:duo:kenmerkwaardeTekst "BIO"]]
-   [:duo:kenmerken [:duo:kenmerknaam "website"] [:duo:kenmerkwaardeTekst "https://bijvak.nl"]]])
-
 (def program-cohort-1
   [:duo:aangebodenHOOpleidingCohort
    [:duo:cohortcode "1234qwe12"]
@@ -329,7 +321,7 @@
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
             program-period-1
-            program-period-2-no-timeline-consumer
+            program-period-2
             [:duo:aangebodenHOOpleidingCohort
              [:duo:cohortcode "1234qwe12"]
              [:duo:cohortstatus "O"]
@@ -368,7 +360,7 @@
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
             program-period-1
-            program-period-2-no-timeline-consumer
+            program-period-2
             [:duo:aangebodenHOOpleidingCohort
              [:duo:cohortcode "1234qwe12"]
              [:duo:cohortstatus "O"]
@@ -411,7 +403,7 @@
             [:duo:einddatum "2022-08-31"]
             [:duo:opleidingseenheidSleutel "1234O1234"]
             program-period-1
-            program-period-2-no-timeline-consumer
+            program-period-2
             program-cohort-1
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
@@ -437,7 +429,7 @@
               [:duo:einddatum "2022-08-31"]
               [:duo:opleidingseenheidSleutel "1234O1234"]
               program-period-1
-              program-period-2-no-timeline-consumer
+              program-period-2
               program-cohort-1
               [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
               [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]

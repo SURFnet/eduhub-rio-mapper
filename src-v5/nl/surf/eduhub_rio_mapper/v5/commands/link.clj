@@ -148,7 +148,7 @@
         success? (mutator/mutate! mutation rio-config)
         predicate (fn [] (let [rio-obj (rio-loader-fn)
                                loaded-id (last (rio-obj-raadplegen->beheren rio-obj finder))]
-                           (= (str id) loaded-id)))]
+                           (= id loaded-id)))]
 
     ;; Ensure RIO has processed the update
     (when success?

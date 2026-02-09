@@ -1,6 +1,5 @@
 (ns nl.surf.eduhub-rio-mapper.v6.utils.ooapi
-  (:require [clojure.string :as str]
-            [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper])
+  (:require [clojure.string :as str])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter DateTimeParseException]
            [java.util UUID]))

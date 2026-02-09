@@ -81,7 +81,7 @@
      :naamKort                      (:abbreviation current-period),
      :internationaleNaam            (ooapi-utils/get-localized-value (:name current-period)),
      :omschrijving                  (ooapi-utils/get-localized-value (:description current-period) dutch-locales),
-     :eigenOpleidingseenheidSleutel (-> eduspec :consumer :specificationId)}))
+     :eigenOpleidingseenheidSleutel (:programmeId eduspec)}))
 
 (defn summarize-course-program [course-program]
   (let [ooapi-type (if (:courseId course-program) :course :program)

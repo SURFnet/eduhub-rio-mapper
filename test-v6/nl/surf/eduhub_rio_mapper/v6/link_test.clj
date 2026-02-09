@@ -66,6 +66,7 @@
                  link)))))
 
     (testing "unlink education-specifications without opleidingseenheidsleutel"
+        ;; failing, needs step 4, opvragen
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-link" 3 "linker")]
         (let [{:keys [link rio-sexp]}
               (link! (assoc client-info

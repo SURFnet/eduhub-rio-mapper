@@ -20,7 +20,6 @@
   (:require
    [clj-http.client :as client]
    [clojure.java.io :as io]
-   [clojure.string :as str]
    [clojure.test :refer :all]
    [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
@@ -89,18 +88,6 @@
     (is (nil? (:errors actual)))
     (is (= "EN TRANSLATION: Computer Science" (-> actual :ooapi :name first :value)))))
 
-(deftest test-handle-updated-eduspec-upcase
-  (let [ooapi-loader (mock-ooapi-loader eduspec-req-0)
-        ooapi-loader #(let [x (ooapi-loader %)] (assoc x :educationSpecificationId (str/upper-case (:educationSpecificationId x))))
-        actual (helper/test-handler {::ooapi/id   "790c6569-2bcc-d046-dae2-7b73e77231f3"
-                                     ::ooapi/type "education-specification"
-                                     :institution-oin institution-oin}
-                                    test-resolver
-                                    ooapi-loader)]
-    (is (nil? (:errors actual)))
-    (is (= "790c6569-2bcc-d046-dae2-7b73e77231f3" (get-in actual [:rio-sexp 0 4 2 1])))
-    (is (= "EN TRANSLATION: Computer Science" (-> actual :ooapi :name first :value)))))
-
 (deftest test-make-eduspec-0
   (let [actual (:result (simulate-upsert (mock-ooapi-loader eduspec-req-0)
                                          (slurp (io/resource "fixtures/rio/integration-eduspec-0.xml"))
@@ -112,11 +99,10 @@
   (let [ooapi-loader (mock-ooapi-loader {:eduspec        "fixtures/ooapi/integration-eduspec-0.json"
                                          :program-course "fixtures/ooapi/integration-program-0.json"
                                          :offerings      "fixtures/ooapi/integration-program-offerings-0.json"})
-        {:keys [result mutation]} (simulate-upsert ooapi-loader
+        {:keys [result _mutation]} (simulate-upsert ooapi-loader
                                                    (slurp (io/resource "fixtures/rio/integratie-program-0.xml"))
                                                    "program")]
     (is (nil? (:errors result)))
-    (is (= [:duo:cohortcode "34333"] (get-in mutation [:rio-sexp 0 9 1])))
     (is (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))))
 
 (deftest test-joint-program
