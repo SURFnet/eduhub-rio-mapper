@@ -176,5 +176,5 @@
     "specificationId": "{{programmes/specification-dorothy}}"
   },
   "programmeId": "{{programmes/jack}}",
-  "programmeType": "program"
+  "programmeType": "programme"
 }
