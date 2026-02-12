@@ -175,5 +175,5 @@
     "specificationId": "{{programmes/specification-parent-program}}"
   },
   "programmeId": "{{programmes/some}}",
-  "programmeType": "program"
+  "programmeType": "programme"
 }
