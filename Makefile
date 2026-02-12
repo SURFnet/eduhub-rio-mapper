@@ -21,7 +21,7 @@ proof-specs:
 test: test-v5 test-v6
 
 test-v5: test-common
-	clojure -M:test-v5
+	clojure -M:test-v5 --no-capture-output
 
 test-v5-redis:
 	clojure -M:test-v5-redis
