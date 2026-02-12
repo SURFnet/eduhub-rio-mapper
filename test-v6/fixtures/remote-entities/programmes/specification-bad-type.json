@@ -2,7 +2,6 @@
   "level": "bachelor",
   "children": [],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
-  "programmeType": "badType",
   "programmeId": "{{programmes/specification-bad-type}}",
   "validFrom": "1950-09-20",
   "abbreviation": "1T",
@@ -64,6 +63,7 @@
   },
   "consumer": {
     "consumerKey": "rio",
+    "specificationType": "badType",
     "category": [
       "business_and_project_support",
       "education",
