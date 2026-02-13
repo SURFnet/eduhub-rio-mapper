@@ -158,8 +158,11 @@
 (defn ooapi-id
   "Get OOAPI UUID of automatically uploaded fixture."
   [type id]
-  (let [name (str (name type) "/" id)]
-    (get remote-entities/*session* name)))
+  (get remote-entities/*session*
+  (case type
+    :programs (str "programmes" "/" id)
+    :education-specifications (str "programmes" "/" id)
+    :courses (str "courses" "/" id))))
 
 (defn- interpret-post-job-args
   "Automatically find OOAPI ID from session.
@@ -173,7 +176,7 @@
     (concat (drop-last args)
             [(if (and (keyword? type) (string? id))
                (let [uuid (ooapi-id type id)]
-                 (assert uuid (str "Expect a UUID for " id))
+                 (assert uuid (str "Expect a UUID for " type " " id))
                  uuid)
                id)])))
 
@@ -235,8 +238,8 @@
         (call-api action args)]
     (assoc res :result-delay
            (delay
-             (if (not= http-status/ok status)
-               (println "failed to post job")
+             (if (not= http-status/created status)
+               (println (str "failed to post job - status: " status))
                (loop [tries-left (/ job-status-poll-total-msecs
                                     job-status-poll-sleep-msecs)]
                  (let [{:keys [status body] :as res}
@@ -407,7 +410,8 @@
     result))
 
 (defn rio-resolve [rio-type id]
-  {:pre [(#{"education-specification" "course" "program"} rio-type)]}
+  {:pre [(#{"education-specification" "course" "program"} rio-type)
+         (string? id)]}
   (let [messages-atom (atom [])
         result (binding [http-utils/*http-messages* messages-atom]
                  (@rio-resolver rio-type id (:institution-oin @client-info)))]
@@ -553,7 +557,7 @@
       (System/exit 1)))
   (doseq [{:keys [cmd proc-atom ^String log-file]} services]
 
-    (let [process-builder (ProcessBuilder. ^List (into ["clojure" "-M:mapper"] cmd))
+    (let [process-builder (ProcessBuilder. ^List (into ["clojure" "-M:mapper-v6"] cmd))
           log-file (File. log-file)]
       (when-let [parent (.getParentFile log-file)]
         (.mkdirs parent))

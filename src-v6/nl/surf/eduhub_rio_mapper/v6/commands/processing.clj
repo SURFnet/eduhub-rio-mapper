@@ -39,11 +39,35 @@
     (when (= "aanleveren_opleidingseenheid" (:action result))
       entity)))
 
+(defn- quick-validate-specification [{:keys [consumer] :as entity}]
+  (when (nil? (:specificationType consumer))
+    (let [error-msg "Invalid programme specification: specificationType required"]
+      (throw (ex-info error-msg
+                      {:entity     entity
+                       :error      error-msg
+                       :retryable? false}))))
+  (when-not (#{"programme" "cluster" "private" "course" "variant"} (:specificationType consumer))
+    (let [error-msg (str "Invalid programme specification: specificationType value '" (:specificationType consumer) "' not allowed")]
+      (throw (ex-info error-msg
+                      {:entity     entity
+                       :error      error-msg
+                       :retryable? false})))))
+
+(defn- quick-validate [{:keys [programmeType] :as entity} type]
+  ;; TODO ultimately only programme
+  (when (#{"program programme"} type)
+    (when (= "specification" programmeType)
+      (quick-validate-specification entity)) )
+  (when (= "education-specification" type)
+    (quick-validate-specification entity)))
+
 (defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
   (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
     (logging/with-mdc
       {:ooapi-type type :ooapi-id id}
-      (ooapi.loader/load-entities ooapi-loader request))))
+      (let [{::ooapi/keys [entity] :as result} (ooapi.loader/load-entities ooapi-loader request)]
+        (quick-validate entity type)
+        result))))
 
 ;; returns function that takes request
 ;; and returns request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
