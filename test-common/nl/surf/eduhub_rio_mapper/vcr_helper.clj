@@ -105,10 +105,10 @@
   (let [action (get-in request [:headers "SOAPAction"])]
     (if action
       (last (str/split action #"/"))
-      (-> request
-          :url
+      (-> (:url request)
           path-for
-          (str/replace \/ \-)))))
+          (str/replace \/ \-)
+        (str/replace-first #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" "ooapi-id")))))
 
 (defn- make-playbacker [root idx _]
   (let [count-atom (atom 0)
