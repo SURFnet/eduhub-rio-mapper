@@ -99,9 +99,9 @@
            ::rio/type             "opleidingsrelatiesBijOpleidingseenheid"
            ::rio/opleidingscode   opleidingscode}))
 
-(defn delete-relations [opleidingscode type institution-oin {:keys [rio-config getter]}]
+(defn delete-relations [opleidingscode rio-type institution-oin {:keys [rio-config getter]}]
   {:pre [(s/valid? ::rio/opleidingscode opleidingscode)]}
-  (when (= type "education-specification")
+  (when (= rio-type :oe)
     (doseq [rel (load-relation-data getter opleidingscode institution-oin)]
       (-> (relation-mutation :delete institution-oin rel)
           (mutator/mutate! rio-config)))))
@@ -120,11 +120,11 @@
    (let [add-rio-code (fn add-rio-code [entity]
                         (if (::rio/opleidingscode entity)
                           entity
-                          (when-let [rio-code (resolver "education-specification" (primary-key entity) institution-oin)]
+                          (when-let [rio-code (resolver :oe (primary-key entity) institution-oin)]
                             (assoc entity ::rio/opleidingscode rio-code))))
          load-eduspec (fn load-eduspec [id]
                         {:pre [id]}
-                        (when-let [es (ooapi-loader {::ooapi/type            "education-specification"
+                        (when-let [es (ooapi-loader {::ooapi/type            "programme"
                                                      ::ooapi/id              id
                                                      :institution-schac-home institution-schac-home})]
                           (add-rio-code es)))

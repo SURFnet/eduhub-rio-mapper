@@ -54,41 +54,61 @@
                        :retryable? false})))))
 
 (defn- quick-validate [{:keys [programmeType] :as entity} type]
-  ;; TODO ultimately only programme
-  (when (#{"program programme"} type)
-    (when (= "specification" programmeType)
-      (quick-validate-specification entity)) )
-  (when (= "education-specification" type)
+  (when (and (#{"programme"} type)
+             (= "specification" programmeType))
     (quick-validate-specification entity)))
 
+;; Only function of this phase is to load programmes in order to distinguish
+;; programmes from programme-specifications, which are different object in RIO
+(defn- make-deleter-load-ooapi-phase [{:keys [ooapi-loader]}]
+  (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
+    {:pre  [(or (#{"programme" "course"} type) (prn {:unknown-type type}))]
+     :post [(:rio-type %)]}
+    (if (= type "course")
+      (assoc request :rio-type :ao)
+      (logging/with-mdc
+        {:ooapi-type type :ooapi-id id}
+        (let [entity (ooapi-loader request)]
+          (assoc request :rio-type (if (and (= "programme" type)
+                                            (= "specification" (:programmeType entity)))
+                                     :oe
+                                     :ao)))))))
+
+;; in:  {::ooapi/keys [type id] :keys [action institution-name institution-oin institution-schac-home]}
+;; diff out: {:keys [rio-type] ::ooapi/keys [entity]}
+:nl.surf.eduhub-rio-mapper.v6.specs.ooapi/specification-type
 (defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
   (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
+    {:pre  [(or (#{"programme" "course"} type) (prn {:unknown-type type}))]
+     :post [(:rio-type %)]}
     (logging/with-mdc
       {:ooapi-type type :ooapi-id id}
       (let [{::ooapi/keys [entity] :as result} (ooapi.loader/load-entities ooapi-loader request)]
         (quick-validate entity type)
-        result))))
+        (assoc result :rio-type (if (and (= "programme" type)
+                                         (= "specification" (:programmeType entity)))
+                                  :oe
+                                  :ao))))))
 
-;; returns function that takes request
-;; and returns request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
+;; in:  {::ooapi/keys [type id entity] :keys [action rio-type institution-name institution-oin institution-schac-home]}
+;; diff out: {::rio/keys [opleidingscode aangeboden-opleiding-code]}
 (defn- make-updater-resolve-phase [{:keys [resolver]}]
-  (fn resolve-phase [{:keys [institution-oin action]
+  (fn resolve-phase [{:keys [institution-oin action rio-type]
                       ::ooapi/keys [type id entity]
                       ::rio/keys [opleidingscode] :as request}]
-    {:pre [institution-oin id]}
-    (let [resolve-eduspec (= type "education-specification")
-          edu-id          (if (= type "education-specification")
+    {:pre [institution-oin id rio-type]}
+    (let [edu-id          (if (= :oe rio-type)
                             id
                             (-> entity :consumer :specificationId))
           oe-code         (or opleidingscode
-                              (when edu-id (resolver "education-specification" edu-id institution-oin)))
-          ao-code         (when-not resolve-eduspec (resolver type id institution-oin))]
+                              (when edu-id (resolver :oe edu-id institution-oin)))
+          ao-code         (when-not (= :oe rio-type) (resolver rio-type id institution-oin))]
       ;; Inserting a course or program while the education
       ;; specification has not been added to RIO will throw an error.
       ;; Also throw an error when trying to delete an education specification
       ;; that cannot be resolved.
-      (when (or (and (nil? oe-code) (not resolve-eduspec) (= "upsert" action))
-                (and (nil? oe-code) resolve-eduspec (= "delete" action)))
+      (when (or (and (nil? oe-code) (= :ao rio-type) (= "upsert" action))
+                (and (nil? oe-code) (= :oe rio-type) (= "delete" action)))
         (throw (ex-info (str "No 'opleidingseenheid' found in RIO with eigensleutel: " edu-id)
                         {:code       oe-code
                          :type       type
@@ -98,16 +118,15 @@
         oe-code (assoc ::rio/opleidingscode oe-code)
         ao-code (assoc ::rio/aangeboden-opleiding-code ao-code)))))
 
-;; returns function that takes request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
-;; and returns request with :rio-relations
+;; in:  {::ooapi/keys [type id entity] :keys [action rio-type institution-name institution-oin institution-schac-home] ::rio/keys [opleidingscode aangeboden-opleiding-code]}
+;; diff out: {:keys [rio-relations]}
 (defn- make-load-relations-phase [{:keys [getter]}]
   (fn load-relations-phase [{::rio/keys [opleidingscode]
-                             ::ooapi/keys [type]
-                             :keys [institution-oin] :as request}]
+                             :keys [institution-oin rio-type] :as request}]
     {:pre [(or (nil? opleidingscode) (string? opleidingscode))]}
     (cond-> request
       (and opleidingscode
-           (= type "education-specification"))
+           (= rio-type :oe))
       ;; Format: vector of relations, each relation is a map with:
       ;; {:opleidingseenheidcodes #{string...}  ; set of opleidingseenheid codes
       ;;  :valid-from LocalDate                 ; start date
@@ -131,6 +150,8 @@
         is-valid (and valid-from-check valid-to-check)]
     is-valid))
 
+;; in:  {::ooapi/keys [type id entity] :keys [rio-relations action rio-type institution-name institution-oin institution-schac-home] ::rio/keys [opleidingscode aangeboden-opleiding-code]}
+;; diff out: {}
 (defn- make-prune-relations-phase [{:keys [getter] :as _handlers} rio-config]
   (fn prune-relations-phase [{:keys [rio-relations institution-oin]
                               ::ooapi/keys [entity]
@@ -154,6 +175,8 @@
         ;; Return request with only valid relations
         (assoc request :rio-relations (vec valid-relations))))))
 
+;; in:  {::ooapi/keys [type id entity] :keys [rio-relations action rio-type institution-name institution-oin institution-schac-home] ::rio/keys [opleidingscode aangeboden-opleiding-code]}
+;; out {:job job :result result :eduspec eduspec}
 (defn- make-updater-soap-phase
   "Phase definition for creating the soap document.
 
@@ -168,9 +191,10 @@
       {:job job :result result :eduspec eduspec})))
 
 (defn- make-deleter-prune-relations-phase [handlers]
-  (fn [{::ooapi/keys [type] ::rio/keys [opleidingscode] :keys [institution-oin] :as request}]
-    (when (and opleidingscode (= type "education-specification"))
-      (relation-handler/delete-relations opleidingscode type institution-oin handlers))
+  (fn [{::rio/keys [opleidingscode] :keys [institution-oin rio-type] :as request}]
+    {:pre [rio-type]}
+    (when (and opleidingscode (= :oe rio-type))
+      (relation-handler/delete-relations opleidingscode rio-type institution-oin handlers))
     request))
 
 (defn- make-deleter-soap-phase []
@@ -180,6 +204,8 @@
           eduspec (extract-eduspec-from-result result)]
       {:job job :result result :eduspec eduspec})))
 
+;; in:  {:job job :result result :eduspec eduspec}
+;; out: {:job job :mutate-result result :eduspec eduspec}
 (defn- make-updater-mutate-rio-phase [{:keys [rio-config]}]
   (fn mutate-rio-phase [{:keys [job result eduspec]}]
     {:pre [(s/valid? ::mutation/mutation-response result)]}
@@ -189,8 +215,9 @@
 (defn- make-deleter-confirm-rio-phase [{:keys [resolver]} rio-config]
   (fn confirm-rio-phase [{:keys [job] :as result}]
     (let [{::ooapi/keys [id type]
-           :keys        [institution-oin]} job]
-      (if (rio.helper/blocking-retry (complement #(resolver type id institution-oin))
+           :keys        [institution-oin programme-specification]} job
+          rio-type (if programme-specification :oe :ao)]
+      (if (rio.helper/blocking-retry (complement #(resolver rio-type id institution-oin))
                                      rio-config
                                      "Ensure delete is processed by RIO")
         result
@@ -200,12 +227,12 @@
 (defn- make-updater-confirm-rio-phase [{:keys [resolver]} rio-config]
   (fn confirm-rio-phase [{:keys [job] :as result}]
     (let [{::ooapi/keys [id type]
-           :keys        [institution-oin]} job
-          rio-code (rio.helper/blocking-retry #(resolver type id institution-oin)
+           :keys        [institution-oin rio-type]} job
+          rio-code (rio.helper/blocking-retry #(resolver rio-type id institution-oin)
                                               rio-config
                                               "Ensure upsert is processed by RIO")]
       (if rio-code
-        (let [path (if (= type "education-specification")
+        (let [path (if (= :oe rio-type)
                      [:eduspec ::rio/opleidingscode]
                      [:job ::rio/aangeboden-opleiding-code])]
           (assoc-in result path rio-code))
@@ -262,11 +289,12 @@
 
 (defn- make-deleter [{:keys [rio-config] :as handlers}]
   {:pre [rio-config]}
-  (let [fs [[:resolving  (make-updater-resolve-phase handlers)]
-            [:deleting   (make-deleter-prune-relations-phase handlers)]
-            [:preparing  (make-deleter-soap-phase)]
-            [:deleting   (make-updater-mutate-rio-phase handlers)]
-            [:confirming (make-deleter-confirm-rio-phase handlers rio-config)]]
+  (let [fs [[:fetching-ooapi (make-deleter-load-ooapi-phase handlers)]
+            [:resolving      (make-updater-resolve-phase handlers)]
+            [:deleting       (make-deleter-prune-relations-phase handlers)]
+            [:preparing      (make-deleter-soap-phase)]
+            [:deleting       (make-updater-mutate-rio-phase handlers)]
+            [:confirming     (make-deleter-confirm-rio-phase handlers rio-config)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
       {:pre [(:institution-oin request)]}
@@ -278,7 +306,7 @@
   {:status (if ooapi-summary (if rio-summary "found" "not-found") "error")})
 
 (defn- eduspec-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin]} {:keys [resolver getter]}]
-  (let [rio-code      (resolver "education-specification" id institution-oin)
+  (let [rio-code      (resolver :oe id institution-oin)
         rio-summary   (some-> rio-code
                               (rio.loader/find-opleidingseenheid getter institution-oin)
                               (dry-run/summarize-opleidingseenheid))
@@ -318,8 +346,10 @@
     (let [ooapi-entity (safe-loader (fn [] (ooapi-loader request)))
           value (if (not-found? ooapi-entity)
                   {:status "error"}
-                  (let [handler (case type "education-specification" eduspec-dry-run-handler
-                                      ("course" "program") course-program-dry-run-handler)]
+                  (let [handler (if (or (= type "course")
+                                        (not= "specification" (:programmeType ooapi-entity)))
+                                  course-program-dry-run-handler
+                                  eduspec-dry-run-handler)]
                     (handler ooapi-entity request handlers)))]
       {:dry-run value})))
 

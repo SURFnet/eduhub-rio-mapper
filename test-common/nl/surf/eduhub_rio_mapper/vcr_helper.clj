@@ -34,6 +34,7 @@
    [clojure.edn :as edn]
    [clojure.java.io :as io]
    [clojure.pprint :refer [pprint]]
+   [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
    [clojure.string :as str]
    [clojure.test :refer :all]
    [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities]

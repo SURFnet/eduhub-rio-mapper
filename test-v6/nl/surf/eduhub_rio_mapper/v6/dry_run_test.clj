@@ -46,7 +46,8 @@
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-dryrun" 1 "finder")]
         (let [result (dry-run! (assoc client-info
                                       ::ooapi/id "afb435cc-5352-f55f-a548-41c9dfd60002"
-                                      ::ooapi/type "education-specification"))]
+                                      ::ooapi/type "programme"
+                                      :rio-type :oe))]
           (is (some? result))
           (is (= {:begindatum {:diff false},
                   :eigenOpleidingseenheidSleutel {:diff false},
@@ -62,7 +63,8 @@
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-dryrun" 2 "finder")]
         (let [result (dry-run! (assoc client-info
                                       ::ooapi/id "9338214e-3978-484c-676d-427303a92748"
-                                      ::ooapi/type "education-specification"))]
+                                      ::ooapi/type "programme"
+                                      :rio-type :oe))]
           (is (some? result))
           (is (= {:begindatum {:diff false},
                   :eigenOpleidingseenheidSleutel {:diff false},
@@ -78,7 +80,8 @@
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-dryrun" 3 "finder")]
         (let [result (dry-run! (assoc client-info
                                       ::ooapi/id "cdecdecd-5352-f55f-a548-41c9dfd60002"
-                                      ::ooapi/type "education-specification"))]
+                                      ::ooapi/type "programme"
+                                      :rio-type :oe))]
           (is (some? result))
           (is (= {:begindatum {:diff false},
                   :eigenOpleidingseenheidSleutel {:diff false},

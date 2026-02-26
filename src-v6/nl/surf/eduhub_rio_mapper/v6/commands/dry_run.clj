@@ -84,7 +84,7 @@
      :eigenOpleidingseenheidSleutel (:programmeId eduspec)}))
 
 (defn summarize-course-program [course-program]
-  (let [ooapi-type (if (:courseId course-program) :course :program)
+  (let [ooapi-type (if (:courseId course-program) :course :programme)
         current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods course-program ooapi-type) :validFrom)
         consumer (:consumer course-program)]
     {:begindatum                   (:validFrom current-period)
