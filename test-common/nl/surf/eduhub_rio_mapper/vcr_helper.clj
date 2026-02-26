@@ -114,11 +114,7 @@
   (let [count-atom (atom 0)
         dir        (numbered-dir root idx)]
     (fn [_ actual-request]
-      (let [url              (cond-> (:url actual-request)
-                               (not remote-entities/programme-supported?)
-                               (remote-entities/convert-url-to-v5))
-            actual-request   (assoc actual-request :url url)
-            i                (swap! count-atom inc)
+      (let [i                (swap! count-atom inc)
             fname            (numbered-file dir i)
             recording        (with-open [r (io/reader fname)] (edn/read (PushbackReader. r)))
             recorded-request (:request recording)]
@@ -132,11 +128,7 @@
 (defn- make-recorder [root idx desc]
   (let [mycounter (atom 0)]
     (fn [handler request]
-      (let [url          (cond-> (:url request)
-                           (not remote-entities/programme-supported?)
-                           (remote-entities/convert-url-to-v5))
-            request      (assoc request :url url)
-            response     (handler request)
+      (let [response     (handler request)
             content-type (get (:headers response) "Content-Type")
             counter      (swap! mycounter inc)
             file-name    (str root "/" idx "-" desc "/" counter "-" (req-name request) ".edn")
