@@ -84,7 +84,7 @@
           old-uuid     (str (UUID/randomUUID))
           new-uuid     (str (UUID/randomUUID))
 
-          eduspec (-> "eduspec-test-rio.json"
+          prgspec (-> "prgspec-test-rio-v6.json"
                       io/resource
                       slurp
                       (json/read-str :key-fn keyword)
@@ -96,15 +96,12 @@
                             :institution-schac-home (:institution-schac-home client-info)
                             ::ooapi/type            "programme"
                             ::ooapi/id              old-uuid
-                            ::ooapi/entity          eduspec
+                            ::ooapi/entity          prgspec
                             :rio-type               :oe}
                 rio-code   (-> insert-req insert! :aanleveren_opleidingseenheid_response :opleidingseenheidcode)
-                _ (println "INSERTED: RIO CODE" rio-code)
                 link-req   (merge insert-req {::ooapi/id new-uuid ::rio/opleidingscode rio-code})]
             (link! link-req)
-            (println "LINKED")
             (let [rio-obj        (rio.loader/find-rio-object rio-code getter (:institution-oin client-info) "opleidingseenheid")
-                  _ (println "LOADED RIO OBJECT")
                   nieuwe-sleutel (->> rio-obj
                                       :content
                                       (filter #(= :kenmerken (:tag %)))

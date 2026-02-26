@@ -1,5 +1,5 @@
 {
-  "educationSpecificationId": "123e4567-e89b-12d3-a456-426614174000",
+  "programmeId": "123e4567-e89b-12d3-a456-426614174000",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "string"
@@ -10,6 +10,7 @@
       "code": "1234123"
     }
   ],
+
   "name": [
     {
       "language": "en-GB",
@@ -50,13 +51,13 @@
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
+  "consumers": [
+    {
+      "consumerKey": "rio",
+      "specificationType": "programme"
+    }
+  ],
   "ext": {},
   "validFrom": "2019-08-24",
-  "validTo": "2019-08-25",
-  "consumer": {
-    "consumerKey": "rio",
-    "specificationType": "programme",
-    "variantOf": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
-  },
-  "programmeType": "specification"
+  "validTo": "2019-08-25"
 }

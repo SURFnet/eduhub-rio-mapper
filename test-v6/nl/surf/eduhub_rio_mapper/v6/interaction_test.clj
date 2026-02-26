@@ -67,12 +67,9 @@
    [nl.surf.eduhub-rio-mapper.v6.commands.processing :as processing]
    [nl.surf.eduhub-rio-mapper.v6.config :as config]
    [nl.surf.eduhub-rio-mapper.v6.job :as job]
-   [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
    [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
    [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper]
-   [nl.surf.eduhub-rio-mapper.vcr-helper :as vcr.helper])
-  (:import [clojure.lang ExceptionInfo]
-           [java.net URI]))
+   [nl.surf.eduhub-rio-mapper.vcr-helper :as vcr.helper]))
 
 (when (= :record vcr.helper/vcr-mode)
   (use-fixtures :once remote-entities-fixture))
@@ -120,8 +117,8 @@
         handlers             (processing/make-handlers {:rio-config rio-config
                                                         :gateway-root-url (:gateway-root-url config)
                                                         :gateway-credentials (:gateway-credentials config)})
-        eduspec-parent-id    (entity-name-to-id "programmes/specification-interaction-eduspec-parent")
-        eduspec-child-id     (entity-name-to-id "programmes/specification-interaction-eduspec-child")
+        prgspec-parent-id    (entity-name-to-id "programmes/specification-interaction-prgspec-parent")
+        prgspec-child-id     (entity-name-to-id "programmes/specification-interaction-prgspec-child")
         program-id           (entity-name-to-id "programmes/interaction-programme-some")
 
         runner               (make-runner handlers
@@ -131,20 +128,20 @@
         goedgekeurd?         #(= "true" (-> % vals first :requestGoedgekeurd))
         code                 (atom nil) ; During the tests we'll learn which opleidingscode we should use.
 
-        commands            [[1 "upsert" :programme :oe eduspec-parent-id goedgekeurd?]
-                             [2 "upsert" :programme :oe  eduspec-child-id  goedgekeurd?]
+        commands            [[1 "upsert" :programme :oe prgspec-parent-id goedgekeurd?]
+                             [2 "upsert" :programme :oe  prgspec-child-id  goedgekeurd?]
                              ;; TODO upsert shouldn't be final until relation updates have been observed
                              ;; but now, RIO needs 5 seconds for the changes to be visible, therefore sleep in record mode
                              [nil "sleep" nil nil nil nil]
                              [3 "get"    :relation  nil code              identity]
-                             [4 "delete" :programme :oe eduspec-child-id  goedgekeurd?]
+                             [4 "delete" :programme :oe prgspec-child-id  goedgekeurd?]
                              [nil "sleep" nil nil nil nil]
                              [5 "get"    :relation  nil code              nil?]
                              [6 "upsert" :programme :ao program-id        goedgekeurd?]
                              [7 "delete" :programme :ao program-id        goedgekeurd?]
-                             [8 "delete" :programme :oe eduspec-parent-id goedgekeurd?]
+                             [8 "delete" :programme :oe prgspec-parent-id goedgekeurd?]
                              [9 "upsert" :programme :ao program-id        #(= (-> % :errors :message)
-                                                                         (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
+                                                                         (str "No 'opleidingseenheid' found in RIO with eigensleutel: " prgspec-parent-id))]]]
     (doseq [[idx action ootype rio-type id pred?] commands]
       (testing (str "Command " idx " " action " " id)
         (if (= "sleep" action)

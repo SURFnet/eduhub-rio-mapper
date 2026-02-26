@@ -34,7 +34,7 @@
    [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]
    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]))
 
-(defn- extract-eduspec-from-result [result]
+(defn- extract-prgspec-from-result [result]
   (let [entity (:ooapi result)]
     (when (= "aanleveren_opleidingseenheid" (:action result))
       entity)))
@@ -137,16 +137,16 @@
 (defn- valid-date-range?
   "Returns whether the date range of the relation is valid.
 
-   A valid range fits completely within the range of the date range of the eduspec."
-  [eduspec {:keys [valid-from valid-to] :as _relation}]
-  (let [eduspec-valid-from (:validFrom eduspec)
-        eduspec-valid-to   (:validTo eduspec)
-        valid-from-check (if (and valid-from eduspec-valid-from)
-                           (<= 0 (compare valid-from eduspec-valid-from))
-                           (nil? eduspec-valid-from))
-        valid-to-check   (if (and valid-to eduspec-valid-to)
-                           (>= 0 (compare valid-to eduspec-valid-to))
-                           (nil? eduspec-valid-to))
+   A valid range fits completely within the range of the date range of the prgspec."
+  [prgspec {:keys [valid-from valid-to] :as _relation}]
+  (let [prgspec-valid-from (:validFrom prgspec)
+        prgspec-valid-to   (:validTo prgspec)
+        valid-from-check (if (and valid-from prgspec-valid-from)
+                           (<= 0 (compare valid-from prgspec-valid-from))
+                           (nil? prgspec-valid-from))
+        valid-to-check   (if (and valid-to prgspec-valid-to)
+                           (>= 0 (compare valid-to prgspec-valid-to))
+                           (nil? prgspec-valid-to))
         is-valid (and valid-from-check valid-to-check)]
     is-valid))
 
@@ -158,9 +158,9 @@
                               ::rio/keys [opleidingscode] :as request}]
     (if-not rio-relations
       request
-      (let [eduspec entity
+      (let [prgspec entity
             {valid-relations true
-             invalid-relations false} (group-by (partial valid-date-range? eduspec)
+             invalid-relations false} (group-by (partial valid-date-range? prgspec)
                                                 rio-relations)]
         ;; Delete invalid relations from RIO system
         (when (and (seq invalid-relations)
@@ -176,19 +176,19 @@
         (assoc request :rio-relations (vec valid-relations))))))
 
 ;; in:  {::ooapi/keys [type id entity] :keys [rio-relations action rio-type institution-name institution-oin institution-schac-home] ::rio/keys [opleidingscode aangeboden-opleiding-code]}
-;; out {:job job :result result :eduspec eduspec}
+;; out {:job job :result result :prgspec prgspec}
 (defn- make-updater-soap-phase
   "Phase definition for creating the soap document.
 
    Returns function that takes request, and returns map with keys
-   :job (request), :result (::Mutation/mutation-response) and :eduspec (education specification)
+   :job (request), :result (::Mutation/mutation-response) and :prgspec (education specification)
   "
   []
   (fn soap-phase [{:keys [institution-oin] :as job}]
     {:pre [institution-oin (job :institution-schac-home)]}
     (let [result  (updated-handler/update-mutation job)
-          eduspec (extract-eduspec-from-result result)]
-      {:job job :result result :eduspec eduspec})))
+          prgspec (extract-prgspec-from-result result)]
+      {:job job :result result :prgspec prgspec})))
 
 (defn- make-deleter-prune-relations-phase [handlers]
   (fn [{::rio/keys [opleidingscode] :keys [institution-oin rio-type] :as request}]
@@ -201,16 +201,16 @@
   (fn soap-phase [{:keys [institution-oin] :as job}]
     {:pre [institution-oin (job :institution-schac-home)]}
     (let [result  (updated-handler/deletion-mutation job)
-          eduspec (extract-eduspec-from-result result)]
-      {:job job :result result :eduspec eduspec})))
+          prgspec (extract-prgspec-from-result result)]
+      {:job job :result result :prgspec prgspec})))
 
-;; in:  {:job job :result result :eduspec eduspec}
-;; out: {:job job :mutate-result result :eduspec eduspec}
+;; in:  {:job job :result result :prgspec prgspec}
+;; out: {:job job :mutate-result result :prgspec prgspec}
 (defn- make-updater-mutate-rio-phase [{:keys [rio-config]}]
-  (fn mutate-rio-phase [{:keys [job result eduspec]}]
+  (fn mutate-rio-phase [{:keys [job result prgspec]}]
     {:pre [(s/valid? ::mutation/mutation-response result)]}
     (logging/with-mdc {:soap-action (:action result) :ooapi-id (::ooapi/id job)}
-      {:job job :eduspec eduspec :mutate-result (mutator/mutate! result rio-config)})))
+      {:job job :prgspec prgspec :mutate-result (mutator/mutate! result rio-config)})))
 
 (defn- make-deleter-confirm-rio-phase [{:keys [resolver]} rio-config]
   (fn confirm-rio-phase [{:keys [job] :as result}]
@@ -233,7 +233,7 @@
                                               "Ensure upsert is processed by RIO")]
       (if rio-code
         (let [path (if (= :oe rio-type)
-                     [:eduspec ::rio/opleidingscode]
+                     [:prgspec ::rio/opleidingscode]
                      [:job ::rio/aangeboden-opleiding-code])]
           (assoc-in result path rio-code))
         (throw (ex-info (str "Processing this job takes longer than expected. Our developers have been informed and will contact DUO. Please try again in a few hours."
@@ -246,8 +246,8 @@
   one with no subtype and one with subtype variant.
   To perform synchronization, relations are added and deleted in RIO."
   [handlers]
-  (fn sync-relations-phase [{:keys [job eduspec] :as request}]
-    (relation-handler/update-relations eduspec job handlers)
+  (fn sync-relations-phase [{:keys [job prgspec] :as request}]
+    (relation-handler/update-relations prgspec job handlers)
     request))
 
 (defn- wrap-phase [[phase f]]
@@ -305,12 +305,12 @@
 (defn- dry-run-status [rio-summary ooapi-summary]
   {:status (if ooapi-summary (if rio-summary "found" "not-found") "error")})
 
-(defn- eduspec-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin]} {:keys [resolver getter]}]
+(defn- prgspec-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin]} {:keys [resolver getter]}]
   (let [rio-code      (resolver :oe id institution-oin)
         rio-summary   (some-> rio-code
                               (rio.loader/find-opleidingseenheid getter institution-oin)
                               (dry-run/summarize-opleidingseenheid))
-        ooapi-summary (dry-run/summarize-eduspec ooapi-entity)
+        ooapi-summary (dry-run/summarize-prgspec ooapi-entity)
         diff   (dry-run/generate-diff-ooapi-rio :rio-summary rio-summary :ooapi-summary ooapi-summary)
         output (if (nil? ooapi-summary) diff (assoc diff :opleidingseenheidcode rio-code))]
     (merge output (dry-run-status rio-summary ooapi-summary))))
@@ -349,7 +349,7 @@
                   (let [handler (if (or (= type "course")
                                         (not= "specification" (:programmeType ooapi-entity)))
                                   course-program-dry-run-handler
-                                  eduspec-dry-run-handler)]
+                                  prgspec-dry-run-handler)]
                     (handler ooapi-entity request handlers)))]
       {:dry-run value})))
 

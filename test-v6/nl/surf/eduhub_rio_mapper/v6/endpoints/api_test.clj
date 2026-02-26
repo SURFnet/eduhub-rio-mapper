@@ -40,7 +40,7 @@
 (deftest uuid-validation
   (is (= http-status/bad-request (:status (api-routes (authenticated-request :get "/status/invalid-token"))))))
 
-(deftest ^:pickme routes
+(deftest routes
   (are [method path]
        (= http-status/bad-request (:status (api-routes (authenticated-request method path))))
     :get  "/status/1"

@@ -40,10 +40,10 @@
               :read-url      "http://example.com"
               :update-url    "http://example.com"}})
 
-(defn mock-ooapi-loader [{:keys [eduspec program-course offerings]}]
+(defn mock-ooapi-loader [{:keys [prgspec program-course offerings]}]
   (fn [{:keys [rio-type]}]
     (case rio-type
-      :oe (load-json eduspec)
+      :oe (load-json prgspec)
       :ao (load-json program-course)
       (load-json offerings))))
 
@@ -74,33 +74,33 @@
                                                                                    test-resolver))]
       (mutator/mutate! mutation (:rio-config config)))))
 
-(def eduspec-req-0 {:eduspec        "fixtures/ooapi/integration-eduspec-0.json"
+(def prgspec-req-0 {:prgspec        "fixtures/ooapi/integration-prgspec-0.json"
                     :program-course nil
                     :offerings      nil})
 
 (def program-req-0 {:program-course "fixtures/ooapi/integration-program-0.json"
                     :offerings      "fixtures/ooapi/integration-program-offerings-0.json"})
 
-(deftest test-handle-updated-eduspec-0
+(deftest test-handle-updated-prgspec-0
   (let [actual (helper/test-handler {::ooapi/id   ooapi-id
                                      ::ooapi/type "programme"
                                      :rio-type :oe
                                      :institution-oin institution-oin}
                                     test-resolver
-                                    (mock-ooapi-loader eduspec-req-0))]
+                                    (mock-ooapi-loader prgspec-req-0))]
     (is (nil? (:errors actual)))
     (is (= "EN TRANSLATION: Computer Science" (-> actual :ooapi :name first :value)))))
 
-(deftest test-make-eduspec-0
-  (let [actual (:result (simulate-upsert (mock-ooapi-loader eduspec-req-0)
-                                         (slurp (io/resource "fixtures/rio/integration-eduspec-0.xml"))
+(deftest test-make-prgspec-0
+  (let [actual (:result (simulate-upsert (mock-ooapi-loader prgspec-req-0)
+                                         (slurp (io/resource "fixtures/rio/integration-prgspec-0.xml"))
                                          "programme"
                                          :oe))]
     (is (nil? (:errors actual)))
     (is (= "true" (-> actual :aanleveren_opleidingseenheid_response :requestGoedgekeurd)))))
 
 (deftest test-make-program-0
-  (let [ooapi-loader (mock-ooapi-loader {:eduspec        "fixtures/ooapi/integration-eduspec-0.json"
+  (let [ooapi-loader (mock-ooapi-loader {:prgspec        "fixtures/ooapi/integration-prgspec-0.json"
                                          :program-course "fixtures/ooapi/integration-program-0.json"
                                          :offerings      "fixtures/ooapi/integration-program-offerings-0.json"})
         {:keys [result _mutation]} (simulate-upsert ooapi-loader
@@ -110,7 +110,7 @@
     (is (nil? (:errors result)))
     (is (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))))
 
-(deftest test-joint-program
+(deftest test-joint-programme
   (let [ooapi-loader (mock-ooapi-loader program-req-0)
         upserter #(simulate-upsert % (slurp (io/resource "fixtures/rio/integratie-program-0.xml")) "programme" :ao)
         goedgekeurd? (fn [result] (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))
@@ -118,37 +118,37 @@
                                            (first
                                             (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
                                                     (-> mutation :rio-sexp first))))
-        set-joint-program-in-consumer (fn [entity unit-code]
+        set-joint-programme-in-consumer (fn [entity unit-code]
                                         (update entity
                                                 :consumer
                                                 merge
-                                                (cond-> {:jointProgram true}
+                                                (cond-> {:jointProgramme true}
                                                   unit-code
                                                   (assoc :educationUnitCode unit-code))))]
 
-    (testing "fake joint program"
-      ;; after loading program, set jointProgram to true
+    (testing "fake joint programme"
+      ;; after loading program, set jointProgramme to true
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumer nil))
+                              (set-joint-programme-in-consumer nil))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O1234"]
                (extract-opleidingseenheidsleutel mutation)))
         (is (goedgekeurd? result))))
 
-    (testing "normal joint program"
-      ;; after loading program, set jointProgram to true
+    (testing "normal joint programme"
+      ;; after loading program, set jointProgramme to true
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumer "1234O4323"))
+                              (set-joint-programme-in-consumer "1234O4323"))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O4323"]
                (extract-opleidingseenheidsleutel mutation)))
         (is (goedgekeurd? result))))
 
-    (testing "joint-program-without-eduspec"
+    (testing "joint-program-without-prgspec"
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumer "1234O4323")
+                              (set-joint-programme-in-consumer "1234O4323")
                               (dissoc :educationSpecification))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
@@ -158,13 +158,13 @@
 
     (testing "joint-program-invalid-code"
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumer "ZAZA"))]
+                              (set-joint-programme-in-consumer "ZAZA"))]
         (is (thrown? ExceptionInfo
                      (upserter ooapi-loader)))))))
 
-(deftest test-remove-eduspec-0
+(deftest test-remove-prgspec-0
   (let [actual (simulate-delete "programme" :oe
-                                (slurp (io/resource "fixtures/rio/integration-deletion-eduspec-0.xml")))]
+                                (slurp (io/resource "fixtures/rio/integration-deletion-prgspec-0.xml")))]
     (is (nil? (:errors actual)))
     (is (= "true" (-> actual :verwijderen_opleidingseenheid_response :requestGoedgekeurd)))))
 

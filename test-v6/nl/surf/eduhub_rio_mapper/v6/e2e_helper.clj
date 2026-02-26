@@ -411,7 +411,7 @@
     result))
 
 (defn rio-resolve [rio-type id]
-  {:pre [(#{"programme-specification" "course" "programme"} rio-type)
+  {:pre [(#{:oe :ao} rio-type)
          (string? id)]}
   (let [messages-atom (atom [])
         result (binding [http-utils/*http-messages* messages-atom]

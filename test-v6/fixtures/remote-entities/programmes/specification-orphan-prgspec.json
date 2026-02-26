@@ -5,7 +5,7 @@
   ],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "programmeType": "specification",
-  "programmeId": "{{programmes/specification-orphan-eduspec}}",
+  "programmeId": "{{programmes/specification-orphan-prgspec}}",
   "validFrom": "1950-09-20",
   "abbreviation": "1T",
   "validTo": "2060-08-28",
@@ -45,9 +45,9 @@
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{programmes/specification-orphan-eduspec}}"
+    "code": "{{programmes/specification-orphan-prgspec}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-orphan-eduspec}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-orphan-prgspec}}",
   "fieldsOfStudy": "0912",
   "description": [
     {

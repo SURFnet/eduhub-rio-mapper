@@ -262,8 +262,8 @@
        (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader)
        ::ooapi/entity))
 
-(deftest ^:pickme to-rio-obj
-  (testing "eduspec"
+(deftest to-rio-obj
+  (testing "prgspec"
     (is (= [:duo:hoOpleiding
             [:duo:begindatum "2019-08-24"]
             [:duo:einddatum "2022-08-29"]

@@ -101,8 +101,8 @@
                              :opvragen_opleidingsrelatiesBijOpleidingseenheid_response
                              :samenhangOpleidingseenheid)]
       (s/assert ::rio/opleidingscode (:opleidingseenheidcode samenhang))
-      (when-let [related-eduspecs (-> samenhang :gerelateerdeOpleidingseenheid)]
-        (->> (if (map? related-eduspecs) [related-eduspecs] related-eduspecs)
+      (when-let [related-prgspecs (-> samenhang :gerelateerdeOpleidingseenheid)]
+        (->> (if (map? related-prgspecs) [related-prgspecs] related-prgspecs)
              ;; Accredited HoOpleidingen have a AFGELEID_VAN relation which is not relevant for the edumapper
              ;; and should be ignored.
              (filter (fn [m] (not= (:opleidingsrelatiesoort m) "AFGELEID_VAN")))
@@ -149,7 +149,7 @@
            rio-type
            (some? id)
            (string? id)
-           (#{:oe :ao} rio-type)]} ;; TODO remove
+           (#{:oe :ao} rio-type)]}
     (logging/with-mdc
       {:soap-action "opvragen_rioIdentificatiecode" :ooapi-id id}
       (let [xml (soap/prepare-soap-call "opvragen_rioIdentificatiecode"

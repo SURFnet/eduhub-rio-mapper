@@ -107,34 +107,34 @@
           (mutator/mutate! rio-config)))))
 
 (defn relation-mutations
-  ([eduspec job handlers]
-   {:pre [eduspec]}
-   (relation-mutations eduspec
+  ([prgspec job handlers]
+   {:pre [prgspec]}
+   (relation-mutations prgspec
                        :programmeId
-                       (-> eduspec :consumer :variantOf)
-                       (:children eduspec)
+                       (-> prgspec :consumer :variantOf)
+                       (:children prgspec)
                        job
                        handlers))
-  ([eduspec primary-key variant-of variants {:keys [institution-oin institution-schac-home] :as _job} {:keys [getter resolver ooapi-loader]}]
-   {:pre [eduspec]}
+  ([prgspec primary-key variant-of variants {:keys [institution-oin institution-schac-home] :as _job} {:keys [getter resolver ooapi-loader]}]
+   {:pre [prgspec]}
    (let [add-rio-code (fn add-rio-code [entity]
                         (if (::rio/opleidingscode entity)
                           entity
                           (when-let [rio-code (resolver :oe (primary-key entity) institution-oin)]
                             (assoc entity ::rio/opleidingscode rio-code))))
-         load-eduspec (fn load-eduspec [id]
+         load-prgspec (fn load-prgspec [id]
                         {:pre [id]}
                         (when-let [es (ooapi-loader {::ooapi/type            "programme"
                                                      ::ooapi/id              id
                                                      :institution-schac-home institution-schac-home})]
                           (add-rio-code es)))
-         eduspec (add-rio-code eduspec)
-         actual (load-relation-data getter (::rio/opleidingscode eduspec) institution-oin)
+         prgspec (add-rio-code prgspec)
+         actual (load-relation-data getter (::rio/opleidingscode prgspec) institution-oin)
          [rel-dir entity] (if variant-of
-                            [:child (load-eduspec variant-of)]
-                            [:parent (->> (keep load-eduspec variants)
+                            [:child (load-prgspec variant-of)]
+                            [:parent (->> (keep load-prgspec variants)
                                           (filter #(get-in % [:consumer :specificationType])))])]
-     (relation-differences eduspec rel-dir entity actual))))
+     (relation-differences prgspec rel-dir entity actual))))
 
 (defn mutate-relations!
   [{:keys [missing superfluous] :as diff} {:keys [institution-oin] :as _job} {:keys [rio-config] :as _handlers}]
@@ -152,8 +152,8 @@
   "Bring the relations of the education specification in sync.
 
    First calculates which relations are missing or superfluous, then creates the delete and insert mutations, and executes them."
-  [eduspec job handlers]
-  (when eduspec
-    (-> eduspec
+  [prgspec job handlers]
+  (when prgspec
+    (-> prgspec
         (relation-mutations job handlers)
         (mutate-relations! job handlers))))

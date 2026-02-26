@@ -213,18 +213,18 @@
 
 (deftest generate-diff-ooapi-rio-test
   (testing "normal case"
-    (let [eduspec-id    "fddec347-8ca1-c991-8d39-9a85d09c0001"
+    (let [prgspec-id    "fddec347-8ca1-c991-8d39-9a85d09c0001"
           rio-summary   {:begindatum                    "1950-09-20",
                          :naamLang                      "NL VERTALING: Toetsdeskundige",
                          :naamKort                      "1T",
                          :internationaleNaam            "EN VERTALING: Toetsdeskundige",
                          :omschrijving                  "NL VERTALING: There is a 12 credits course which offers student the opportunity to experience in the domain will be paid to the depletion of fossil resources to biomass resources for energy, raw materials and tree form. The course addresses the question if and how this relates to material struggles over natural resources and its relationship to economic and technological domains;- solving optimization problems is climate change. Within a theoretical stance to support making conscious study and career choices.",
-                         :eigenOpleidingseenheidSleutel eduspec-id}
-          eduspec       (-> "fixtures/ooapi/education-specification-diff.json"
+                         :eigenOpleidingseenheidSleutel prgspec-id}
+          prgspec       (-> "fixtures/ooapi/education-specification-diff.json"
                             io/resource
                             slurp
                             (json/read-str :key-fn keyword))
-          ooapi-summary (dry-run/summarize-eduspec eduspec)
+          ooapi-summary (dry-run/summarize-prgspec prgspec)
           diff          (dry-run/generate-diff-ooapi-rio {:rio-summary rio-summary :ooapi-summary ooapi-summary})]
       (is (= {:begindatum                    {:diff true, :current "1950-09-20", :proposed "2019-08-24"},
               :eigenOpleidingseenheidSleutel {:diff false},
@@ -236,11 +236,11 @@
              (merge diff {:status "found"})))))
   (testing "no rio object"
     (let [rio-summary   nil
-          eduspec       (-> "fixtures/ooapi/education-specification-diff.json"
+          prgspec       (-> "fixtures/ooapi/education-specification-diff.json"
                             io/resource
                             slurp
                             (json/read-str :key-fn keyword))
-          ooapi-summary (dry-run/summarize-eduspec eduspec)
+          ooapi-summary (dry-run/summarize-prgspec prgspec)
           diff          (dry-run/generate-diff-ooapi-rio {:rio-summary rio-summary :ooapi-summary ooapi-summary})]
       (is (= {:begindatum                    {:diff true, :current nil, :proposed "2019-08-24"},
               :eigenOpleidingseenheidSleutel {:diff true, :current nil, :proposed "fddec347-8ca1-c991-8d39-9a85d09c0001"},
