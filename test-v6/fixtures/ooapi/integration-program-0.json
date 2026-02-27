@@ -1,13 +1,12 @@
 {
   "fieldsOfStudy": "0542",
   "teachingLanguage": "nld",
-  "studyLoad": {
+  "studyLoad": [{
     "value": 79,
     "studyLoadUnit": "ects"
-  },
+  }],
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "level": "secondary vocational education 2",
-  "educationSpecification": "790c6569-2bcc-d046-dae2-7b73e77231f3",
   "name": [
     {
       "language": "en-GB",
@@ -35,7 +34,6 @@
       "additional": []
     }
   ],
-  "programType": "specialization",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "34333"
@@ -78,33 +76,6 @@
     }
   ],
   "levelOfQualification": "4",
-  "consumers": [
-    {
-      "alliances": [
-        {
-          "name": "lde",
-          "enrollmentForOwnStudents": "broker",
-          "type": "broadening",
-          "visibleForOwnStudents": true,
-          "selection": true,
-          "theme": "Health and Welfare"
-        }
-      ],
-      "consumerKey": "eduxchange"
-    },
-    {
-      "educationOffererCode": "122A112",
-      "acceleratedRoute": "no_accelerated_route",
-      "consentParticipationSTAP": "permission_not_granted",
-      "deficiency": "deficiencies",
-      "studyChoiceCheck": "study_choice_check_available",
-      "consumerKey": "rio",
-      "requirementsActivities": "requirements",
-      "propaedeuticPhase": "no_propaedeutic_phase",
-      "educationLocationCode": "123X122"
-    }
-  ],
-  "programId": "db9ea35d-d8b7-1db6-2b08-4092c1fd57c1",
   "firstStartDate": "2020-07-29",
   "resources": [
     ". (2016). R.",
@@ -183,5 +154,18 @@
       "language": "nl-NL",
       "value": "NL VERTALING: . . ."
     }
-  ]
+  ],
+  "consumer": {
+    "educationOffererCode": "122A112",
+    "acceleratedRoute": "no_accelerated_route",
+    "deficiency": "deficiencies",
+    "studyChoiceCheck": "study_choice_check_available",
+    "consumerKey": "rio",
+    "requirementsActivities": "requirements",
+    "propaedeuticPhase": "no_propaedeutic_phase",
+    "educationLocationCode": "123X122",
+    "specificationId": "790c6569-2bcc-d046-dae2-7b73e77231f3"
+  },
+  "programmeType": "specialization",
+  "programmeId": "db9ea35d-d8b7-1db6-2b08-4092c1fd57c1"
 }

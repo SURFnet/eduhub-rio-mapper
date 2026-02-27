@@ -1,13 +1,16 @@
 (ns nl.surf.eduhub-rio-mapper.v6.specs.relations
   (:require [clojure.spec.alpha :as s]
-            [nl.surf.eduhub-rio-mapper.RelationChild :as-alias RelationChild]
-            [nl.surf.eduhub-rio-mapper.RelationParent :as-alias RelationParent]
-            [nl.surf.eduhub-rio-mapper.v6.specs.common :as common]))
+            [nl.surf.eduhub-rio-mapper.re-spec :refer [re-spec]]
+            [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
+
+(s/def ::date
+  (s/and (re-spec #"\d\d\d\d-[01]\d-[0123]\d")
+         ooapi-utils/valid-date?))
 
 (s/def ::opleidingseenheidcodes
   (s/and set? (s/coll-of string?)))
 
-(s/def ::valid-from ::common/date)
+(s/def ::valid-from ::date)
 
 (s/def ::relation
   (s/keys :req-un [::opleidingseenheidcodes ::valid-from]
@@ -27,11 +30,3 @@
 
 (s/def ::relation-diff
   (s/keys :req-un [::missing ::superfluous]))
-
-(s/def ::educationSpecificationType #(= % "program"))
-(s/def ::RelationParent/educationSpecificationSubType nil?)
-(s/def ::RelationChild/educationSpecificationSubType #(= % "variant"))
-(s/def ::parent (s/keys :req-un [::educationSpecificationType]
-                                 :opt-un [::RelationParent/educationSpecificationSubType]))
-(s/def ::child (s/keys :req-un [::educationSpecificationType]
-                                :opt-un [::RelationChild/educationSpecificationSubType]))

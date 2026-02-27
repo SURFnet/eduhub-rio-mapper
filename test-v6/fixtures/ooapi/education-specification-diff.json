@@ -1,5 +1,5 @@
 {
-  "educationSpecificationId": "fddec347-8ca1-c991-8d39-9a85d09c0001",
+  "programmeId": "fddec347-8ca1-c991-8d39-9a85d09c0001",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "string"
@@ -10,7 +10,6 @@
       "code": "1234123"
     }
   ],
-  "educationSpecificationType": "program",
   "name": [
     {
       "language": "en-GB",
@@ -33,10 +32,10 @@
   "sector": "university education",
   "levelOfQualification": "6",
   "fieldsOfStudy": "0732",
-  "studyLoad": {
+  "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 3
-  },
+  }],
   "learningOutcomes": [
     [
       {
@@ -51,13 +50,13 @@
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
-  "consumers": [
-    {
-      "consumerKey": "rio",
-      "educationSpecificationSubType": "variant"
-    }
-  ],
   "ext": {},
   "validFrom": "2019-08-24",
-  "validTo": "2019-08-24"
+  "validTo": "2019-08-24",
+  "consumer": {
+    "consumerKey": "rio",
+    "specificationType": "programme",
+    "variantOf": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
+  },
+  "programmeType": "specification"
 }

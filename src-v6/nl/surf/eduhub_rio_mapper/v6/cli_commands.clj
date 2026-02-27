@@ -51,9 +51,9 @@
     (assert (rio.loader/valid-get-types type))
     (-> (when pagina {:pagina pagina})
         (assoc
-          key-name id
-          :response-type response-type
-          ::rio/type type))))
+         key-name id
+         :response-type response-type
+         ::rio/type type))))
 
 (defn parse-client-info-args [args clients]
   (let [[client-id & rest-args] args
@@ -81,22 +81,23 @@
 
     "test-rio"
     (let [[client-info _args] (parse-client-info-args args clients)
-          old-uuid     (UUID/randomUUID)
-          new-uuid     (UUID/randomUUID)
+          old-uuid     (str (UUID/randomUUID))
+          new-uuid     (str (UUID/randomUUID))
 
-          eduspec (-> "eduspec-test-rio.json"
+          prgspec (-> "prgspec-test-rio-v6.json"
                       io/resource
                       slurp
                       (json/read-str :key-fn keyword)
-                      (assoc :educationSpecificationId old-uuid))]
+                      (assoc-in [:consumer :specificationId] old-uuid))]
 
       (binding [*http-messages* (atom [])]
         (try
           (let [insert-req {:institution-oin        (:institution-oin client-info)
                             :institution-schac-home (:institution-schac-home client-info)
-                            ::ooapi/type            "education-specification"
+                            ::ooapi/type            "programme"
                             ::ooapi/id              old-uuid
-                            ::ooapi/entity          eduspec}
+                            ::ooapi/entity          prgspec
+                            :rio-type               :oe}
                 rio-code   (-> insert-req insert! :aanleveren_opleidingseenheid_response :opleidingseenheidcode)
                 link-req   (merge insert-req {::ooapi/id new-uuid ::rio/opleidingscode rio-code})]
             (link! link-req)
@@ -109,7 +110,7 @@
                                       (filter #(= "eigenOpleidingseenheidSleutel" (:kenmerknaam %)))
                                       first
                                       :kenmerkwaardeTekst)]
-              (when (not= nieuwe-sleutel (str new-uuid))
+              (when (not= nieuwe-sleutel new-uuid)
                 (println "old uuid " old-uuid)
                 (println "new uuid " new-uuid)
                 (throw (ex-info "Failed to set eigenOpleidingseenheidSleutel" {:rio-queue-status :down}))))
@@ -128,7 +129,7 @@
     "get"
     (let [[client-info rest-args] (parse-client-info-args args clients)]
       (getter (assoc (parse-getter-args rest-args)
-                :institution-oin (:institution-oin client-info))))
+                     :institution-oin (:institution-oin client-info))))
 
     ("show" "dry-run-upsert")
     (let [[client-info [type id]] (parse-client-info-args args clients)
@@ -140,13 +141,14 @@
 
     "link"
     (let [[client-info [code type id]] (parse-client-info-args args clients)
-          codename (if (= type "education-specification") ::rio/opleidingscode ::rio/aangeboden-opleiding-code)
+          codename (if (= type "programme-specification") ::rio/opleidingscode ::rio/aangeboden-opleiding-code)
           request (merge client-info {::ooapi/id id ::ooapi/type type codename code})]
       (link! request))
 
+    ;; rio-type is "oe" or "ae"
     "resolve"
-    (let [[client-info [type id]] (parse-client-info-args args clients)]
-      (resolver type id (:institution-oin client-info)))
+    (let [[client-info [rio-type id]] (parse-client-info-args args clients)]
+      (resolver (:keyword rio-type) id (:institution-oin client-info)))
 
     "document-env-vars"
     (envopts/specs-description config/opts-spec)
@@ -154,10 +156,10 @@
     ("upsert" "delete" "delete-by-code")
     (let [[client-info [type id rest-args]] (parse-client-info-args args clients)
           job (merge (assoc client-info
-                       ::ooapi/type type
-                       :args rest-args)
+                            ::ooapi/type type
+                            :args rest-args)
                      (if (= "delete-by-code" command)
-                       (let [name-id (if (= type "education-specification")
+                       (let [name-id (if (= type "programme-specification")
                                        ::rio/opleidingscode
                                        ::rio/aangeboden-opleiding-code)]
                          {:action "delete"

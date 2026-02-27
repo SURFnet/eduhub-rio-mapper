@@ -18,6 +18,7 @@
 
 (ns nl.surf.eduhub-rio-mapper.v5.commands.processing
   (:require
+    [clojure.set :as set]
     [clojure.spec.alpha :as s]
     [nl.jomco.http-status-codes :as http-status]
     [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
@@ -33,7 +34,8 @@
     [nl.surf.eduhub-rio-mapper.v5.ooapi.loader :as ooapi.loader]
     [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.v5.rio.relation-handler :as relation-handler]
-    [nl.surf.eduhub-rio-mapper.v5.rio.updated-handler :as updated-handler]))
+    [nl.surf.eduhub-rio-mapper.v5.rio.updated-handler :as updated-handler]
+    [nl.surf.eduhub-rio-mapper.v5.utils.ooapi :as ooapi-utils]))
 
 (defn- extract-eduspec-from-result [result]
   (let [entity (:ooapi result)]
@@ -47,6 +49,13 @@
         {:ooapi-type type :ooapi-id id}
         (ooapi.loader/load-entities validating-loader request)))))
 
+;; If resolve not successful, nil is returned or exception thrown.
+(defn- can-resolve? [resolver ooapi-type ooapi-id institution-oin]
+  (try
+    (some? (resolver ooapi-type ooapi-id institution-oin))
+    (catch Exception _ex
+      false)))
+
 ;; returns function that takes request
 ;; and returns request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
 (defn- make-updater-resolve-phase [{:keys [resolver]}]
@@ -54,7 +63,8 @@
                       ::ooapi/keys [type id entity]
                       ::rio/keys [opleidingscode] :as request}]
     {:pre [institution-oin]}
-    (let [resolve-eduspec (= type "education-specification")
+    (let [rio-consumer    (ooapi-utils/extract-rio-consumer (:consumers entity))
+          resolve-eduspec (= type "education-specification")
           edu-id          (if (= type "education-specification")
                             id
                             (ooapi-base/education-specification-id entity))
@@ -68,6 +78,16 @@
       (when (or (and (nil? oe-code) (not resolve-eduspec) (= "upsert" action))
                 (and (nil? oe-code) resolve-eduspec (= "delete" action)))
         (throw (ex-info (str "No 'opleidingseenheid' found in RIO with eigensleutel: " edu-id)
+                        {:code       oe-code
+                         :type       type
+                         :action     action
+                         :retryable? false})))
+      ;; For variants, we need to check if the eduspec this is a variant of (the parent) actually exists in RIO - if not, abort now
+      (when (and
+             (= type "education-specification")
+             (= "variant" (:educationSpecificationSubType rio-consumer))
+             (not (can-resolve? resolver "education-specification" (:parent entity) institution-oin)))
+        (throw (ex-info (str "No 'opleidingseenheid' found in RIO for the parent of this variant with eigensleutel: " (:parent entity))
                         {:code       oe-code
                          :type       type
                          :action     action
@@ -196,10 +216,25 @@
   Only relations between education-specifications are considered; specifically, relations with type program,
   one with no subtype and one with subtype variant.
   To perform synchronization, relations are added and deleted in RIO."
-  [handlers]
+  [{:keys [getter] :as handlers} config]
   (fn sync-relations-phase [{:keys [job eduspec] :as request}]
-    (relation-handler/update-relations eduspec job handlers)
-    request))
+    (if (nil? eduspec)
+      request
+      (let [{:keys [missing superfluous] :as diff} (relation-handler/relation-mutations eduspec job handlers)
+            {:keys [institution-oin]} job
+            {::rio/keys [opleidingscode]} eduspec]
+
+        (relation-handler/mutate-relations! diff job handlers)
+        (rio.helper/blocking-retry (fn in-sync? []
+                                     (let [rio-relations (relation-handler/load-relation-data getter opleidingscode institution-oin)
+                                           rio-relations-set (set rio-relations)
+                                           missing-now-present? (every? rio-relations-set missing)
+                                           superfluous-now-gone? (empty? (set/intersection rio-relations-set superfluous))
+                                           synced? (and missing-now-present? superfluous-now-gone?)]
+                                       synced?))
+                                   config
+                                   "Ensure update relation is processed by RIO")
+        request))))
 
 (defn- wrap-phase [[phase f]]
   (fn [req]
@@ -230,7 +265,7 @@
             [:preparing       (make-updater-soap-phase)]
             [:upserting       (make-updater-mutate-rio-phase handlers)]
             [:confirming      (make-updater-confirm-rio-phase handlers rio-config)]
-            [:associating     (make-updater-sync-relations-phase handlers)]]
+            [:associating     (make-updater-sync-relations-phase handlers rio-config)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
       {:pre [(:institution-oin request)]}

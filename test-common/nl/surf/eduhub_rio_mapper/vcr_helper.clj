@@ -39,7 +39,8 @@
    [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities]
    [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper])
   (:import
-   [java.io PushbackReader]))
+   [java.io PushbackReader]
+   [java.net URI]))
 
 (def vcr-mode (if (= "true" (System/getenv "VCR_RECORD"))
                 :record
@@ -75,34 +76,45 @@
   (assert (< (count list) 2) (prn-str list))
   (first list))
 
+(defn- numbered-dir [basedir nr]
+  {:post [(some? %)]}
+  (let [dirname (->> basedir
+                      (ls)
+                      (filter #(.startsWith % (str nr "-")))
+                      (only-one-if-any))]
+    (when-not dirname (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
+    (str basedir "/" dirname)))
+
 (defn- numbered-file [basedir nr]
   {:post [(some? %)]}
   (let [filename (->> basedir
                       (ls)
                       (filter #(.startsWith % (str nr "-")))
+                      (filter #(.endsWith % ".edn"))
                       (only-one-if-any))]
     (when-not filename (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
     (str basedir "/" filename)))
+
+(defn path-for [url]
+  (-> url
+      (URI.)
+      (.getPath)
+      (str/replace-first #"^/" "")))
 
 (defn req-name [request]
   (let [action (get-in request [:headers "SOAPAction"])]
     (if action
       (last (str/split action #"/"))
-      (-> request :url
-          (subs (count "https://gateway.test.surfeduhub.nl/"))
+      (-> (:url request)
+          path-for
           (str/replace \/ \-)
-          (str/split #"\?")
-          first))))
+        (str/replace-first #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" "ooapi-id")))))
 
 (defn- make-playbacker [root idx _]
   (let [count-atom (atom 0)
-        dir        (numbered-file root idx)]
+        dir        (numbered-dir root idx)]
     (fn [_ actual-request]
-      (let [url              (cond-> (:url actual-request)
-                               (not remote-entities/programme-supported?)
-                               (remote-entities/convert-url-to-v5))
-            actual-request   (assoc actual-request :url url)
-            i                (swap! count-atom inc)
+      (let [i                (swap! count-atom inc)
             fname            (numbered-file dir i)
             recording        (with-open [r (io/reader fname)] (edn/read (PushbackReader. r)))
             recorded-request (:request recording)]
@@ -116,11 +128,7 @@
 (defn- make-recorder [root idx desc]
   (let [mycounter (atom 0)]
     (fn [handler request]
-      (let [url          (cond-> (:url request)
-                           (not remote-entities/programme-supported?)
-                           (remote-entities/convert-url-to-v5))
-            request      (assoc request :url url)
-            response     (handler request)
+      (let [response     (handler request)
             content-type (get (:headers response) "Content-Type")
             counter      (swap! mycounter inc)
             file-name    (str root "/" idx "-" desc "/" counter "-" (req-name request) ".edn")

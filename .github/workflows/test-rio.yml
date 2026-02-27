@@ -47,9 +47,12 @@ jobs:
           CLIENTS_INFO_PATH: ${{ secrets.CLIENTS_INFO_PATH }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          GATEWAY_PASSWORD: ${{ secrets.GATEWAY_PASSWORD }}
-          GATEWAY_ROOT_URL: ${{ secrets.GATEWAY_ROOT_URL }}
-          GATEWAY_USER: ${{ secrets.GATEWAY_USER }}
+          GATEWAY_PASSWORD_V5: ${{ secrets.GATEWAY_PASSWORD_V5 }}
+          GATEWAY_ROOT_URL_V5: ${{ secrets.GATEWAY_ROOT_URL_V5 }}
+          GATEWAY_USER_V5: ${{ secrets.GATEWAY_USER_V5 }}
+          GATEWAY_PASSWORD_V6: ${{ secrets.GATEWAY_PASSWORD_V6 }}
+          GATEWAY_ROOT_URL_V6: ${{ secrets.GATEWAY_ROOT_URL_V6 }}
+          GATEWAY_USER_V6: ${{ secrets.GATEWAY_USER_V6 }}
           KEYSTORE: keystore.jks
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
