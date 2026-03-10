@@ -14,11 +14,21 @@
 
          ;; http
          ring/ring-core                 {:mvn/version "1.15.3"}
-         ring/ring-jetty-adapter        {:mvn/version "1.15.3"}
+         ring/ring-jetty-adapter        {:mvn/version "1.15.3"
+                                         :exclusions  [org.eclipse.jetty/jetty-server
+                                                       org.eclipse.jetty/jetty-unixdomain-server
+                                                       org.eclipse.jetty.ee9/jetty-ee9-servlet
+                                                       org.eclipse.jetty.ee9.websocket/jetty-ee9-websocket-jetty-server]}
          ring/ring-defaults             {:mvn/version "0.7.0"}
          compojure/compojure            {:mvn/version "1.7.2"}
          nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
          nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
+
+         ;; Fixes CVE-2025-11143 and CVE-2026-1605
+         org.eclipse.jetty/jetty-server                                   {:mvn/version "12.1.7"}
+         org.eclipse.jetty/jetty-unixdomain-server                        {:mvn/version "12.1.7"}
+         org.eclipse.jetty.ee9/jetty-ee9-servlet                          {:mvn/version "12.1.7"}
+         org.eclipse.jetty.ee9.websocket/jetty-ee9-websocket-jetty-server {:mvn/version "12.1.7"}
 
          ;; interface
          nl.jomco/envopts     {:mvn/version "0.0.7"}
