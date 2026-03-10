@@ -17,10 +17,10 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.v6.commands.dry-run
-  (:require [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
+  (:require [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
+            [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opleiding]
-            [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]
-            [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]))
+            [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
 
 (def aangeboden-opleiding-namen (->> aangeboden-opleiding/specification-type-mapping
                                      vals
