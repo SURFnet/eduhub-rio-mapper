@@ -122,7 +122,7 @@
    (let [add-rio-code (fn add-rio-code [entity]
                         (if (::rio/opleidingscode entity)
                           entity
-                          (when-let [rio-code (resolver "education-specification" (primary-key entity) institution-oin)]
+                          (when-let [rio-code (resolver :oe (primary-key entity) institution-oin)]
                             (assoc entity ::rio/opleidingscode rio-code))))
          load-eduspec (fn load-eduspec [id]
                         {:pre [id]}

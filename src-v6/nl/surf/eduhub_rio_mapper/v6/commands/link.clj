@@ -20,10 +20,10 @@
   (:require [clojure.string :as str]
             [clojure.test :refer :all]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
+            [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-            [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-            [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]))
+            [nl.surf.eduhub-rio-mapper.specs.rio :as rio]))
 
 (defn- strip-duo [kw]
   (-> kw

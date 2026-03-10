@@ -22,6 +22,7 @@
    [clojure.spec.alpha :as s]
    [nl.jomco.http-status-codes :as http-status]
    [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
+   [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
    [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
    [nl.surf.eduhub-rio-mapper.specs.mutation :as mutation]
    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
@@ -31,7 +32,6 @@
    [nl.surf.eduhub-rio-mapper.v6.commands.dry-run :as dry-run]
    [nl.surf.eduhub-rio-mapper.v6.commands.link :as link]
    [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
-   [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
    [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]
    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]))
 
