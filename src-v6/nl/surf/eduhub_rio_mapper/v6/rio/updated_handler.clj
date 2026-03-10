@@ -59,7 +59,7 @@
                    (assoc :rioCode opleidingscode)
 
                    (and aangeboden-opleiding-code
-                        (= :ae rio-type))
+                        (= :ao rio-type))
                    (assoc :rioCode aangeboden-opleiding-code))]
       (cond
         (= :oe rio-type)

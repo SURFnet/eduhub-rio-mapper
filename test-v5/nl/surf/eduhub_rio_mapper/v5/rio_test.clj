@@ -22,6 +22,7 @@
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.test :refer [are deftest is testing]]
+            [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
@@ -29,7 +30,6 @@
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.loader :as ooapi.loader]
             [nl.surf.eduhub-rio-mapper.v5.rio.aangeboden-opleiding :as aangeboden-opl]
-            [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.v5.rio.opleidingseenheid :as opl-eenh]
             [nl.surf.eduhub-rio-mapper.v5.test-helper :as helper])
   (:import java.io.PushbackReader))
