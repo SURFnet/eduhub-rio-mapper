@@ -24,6 +24,7 @@
             [nl.jomco.envopts :as envopts]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.endpoints.worker-api :as worker-api]
+            [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :refer [*http-messages*]]
@@ -31,7 +32,6 @@
             [nl.surf.eduhub-rio-mapper.v6.config :as config]
             [nl.surf.eduhub-rio-mapper.v6.endpoints.api :as api]
             [nl.surf.eduhub-rio-mapper.v6.job :as job]
-            [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.worker :as worker])
   (:import [java.util UUID]))
 
@@ -145,7 +145,7 @@
           request (merge client-info {::ooapi/id id ::ooapi/type type codename code})]
       (link! request))
 
-    ;; rio-type is "oe" or "ae"
+    ;; rio-type is "oe" or "ao"
     "resolve"
     (let [[client-info [rio-type id]] (parse-client-info-args args clients)]
       (resolver (:keyword rio-type) id (:institution-oin client-info)))
