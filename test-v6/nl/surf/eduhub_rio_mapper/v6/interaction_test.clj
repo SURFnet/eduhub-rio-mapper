@@ -61,13 +61,13 @@
    [environ.core :refer [env]]
    [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
    [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities :refer [remote-entities-fixture]]
+   [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
    [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
    [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
    [nl.surf.eduhub-rio-mapper.v6.commands.processing :as processing]
    [nl.surf.eduhub-rio-mapper.v6.config :as config]
    [nl.surf.eduhub-rio-mapper.v6.job :as job]
-   [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
    [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper]
    [nl.surf.eduhub-rio-mapper.vcr-helper :as vcr.helper]))
 
