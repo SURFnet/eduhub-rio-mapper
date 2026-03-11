@@ -155,3 +155,10 @@ properties:
     type: string
     description: The start date on which participants can last enter the Course.
     format: date-time
+  studyLoad:
+    $ref: ./schemas/StudyLoadDescriptor.yaml
+  variantIds:
+    type: array
+    description: The list of programmes that are a variant of this programme. Only to be used between programmes of type specification
+    items:
+      $ref: './schemas/Identifier.yaml'

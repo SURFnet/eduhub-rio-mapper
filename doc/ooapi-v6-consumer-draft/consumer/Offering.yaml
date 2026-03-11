@@ -47,3 +47,5 @@ properties:
       - lecture
       - self_study
       - coaching
+  enrolmentPeriod:
+    $ref: './schemas/EnrolmentPeriods.yaml'

@@ -41,3 +41,6 @@ properties:
     type: string
     description: The start date on which participants can last enter the Course.
     format: date
+  studyLoad:
+    $ref: ./schemas/StudyLoadDescriptor.yaml
+  
