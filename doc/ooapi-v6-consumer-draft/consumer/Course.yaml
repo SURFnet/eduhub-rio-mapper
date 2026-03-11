@@ -43,4 +43,13 @@ properties:
     format: date
   studyLoad:
     $ref: ./schemas/StudyLoadDescriptor.yaml
+  teachingLanguages:
+    type:
+      - array
+      - 'null'
+    description: The languages in which this programme is given, should be three-letter language codes as specified by ISO 639-2. A student should be reasonably proficient in each language to be able to follow the programme.
+    minItems: 1
+    maxItems: 3
+    items:
+      $ref: './schemas/Language.yaml'
   
