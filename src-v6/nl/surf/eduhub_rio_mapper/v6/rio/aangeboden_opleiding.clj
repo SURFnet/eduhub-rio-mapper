@@ -93,16 +93,24 @@
 (def consumer-modeOfDelivery-mapping
   {"online" "ONLINE"
    "hybrid" "KLASSIKAAL_EN_ONLINE"
-   "situated" "KLASSIKAAL"
+   "blended" "KLASSIKAAL_EN_ONLINE"
+   "presential" "KLASSIKAAL"
    "lecture" "LEZING"
-   "self-study" "ZELFSTUDIE"
+   "self_study" "ZELFSTUDIE"
    "coaching" "COACHING"})
+
+(defn- lookup-consumer-mode-of-delivery [mode-of-delivery]
+  (let [opleidingsvorm (get consumer-modeOfDelivery-mapping mode-of-delivery)]
+    (when-not opleidingsvorm
+      (throw (ex-info "modeOfDelivery cannot be mapped to RIO" {:modeOfDelivery mode-of-delivery})))
+    opleidingsvorm)
+  )
 
 ;; modeOfDelivery in rio-consumer of the offering has precedence over the one in the offering itself.
 (defn- extract-opleidingsvorm [modeOfDelivery rio-consumer]
   (let [consumer-modeOfDelivery (:modeOfDelivery rio-consumer)
         mapped-values (if consumer-modeOfDelivery
-                        (map consumer-modeOfDelivery-mapping consumer-modeOfDelivery)
+                        (map lookup-consumer-mode-of-delivery consumer-modeOfDelivery)
                         (map #(rio-helper/ooapi-mapping "opleidingsvorm" %) modeOfDelivery))]
     (first (filter seq mapped-values))))
 
