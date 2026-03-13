@@ -2,8 +2,22 @@
  {:method :get,
   :url
   "https://gateway.test.surfeduhub.nl/courses/44444444-dfc3-4a30-874e-0b70db15638a?returnTimelineOverrides=true",
-  :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"}},
+  :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"},
+  :body nil},
  :response
  {:status 200,
   :body
-  "{\"gateway\":{\"requestId\":\"6CfmsjnG8kvVUoR254UkQ0\",\"request\":\"/courses/44444444-dfc3-4a30-874e-0b70db15638a?returnTimelineOverrides=true\",\"endpoints\":{\"endpoint01.sandbox.jomco.nl\":{\"url\":\"https://endpoint01.sandbox.jomco.nl/rio-mapper-test-data/courses/44444444-dfc3-4a30-874e-0b70db15638a?returnTimelineOverrides=true\",\"responseCode\":404,\"headers\":{\"content-length\":\"9339\",\"content-type\":\"text/html; charset=utf-8\"}}}},\"responses\":{}}"}}
+  {:JSONSTRING
+   {"gateway"
+    {"requestId" "6CfmsjnG8kvVUoR254UkQ0",
+     "request"
+     "/courses/44444444-dfc3-4a30-874e-0b70db15638a?returnTimelineOverrides=true",
+     "endpoints"
+     {"endpoint01.sandbox.jomco.nl"
+      {"url"
+       "https://endpoint01.sandbox.jomco.nl/rio-mapper-test-data/courses/44444444-dfc3-4a30-874e-0b70db15638a?returnTimelineOverrides=true",
+       "responseCode" 404,
+       "headers"
+       {"content-length" "9339",
+        "content-type" "text/html; charset=utf-8"}}}},
+    "responses" {}}}}}
