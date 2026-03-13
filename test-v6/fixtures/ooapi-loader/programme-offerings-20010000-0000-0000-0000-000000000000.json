@@ -44,12 +44,10 @@
         }
       ],
       "ext": {},
-      "startDate": "2019-08-21",
-      "endDate": "2023-06-15",
-      "enrollStartDate": "2019-05-01",
-      "enrollEndDate": "2019-08-01",
-      "flexibleEntryPeriodStart": "2019-08-24",
-      "flexibleEntryPeriodEnd": "2019-08-24",
+      "startDateTime": "2019-08-21T20:07:01+00:00",
+      "endDateTime": "2023-06-15T12:24:12+00:00",
+      "flexibleEntryPeriodStartDateTime": "2019-08-24T03:18:30+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-08-24T17:39:15+00:00",
       "addresses": [
         {
           "addressType": "postal",
@@ -98,7 +96,13 @@
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
         "requiredPermissionRegistration": "yes",
         "registrationStatus": "open"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2019-05-01T00:00:00+00:00",
+          "endDateTime": "2019-08-01T00:00:00+00:00"
+        }
+      ]
     }
   ],
   "ext": {}
