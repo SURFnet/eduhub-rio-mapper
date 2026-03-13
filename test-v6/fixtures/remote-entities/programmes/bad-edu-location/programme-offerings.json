@@ -46,8 +46,8 @@
       "ext": {},
       "startDateTime": "2019-08-21T09:05:54+00:00",
       "endDateTime": "2023-06-15T21:52:26+00:00",
-      "flexibleEntryPeriodStart": "2019-08-24",
-      "flexibleEntryPeriodEnd": "2019-09-24",
+      "flexibleEntryPeriodStartDateTime": "2019-08-24T23:38:26+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-09-24T15:32:17+00:00",
       "addresses": [
         {
           "addressType": "postal",
