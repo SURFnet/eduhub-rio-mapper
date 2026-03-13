@@ -36,19 +36,19 @@
   (if id
     (let [page-suffix (if page (str "&pageNumber=" page) "")
           path        (case ooapi-type
-                        "education-specification" "programs/%s?returnTimelineOverrides=true"
+                        "education-specification" "programmes/%s?returnTimelineOverrides=true"
                         ;; TODO remove program variant
-                        "program"                 "programs/%s?returnTimelineOverrides=true"
+                        "program"                 "programmes/%s?returnTimelineOverrides=true"
                         "programme"               "programmes/%s?returnTimelineOverrides=true"
                         "course"                  "courses/%s?returnTimelineOverrides=true"
                         "course-offerings"        (str "courses/%s/course-offerings?pageSize=" page-size "&consumer=rio" page-suffix)
-                        "program-offerings"       (str "programs/%s/offerings?pageSize=" page-size "&consumer=rio" page-suffix)
+                        "program-offerings"       (str "programmes/%s/programme-offerings?pageSize=" page-size "&consumer=rio" page-suffix)
                         "programme-offerings"     (str "programmes/%s/programme-offerings?pageSize=" page-size "&consumer=rio" page-suffix))]
       (format path id))
     (case ooapi-type
       "education-specifications" "programmes"
       "programmes"               "programmes"
-      "programs"                 "programs"
+      "programs"                 "programmes"
       "courses"                  "courses")))
 
 (defn- wrap-ooapi-request->ring-request
