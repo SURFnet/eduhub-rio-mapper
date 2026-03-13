@@ -19,7 +19,7 @@
     "situated"
   ],
   "duration": "P1DT30H4S",
-  "firstStartDate": "2019-08-24",
+  "firstStartDateTime": "2019-08-24T08:30:00+01:00",
   "description": [
     {
       "language": "en-GB",
@@ -137,7 +137,7 @@
           "situated"
         ],
         "duration": "P1DT30H4S",
-        "firstStartDate": "2019-08-24",
+        "firstStartDateTime": "2019-08-24T08:30:00+01:00",
         "description": [
           {
             "language": "en-GB",
