@@ -48,10 +48,12 @@
     }
   ],
   "levelOfQualification": "6",
-  "studyLoad": {
-    "value": 128,
-    "studyLoadUnit": "ects"
-  },
+  "studyLoad": [
+    {
+      "value": 128,
+      "studyLoadUnit": "ects"
+    }
+  ],
   "consumer": {
     "consumerKey": "rio",
     "variantOf": "{{programmes/specification-parent-program}}",

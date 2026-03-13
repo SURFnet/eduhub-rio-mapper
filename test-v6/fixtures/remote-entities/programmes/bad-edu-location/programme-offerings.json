@@ -96,7 +96,7 @@
           "ext": {}
         }
       ],
-      "program": "{{programmes/bad-edu-location}}",
+      "programme": "{{programmes/bad-edu-location}}",
       "consumer": {
         "consumerKey": "rio",
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
