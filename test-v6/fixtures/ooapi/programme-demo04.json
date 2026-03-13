@@ -1,10 +1,10 @@
 {
   "fieldsOfStudy": "0913",
   "teachingLanguage": "nld",
-  "studyLoad": {
+  "studyLoad": [{
     "value": 131,
     "studyLoadUnit": "ects"
-  },
+  }],
   "organization": "7e3a9216-9a75-c1ef-35ae-7af8fc661c39",
   "level": "secondary vocational education 4",
   "name": [

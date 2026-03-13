@@ -32,10 +32,10 @@
   "sector": "university education",
   "levelOfQualification": "6",
   "fieldsOfStudy": "0732",
-  "studyLoad": {
+  "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 3
-  },
+  }],
   "learningOutcomes": [
     [
       {
