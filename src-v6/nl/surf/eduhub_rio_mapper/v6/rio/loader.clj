@@ -101,8 +101,8 @@
                              :opvragen_opleidingsrelatiesBijOpleidingseenheid_response
                              :samenhangOpleidingseenheid)]
       (s/assert ::rio/opleidingscode (:opleidingseenheidcode samenhang))
-      (when-let [related-eduspecs (-> samenhang :gerelateerdeOpleidingseenheid)]
-        (->> (if (map? related-eduspecs) [related-eduspecs] related-eduspecs)
+      (when-let [related-prgspecs (-> samenhang :gerelateerdeOpleidingseenheid)]
+        (->> (if (map? related-prgspecs) [related-prgspecs] related-prgspecs)
              ;; Accredited HoOpleidingen have a AFGELEID_VAN relation which is not relevant for the edumapper
              ;; and should be ignored.
              (filter (fn [m] (not= (:opleidingsrelatiesoort m) "AFGELEID_VAN")))
@@ -144,16 +144,18 @@
   [{:keys [read-url credentials recipient-oin connection-timeout-millis]}]
   {:pre [read-url]}
   (fn resolver
-    [type id institution-oin]
+    [rio-type id institution-oin]
     {:pre [institution-oin
+           rio-type
            (some? id)
-           (string? id)]}
+           (string? id)
+           (#{:oe :ao} rio-type)]}
     (logging/with-mdc
       {:soap-action "opvragen_rioIdentificatiecode" :ooapi-id id}
       (let [xml (soap/prepare-soap-call "opvragen_rioIdentificatiecode"
-                                        [[(case type
-                                            "education-specification" :duo:eigenOpleidingseenheidSleutel
-                                            ("course" "program") :duo:eigenAangebodenOpleidingSleutel)
+                                        [[(if (= :oe rio-type)
+                                            :duo:eigenOpleidingseenheidSleutel
+                                            :duo:eigenAangebodenOpleidingSleutel)
                                           id]]
                                         (make-datamap institution-oin recipient-oin)
                                         credentials)
@@ -197,10 +199,11 @@
 (defn find-aangebodenopleiding [rio-code getter institution-oin]
   (find-rio-object rio-code getter institution-oin aangeboden-opleiding-type))
 
-(defn rio-finder [getter {::ooapi/keys [type] ::rio/keys [opleidingscode aangeboden-opleiding-code] :keys [institution-oin] :as _request}]
-  (case type
-    "education-specification" (find-rio-object opleidingscode getter institution-oin opleidingseenheid-type)
-    ("course" "program") (find-rio-object aangeboden-opleiding-code getter institution-oin aangeboden-opleiding-type)))
+(defn rio-finder [getter {::rio/keys [opleidingscode aangeboden-opleiding-code] :keys [rio-type institution-oin] :as _request}]
+  {:pre [rio-type]}
+  (case rio-type
+    :oe (find-rio-object opleidingscode getter institution-oin opleidingseenheid-type)
+    :ao (find-rio-object aangeboden-opleiding-code getter institution-oin aangeboden-opleiding-type)))
 
 (defn- rio-xml-getter-response [^Element element]
   (assert (rio-utils/goedgekeurd? element))                           ; should fail elsewhere with error http code otherwise

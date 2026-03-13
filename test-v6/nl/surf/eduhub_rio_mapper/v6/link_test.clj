@@ -45,7 +45,8 @@
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-link" 1 "linker")]
         (let [result (link! (assoc client-info
                                    ::ooapi/id "11111112-dfc3-4a30-874e-000000000001"
-                                   ::ooapi/type "education-specification"
+                                   ::ooapi/type "programme"
+                                   :rio-type :oe
                                    ::rio/opleidingscode "1010O6466"))]
           (is (= [:duo:opleidingseenheidcode "1010O6466"]
                  (get-in result [:rio-sexp 0 1])))
@@ -57,7 +58,8 @@
         (let [{:keys [link]}
               (link! (assoc client-info
                             ::ooapi/id "11111112-dfc3-4a30-874e-000000000001"
-                            ::ooapi/type "education-specification"
+                            ::ooapi/type "programme"
+                            :rio-type :oe
                             ::rio/opleidingscode "1010O6466"))]
           (is (= {:eigenOpleidingseenheidSleutel
                   {:diff true,
@@ -70,7 +72,8 @@
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-link" 3 "linker")]
         (let [{:keys [link rio-sexp]}
               (link! (assoc client-info
-                            ::ooapi/type "education-specification"
+                            ::ooapi/type "programme"
+                            :rio-type :oe
                             ::rio/opleidingscode "1011O3504"))]
           (is (empty? (filter #(and (sequential? %) (= :duo:kenmerken (first %)))
                               (first rio-sexp))))
@@ -85,23 +88,26 @@
         (let [result (link! (assoc client-info
                                    ::ooapi/id "11111111-dfc3-4a30-874e-000000000001"
                                    ::ooapi/type "course"
+                                   :rio-type :ao
                                    ::rio/aangeboden-opleiding-code "bd6cb46b-3f4e-49c2-a1f7-e24ae82b0672"))]
           (is (= {:link {:eigenAangebodenOpleidingSleutel {:diff true, :old-id nil, :new-id "11111111-dfc3-4a30-874e-000000000001"}}}
                  (select-keys result [:link]))))))
 
-    (testing "program"
+    (testing "programme"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-link" 2 "linker")]
         (let [result (link! (assoc client-info
                                    ::ooapi/id "11111111-dfc3-4a30-874e-000000000002"
-                                   ::ooapi/type "program"
+                                   ::ooapi/type "programme"
+                                   :rio-type :ao
                                    ::rio/aangeboden-opleiding-code "ab7431c0-f985-4742-aa68-42060570b17e"))]
           (is (= {:link {:eigenAangebodenOpleidingSleutel {:diff true, :old-id nil, :new-id "11111111-dfc3-4a30-874e-000000000002"}}}
                  (select-keys result [:link]))))))
 
-    (testing "missing program"
+    (testing "missing programme"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-link" 3 "linker")]
         (let [request (assoc client-info
                              ::ooapi/id "11111111-dfc3-4a30-874e-000000000002"
-                             ::ooapi/type "program"
+                             ::ooapi/type "programme"
+                             :rio-type :ao
                              ::rio/aangeboden-opleiding-code "00000000-d8e8-4868-b451-157180ab0001")]
           (is (thrown-with-msg? ExceptionInfo #"404 Not Found" (link! request))))))))
