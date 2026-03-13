@@ -36,14 +36,15 @@
 
 (defn update-mutation
   "Returned object conforms to ::Mutation/mutation-response."
-  [{:keys [institution-oin args]
+  [{:keys [institution-oin args rio-type]
     ::ooapi/keys [id entity type]
     ::ooapi-v6/keys [specification-type]
     ::rio/keys [opleidingscode aangeboden-opleiding-code] :as job}]
-  {:pre [(or (not= type "program") specification-type)]
+  {:pre [(or (not= type "programme") specification-type)] ;; type programme implies specification-type present
    :post [(s/valid? ::mutation/mutation-response %)]}
   (assert institution-oin)
-  (if (and (not (#{"education-specification" "relation"} type))
+  (if (and (not= "relation" type)
+           (not= :oe rio-type)
            (not opleidingscode))
     ;; If we're not inserting a new education-specification or a
     ;; relation we need a rio code (from an earlier inserted
@@ -54,59 +55,58 @@
                        :retryable? false})))
     (let [entity (cond-> entity
                    (and opleidingscode
-                        (= "education-specification" type))
+                        (= :oe rio-type))
                    (assoc :rioCode opleidingscode)
 
                    (and aangeboden-opleiding-code
-                        (#{"course" "program"} type))
+                        (= :ae rio-type))
                    (assoc :rioCode aangeboden-opleiding-code))]
-      (case type
-        "education-specification"
+      (cond
+        (= :oe rio-type)
         {:action     "aanleveren_opleidingseenheid"
          :ooapi      entity
          :sender-oin institution-oin
          :rio-sexp   [(opl-eenh/education-specification->opleidingseenheid entity)]}
 
-        ("course" "program")
-        {:action     "aanleveren_aangebodenOpleiding"
-         :ooapi      entity
-         :sender-oin institution-oin
-         :rio-sexp   [(aangeboden-opl/->aangeboden-opleiding entity (keyword type) opleidingscode (select-keys job [::ooapi-v6/specification-type]))]}
-
-        "relation"
+        (= type "relation")
         (let [[object-code valid-from valid-to] args]
           (relation-handler/relation-mutation :insert institution-oin
                                               {:opleidingseenheidcodes #{id object-code}
                                                :valid-from             valid-from
-                                               :valid-to               valid-to}))))))
+                                               :valid-to               valid-to}))
+
+        :else
+        {:action     "aanleveren_aangebodenOpleiding"
+         :ooapi      entity
+         :sender-oin institution-oin
+         :rio-sexp   [(aangeboden-opl/->aangeboden-opleiding entity (keyword type) opleidingscode (select-keys job [::ooapi-v6/specification-type]))]}))))
 
 (defn deletion-mutation
   "Returned object conforms to ::mutation/mutation-response."
-  [{:keys [::rio/opleidingscode ::rio/aangeboden-opleiding-code ::ooapi/type ::ooapi/id institution-oin args]}]
-  {:post [(s/valid? ::mutation/mutation-response %)]}
+  [{:keys [::rio/opleidingscode ::rio/aangeboden-opleiding-code ::ooapi/type rio-type ::ooapi/id institution-oin args]}]
+  {:pre [(#{:ao :oe} rio-type)]
+   :post [(s/valid? ::mutation/mutation-response %)]}
   (assert institution-oin)
-  (case type
-    "education-specification"
-    (if opleidingscode
-      {:action     "verwijderen_opleidingseenheid"
-       :sender-oin institution-oin
-       :rio-sexp   [[:duo:opleidingseenheidcode opleidingscode]]}
-      (throw (ex-info "Unable to delete 'opleidingseenheid' without 'opleidingscode'"
-                      {:education-specification-id id,
-                       :retryable?                 false})))
-
-    ("course" "program")
-    (if aangeboden-opleiding-code
-      {:action     "verwijderen_aangebodenOpleiding"
-       :sender-oin institution-oin
-       :rio-sexp   [[:duo:aangebodenOpleidingCode aangeboden-opleiding-code]]}
-      (throw (ex-info "Unable to delete 'aangebodenopleiding' without 'aangebodenopleidingscode'"
-                      {(keyword (str type "-id"))  id,
-                       :retryable?                 false})))
-
-    ;; Only called explicitly from the command line.
-    "relation"
+  (if (= type "relation")
     (let [[other-code valid-from] args]
       (relation-handler/relation-mutation :delete institution-oin
                                           {:opleidingseenheidcodes #{id other-code}
-                                           :valid-from             valid-from}))))
+                                           :valid-from             valid-from}))
+    (case rio-type
+      :oe
+      (if opleidingscode
+        {:action     "verwijderen_opleidingseenheid"
+         :sender-oin institution-oin
+         :rio-sexp   [[:duo:opleidingseenheidcode opleidingscode]]}
+        (throw (ex-info "Unable to delete 'opleidingseenheid' without 'opleidingscode'"
+                        {:education-specification-id id,
+                         :retryable?                 false})))
+
+      :ao
+      (if aangeboden-opleiding-code
+        {:action     "verwijderen_aangebodenOpleiding"
+         :sender-oin institution-oin
+         :rio-sexp   [[:duo:aangebodenOpleidingCode aangeboden-opleiding-code]]}
+        (throw (ex-info "Unable to delete 'aangebodenopleiding' without 'aangebodenopleidingscode'"
+                        {(keyword (str type "-id"))  id,
+                         :retryable?                 false}))))))
