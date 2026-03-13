@@ -82,8 +82,8 @@
 
 (defn- parent [id children-ids valid-from & {:keys [] :as opts}]
   (merge opts
-         {:programmeId id, :children children-ids, :validFrom valid-from, :programmeType "specification",
-          :consumer {:consumerKey "rio", :specificationType "programme"}}))
+         {:programmeId id, :validFrom valid-from, :programmeType "specification",
+          :consumer {:consumerKey "rio", :specificationType "programme", :variantIds children-ids}}))
 
 (defn update-relations
   "Bring the relations of the education specification in sync.
