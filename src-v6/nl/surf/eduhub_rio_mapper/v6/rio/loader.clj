@@ -63,6 +63,7 @@
 (def missing-entity "A01161")
 
 (defn- handle-resolver-success [element]
+  {:post [(string? %)]}
   ;; TODO: this is ugly, but we don't know at this stage what entity we tried to resolve.
   (let [code (or (xml-utils/single-xml-unwrapper element "ns2:opleidingseenheidcode")
                  (xml-utils/single-xml-unwrapper element "ns2:aangebodenOpleidingCode"))]
@@ -70,6 +71,7 @@
     code))
 
 (defn- handle-resolver-error [element]
+  {:post [(nil? %)]}
   (let [foutmelding (-> element
                         xml-utils/element->edn
                         :opvragen_rioIdentificatiecode_response
@@ -86,7 +88,8 @@
       (throw (ex-info error-msg {:retryable? false})))))
 
 (defn- rio-resolver-response [^Element element]
-  {:pre [element]}
+  {:pre [element]
+   :post [(or (string? %) (nil? %))]}
   (if (rio-utils/goedgekeurd? element)
     (handle-resolver-success element)
     (handle-resolver-error element)))

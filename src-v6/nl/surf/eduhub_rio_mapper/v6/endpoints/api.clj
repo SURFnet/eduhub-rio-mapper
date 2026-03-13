@@ -57,23 +57,28 @@
         (finally
           (swap! nr-active-requests dec))))))
 
+(defn- prepare-job-for-enqueuement [res token suppress-header]
+  (assoc (:job res)
+         :token token
+         :created-at (str (Instant/now)) ; store created-at in job itself as soon as it is created
+         :suppress-http-messages (= "true" suppress-header)))
+
+(defn- enqueue-job [enqueue-fn req res]
+  (let [token (UUID/randomUUID)
+        suppress-header (get-in req [:headers "x-suppress-http-messages"])]
+    (with-mdc {:token token}
+      (-> res
+          (prepare-job-for-enqueuement token suppress-header)
+          enqueue-fn))
+    (assoc res
+           :status http-status/created
+           :body {:token token})))
+
 (defn wrap-job-enqueuer
   [app enqueue-fn]
   (fn job-enqueuer [req]
-    (let [{:keys [job] :as res} (app req)]
-      (if job
-        (let [token (UUID/randomUUID)
-              suppress-header (get-in req [:headers "x-suppress-http-messages"])]
-          (with-mdc {:token token}
-                    ; store created-at in job itself as soon as it is created
-            (enqueue-fn (assoc job
-                               :token token
-                               :created-at (str (Instant/now))
-                               :suppress-http-messages (= "true" suppress-header))))
-          (assoc res
-                 :status http-status/created
-                 :body {:token token}))
-        res))))
+    (cond->> (app req)
+      :job (enqueue-job enqueue-fn req))))
 
 (defn- valid-url? [url]
   (try
