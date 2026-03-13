@@ -34,7 +34,7 @@
     nil))
 
 (defn- programme-specification-timeline-override-adapter
-  [{:keys [abbreviation description formalDocument name studyLoad validFrom] :as eduspec}]
+  [{:keys [abbreviation description formalDocument name studyLoad validFrom] :as prgspec}]
   (fn [pk]
     (case pk
       :begindatum validFrom
@@ -42,8 +42,8 @@
       :naamKort abbreviation
       :naamLang (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
       :omschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"])
-      :studielast (if (= "VARIANT" (soort-mapping eduspec)) nil (:value studyLoad))
-      :studielasteenheid (rio-helper/ooapi-mapping "studielasteenheid" (:studyLoadUnit studyLoad))
+      :studielast (if (= "VARIANT" (soort-mapping prgspec)) nil (:value (first studyLoad)))
+      :studielasteenheid (rio-helper/ooapi-mapping "studielasteenheid" (:studyLoadUnit (first studyLoad)))
       :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))
 
 (def ^:private mapping-progspec->opleidingseenheid

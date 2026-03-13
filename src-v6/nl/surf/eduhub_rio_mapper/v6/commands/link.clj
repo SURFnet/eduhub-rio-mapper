@@ -139,13 +139,11 @@
 
 ;; The id contains new ooapi id, which in RIO is the "eigen sleutel"
 ;; The loader loads the RIO object based on the request, which contains either ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
-(defn- execute-link [{::ooapi/keys [id type] :keys [institution-oin] :as _request} rio-loader-fn rio-config]
-  {:pre [(#{"education-specification" "course" "program"} type)]}
-  (let [eduspec? (= type "education-specification")
-        sleutelnaam-kw (if eduspec? :eigenOpleidingseenheidSleutel :eigenAangebodenOpleidingSleutel)
+(defn- execute-link [{::ooapi/keys [id] :keys [institution-oin rio-type] :as _request} rio-loader-fn rio-config]
+  (let [sleutelnaam-kw (if (= :oe rio-type) :eigenOpleidingseenheidSleutel :eigenAangebodenOpleidingSleutel)
         finder (sleutel-finder (name sleutelnaam-kw))
         [rio-new old-id] (rio-obj-raadplegen->beheren (rio-loader-fn) finder)
-        mutation {:action     (if eduspec? "aanleveren_opleidingseenheid" "aanleveren_aangebodenOpleiding")
+        mutation {:action     (if (= :oe rio-type) "aanleveren_opleidingseenheid" "aanleveren_aangebodenOpleiding")
                   :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
                   :sender-oin institution-oin}
         success? (mutator/mutate! mutation rio-config)
@@ -173,6 +171,10 @@
 
 (defn make-linker [rio-config getter]
   {:pre [rio-config]}
-  (fn [request]
-    {:pre [(:institution-oin request)]}
-    (execute-link request #(load-rio-obj-for-link getter request) rio-config)))
+  (fn [{::rio/keys [opleidingscode aangeboden-opleiding-code]:as request}]
+    {:pre [(:institution-oin request)
+           (or opleidingscode aangeboden-opleiding-code)]}
+    (let [rio-type (if opleidingscode :oe :ao)
+          request (assoc request :rio-type rio-type)]
+      (execute-link request
+                    #(load-rio-obj-for-link getter request) rio-config))))
