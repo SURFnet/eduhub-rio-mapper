@@ -7,7 +7,6 @@
   },
   "organization": "7e3a9216-9a75-c1ef-35ae-7af8fc661c39",
   "level": "secondary vocational education 4",
-  "educationSpecification": "7851ba8d-da69-3802-3539-486b74f9698b",
   "name": [
     {
       "language": "en-GB",
@@ -35,7 +34,6 @@
       "additional": []
     }
   ],
-  "programType": "minor",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "34572"
@@ -77,34 +75,6 @@
     }
   ],
   "levelOfQualification": "4",
-  "consumers": [
-    {
-      "alliances": [
-        {
-          "name": "lde",
-          "enrollmentForOwnStudents": "broker",
-          "type": "deepening",
-          "visibleForOwnStudents": false,
-          "selection": false,
-          "theme": "Social Sciences, Business and Law",
-          "enrollmentUrl": "https://www.eigen-inschrijf-url.nl/schrijf-hier-in"
-        }
-      ],
-      "consumerKey": "eduxchange"
-    },
-    {
-      "educationOffererCode": "122A112",
-      "acceleratedRoute": "no_accelerated_route",
-      "consentParticipationSTAP": "permission_not_granted",
-      "deficiency": "no_deficiencies",
-      "studyChoiceCheck": "no_study_choice_check",
-      "consumerKey": "rio",
-      "requirementsActivities": "requirements",
-      "propaedeuticPhase": "no_propaedeutic_phase",
-      "educationLocationCode": "123X122"
-    }
-  ],
-  "programId": "58095060-d18c-fcd2-04df-c20b156736f6",
   "firstStartDate": "2021-02-20",
   "resources": [
     "Items: Artikelen (elektronisch toegankelijk of aangeboden via Blackboard). Answers to exercises.Selected scientific papers. .",
@@ -183,5 +153,18 @@
       "language": "nl-NL",
       "value": "NL VERTALING: Osiris. . ."
     }
-  ]
+  ],
+  "consumer": {
+    "educationOffererCode": "122A112",
+    "acceleratedRoute": "no_accelerated_route",
+    "deficiency": "no_deficiencies",
+    "studyChoiceCheck": "no_study_choice_check",
+    "consumerKey": "rio",
+    "requirementsActivities": "requirements",
+    "propaedeuticPhase": "no_propaedeutic_phase",
+    "educationLocationCode": "123X122",
+    "specificationId": "7851ba8d-da69-3802-3539-486b74f9698b"
+  },
+  "programmeType": "minor",
+  "programmeId": "58095060-d18c-fcd2-04df-c20b156736f6"
 }
