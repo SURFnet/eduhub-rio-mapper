@@ -1,0 +1,74 @@
+{:request
+ {:method :get,
+  :url
+  "https://gateway-v6-sandbox.dev.surfeduhub.nl/programmes/5ecb3d9c-0ece-469f-92ea-a9606f269b3e?returnTimelineOverrides=true",
+  :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"},
+  :body nil},
+ :response
+ {:status 200,
+  :body
+  {:JSONSTRING
+   {"gateway"
+    {"requestId" "5mb9Vjj2miKB7CT4ux37sm",
+     "traceparent_trace_id" "fa647e7906b95507a2ceb52fece38a14",
+     "traceparent_id" "da2ae77e086fe764",
+     "request"
+     "/programmes/5ecb3d9c-0ece-469f-92ea-a9606f269b3e?returnTimelineOverrides=true",
+     "endpoints"
+     {"endpoint01.sandbox.jomco.nl"
+      {"url"
+       "https://objectstore.surf.nl/swift/v1/AUTH_8e0eecf8d38141f7aa98bc3078fc9ccd/rio-mapper-test-suite/programmes/5ecb3d9c-0ece-469f-92ea-a9606f269b3e?returnTimelineOverrides=true",
+       "responseCode" 200,
+       "headers"
+       {"content-length" "2895", "content-type" "application/json"}}}},
+    "responses"
+    {"endpoint01.sandbox.jomco.nl"
+     {"fieldsOfStudy" "0912",
+      "consumer"
+      {"consumerKey" "rio",
+       "category"
+       ["business_and_project_support"
+        "language_and_culture"
+        "technology_and_ict"],
+       "variantIds" ["7f3ecba7-6aed-49c9-93f7-646d9f352526"],
+       "specificationType" "programme"},
+      "studyLoad" [{"value" 93, "studyLoadUnit" "sbu"}],
+      "validFrom" "1950-09-20",
+      "programmeType" "specification",
+      "sector" "higher professional education",
+      "programmeId" "5ecb3d9c-0ece-469f-92ea-a9606f269b3e",
+      "name"
+      [{"language" "en-GB", "value" "EN TRANSLATION: Toetsdeskundige"}
+       {"language" "nl-NL", "value" "NL VERTALING: Toetsdeskundige"}],
+      "level" "bachelor",
+      "primaryCode"
+      {"codeType" "identifier",
+       "code" "5ecb3d9c-0ece-469f-92ea-a9606f269b3e"},
+      "validTo" "2060-08-28",
+      "link"
+      "https://universiteit-van-boxtel.nl/programmes/5ecb3d9c-0ece-469f-92ea-a9606f269b3e",
+      "learningOutcomes"
+      [[{"language" "en-GB",
+         "value"
+         "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}
+        {"language" "nl-NL",
+         "value"
+         "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}]
+       [{"language" "en-GB",
+         "value"
+         "EN TRANSLATION: nieuw talent op het gebied van programmeren"}
+        {"language" "nl-NL",
+         "value"
+         "NL VERTALING: nieuw talent op het gebied van programmeren"}]],
+      "formalDocument" "diploma",
+      "abbreviation" "1T",
+      "organization" "c388522c-ebc1-2889-1899-06a89e4f5091",
+      "levelOfQualification" "6",
+      "description"
+      [{"language" "en-GB",
+        "value"
+        "EN TRANSLATION: There is a 12 credits course which offers student the opportunity to experience in the domain will be paid to the depletion of fossil resources to biomass resources for energy, raw materials and tree form. The course addresses the question if and how this relates to material struggles over natural resources and its relationship to economic and technological domains;- solving optimization problems is climate change. Within a theoretical stance to support making conscious study and career choices."}
+       {"language" "nl-NL",
+        "value"
+        "NL VERTALING: There is a 12 credits course which offers student the opportunity to experience in the domain will be paid to the depletion of fossil resources to biomass resources for energy, raw materials and tree form. The course addresses the question if and how this relates to material struggles over natural resources and its relationship to economic and technological domains;- solving optimization problems is climate change. Within a theoretical stance to support making conscious study and career choices."}]}}}},
+  :headers {"content-type" "application/json; charset=utf-8"}}}
