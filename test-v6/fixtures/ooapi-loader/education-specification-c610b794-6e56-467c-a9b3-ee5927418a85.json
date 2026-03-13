@@ -1,0 +1,54 @@
+{
+  "programmeId": "c610b794-6e56-467c-a9b3-ee5927418a85",
+  "primaryCode": {
+    "codeType": "identifier",
+    "code": "56105"
+  },
+  "name": [
+    {
+      "language": "nl-NL",
+      "value": "Humanistiek"
+    },
+    {
+      "language": "en-GB",
+      "value": "Humanistic Studies"
+    }
+  ],
+  "abbreviation": "B Humanistiek",
+  "validFrom": "2021-05-03",
+  "formalDocument": "testimonial",
+  "level": "bachelor",
+  "sector": "university education",
+  "studyLoad": {
+    "studyLoadUnit": "ects",
+    "value": 180
+  },
+  "timelineOverrides": [
+    {
+      "primaryCode": {
+        "codeType": "identifier",
+        "code": "56105"
+      },
+      "name": [
+        {
+          "language": "nl-NL",
+          "value": "Humanistiek"
+        }
+      ],
+      "abbreviation": "B Humanistiek",
+      "validFrom": "2003-09-01",
+      "formalDocument": "testimonial",
+      "level": "bachelor",
+      "sector": "university education",
+      "studyLoad": {
+        "studyLoadUnit": "ects",
+        "value": 180
+      }
+    }
+  ],
+  "consumer": {
+    "consumerKey": "rio",
+    "specificationType": "programme"
+  },
+  "programmeType": "specification"
+}
