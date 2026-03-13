@@ -119,7 +119,7 @@
    (relation-mutations prgspec
                        :programmeId
                        (-> prgspec :consumer :variantOf)
-                       (:children prgspec)
+                       (-> prgspec :consumer :variantIds)
                        job
                        handlers))
   ([prgspec primary-key variant-of variants {:keys [institution-oin institution-schac-home] :as _job} {:keys [getter resolver ooapi-loader]}]
