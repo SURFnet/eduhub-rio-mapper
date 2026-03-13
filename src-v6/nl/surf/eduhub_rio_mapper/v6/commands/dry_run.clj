@@ -19,7 +19,8 @@
 (ns nl.surf.eduhub-rio-mapper.v6.commands.dry-run
   (:require [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opleiding]
-            [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
+            [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]
+            [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]))
 
 (def aangeboden-opleiding-namen (->> aangeboden-opleiding/specification-type-mapping
                                      vals
@@ -107,9 +108,10 @@
     (zipmap keys (map finder keys))))
 
 (defn summarize-offering [offering]
-  {:cohortcode (-> offering :primaryCode :code)
-   :beginAanmeldperiode (:enrollStartDate offering)
-   :eindeAanmeldperiode (:enrollEndDate offering)})
+  (let [period (-> (:enrolmentPeriods offering) first)]
+    {:cohortcode (-> offering :primaryCode :code)
+     :beginAanmeldperiode (rio.helper/datetime->date (:startDateTime period))
+     :eindeAanmeldperiode (rio.helper/datetime->date (:endDateTime period))}))
 
 (defn summarize-opleidingseenheid [opleidingseenheid]
   (let [periods     (xml-utils/find-all-in-xmlseq (xml-seq opleidingseenheid)
