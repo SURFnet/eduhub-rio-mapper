@@ -61,7 +61,7 @@
                                      (authenticated-request path)
                                      (assoc :institution-schac-home "edu.nl")
                                      api-routes)]
-        (is (= http-status/ok status))
+        (is (= http-status/created status))
         (is (= expected-job job)))
 
     {:action                 "upsert"
@@ -181,7 +181,7 @@
                                 :institution-schac-home "uu.nl"))))
         "real client, status request")
 
-  (is (= http-status/ok
+  (is (= http-status/created
          (:status (api-routes (assoc (request :post "/job/delete/courses/12345678-1234-2345-3456-123456789abc")
                                 :client-id "wolfgang"
                                 :institution-oin "123",
@@ -415,7 +415,7 @@
 (deftest jobqueue
   (let [req (authenticated-request :post "/job/upsert/education-specifications/12345678-1234-2345-3456-123456789abc")
         req (assoc-in req [:headers "x-callback"] "https://google.com/")]
-    (is (= http-status/ok (:status (api-routes req))))
+    (is (= http-status/created (:status (api-routes req))))
     (is (= "https://google.com/" (::job/callback-url @last-job)))))
 
 ;; In the http-messages, generally keywords are used for keys, except for the headers, there we use strings.
