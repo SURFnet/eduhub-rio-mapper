@@ -146,8 +146,9 @@
                   :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
                   :sender-oin institution-oin}
         success? (mutator/mutate! mutation rio-config)
-        predicate (fn [] (let [rio-obj (rio-loader-fn)]
-                           (= id (last (rio-obj-raadplegen->beheren rio-obj finder)))))]
+        predicate (fn [] (let [rio-obj (rio-loader-fn)
+                               loaded-id (last (rio-obj-raadplegen->beheren rio-obj finder))]
+                           (= id loaded-id)))]
 
     ;; Ensure RIO has processed the update
     (when success?

@@ -18,22 +18,21 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.commands.processing
   (:require
-    [clojure.spec.alpha :as s]
-    [nl.jomco.http-status-codes :as http-status]
-    [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
-    [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
-    [nl.surf.eduhub-rio-mapper.specs.mutation :as mutation]
-    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-    [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-    [nl.surf.eduhub-rio-mapper.utils.logging :as logging]
-    [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
-    [nl.surf.eduhub-rio-mapper.v6.commands.dry-run :as dry-run]
-    [nl.surf.eduhub-rio-mapper.v6.commands.link :as link]
-    [nl.surf.eduhub-rio-mapper.v6.ooapi.base :as ooapi-base]
-    [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
-    [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
-    [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]
-    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]))
+   [clojure.spec.alpha :as s]
+   [nl.jomco.http-status-codes :as http-status]
+   [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
+   [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
+   [nl.surf.eduhub-rio-mapper.specs.mutation :as mutation]
+   [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+   [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
+   [nl.surf.eduhub-rio-mapper.utils.logging :as logging]
+   [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
+   [nl.surf.eduhub-rio-mapper.v6.commands.dry-run :as dry-run]
+   [nl.surf.eduhub-rio-mapper.v6.commands.link :as link]
+   [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
+   [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
+   [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]
+   [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]))
 
 (defn- extract-eduspec-from-result [result]
   (let [entity (:ooapi result)]
@@ -43,7 +42,7 @@
 (defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
   (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
     (logging/with-mdc
-        {:ooapi-type type :ooapi-id id}
+      {:ooapi-type type :ooapi-id id}
       (ooapi.loader/load-entities ooapi-loader request))))
 
 ;; returns function that takes request
@@ -52,13 +51,13 @@
   (fn resolve-phase [{:keys [institution-oin action]
                       ::ooapi/keys [type id entity]
                       ::rio/keys [opleidingscode] :as request}]
-    {:pre [institution-oin]}
+    {:pre [institution-oin id]}
     (let [resolve-eduspec (= type "education-specification")
           edu-id          (if (= type "education-specification")
                             id
-                            (ooapi-base/education-specification-id entity))
+                            (-> entity :consumer :specificationId))
           oe-code         (or opleidingscode
-                              (resolver "education-specification" edu-id institution-oin))
+                              (when edu-id (resolver "education-specification" edu-id institution-oin)))
           ao-code         (when-not resolve-eduspec (resolver type id institution-oin))]
       ;; Inserting a course or program while the education
       ;; specification has not been added to RIO will throw an error.
@@ -72,8 +71,8 @@
                          :action     action
                          :retryable? false})))
       (cond-> request
-              oe-code (assoc ::rio/opleidingscode oe-code)
-              ao-code (assoc ::rio/aangeboden-opleiding-code ao-code)))))
+        oe-code (assoc ::rio/opleidingscode oe-code)
+        ao-code (assoc ::rio/aangeboden-opleiding-code ao-code)))))
 
 ;; returns function that takes request with ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
 ;; and returns request with :rio-relations
@@ -218,8 +217,8 @@
       {:pre [(:institution-oin request)
              (::ooapi/entity request)]}
       (as-> request $
-            (reduce (fn [req f] (f req)) $ wrapped-fs)
-            (:mutate-result $)))))
+        (reduce (fn [req f] (f req)) $ wrapped-fs)
+        (:mutate-result $)))))
 
 (defn- make-update [handlers rio-config]
   (let [fs [[:fetching-ooapi  (make-updater-load-ooapi-phase handlers)]
@@ -234,8 +233,8 @@
     (fn [request]
       {:pre [(:institution-oin request)]}
       (as-> request $
-            (reduce (fn [req f] (f req)) $ wrapped-fs)
-            (merge (:mutate-result $) (select-keys (:job $) [::rio/aangeboden-opleiding-code]))))))
+        (reduce (fn [req f] (f req)) $ wrapped-fs)
+        (merge (:mutate-result $) (select-keys (:job $) [::rio/aangeboden-opleiding-code]))))))
 
 (defn- make-deleter [{:keys [rio-config] :as handlers}]
   {:pre [rio-config]}
@@ -248,8 +247,8 @@
     (fn [request]
       {:pre [(:institution-oin request)]}
       (as-> request $
-            (reduce (fn [req f] (f req)) $ wrapped-fs)
-            (:mutate-result $)))))
+        (reduce (fn [req f] (f req)) $ wrapped-fs)
+        (:mutate-result $)))))
 
 (defn- dry-run-status [rio-summary ooapi-summary]
   {:status (if ooapi-summary (if rio-summary "found" "not-found") "error")})
@@ -296,7 +295,7 @@
           value (if (not-found? ooapi-entity)
                   {:status "error"}
                   (let [handler (case type "education-specification" eduspec-dry-run-handler
-                                           ("course" "program") course-program-dry-run-handler)]
+                                      ("course" "program") course-program-dry-run-handler)]
                     (handler ooapi-entity request handlers)))]
       {:dry-run value})))
 
