@@ -2,7 +2,6 @@
   "level": "nt2-1",
   "parent": "f2d020bc-5fac-b2e9-4ea7-4b35a08dfbeb",
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
-  "educationSpecificationType": "privateProgramme",
   "educationSpecificationId": "790c6569-2bcc-d046-dae2-7b73e77231f3",
   "validFrom": "2015-09-19",
   "abbreviation": "CS",
@@ -78,26 +77,26 @@
     }
   ],
   "levelOfQualification": "3",
-  "consumers": [
-    {
-      "consumerKey": "rio",
-      "category": [
-        "agriculture_food_and_natural_environment",
-        "tourism_hospitality_and_recreation",
-        "healthcare_and_sport",
-        "behavior_and_society",
-        "economy",
-        "cross_sectoral",
-        "transport_and_logistics",
-        "education",
-        "technology_and_ict",
-        "language_and_culture",
-        "management_and_project_management"
-      ]
-    }
-  ],
   "studyLoad": {
     "value": 110,
     "studyLoadUnit": "ects"
-  }
+  },
+  "consumer": {
+    "consumerKey": "rio",
+    "category": [
+      "agriculture_food_and_natural_environment",
+      "tourism_hospitality_and_recreation",
+      "healthcare_and_sport",
+      "behavior_and_society",
+      "economy",
+      "cross_sectoral",
+      "transport_and_logistics",
+      "education",
+      "technology_and_ict",
+      "language_and_culture",
+      "management_and_project_management"
+    ],
+    "specificationType": "private"
+  },
+  "programmeType": "specification"
 }
