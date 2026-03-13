@@ -17,10 +17,10 @@
     }
   ],
   "teachingLanguage": "nld",
-  "studyLoad": {
+  "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 3
-  },
+  }],
   "qualificationAwarded": "None",
   "modeOfStudy": "full-time",
   "modeOfDelivery": [
@@ -131,10 +131,10 @@
           }
         ],
         "teachingLanguage": "nld",
-        "studyLoad": {
+        "studyLoad": [{
           "studyLoadUnit": "ects",
           "value": 3
-        },
+        }],
         "qualificationAwarded": "None",
         "modeOfStudy": "full-time",
         "modeOfDelivery": [

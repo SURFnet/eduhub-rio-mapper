@@ -77,10 +77,10 @@
     }
   ],
   "levelOfQualification": "3",
-  "studyLoad": {
+  "studyLoad": [{
     "value": 110,
     "studyLoadUnit": "ects"
-  },
+  }],
   "consumer": {
     "consumerKey": "rio",
     "category": [
