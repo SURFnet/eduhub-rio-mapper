@@ -92,7 +92,14 @@
      :sender-oin institution-oin
      :rio-sexp   rio-sexp}))
 
-(defn load-relation-data [getter opleidingscode institution-oin]
+(defn load-relation-data
+  "Returns a vector of relation maps, or nil if no relations exist.
+
+  Each relation map contains:
+  - :opleidingseenheidcodes - a set of two opleidingscode strings
+  - :valid-from - the start date of the relation
+  - :valid-to - the end date of the relation (may be nil)"
+  [getter opleidingscode institution-oin]
   {:pre [(s/valid? ::rio/opleidingscode opleidingscode)]
    :post [(s/valid? (s/nilable ::relations/relation-vector) %)]}
   (getter {:institution-oin       institution-oin
@@ -147,13 +154,3 @@
     (doseq [rel superfluous] (mutator rel :delete))
     (doseq [rel missing]     (mutator rel :insert)))
   diff)
-
-(defn update-relations
-  "Bring the relations of the education specification in sync.
-
-   First calculates which relations are missing or superfluous, then creates the delete and insert mutations, and executes them."
-  [prgspec job handlers]
-  (when prgspec
-    (-> prgspec
-        (relation-mutations job handlers)
-        (mutate-relations! job handlers))))

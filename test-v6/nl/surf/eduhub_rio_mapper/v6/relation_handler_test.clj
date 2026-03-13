@@ -85,6 +85,16 @@
          {:programmeId id, :children children-ids, :validFrom valid-from, :programmeType "specification",
           :consumer {:consumerKey "rio", :specificationType "programme"}}))
 
+(defn update-relations
+  "Bring the relations of the education specification in sync.
+
+   First calculates which relations are missing or superfluous, then creates the delete and insert mutations, and executes them."
+  [prgspec job handlers]
+  (when prgspec
+    (-> prgspec
+        (rh/relation-mutations job handlers)
+        (rh/mutate-relations! job handlers))))
+
 (deftest test-mutate-relation
   (let [job      {:institution-schac-home "a" :institution-oin "b"}
         loader   {1 (child 1 2 "2022-01-01")
@@ -117,17 +127,17 @@
                                                  "test-surf")}}]
     (binding [client/request (constantly {:status 200 :body (slurp "test-v6/fixtures/rio/create-relation.xml")})]
       (testing "child with one parent"
-        (let [{:keys [missing superfluous]} (rh/update-relations (loader 1) job handlers)]
+        (let [{:keys [missing superfluous]} (update-relations (loader 1) job handlers)]
           (is (empty? superfluous))
           (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"2234O1234" "1234O1234"}}}))))
 
       (testing "parent with one child"
-        (let [{:keys [missing superfluous]} (rh/update-relations (loader 2) job handlers)]
+        (let [{:keys [missing superfluous]} (update-relations (loader 2) job handlers)]
           (is (empty? superfluous))
           (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"2234O1234" "1234O1234"}}}))))
 
       (testing "parent with two children"
-        (let [{:keys [missing superfluous]} (rh/update-relations (loader 3) job handlers)]
+        (let [{:keys [missing superfluous]} (update-relations (loader 3) job handlers)]
           (is (empty? superfluous))
           (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"3234O1234" "4234O1234"}}
                            {:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"3234O1234" "5234O1234"}}})))))))

@@ -18,6 +18,7 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.commands.processing
   (:require
+   [clojure.set :as set]
    [clojure.spec.alpha :as s]
    [nl.jomco.http-status-codes :as http-status]
    [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
@@ -259,16 +260,33 @@
         (throw (ex-info (str "Processing this job takes longer than expected. Our developers have been informed and will contact DUO. Please try again in a few hours."
                              ": " type " " id) {:rio-queue-status :down}))))))
 
+;; we loaded the relation data in the make-load-relations-phase phase with the opleidingscode - why isn't the opleidingscode present now?
+
 (defn- make-updater-sync-relations-phase
   "Calculates which relations exist in ooapi, which relations exist in RIO, and synchronizes them.
 
   Only relations between education-specifications are considered; specifically, relations with type program,
   one with no subtype and one with subtype variant.
   To perform synchronization, relations are added and deleted in RIO."
-  [handlers]
+  [{:keys [getter] :as handlers} config]
   (fn sync-relations-phase [{:keys [job prgspec] :as request}]
-    (relation-handler/update-relations prgspec job handlers)
-    request))
+    (if (nil? prgspec)
+      request
+      (let [{:keys [missing superfluous] :as diff} (relation-handler/relation-mutations prgspec job handlers)
+            {:keys [institution-oin]} job
+            {::rio/keys [opleidingscode]} prgspec]
+
+        (relation-handler/mutate-relations! diff job handlers)
+        (rio.helper/blocking-retry (fn in-sync? []
+                                     (let [rio-relations (relation-handler/load-relation-data getter opleidingscode institution-oin)
+                                           rio-relations-set (set rio-relations)
+                                           missing-now-present? (every? rio-relations-set missing)
+                                           superfluous-now-gone? (empty? (set/intersection rio-relations-set superfluous))
+                                           synced? (and missing-now-present? superfluous-now-gone?)]
+                                       synced?))
+                                   config
+                                   "Ensure update relation is processed by RIO")
+        request))))
 
 (defn- wrap-phase [[phase f]]
   (fn [req]
@@ -299,7 +317,7 @@
             [:preparing       (make-updater-soap-phase)]
             [:upserting       (make-updater-mutate-rio-phase handlers)]
             [:confirming      (make-updater-confirm-rio-phase handlers rio-config)]
-            [:associating     (make-updater-sync-relations-phase handlers)]]
+            [:associating     (make-updater-sync-relations-phase handlers rio-config)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
       {:pre [(:institution-oin request)]}
