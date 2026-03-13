@@ -19,10 +19,10 @@
   "formalDocument": "testimonial",
   "level": "bachelor",
   "sector": "university education",
-  "studyLoad": {
+  "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 180
-  },
+  }],
   "timelineOverrides": [
     {
       "primaryCode": {
@@ -40,10 +40,10 @@
       "formalDocument": "testimonial",
       "level": "bachelor",
       "sector": "university education",
-      "studyLoad": {
+      "studyLoad": [{
         "studyLoadUnit": "ects",
         "value": 180
-      }
+      }]
     }
   ],
   "consumer": {
