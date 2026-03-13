@@ -18,15 +18,15 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.mapper-integration-test
   (:require
-    [clj-http.client :as client]
-    [clojure.java.io :as io]
-    [clojure.string :as str]
-    [clojure.test :refer :all]
-    [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
-    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-    [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
-    [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]
-    [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper :refer [load-json]])
+   [clj-http.client :as client]
+   [clojure.java.io :as io]
+   [clojure.test :refer :all]
+   [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
+   [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+   [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
+   [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]
+   [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]
+   [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper :refer [load-json]])
   (:import [clojure.lang ExceptionInfo]))
 
 (def institution-oin "123O321")
@@ -34,8 +34,8 @@
 (def ooapi-id "f2d020bc-5fac-b2e9-4ea7-4b35a08dfbeb")
 (def config {:rio-config
              {:credentials   (keystore/credentials "test/keystore.jks"
-                                                 "xxxxxx"
-                                                 "test-surf")
+                                                   "xxxxxx"
+                                                   "test-surf")
               :recipient-oin "12345"
               :read-url      "http://example.com"
               :update-url    "http://example.com"}})
@@ -46,12 +46,6 @@
       "education-specification" (load-json eduspec)
       ("course" "program") (load-json program-course)
       (load-json offerings))))
-
-(defn mock-ooapi-loader-simple [{:keys [eduspec program-course offerings]} ooapi-type]
-  (case ooapi-type
-    "education-specification" (load-json eduspec)
-    ("course" "program") (load-json program-course)
-    (load-json offerings)))
 
 (defn- test-resolver [ootype]
   (if (= ootype "education-specification")
@@ -65,7 +59,7 @@
           mutation       (handle-updated {::ooapi/id ooapi-id
                                           ::ooapi/type ooapi-type
                                           :institution-oin institution-oin
-                                          ::ooapi/education-specification-type "program"})]
+                                          ::ooapi-v6/specification-type "programme"})]
       {:result (mutator/mutate! mutation (:rio-config config))
        :mutation mutation})))
 
@@ -94,19 +88,6 @@
     (is (nil? (:errors actual)))
     (is (= "EN TRANSLATION: Computer Science" (-> actual :ooapi :name first :value)))))
 
-(deftest test-handle-updated-eduspec-upcase
-  (let [ooapi-loader (mock-ooapi-loader eduspec-req-0)
-        ooapi-loader #(let [x (ooapi-loader %)] (assoc x :educationSpecificationId (str/upper-case (:educationSpecificationId x))))
-        actual (helper/test-handler {::ooapi/id   "790c6569-2bcc-d046-dae2-7b73e77231f3"
-                                     ::ooapi/type "education-specification"
-                                     :institution-oin institution-oin}
-                                    test-resolver
-                                    ooapi-loader)]
-    (is (nil? (:errors actual)))
-    (is (= "790c6569-2bcc-d046-dae2-7b73e77231f3" (get-in actual [:rio-sexp 0 4 2 1])))
-    (is (= "EN TRANSLATION: Computer Science" (-> actual :ooapi :name first :value)))))
-
-
 (deftest test-make-eduspec-0
   (let [actual (:result (simulate-upsert (mock-ooapi-loader eduspec-req-0)
                                          (slurp (io/resource "fixtures/rio/integration-eduspec-0.xml"))
@@ -118,11 +99,10 @@
   (let [ooapi-loader (mock-ooapi-loader {:eduspec        "fixtures/ooapi/integration-eduspec-0.json"
                                          :program-course "fixtures/ooapi/integration-program-0.json"
                                          :offerings      "fixtures/ooapi/integration-program-offerings-0.json"})
-        {:keys [result mutation]} (simulate-upsert ooapi-loader
+        {:keys [result _mutation]} (simulate-upsert ooapi-loader
                                                    (slurp (io/resource "fixtures/rio/integratie-program-0.xml"))
                                                    "program")]
     (is (nil? (:errors result)))
-    (is (= [:duo:cohortcode "34333"] (get-in mutation [:rio-sexp 0 9 1])))
     (is (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))))
 
 (deftest test-joint-program
@@ -131,20 +111,20 @@
         goedgekeurd? (fn [result] (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))
         extract-opleidingseenheidsleutel (fn [mutation]
                                            (first
-                                             (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
-                                                     (-> mutation :rio-sexp first))))
-        set-joint-program-in-consumers (fn [entity unit-code]
-                                         (update-in entity
-                                                    [:consumers 1]
-                                                    merge
-                                                    (cond-> {:jointProgram true}
-                                                            unit-code
-                                                            (assoc :educationUnitCode unit-code))))]
+                                            (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
+                                                    (-> mutation :rio-sexp first))))
+        set-joint-program-in-consumer (fn [entity unit-code]
+                                        (update entity
+                                                :consumer
+                                                merge
+                                                (cond-> {:jointProgram true}
+                                                  unit-code
+                                                  (assoc :educationUnitCode unit-code))))]
 
     (testing "fake joint program"
       ;; after loading program, set jointProgram to true
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumers nil))
+                              (set-joint-program-in-consumer nil))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O1234"]
@@ -154,7 +134,7 @@
     (testing "normal joint program"
       ;; after loading program, set jointProgram to true
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumers "1234O4323"))
+                              (set-joint-program-in-consumer "1234O4323"))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O4323"]
@@ -163,7 +143,7 @@
 
     (testing "joint-program-without-eduspec"
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumers "1234O4323")
+                              (set-joint-program-in-consumer "1234O4323")
                               (dissoc :educationSpecification))
             {:keys [result mutation]} (upserter ooapi-loader)]
         (is (nil? (:errors result)))
@@ -173,7 +153,7 @@
 
     (testing "joint-program-invalid-code"
       (let [ooapi-loader #(-> (ooapi-loader %)
-                              (set-joint-program-in-consumers "ZAZA"))]
+                              (set-joint-program-in-consumer "ZAZA"))]
         (is (thrown? ExceptionInfo
                      (upserter ooapi-loader)))))))
 

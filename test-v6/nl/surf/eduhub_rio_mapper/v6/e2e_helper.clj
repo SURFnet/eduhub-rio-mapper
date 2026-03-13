@@ -86,8 +86,6 @@
   [http-messages]
   (printer/print-http-messages-with-boxed-printer http-messages print-single-http-message))
 
-
-
 ;; Defer running make-config so running some (other!) tests is still
 ;; possible when environment incomplete.
 (def config (delay (config/make-config
@@ -216,7 +214,7 @@
                  (print-api-message {:req req, :res res}))
     (when (seq http-messages)
       (print-boxed "Job HTTP messages"
-        (print-http-messages http-messages)))
+                   (print-http-messages http-messages)))
     res))
 
 (defn- api-status-final?
@@ -295,8 +293,8 @@
   "Short cut to `post-job` job response attributes aangebodenopleidingcode."
   [job]
   (or
-    (job-result-attributes job :aangebodenopleidingcode)
-    (throw (ex-info "error job-result-aangebodenopleidingcode" job))))
+   (job-result-attributes job :aangebodenopleidingcode)
+   (throw (ex-info "error job-result-aangebodenopleidingcode" job))))
 
 (defmethod test/assert-expr 'job-result-aangebodenopleidingcode [msg form]
   `(let [job# ~(second form)
@@ -349,10 +347,10 @@
   `(let [job# ~(second form)
          status# (job-result-status job#)
          result# (= "done" status#)]
-    (test/do-report {:type (if result# :pass :fail)
-                     :message (or ~msg "Expect final job status to equal 'done'"),
-                     :expected "done", :actual status#})
-    result#))
+     (test/do-report {:type (if result# :pass :fail)
+                      :message (or ~msg "Expect final job status to equal 'done'"),
+                      :expected "done", :actual status#})
+     result#))
 
 (defn job-error?
   "Final job status is 'error'."
@@ -395,7 +393,6 @@
                       :message (or ~msg "Expect final job status attributes status to equal 'not-found'"),
                       :expected "not-found", :actual status#})
      result#))
-
 
 (def ^:private rio-getter (delay (rio-loader/make-getter (:rio-config @config))))
 (def ^:private rio-resolver (delay (rio-loader/make-resolver (:rio-config @config))))
@@ -422,9 +419,9 @@
   [code]
   {:pre [code]}
   (print-boxed "rio-relations"
-    (rio-get {::rio/type           rio-loader/opleidingsrelaties-bij-opleidingseenheid-type
-              ::rio/opleidingscode code
-              :institution-oin            (:institution-oin @client-info)})))
+               (rio-get {::rio/type           rio-loader/opleidingsrelaties-bij-opleidingseenheid-type
+                         ::rio/opleidingscode code
+                         :institution-oin            (:institution-oin @client-info)})))
 
 (defn rio-with-relation?
   "Fetch relations of `rio-child` and test if it includes `rio-parent`.
@@ -449,12 +446,12 @@
   [code]
   {:pre [code]}
   (print-boxed "rio-opleidingseenheid"
-    (-> {::rio/type           rio-loader/opleidingseenheid-type
-         ::rio/opleidingscode code
-         :institution-oin            (:institution-oin @client-info)
-         :response-type              :literal}
-        rio-get
-        xml-utils/str->dom)))
+               (-> {::rio/type           rio-loader/opleidingseenheid-type
+                    ::rio/opleidingscode code
+                    :institution-oin            (:institution-oin @client-info)
+                    :response-type              :literal}
+                   rio-get
+                   xml-utils/str->dom)))
 
 (defn- extract-kenmerken [node]
   (if (map? node)
@@ -463,30 +460,31 @@
 
 (defn- kenmerken-tekst-opleidingseenheid [rio-code naam]
   (as-> rio-code $
-        (rio-opleidingseenheid $)
-        (xml-utils/element->edn $)
-        (:Envelope $)
-        (:Body $)
-        (:opvragen_opleidingseenheid_response $)
-        (some $ rio-loader/opleidingseenheid-namen)
-        (extract-kenmerken $)
-        (filter #(= naam (:kenmerknaam %)) $)
-        (first $)
-        (:kenmerkwaardeTekst $)))
+    (rio-opleidingseenheid $)
+    (xml-utils/element->edn $)
+    (:Envelope $)
+    (:Body $)
+    (:opvragen_opleidingseenheid_response $)
+    (some $ rio-loader/opleidingseenheid-namen)
+    (extract-kenmerken $)
+    (filter #(= naam (:kenmerknaam %)) $)
+    (first $)
+    (:kenmerkwaardeTekst $)))
 
 (defn eigen-opleidingseenheid-sleutel [rio-code]
+  {:pre [(string? rio-code)]}
   (kenmerken-tekst-opleidingseenheid rio-code "eigenOpleidingseenheidSleutel"))
 
 (defn rio-aangebodenopleiding
   "Call RIO `opvragen_aangebodenOpleiding`."
   [id]
   (print-boxed "rio-aangebodenopleiding"
-    (-> {::rio/type                      rio-loader/aangeboden-opleiding-type
-         ::rio/aangeboden-opleiding-code id
-         :institution-oin                (:institution-oin @client-info)
-         :response-type                  :literal}
-        rio-get
-        xml-utils/str->dom)))
+               (-> {::rio/type                      rio-loader/aangeboden-opleiding-type
+                    ::rio/aangeboden-opleiding-code id
+                    :institution-oin                (:institution-oin @client-info)
+                    :response-type                  :literal}
+                   rio-get
+                   xml-utils/str->dom)))
 
 (defn kenmerken-values-aangeboden-opleiding [ao-dom naam kenmerk-type]
   (as-> ao-dom $
@@ -522,9 +520,9 @@
   [node path]
   {:pre [(instance? Node node)]}
   (let [xpath           (str "//"
-                   (->> path
-                        (map #(str "*[local-name()='" % "']"))
-                        (str/join "/")))
+                             (->> path
+                                  (map #(str "*[local-name()='" % "']"))
+                                  (str/join "/")))
         ^NodeList nodes (.evaluate (.newXPath (XPathFactory/newInstance))
                                    xpath
                                    node
@@ -533,8 +531,6 @@
         values          (mapv #(.getTextContent (.item nodes %))
                               (range node-length))]
     values))
-
-
 
 ;; Using atoms to keep process to make interactive development easier.
 (defonce ^:private serve-api-process-atom (atom nil))

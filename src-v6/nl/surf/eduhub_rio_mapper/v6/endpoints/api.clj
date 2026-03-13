@@ -66,10 +66,10 @@
               suppress-header (get-in req [:headers "x-suppress-http-messages"])]
           (with-mdc {:token token}
                     ; store created-at in job itself as soon as it is created
-                    (enqueue-fn (assoc job
-                                       :token token
-                                       :created-at (str (Instant/now))
-                                       :suppress-http-messages (= "true" suppress-header))))
+            (enqueue-fn (assoc job
+                               :token token
+                               :created-at (str (Instant/now))
+                               :suppress-http-messages (= "true" suppress-header))))
           (assoc res
                  :status http-status/created
                  :body {:token token}))
@@ -201,17 +201,17 @@
 (defn private-routes [{:keys [enqueuer-fn]}]
   (-> (compojure.core/routes
         ;; Unlink is link to `nil`
-        (POST "/job/unlink/:rio-code/:type" request
-          (link-route request))
+       (POST "/job/unlink/:rio-code/:type" request
+         (link-route request))
 
-        (POST "/job/dry-run/upsert/:type/:id" request
-          (job-route (assoc-in request [:params :action] "dry-run-upsert")))
+       (POST "/job/dry-run/upsert/:type/:id" request
+         (job-route (assoc-in request [:params :action] "dry-run-upsert")))
 
-        (POST "/job/link/:rio-code/:type/:id" request
-          (link-route request))
+       (POST "/job/link/:rio-code/:type/:id" request
+         (link-route request))
 
-        (POST "/job/:action/:type/:id" request
-          (job-route request)))
+       (POST "/job/:action/:type/:id" request
+         (job-route request)))
 
       (compojure.core/wrap-routes wrap-callback-extractor)
       (compojure.core/wrap-routes wrap-job-enqueuer enqueuer-fn)
@@ -221,8 +221,8 @@
 
 (def public-routes
   (compojure.core/routes
-    (GET "/health" []
-      {:health true})))
+   (GET "/health" []
+     {:health true})))
 
 (defn read-only-routes [config]
   (-> (GET "/status/:token" [token] {:token token})
