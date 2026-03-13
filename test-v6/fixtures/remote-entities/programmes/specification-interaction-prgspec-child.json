@@ -16,7 +16,7 @@
       "studyLoadUnit": "ects"
     }
   ],
-  "parent": "{{programmes/specification-interaction-eduspec-parent}}",
+  "parent": "{{programmes/specification-interaction-prgspec-parent}}",
   "fieldsOfStudy": "0612",
   "name": [
     {
@@ -31,12 +31,12 @@
   "sector": "higher professional education",
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{programmes/specification-interaction-eduspec-child}}"
+    "code": "{{programmes/specification-interaction-prgspec-child}}"
   },
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "level": "bachelor",
   "levelOfQualification": "6",
-  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-eduspec-child}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-prgspec-child}}",
   "validTo": "2025-04-25",
   "learningOutcomes": [
     [
@@ -52,11 +52,11 @@
   ],
   "abbreviation": "OT",
   "formalDocument": "diploma",
-  "programmeId": "{{programmes/specification-interaction-eduspec-child}}",
+  "programmeId": "{{programmes/specification-interaction-prgspec-child}}",
   "programmeType": "specification",
   "consumer": {
     "consumerKey": "rio",
-    "variantOf": "{{programmes/specification-interaction-eduspec-parent}}",
+    "variantOf": "{{programmes/specification-interaction-prgspec-parent}}",
     "category": [
       "agriculture_food_and_natural_environment",
       "healthcare_and_sport",

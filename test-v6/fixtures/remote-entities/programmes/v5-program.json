@@ -94,7 +94,7 @@
     "deficiency": "deficiencies",
     "educationLocationCode": "107X215",
     "propaedeuticPhase": "no_propaedeutic_phase",
-    "specificationId": "{{programmes/specification-interaction-eduspec-parent}}"
+    "specificationId": "{{programmes/specification-interaction-prgspec-parent}}"
   },
   "programId": "{{programmes/interaction-programme-some}}",
   "programType": "program",
