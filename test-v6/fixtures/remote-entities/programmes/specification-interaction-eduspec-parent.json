@@ -36,16 +36,6 @@
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "level": "bachelor",
   "levelOfQualification": "6",
-  "consumers": [
-    {
-      "consumerKey": "rio",
-      "category": [
-        "business_and_project_support",
-        "language_and_culture",
-        "technology_and_ict"
-      ]
-    }
-  ],
   "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-eduspec-parent}}",
   "validTo": "2060-08-28",
   "learningOutcomes": [
@@ -73,5 +63,14 @@
   "abbreviation": "1T",
   "formalDocument": "diploma",
   "programmeId": "{{programmes/specification-interaction-eduspec-parent}}",
-  "programmeType": "programme"
+  "programmeType": "specification",
+  "consumer": {
+    "consumerKey": "rio",
+    "category": [
+      "business_and_project_support",
+      "language_and_culture",
+      "technology_and_ict"
+    ],
+    "specificationType": "programme"
+  }
 }

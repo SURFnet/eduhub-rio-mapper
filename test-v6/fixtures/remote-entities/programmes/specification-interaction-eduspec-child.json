@@ -34,17 +34,6 @@
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "level": "bachelor",
   "levelOfQualification": "6",
-  "consumers": [
-    {
-      "consumerKey": "rio",
-      "educationSpecificationSubType": "variant",
-      "category": [
-        "agriculture_food_and_natural_environment",
-        "healthcare_and_sport",
-        "tourism_hospitality_and_recreation"
-      ]
-    }
-  ],
   "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-eduspec-child}}",
   "validTo": "2025-04-25",
   "learningOutcomes": [
@@ -62,5 +51,15 @@
   "abbreviation": "OT",
   "formalDocument": "diploma",
   "programmeId": "{{programmes/specification-interaction-eduspec-child}}",
-  "programmeType": "programme"
+  "programmeType": "specification",
+  "consumer": {
+    "consumerKey": "rio",
+    "variantOf": "{{programmes/specification-interaction-eduspec-parent}}",
+    "category": [
+      "agriculture_food_and_natural_environment",
+      "healthcare_and_sport",
+      "tourism_hospitality_and_recreation"
+    ],
+    "specificationType": "programme"
+  }
 }
