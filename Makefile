@@ -12,6 +12,13 @@ all: lint proof-specs test watson clean jar
 
 jar: target/eduhub-rio-mapper.jar
 
+test-all-units:
+	clojure -M:test-v5
+	clojure -M:test-v6
+	clojure -M:test-common
+	clojure -M:test-v5-redis
+	clojure -M:test-v6-redis
+
 lint:
 	clojure -M:lint
 

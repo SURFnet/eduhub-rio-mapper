@@ -33,7 +33,6 @@
          :client-id 123
          :institution-oin "123"))
 
-(def config nil)
 (def last-job (atom nil))
 (def api-routes (api/routes {:enqueuer-fn      (fn [job] (reset! last-job job) nil)
                              :status-getter-fn (constantly {:test :dummy})}))
@@ -49,7 +48,7 @@
     :post "/job/link/1234O4321/courses/abcdefgh-ijkl-mnop-qrst-uvwxyzabcdef")
 
   (are [method path]
-       (is (= http-status/not-found (:status (api-routes (authenticated-request method path)))))
+       (= http-status/not-found (:status (api-routes (authenticated-request method path))))
     :get  "/blerk"
     :get  "/job/upsert/courses/31415"
     :get  "/status"
@@ -63,7 +62,6 @@
                                       api-routes)]
          (is (= http-status/created status))
          (is (= expected-job job)))
-
     {:action                 "upsert"
      ::ooapi/type            "course"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
@@ -72,18 +70,18 @@
     "/job/upsert/courses/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "upsert"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/upsert/education-specifications/12345678-1234-2345-3456-123456789abc"
+    "/job/upsert/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "upsert"
-     ::ooapi/type            "program"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/upsert/programs/12345678-1234-2345-3456-123456789abc"
+    "/job/upsert/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "delete"
      ::ooapi/type            "course"
@@ -93,19 +91,19 @@
     "/job/delete/courses/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "delete"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/delete/education-specifications/12345678-1234-2345-3456-123456789abc"
+    "/job/delete/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "link"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      ::rio/opleidingscode    "1234O4321"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/link/1234O4321/education-specifications/12345678-1234-2345-3456-123456789abc"
+    "/job/link/1234O4321/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                         "link"
      ::ooapi/type                    "course"
@@ -116,21 +114,21 @@
     "/job/link/00000000-0000-0000-0000-000000000000/courses/12345678-1234-2345-3456-123456789abc"
 
     {:action                         "link"
-     ::ooapi/type                    "program"
+     ::ooapi/type                    "programme"
      ::ooapi/id                      "12345678-1234-2345-3456-123456789abc"
      ::rio/aangeboden-opleiding-code "00000000-0000-0000-0000-000000000000"
      :institution-schac-home         "edu.nl"
      :institution-oin                "123"}
-    "/job/link/00000000-0000-0000-0000-000000000000/programs/12345678-1234-2345-3456-123456789abc"
+    "/job/link/00000000-0000-0000-0000-000000000000/programmes/12345678-1234-2345-3456-123456789abc"
 
     ;; Unlink is link to id with value `nil`
     {:action                 "link"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              nil
      ::rio/opleidingscode    "1234O4321"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/unlink/1234O4321/education-specifications"
+    "/job/unlink/1234O4321/programmes"
 
     {:action                         "link"
      ::ooapi/type                    "course"
@@ -141,19 +139,19 @@
     "/job/unlink/00000000-0000-0000-0000-000000000000/courses"
 
     {:action                         "link"
-     ::ooapi/type                    "program"
+     ::ooapi/type                    "programme"
      ::ooapi/id                      nil
      ::rio/aangeboden-opleiding-code "00000000-0000-0000-0000-000000000000"
      :institution-schac-home         "edu.nl"
      :institution-oin                "123"}
-    "/job/unlink/00000000-0000-0000-0000-000000000000/programs"
+    "/job/unlink/00000000-0000-0000-0000-000000000000/programmes"
 
     {:action                 "delete"
-     ::ooapi/type            "program"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/delete/programs/12345678-1234-2345-3456-123456789abc")
+    "/job/delete/programmes/12345678-1234-2345-3456-123456789abc")
 
   (is (= "12345678-1234-2345-3456-123456789abc"
          (-> (assoc (request :get "/status/12345678-1234-2345-3456-123456789abc")
@@ -413,7 +411,7 @@
     (status/purge! config)))
 
 (deftest jobqueue
-  (let [req (authenticated-request :post "/job/upsert/education-specifications/12345678-1234-2345-3456-123456789abc")
+  (let [req (authenticated-request :post "/job/upsert/programmes/12345678-1234-2345-3456-123456789abc")
         req (assoc-in req [:headers "x-callback"] "https://google.com/")]
     (is (= http-status/created (:status (api-routes req))))
     (is (= "https://google.com/" (::job/callback-url @last-job)))))
@@ -432,5 +430,5 @@
                          api/add-single-parsed-json-response)]
     (is (string? (get-in http-message [:res :body])))
     (is (map? (get-in http-message [:res :json-body])))
-    (is (= "/programs/0f212491-c96a-4141-8718-86d40a4ebfd3?returnTimelineOverrides=true"
+    (is (= "/programmes/0f212491-c96a-4141-8718-86d40a4ebfd3?returnTimelineOverrides=true"
            (get-in http-message [:res :json-body :gateway :request])))))
