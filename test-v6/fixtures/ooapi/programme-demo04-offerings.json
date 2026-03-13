@@ -10,7 +10,6 @@
         "code": "null"
       },
       "maxNumberStudents": 166,
-      "enrollEndDate": "2019-01-31",
       "name": [
         {
           "language": "en-GB",
@@ -43,7 +42,7 @@
       "minNumberStudents": 3,
       "offeringId": "aa7d22b0-6290-2ed7-9029-ee7efaa6ef92",
       "resultExpected": true,
-      "flexibleEntryPeriodStart": "2003-09-01",
+      "flexibleEntryPeriodStartDateTime": "2003-09-01T17:07:22+00:00",
       "resultValueType": "UK letter",
       "modeOfDelivery": [
         "online",
@@ -53,16 +52,21 @@
       "pendingNumberStudents": 10,
       "addresses": null,
       "teachingLanguage": "eng",
-      "enrollStartDate": "2003-09-01",
-      "endDate": "2019-01-31",
+      "endDateTime": "2019-01-31T22:33:43+00:00",
       "academicSession": "373500c0-ce95-4956-664e-1c8776b9e195",
-      "startDate": "2003-09-01",
-      "flexibleEntryPeriodEnd": "2019-01-31",
+      "startDateTime": "2003-09-01T05:44:27+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-01-31T16:03:53+00:00",
       "consumer": {
         "consumerKey": "rio",
         "requiredPermissionRegistration": "yes",
         "registrationStatus": "closed"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2003-09-01T00:00:00+00:00",
+          "endDateTime": "2019-01-31T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programme": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -72,7 +76,6 @@
         "code": "null"
       },
       "maxNumberStudents": 104,
-      "enrollEndDate": "2012-08-31",
       "name": [
         {
           "language": "en-GB",
@@ -105,7 +108,7 @@
       "minNumberStudents": 3,
       "offeringId": "fda94bfe-b1f0-29a2-4ce9-ea0395ab30e5",
       "resultExpected": false,
-      "flexibleEntryPeriodStart": "2011-02-07",
+      "flexibleEntryPeriodStartDateTime": "2011-02-07T12:48:37+00:00",
       "resultValueType": "0-100",
       "modeOfDelivery": [
         "on campus",
@@ -116,15 +119,20 @@
       "pendingNumberStudents": 2,
       "addresses": null,
       "teachingLanguage": "nld",
-      "enrollStartDate": "2011-02-07",
-      "endDate": "2012-08-31",
+      "endDateTime": "2012-08-31T02:30:20+00:00",
       "academicSession": "f746c96d-ae3f-255a-6b55-ab8f3834e63e",
-      "startDate": "2011-02-07",
-      "flexibleEntryPeriodEnd": "2012-08-31",
+      "startDateTime": "2011-02-07T10:17:09+00:00",
+      "flexibleEntryPeriodEndDateTime": "2012-08-31T19:33:15+00:00",
       "consumer": {
         "consumerKey": "rio",
         "registrationStatus": "open"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2011-02-07T00:00:00+00:00",
+          "endDateTime": "2012-08-31T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programme": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -134,7 +142,6 @@
         "code": "null"
       },
       "maxNumberStudents": 164,
-      "enrollEndDate": "2019-01-31",
       "name": [
         {
           "language": "en-GB",
@@ -167,7 +174,7 @@
       "minNumberStudents": 2,
       "offeringId": "9cb176ad-5c89-9f35-78d0-981b45b08fa4",
       "resultExpected": true,
-      "flexibleEntryPeriodStart": "2003-09-01",
+      "flexibleEntryPeriodStartDateTime": "2003-09-01T07:36:30+00:00",
       "resultValueType": "US letter",
       "modeOfDelivery": [
         "hybrid",
@@ -177,16 +184,21 @@
       "pendingNumberStudents": 0,
       "addresses": null,
       "teachingLanguage": "eng",
-      "enrollStartDate": "2003-09-01",
-      "endDate": "2019-01-31",
+      "endDateTime": "2019-01-31T12:02:17+00:00",
       "academicSession": "373500c0-ce95-4956-664e-1c8776b9e195",
-      "startDate": "2003-09-01",
-      "flexibleEntryPeriodEnd": "2019-01-31",
+      "startDateTime": "2003-09-01T06:48:21+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-01-31T12:47:08+00:00",
       "consumer": {
         "consumerKey": "rio",
         "requiredPermissionRegistration": "yes",
         "registrationStatus": "open"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2003-09-01T00:00:00+00:00",
+          "endDateTime": "2019-01-31T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programme": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -196,7 +208,6 @@
         "code": "null"
       },
       "maxNumberStudents": 127,
-      "enrollEndDate": "2012-08-31",
       "name": [
         {
           "language": "en-GB",
@@ -229,7 +240,7 @@
       "minNumberStudents": 3,
       "offeringId": "56caae70-2010-fc5c-83b7-b5a2cd7764b7",
       "resultExpected": false,
-      "flexibleEntryPeriodStart": "2011-02-07",
+      "flexibleEntryPeriodStartDateTime": "2011-02-07T12:00:02+00:00",
       "resultValueType": "pass-or-fail",
       "modeOfDelivery": [
         "online"
@@ -238,16 +249,21 @@
       "pendingNumberStudents": 6,
       "addresses": null,
       "teachingLanguage": "nld",
-      "enrollStartDate": "2011-02-07",
-      "endDate": "2012-08-31",
+      "endDateTime": "2012-08-31T17:00:27+00:00",
       "academicSession": "f746c96d-ae3f-255a-6b55-ab8f3834e63e",
-      "startDate": "2011-02-07",
-      "flexibleEntryPeriodEnd": "2012-08-31",
+      "startDateTime": "2011-02-07T03:05:24+00:00",
+      "flexibleEntryPeriodEndDateTime": "2012-08-31T01:31:40+00:00",
       "consumer": {
         "consumerKey": "rio",
         "requiredPermissionRegistration": "no",
         "registrationStatus": "open"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2011-02-07T00:00:00+00:00",
+          "endDateTime": "2012-08-31T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programme": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -257,7 +273,6 @@
         "code": "null"
       },
       "maxNumberStudents": 93,
-      "enrollEndDate": "2015-08-31",
       "name": [
         {
           "language": "en-GB",
@@ -290,7 +305,7 @@
       "minNumberStudents": 2,
       "offeringId": "295ee25f-a69d-0f81-6a37-4c6bc346789f",
       "resultExpected": false,
-      "flexibleEntryPeriodStart": "1991-09-02",
+      "flexibleEntryPeriodStartDateTime": "1991-09-02T01:47:22+00:00",
       "resultValueType": "1-10",
       "modeOfDelivery": [
         "hybrid",
@@ -301,15 +316,20 @@
       "pendingNumberStudents": 10,
       "addresses": null,
       "teachingLanguage": "eng",
-      "enrollStartDate": "1991-09-02",
-      "endDate": "2015-08-31",
+      "endDateTime": "2015-08-31T06:23:59+00:00",
       "academicSession": "2b616db4-c6f4-ef58-7997-2c28974651d0",
-      "startDate": "1991-09-02",
-      "flexibleEntryPeriodEnd": "2015-08-31",
+      "startDateTime": "1991-09-02T03:22:54+00:00",
+      "flexibleEntryPeriodEndDateTime": "2015-08-31T13:07:16+00:00",
       "consumer": {
         "consumerKey": "rio",
         "registrationStatus": "closed"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "1991-09-02T00:00:00+00:00",
+          "endDateTime": "2015-08-31T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programme": "26316727-c4f4-4d0d-3aa8-f06eed0de000",
@@ -319,7 +339,6 @@
         "code": "null"
       },
       "maxNumberStudents": 160,
-      "enrollEndDate": "2019-01-31",
       "name": [
         {
           "language": "en-GB",
@@ -352,7 +371,7 @@
       "minNumberStudents": 5,
       "offeringId": "99c5e4eb-3623-25be-0de1-368d1690b817",
       "resultExpected": true,
-      "flexibleEntryPeriodStart": "2003-09-01",
+      "flexibleEntryPeriodStartDateTime": "2003-09-01T16:57:36+00:00",
       "resultValueType": "UK letter",
       "modeOfDelivery": [
         "distance-learning",
@@ -362,16 +381,21 @@
       "pendingNumberStudents": 8,
       "addresses": null,
       "teachingLanguage": "eng",
-      "enrollStartDate": "2003-09-01",
-      "endDate": "2019-01-31",
+      "endDateTime": "2019-01-31T17:05:29+00:00",
       "academicSession": "373500c0-ce95-4956-664e-1c8776b9e195",
-      "startDate": "2003-09-01",
-      "flexibleEntryPeriodEnd": "2019-01-31",
+      "startDateTime": "2003-09-01T11:38:16+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-01-31T22:31:03+00:00",
       "consumer": {
         "consumerKey": "rio",
         "requiredPermissionRegistration": "yes",
         "registrationStatus": "closed"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2003-09-01T00:00:00+00:00",
+          "endDateTime": "2019-01-31T00:00:00+00:00"
+        }
+      ]
     }
   ],
   "hasPreviousPage": false,

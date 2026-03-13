@@ -97,9 +97,6 @@
     }
   ],
   "parent": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
-  "children": [
-    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-  ],
   "coordinators": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
@@ -251,6 +248,7 @@
     "foreignPartners": [
       "Harvard University"
     ],
+    "variantIds": [ "497f6eca-6276-4993-bfeb-53cbbbba6f08" ],
     "deficiency": "deficiencies",
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
