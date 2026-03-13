@@ -13,10 +13,12 @@
   "children": [
     "{{programmes/specification-interaction-eduspec-child}}"
   ],
-  "studyLoad": {
-    "value": 93,
-    "studyLoadUnit": "sbu"
-  },
+  "studyLoad": [
+    {
+      "value": 93,
+      "studyLoadUnit": "sbu"
+    }
+  ],
   "fieldsOfStudy": "0912",
   "name": [
     {
