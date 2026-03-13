@@ -57,10 +57,6 @@
   "Enum used in Programs for studyChoiceCheck."
   #{"no_study_choice_check" "study_choice_check_available" "study_choice_check_mandatory"})
 
-(def educationSpecificationTypes
-  "Enum used in EducationSpecification for educationSpecificationType."
-  #{"program" "privateProgram" "cluster" "course"})
-
 (def formalDocumentTypes
   "Enum used in EducationSpecification for formalDocument."
   #{"diploma" "certificate" "no official document" "testimonial" "school advice"})
