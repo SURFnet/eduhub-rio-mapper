@@ -57,7 +57,6 @@
 
 (def ^:private mapping-course-program->aangeboden-opleiding
   {:buitenlandsePartner [:foreignPartners true]
-   :eersteInstroomDatum [:firstStartDate false]
    :onderwijsaanbiedercode [:educationOffererCode true]
    :onderwijslocatiecode [:educationLocationCode true]})
 
@@ -131,7 +130,7 @@
   "Given a course or program, a rio-consumer object and an id, return a function.
    This function, given a attribute name from the RIO namespace, returns the corresponding value from the course or program,
    translated if necessary to the RIO domain."
-  [{:keys [rioCode validFrom validTo offerings level modeOfStudy sector fieldsOfStudy consumer teachingLanguage timelineOverrides] :as course-program}
+  [{:keys [rioCode validFrom validTo offerings level modeOfStudy sector fieldsOfStudy consumer teachingLanguage timelineOverrides firstStartDateTime] :as course-program}
    opleidingscode
    ooapi-type]
   (let [duration-map (some-> consumer :duration parse-duration)
@@ -162,6 +161,7 @@
                      "voertaal"
                      (or (:teachingLanguages consumer)
                          teachingLanguage))
+          :eersteInstroomDatum (rio-helper/datetime->date firstStartDateTime)
 
           :cohorten (mapv #(course-program-offering-adapter %)
                           offerings)
