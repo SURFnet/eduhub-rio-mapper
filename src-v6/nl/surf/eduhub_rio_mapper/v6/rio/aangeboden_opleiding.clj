@@ -61,10 +61,7 @@
    :onderwijslocatiecode [:educationLocationCode true]})
 
 (def ^:private mapping-offering->cohort
-  {:beginAanmeldperiode :enrollStartDate
-   :deelnemersplaatsen :maxNumberStudents
-   :einddatum :endDate
-   :eindeAanmeldperiode :enrollEndDate
+  {:deelnemersplaatsen :maxNumberStudents
    :toelichtingVereisteToestemming :explanationRequiredPermission})
 
 (defn- course-program-timeline-override-adapter
@@ -114,25 +111,40 @@
                         (map #(rio-helper/ooapi-mapping "opleidingsvorm" %) modeOfDelivery))]
     (first (filter seq mapped-values))))
 
+(defn- first-item-consumer-backed
+  "Returns first item of property. If present in consumer, consumer has precedence. Expect a single item, reject otherwise."
+  [entity consumer key required?]
+  (when-let [value (or (key consumer) (key entity))]
+    (case (count value)
+      0 (when required? (throw (ex-info "Key is required" {:key key})))
+      1 (first value)
+      (throw (ex-info (str "RIO expects a single item in " key "; add single item array to consumer") {})))))
+
 (defn- course-program-offering-adapter
-  [{:keys [consumer startDate modeOfDelivery priceInformation
-           flexibleEntryPeriodStart flexibleEntryPeriodEnd] :as offering}]
-  (let [{:keys [registrationStatus requiredPermissionRegistration]} consumer]
+  [{:keys [consumer startDateTime endDateTime modeOfDelivery priceInformation
+           flexibleEntryPeriodStartDateTime flexibleEntryPeriodEndDateTime] :as offering}]
+  (let [{:keys [registrationStatus requiredPermissionRegistration]} consumer
+        period (first-item-consumer-backed offering consumer :enrolmentPeriods :required)
+        flexstart (rio-helper/datetime->date flexibleEntryPeriodStartDateTime)
+        flexend (rio-helper/datetime->date flexibleEntryPeriodEndDateTime)]
     (fn [ck]
       (if-let [translation (mapping-offering->cohort ck)]
         (translation offering)
         (case ck
+          :einddatum (rio-helper/datetime->date endDateTime)
           :bedrijfsopleiding nil    ; ignored
+          :beginAanmeldperiode (-> (:startDateTime period) rio-helper/datetime->date)
+          :eindeAanmeldperiode (-> (:endDateTime period) rio-helper/datetime->date)
           :cohortcode (-> offering :primaryCode :code)
           :cohortstatus (rio-helper/ooapi-mapping "cohortStatus" registrationStatus)
-          :flexibeleInstroom (and flexibleEntryPeriodStart {:beginInstroomperiode flexibleEntryPeriodStart
-                                                            :eindeInstroomperiode flexibleEntryPeriodEnd})
+          :flexibeleInstroom (and flexibleEntryPeriodStartDateTime {:beginInstroomperiode flexstart
+                                                                    :eindeInstroomperiode flexend})
           :opleidingsvorm (extract-opleidingsvorm modeOfDelivery consumer)
           :prijs (mapv (fn [h] {:soort (rio-helper/ooapi-mapping "soort" (:costType h)) :bedrag (:amount h)})
                        priceInformation)
           :toestemmingVereistVoorAanmelding (rio-helper/ooapi-mapping "toestemmingVereistVoorAanmelding"
                                                                       requiredPermissionRegistration)
-          :vastInstroommoment (when (nil? flexibleEntryPeriodStart) {:instroommoment startDate}))))))
+          :vastInstroommoment (when (nil? flexibleEntryPeriodStartDateTime) {:instroommoment (rio-helper/datetime->date startDateTime)}))))))
 
 (defn- course-program-adapter
   "Given a course or program, a rio-consumer object and an id, return a function.
