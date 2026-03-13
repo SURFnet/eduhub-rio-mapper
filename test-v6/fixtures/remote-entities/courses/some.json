@@ -11,7 +11,7 @@
   ],
   "validFrom": "1994-05-15",
   "validTo": "2050-11-10",
-  "firstStartDate": "1994-09-05",
+  "firstStartDateTime": "1994-09-05T08:30:00+01:00",
   "addresses": [
     {
       "countryCode": {

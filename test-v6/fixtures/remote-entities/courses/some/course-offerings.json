@@ -7,7 +7,12 @@
       "academicSessionId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "addresses": [
         {
-          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+          "countryCode": {
+            "iso3166-1-alpha2": "NL",
+            "iso3166-1-alpha3": "NLD",
+            "iso3166-2": "BQ-BO",
+            "iso3166-3": "ANHH"
+          },
           "city": "Manderveen",
           "geoLocation": {
             "longitude": 21,
@@ -25,14 +30,12 @@
         "situated",
         "distance-learning"
       ],
-      "enrollStartDate": "1994-09-05",
       "offeringType": "course",
       "resultExpected": false,
       "minNumberStudents": 3,
-      "startDate": "1994-09-05",
+      "startDateTime": "1994-09-05T22:04:02+00:00",
       "flexibleEntryPeriodStart": "1994-09-05",
-      "enrollEndDate": "1995-01-31",
-      "endDate": "1995-01-31",
+      "endDateTime": "1995-01-31T05:02:07+00:00",
       "primaryCode": {
         "codeType": "offeringCode",
         "code": "cafecafe-cafe-cafe-cafe-cafecafecafe"
@@ -69,15 +72,21 @@
       "enrolledNumberStudents": 57,
       "flexibleEntryPeriodEnd": "2026-01-31",
       "consumer": {
-          "consumerKey": "rio",
-          "requiredPermissionRegistration": "no",
-          "registrationStatus": "open"
-        },
+        "consumerKey": "rio",
+        "requiredPermissionRegistration": "no",
+        "registrationStatus": "open"
+      },
       "programmeOfferingId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "programOffering": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "maxNumberStudents": 137,
       "abbreviation": "MB",
-      "resultValueType": "0-100"
+      "resultValueType": "0-100",
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "1994-09-05T00:00:00+00:00",
+          "endDateTime": "1995-01-31T00:00:00+00:00"
+        }
+      ]
     }
   ],
   "hasPreviousPage": false,
