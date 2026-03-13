@@ -18,14 +18,14 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.job-test
   (:require
-    [clj-http.client :as client]
-    [clojure.data.json :as json]
-    [clojure.test :refer :all]
-    [nl.jomco.http-status-codes :as http-status]
-    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-    [nl.surf.eduhub-rio-mapper.v6.endpoints.status :as status]
-    [nl.surf.eduhub-rio-mapper.v6.job :as job]
-    [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper])
+   [clj-http.client :as client]
+   [clojure.data.json :as json]
+   [clojure.test :refer :all]
+   [nl.jomco.http-status-codes :as http-status]
+   [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+   [nl.surf.eduhub-rio-mapper.v6.endpoints.status :as status]
+   [nl.surf.eduhub-rio-mapper.v6.job :as job]
+   [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper])
   (:refer-clojure :exclude [run!]))
 
 (def dummy-handlers {:delete! identity, :update! identity, :dry-run! identity, :link! identity})

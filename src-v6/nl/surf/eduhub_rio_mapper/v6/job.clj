@@ -36,10 +36,10 @@
          delete! update! dry-run! link!
          (boolean? http-logging-enabled)]}
   (let [log-context (assoc trace-context
-                      :token token
-                      :institution-schac-home institution-schac-home
-                      :institution-oin institution-oin
-                      :institution-name institution-name)
+                           :token token
+                           :institution-schac-home institution-schac-home
+                           :institution-oin institution-oin
+                           :institution-name institution-name)
         job         (select-keys request [:action
                                           :args
                                           :institution-oin
@@ -55,13 +55,13 @@
         (try
           (with-context trace-context
             (let [handler (case action
-                           "delete" delete!
-                           "upsert" update!
-                           "dry-run-upsert" dry-run!
-                           "link" link!)]
+                            "delete" delete!
+                            "upsert" update!
+                            "dry-run-upsert" dry-run!
+                            "link" link!)]
               (cond-> (handler job)
-                      *http-messages*
-                      (assoc :http-messages @*http-messages*))))
+                *http-messages*
+                (assoc :http-messages @*http-messages*))))
           (catch Exception ex
             (let [error-id                   (UUID/randomUUID)
                   {:keys [phase retryable?]} (ex-data ex)]
@@ -73,6 +73,6 @@
                                        :message       (ex-message ex)
                                        ;; we default to retrying, since that captures
                                        ;; all kinds of unexpected issues.
-                                      :retryable?    (not= retryable? false)}}
-                      *http-messages*
-                      (assoc :http-messages @*http-messages*)))))))))
+                                       :retryable?    (not= retryable? false)}}
+                *http-messages*
+                (assoc :http-messages @*http-messages*)))))))))

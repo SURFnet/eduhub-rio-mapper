@@ -51,7 +51,7 @@
 
       "get"
       (if (string? result) (println result)
-                           (pprint/pprint result))
+          (pprint/pprint result))
 
       ("dry-run-upsert" "link")
       (pprint/pprint result)

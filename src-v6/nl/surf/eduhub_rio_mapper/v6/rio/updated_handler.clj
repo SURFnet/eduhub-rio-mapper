@@ -21,10 +21,10 @@
             [nl.surf.eduhub-rio-mapper.specs.mutation :as mutation]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as-alias ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-            [nl.surf.eduhub-rio-mapper.v6.ooapi.base :as ooapi-base]
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opl]
             [nl.surf.eduhub-rio-mapper.v6.rio.opleidingseenheid :as opl-eenh]
-            [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]))
+            [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as relation-handler]
+            [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]))
 
 ;; We have full entities in the request for upserts and then we need to
 ;; also fetch the education-specification from the entity if it's a
@@ -37,9 +37,10 @@
 (defn update-mutation
   "Returned object conforms to ::Mutation/mutation-response."
   [{:keys [institution-oin args]
-    ::ooapi/keys [id entity type education-specification-type]
-    ::rio/keys [opleidingscode aangeboden-opleiding-code]}]
-  {:pre [(or (not= type "program") education-specification-type)]
+    ::ooapi/keys [id entity type]
+    ::ooapi-v6/keys [specification-type]
+    ::rio/keys [opleidingscode aangeboden-opleiding-code] :as job}]
+  {:pre [(or (not= type "program") specification-type)]
    :post [(s/valid? ::mutation/mutation-response %)]}
   (assert institution-oin)
   (if (and (not (#{"education-specification" "relation"} type))
@@ -47,7 +48,7 @@
     ;; If we're not inserting a new education-specification or a
     ;; relation we need a rio code (from an earlier inserted
     ;; education-specification).
-    (let [id (ooapi-base/education-specification-id entity)]
+    (let [id (-> entity :consumer :specificationId)]
       (throw (ex-info (str "Education specification " id " not yet known by RIO updating " type)
                       {:entity     entity
                        :retryable? false})))
@@ -66,17 +67,11 @@
          :sender-oin institution-oin
          :rio-sexp   [(opl-eenh/education-specification->opleidingseenheid entity)]}
 
-        "course"
+        ("course" "program")
         {:action     "aanleveren_aangebodenOpleiding"
          :ooapi      entity
          :sender-oin institution-oin
-         :rio-sexp   [(aangeboden-opl/->aangeboden-opleiding entity :course opleidingscode "course")]}
-
-        "program"
-        {:action     "aanleveren_aangebodenOpleiding"
-         :ooapi      entity
-         :sender-oin institution-oin
-         :rio-sexp   [(aangeboden-opl/->aangeboden-opleiding entity :program opleidingscode education-specification-type)]}
+         :rio-sexp   [(aangeboden-opl/->aangeboden-opleiding entity (keyword type) opleidingscode (select-keys job [::ooapi-v6/specification-type]))]}
 
         "relation"
         (let [[object-code valid-from valid-to] args]

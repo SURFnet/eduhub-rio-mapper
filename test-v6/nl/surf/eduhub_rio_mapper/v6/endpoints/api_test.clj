@@ -30,8 +30,8 @@
 
 (defn authenticated-request [method path]
   (assoc (request method path)
-    :client-id 123
-    :institution-oin "123"))
+         :client-id 123
+         :institution-oin "123"))
 
 (def config nil)
 (def last-job (atom nil))
@@ -43,13 +43,13 @@
 
 (deftest routes
   (are [method path]
-      (= http-status/bad-request (:status (api-routes (authenticated-request method path))))
+       (= http-status/bad-request (:status (api-routes (authenticated-request method path))))
     :get  "/status/1"
     :post "/job/upsert/courses/bleh"
     :post "/job/link/1234O4321/courses/abcdefgh-ijkl-mnop-qrst-uvwxyzabcdef")
 
   (are [method path]
-      (is (= http-status/not-found (:status (api-routes (authenticated-request method path)))))
+       (is (= http-status/not-found (:status (api-routes (authenticated-request method path)))))
     :get  "/blerk"
     :get  "/job/upsert/courses/31415"
     :get  "/status"
@@ -57,12 +57,12 @@
     :post "/job/blerk/courses/12345678-1234-2345-3456-123456789abc")
 
   (are [expected-job path]
-      (let [{:keys [job status]} (-> :post
-                                     (authenticated-request path)
-                                     (assoc :institution-schac-home "edu.nl")
-                                     api-routes)]
-        (is (= http-status/created status))
-        (is (= expected-job job)))
+       (let [{:keys [job status]} (-> :post
+                                      (authenticated-request path)
+                                      (assoc :institution-schac-home "edu.nl")
+                                      api-routes)]
+         (is (= http-status/created status))
+         (is (= expected-job job)))
 
     {:action                 "upsert"
      ::ooapi/type            "course"
@@ -157,7 +157,7 @@
 
   (is (= "12345678-1234-2345-3456-123456789abc"
          (-> (assoc (request :get "/status/12345678-1234-2345-3456-123456789abc")
-               :client-id "123")
+                    :client-id "123")
              (api-routes)
              :token))))
 
@@ -176,17 +176,17 @@
 
   (is (= http-status/ok
          (:status (api-routes (assoc (request :get "/status/12345678-1234-2345-3456-123456789abc")
-                                :client-id "wolfgang"
-                                :institution-oin "123",
-                                :institution-schac-home "uu.nl"))))
-        "real client, status request")
+                                     :client-id "wolfgang"
+                                     :institution-oin "123",
+                                     :institution-schac-home "uu.nl"))))
+      "real client, status request")
 
   (is (= http-status/created
          (:status (api-routes (assoc (request :post "/job/delete/courses/12345678-1234-2345-3456-123456789abc")
-                                :client-id "wolfgang"
-                                :institution-oin "123",
-                                :institution-schac-home "uu.nl"))))
-        "real client, mutation request"))
+                                     :client-id "wolfgang"
+                                     :institution-oin "123",
+                                     :institution-schac-home "uu.nl"))))
+      "real client, mutation request"))
 
 (deftest wrap-code-validator
   (let [app (api/wrap-code-validator identity)]
@@ -280,8 +280,8 @@
         status {:http-messages http-messages-json, :profile "rio"}
         f (fn mocked-wrap-status-getter [req status-getter]
             (let [f (api/wrap-status-getter
-                      (fn [req] {:token (:token req)})
-                      {:status-getter-fn status-getter})]
+                     (fn [req] {:token (:token req)})
+                     {:status-getter-fn status-getter})]
               (f req)))]
     (testing "Token is nil"
       (let [actual (f {:token nil} (constantly status))]
@@ -378,7 +378,7 @@
                      :started-at nil
                      :resource "test/314"}}
            (cond-> (app {:token "test-pending"})
-                   :created-at (assoc-in [:body :created-at] true))))
+             :created-at (assoc-in [:body :created-at] true))))
 
     ;; test done status
     (is (= {:token  "test-done"
@@ -392,8 +392,8 @@
                      :finished-at true
                      :attributes {:opleidingseenheidcode "code"}}}
            (cond-> (app {:token "test-done"})
-                   :created-at (assoc-in [:body :created-at] true)
-                   :finished-at (assoc-in [:body :finished-at] true))))
+             :created-at (assoc-in [:body :created-at] true)
+             :finished-at (assoc-in [:body :finished-at] true))))
 
     ;; test error status
     (is (= {:token  "test-error"
@@ -408,8 +408,8 @@
                      :phase    "middle"
                      :message  "error"}}
            (cond-> (app {:token "test-error"})
-                   :created-at (assoc-in [:body :created-at] true)
-                   :finished-at (assoc-in [:body :finished-at] true))))
+             :created-at (assoc-in [:body :created-at] true)
+             :finished-at (assoc-in [:body :finished-at] true))))
     (status/purge! config)))
 
 (deftest jobqueue
@@ -425,11 +425,11 @@
 
 (deftest status-http-messages
   (let [http-message (-> (slurp "test-v6/fixtures/http-messages-1.json")
-                          (json/read-str :key-fn keyword)
-                          :http-messages
-                          first
-                          stringify-headers
-                          api/add-single-parsed-json-response)]
+                         (json/read-str :key-fn keyword)
+                         :http-messages
+                         first
+                         stringify-headers
+                         api/add-single-parsed-json-response)]
     (is (string? (get-in http-message [:res :body])))
     (is (map? (get-in http-message [:res :json-body])))
     (is (= "/programs/0f212491-c96a-4141-8718-86d40a4ebfd3?returnTimelineOverrides=true"

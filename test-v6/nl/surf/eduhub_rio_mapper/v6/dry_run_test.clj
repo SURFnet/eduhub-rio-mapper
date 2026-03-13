@@ -45,8 +45,8 @@
     (testing "education-specifications"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-dryrun" 1 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "afb435cc-5352-f55f-a548-41c9dfd60002"
-                                 ::ooapi/type "education-specification"))]
+                                      ::ooapi/id "afb435cc-5352-f55f-a548-41c9dfd60002"
+                                      ::ooapi/type "education-specification"))]
           (is (some? result))
           (is (= {:begindatum {:diff false},
                   :eigenOpleidingseenheidSleutel {:diff false},
@@ -61,8 +61,8 @@
     (testing "education-specifications"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-dryrun" 2 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "9338214e-3978-484c-676d-427303a92748"
-                                 ::ooapi/type "education-specification"))]
+                                      ::ooapi/id "9338214e-3978-484c-676d-427303a92748"
+                                      ::ooapi/type "education-specification"))]
           (is (some? result))
           (is (= {:begindatum {:diff false},
                   :eigenOpleidingseenheidSleutel {:diff false},
@@ -77,8 +77,8 @@
     (testing "education-specifications with timelineOverride"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/opleenh-dryrun" 3 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "cdecdecd-5352-f55f-a548-41c9dfd60002"
-                                 ::ooapi/type "education-specification"))]
+                                      ::ooapi/id "cdecdecd-5352-f55f-a548-41c9dfd60002"
+                                      ::ooapi/type "education-specification"))]
           (is (some? result))
           (is (= {:begindatum {:diff false},
                   :eigenOpleidingseenheidSleutel {:diff false},
@@ -95,8 +95,8 @@
     (testing "course with timelineOverrides"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-dryrun" 5 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "3c358c84-dfc3-4a30-874e-0b70db15638b"
-                                 ::ooapi/type "course"))]
+                                      ::ooapi/id "3c358c84-dfc3-4a30-874e-0b70db15638b"
+                                      ::ooapi/type "course"))]
           (is (= {:begindatum {:diff false}
                   :eigenNaamInternationaal {:diff true,
                                             :current "OVERRIDE EN TRANSLATION: Micro Biotechnologie",
@@ -117,8 +117,8 @@
     (testing "courses with a timeline override"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-dryrun" 5 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "3c358c84-dfc3-4a30-874e-0b70db15638b"
-                                 ::ooapi/type "course"))]
+                                      ::ooapi/id "3c358c84-dfc3-4a30-874e-0b70db15638b"
+                                      ::ooapi/type "course"))]
           (is (= {:begindatum {:diff false},
                   :eigenNaamInternationaal {:diff true,
                                             :current "OVERRIDE EN TRANSLATION: Micro Biotechnologie",
@@ -139,16 +139,16 @@
     (testing "course not in ooapi"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-dryrun" 2 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "44444444-dfc3-4a30-874e-0b70db15638a"
-                                 ::ooapi/type "course"))]
+                                      ::ooapi/id "44444444-dfc3-4a30-874e-0b70db15638a"
+                                      ::ooapi/type "course"))]
           (is (= {:status "error"}
                  (:dry-run result))))))
 
     (testing "courses"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-dryrun" 3 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "4c358c84-dfc3-4a30-874e-0b70db15638b"
-                                 ::ooapi/type "course"))]
+                                      ::ooapi/id "4c358c84-dfc3-4a30-874e-0b70db15638b"
+                                      ::ooapi/type "course"))]
           (is (= {:begindatum {:diff false},
                   :eigenNaamInternationaal {:diff false},
                   :eigenNaamAangebodenOpleiding {:diff false},
@@ -173,8 +173,8 @@
     (testing "course not in RIO"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-dryrun" 4 "finder")]
         (let [result (dry-run! (assoc client-info
-                                 ::ooapi/id "4c358c84-dfc3-4a30-874e-0b70db15638b"
-                                 ::ooapi/type "course"))]
+                                      ::ooapi/id "4c358c84-dfc3-4a30-874e-0b70db15638b"
+                                      ::ooapi/type "course"))]
           (is (= {:begindatum
                   {:diff true, :current nil, :proposed "2017-01-01"},
                   :eigenNaamInternationaal
