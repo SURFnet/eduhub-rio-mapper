@@ -46,9 +46,6 @@
   ],
   "link": "https://shell.nl",
   "parent": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
-  "children": [
-    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-  ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "ext": {},
   "validFrom": "2019-08-24",
@@ -70,6 +67,7 @@
   "consumer": {
     "consumerKey": "rio",
     "specificationType": "programme",
+    "variantIds": [ "497f6eca-6276-4993-bfeb-53cbbbba6f08" ],
     "variantOf": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
   },
   "programmeType": "specification"
