@@ -10,10 +10,12 @@
     }
   ],
   "validFrom": "2016-12-16",
-  "studyLoad": {
-    "value": 128,
-    "studyLoadUnit": "ects"
-  },
+  "studyLoad": [
+    {
+      "value": 128,
+      "studyLoadUnit": "ects"
+    }
+  ],
   "parent": "{{programmes/specification-interaction-eduspec-parent}}",
   "fieldsOfStudy": "0612",
   "name": [
