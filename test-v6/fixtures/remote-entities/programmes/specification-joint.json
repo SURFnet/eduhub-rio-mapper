@@ -60,10 +60,12 @@
     }
   ],
   "levelOfQualification": "6",
-  "studyLoad": {
-    "value": 93,
-    "studyLoadUnit": "sbu"
-  },
+  "studyLoad": [
+    {
+      "value": 93,
+      "studyLoadUnit": "sbu"
+    }
+  ],
   "consumer": {
     "consumerKey": "rio",
     "category": [
