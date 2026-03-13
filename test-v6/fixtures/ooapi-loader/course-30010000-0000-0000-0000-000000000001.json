@@ -89,7 +89,7 @@
       "code": "string"
     }
   ],
-  "consumers": [
+  "consumer":
     {
       "consumerKey": "rio",
       "educationOffererCode": "123A321",
@@ -102,8 +102,7 @@
       "foreignPartners": [
         "Harvard University"
       ]
-    }
-  ],
+    },
   "ext": {},
   "programs": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
@@ -180,7 +179,6 @@
           }
         ],
         "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
-        "educationSpecification": "9fa40013-369e-4f7a-839b-5bf76128b51e",
         "addresses": [
           {
             "addressType": "postal",
@@ -208,7 +206,7 @@
             "code": "string"
           }
         ],
-        "consumers": [
+        "consumer":
           {
             "consumerKey": "rio",
             "educationOffererCode": "123A321",
@@ -218,8 +216,7 @@
               "999A123"
             ],
             "foreignPartners": "Harvard University"
-          }
-        ],
+          } ,
         "ext": {},
         "programs": [
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
