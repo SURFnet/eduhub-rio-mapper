@@ -387,6 +387,15 @@
        (is (job-done? last-job))
        (is (nil? (rio-resolve "education-specification" child-code)))))))
 
+(deftest ^:v5-e2e test-insert-variant-eduspecs
+  (testing "insert eduspec child-program"
+    ;; this should fail because its parent (parent-program) is not present in RIO
+    ;; if the program tests fails before deletion of parent-program, this test will fail too
+    (binding [last-job (post-job :upsert :education-specifications "child-program")]
+      (and
+       (is last-job)
+       (is (job-error? last-job))))))
+
 (def ^:dynamic course-id nil)
 
 (deftest ^:v5-e2e test-course-with-eduspecs
