@@ -117,8 +117,8 @@
         handlers             (processing/make-handlers {:rio-config rio-config
                                                         :gateway-root-url (:gateway-root-url config)
                                                         :gateway-credentials (:gateway-credentials config)})
-        eduspec-parent-id    (entity-name-to-id "education-specifications/interaction-eduspec-parent")
-        eduspec-child-id     (entity-name-to-id "education-specifications/interaction-eduspec-child")
+        eduspec-parent-id    (entity-name-to-id "education-specifications/specification-interaction-eduspec-parent")
+        eduspec-child-id     (entity-name-to-id "education-specifications/specification-interaction-eduspec-child")
         program-id           (entity-name-to-id "programmes/interaction-programme-some")
 
         runner               (make-runner handlers
