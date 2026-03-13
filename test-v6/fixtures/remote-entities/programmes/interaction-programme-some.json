@@ -84,7 +84,7 @@
   "teachingLanguage": "eng",
   "level": "nt2-2",
   "levelOfQualification": "2",
-  "firstStartDate": "2020-01-31",
+  "firstStartDateTime": "2020-01-31T08:30:00+01:00",
   "qualificationAwarded": "Phd",
   "link": "https://universiteit-van-morra.nl/programs/{{programmes/interaction-programme-some}}",
   "otherCodes": [

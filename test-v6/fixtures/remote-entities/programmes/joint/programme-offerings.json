@@ -44,10 +44,8 @@
         }
       ],
       "ext": {},
-      "startDate": "2019-08-21",
-      "endDate": "2023-06-15",
-      "enrollStartDate": "2019-05-01",
-      "enrollEndDate": "2019-08-01",
+      "startDateTime": "2019-08-21T05:23:22+00:00",
+      "endDateTime": "2023-06-15T12:21:08+00:00",
       "flexibleEntryPeriodStart": "2019-08-24",
       "flexibleEntryPeriodEnd": "2019-09-24",
       "addresses": [
@@ -102,7 +100,13 @@
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
         "requiredPermissionRegistration": "yes",
         "registrationStatus": "open"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2019-05-01T00:00:00+00:00",
+          "endDateTime": "2019-08-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programmeOfferingId": "fadefade-fade-fade-fade-fadefadefade",
@@ -143,10 +147,8 @@
         }
       ],
       "ext": {},
-      "startDate": "2019-08-25",
-      "endDate": "2023-06-15",
-      "enrollStartDate": "2019-05-01",
-      "enrollEndDate": "2019-08-01",
+      "startDateTime": "2019-08-25T06:42:17+00:00",
+      "endDateTime": "2023-06-15T16:25:12+00:00",
       "flexibleEntryPeriodStart": "2019-08-27",
       "flexibleEntryPeriodEnd": "2019-09-24",
       "addresses": [
@@ -201,7 +203,13 @@
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
         "requiredPermissionRegistration": "yes",
         "registrationStatus": "open"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2019-05-01T00:00:00+00:00",
+          "endDateTime": "2019-08-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programmeOfferingId": "beadbead-bead-bead-bead-beadbeadbead",
@@ -242,10 +250,8 @@
         }
       ],
       "ext": {},
-      "startDate": "2019-08-29",
-      "endDate": "2023-06-15",
-      "enrollStartDate": "2019-05-01",
-      "enrollEndDate": "2019-08-01",
+      "startDateTime": "2019-08-29T22:59:43+00:00",
+      "endDateTime": "2023-06-15T01:40:13+00:00",
       "flexibleEntryPeriodStart": "2019-08-31",
       "flexibleEntryPeriodEnd": "2019-09-24",
       "addresses": [
@@ -300,7 +306,13 @@
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
         "requiredPermissionRegistration": "yes",
         "registrationStatus": "open"
-      }
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2019-05-01T00:00:00+00:00",
+          "endDateTime": "2019-08-01T00:00:00+00:00"
+        }
+      ]
     }
   ],
   "ext": {}
