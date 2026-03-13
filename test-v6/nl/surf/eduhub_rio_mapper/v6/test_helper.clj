@@ -53,8 +53,8 @@
   "Loads ooapi fixtures from file and fakes resolver."
   [{::ooapi/keys [type] :as req} resolver ooapi-loader]
   (-> (cond->> (merge req test-client-info)
-               (not= "relation" type)
-               (ooapi.loader/load-entities ooapi-loader))
+        (not= "relation" type)
+        (ooapi.loader/load-entities ooapi-loader))
       (test-resolve-request resolver)
       updated-handler/update-mutation))
 
