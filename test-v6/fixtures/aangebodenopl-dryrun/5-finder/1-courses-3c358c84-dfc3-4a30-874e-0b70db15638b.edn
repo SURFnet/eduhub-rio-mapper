@@ -1,7 +1,7 @@
 {:request
  {:method :get,
   :url
-  "https://gateway.test.surfeduhub.nl/courses/3c358c84-dfc3-4a30-874e-0b70db15638b?returnTimelineOverrides=true",
+  "https://gateway-v6-sandbox.dev.surfeduhub.nl/courses/3c358c84-dfc3-4a30-874e-0b70db15638b?returnTimelineOverrides=true",
   :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"}},
  :response
  {:status 200N,
