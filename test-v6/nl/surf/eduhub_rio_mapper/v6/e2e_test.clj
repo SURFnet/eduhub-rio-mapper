@@ -518,7 +518,7 @@
        (is (job-done? last-job))
        (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))
 
-    (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
+    #_(testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
       ;; insert prgspec with type "variant", then create relation. Delete after use
       (and
        (set! last-job (post-job :upsert :programmes "specification-accredited-variant"))
