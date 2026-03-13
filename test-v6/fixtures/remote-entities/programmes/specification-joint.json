@@ -1,8 +1,5 @@
 {
   "level": "bachelor",
-  "children": [
-    "{{programmes/specification-child-program}}"
-  ],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "programmeType": "specification",
   "programmeId": "{{programmes/specification-joint}}",
@@ -75,6 +72,7 @@
       "language_and_culture",
       "technology_and_ict"
     ],
+    "variantIds": [ "{{programmes/specification-child-program}}" ],
     "specificationType": "programme"
   }
 }

@@ -46,8 +46,8 @@
       "ext": {},
       "startDateTime": "2019-08-21T14:24:17+00:00",
       "endDateTime": "2023-06-15T15:59:03+00:00",
-      "flexibleEntryPeriodStart": "2019-08-24",
-      "flexibleEntryPeriodEnd": "2019-09-24",
+      "flexibleEntryPeriodStartDateTime": "2019-08-24T10:20:58+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-09-24T06:49:17+00:00",
       "addresses": [
         {
           "addressType": "postal",
@@ -149,8 +149,8 @@
       "ext": {},
       "startDateTime": "2019-08-25T20:44:35+00:00",
       "endDateTime": "2023-06-15T04:47:55+00:00",
-      "flexibleEntryPeriodStart": "2019-08-27",
-      "flexibleEntryPeriodEnd": "2019-09-24",
+      "flexibleEntryPeriodStartDateTime": "2019-08-27T11:48:46+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-09-24T21:30:47+00:00",
       "addresses": [
         {
           "addressType": "postal",
@@ -252,8 +252,8 @@
       "ext": {},
       "startDateTime": "2019-08-29T07:43:20+00:00",
       "endDateTime": "2023-06-15T22:38:49+00:00",
-      "flexibleEntryPeriodStart": "2019-08-31",
-      "flexibleEntryPeriodEnd": "2019-09-24",
+      "flexibleEntryPeriodStartDateTime": "2019-08-31T20:33:25+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-09-24T16:34:25+00:00",
       "addresses": [
         {
           "addressType": "postal",
