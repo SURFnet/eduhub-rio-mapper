@@ -1,10 +1,8 @@
 {
-  "programId": "123e4567-e89b-12d3-a456-426614174000",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "string"
   },
-  "programType": "program",
   "name": [
     {
       "language": "en-GB",
@@ -71,7 +69,6 @@
     }
   ],
   "link": "https://bijvak.nl",
-  "educationSpecification": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -107,25 +104,6 @@
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
-  "consumers": [
-    {
-      "consumerKey": "rio",
-      "educationOffererCode": "110A133",
-      "educationLocationCode": "123X122",
-      "consentParticipationSTAP": "permission_granted",
-      "jointPartnerCodes": [
-        "122A113"
-      ],
-      "foreignPartners": [
-        "Harvard University"
-      ],
-      "deficiency": "deficiencies",
-      "requirementsActivities": "requirements",
-      "propaedeuticPhase": "no_propaedeutic_phase",
-      "studyChoiceCheck": "no_study_choice_check",
-      "acceleratedRoute": "accelerated_route"
-    }
-  ],
   "ext": {},
   "validFrom": "2019-08-24",
   "validTo": "2019-08-24",
@@ -241,7 +219,7 @@
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
-        "consumers": [
+        "consumer":
           {
             "consumerKey": "rio",
             "educationOffererCode": "122A112",
@@ -258,10 +236,28 @@
             "propaedeuticPhase": "no_propaedeutic_phase",
             "studyChoiceCheck": "no_study_choice_check",
             "acceleratedRoute": "accelerated_route"
-          }
-        ],
+          },
         "ext": {}
       }
     }
-  ]
+  ],
+  "consumer": {
+    "consumerKey": "rio",
+    "educationOffererCode": "110A133",
+    "educationLocationCode": "123X122",
+    "jointPartnerCodes": [
+      "122A113"
+    ],
+    "foreignPartners": [
+      "Harvard University"
+    ],
+    "deficiency": "deficiencies",
+    "requirementsActivities": "requirements",
+    "propaedeuticPhase": "no_propaedeutic_phase",
+    "studyChoiceCheck": "no_study_choice_check",
+    "acceleratedRoute": "accelerated_route",
+    "specificationId": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
+  },
+  "programmeType": "programme",
+  "programmeId": "123e4567-e89b-12d3-a456-426614174000"
 }
