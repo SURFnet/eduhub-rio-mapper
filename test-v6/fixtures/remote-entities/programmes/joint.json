@@ -173,7 +173,7 @@
     "consumerKey": "rio",
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
-    "jointProgram": true,
+    "jointProgramme": true,
     "educationLocationCode": "107X215",
     "specificationId": "{{programmes/specification-parent-program}}"
   },
