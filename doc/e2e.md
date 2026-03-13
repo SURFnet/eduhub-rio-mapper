@@ -36,9 +36,12 @@ In order to run the end-to-end tests, the following things should have been take
 
 - an application account on the test gateway which provides access to the above Object Store
 
-    - `GATEWAY_ROOT_URL`
-    - `GATEWAY_USER`
-    - `GATEWAY_PASSWORD`
+    - `GATEWAY_ROOT_URL_V5`
+    - `GATEWAY_USER_V5`
+    - `GATEWAY_PASSWORD_V5`
+    - `GATEWAY_ROOT_URL_V6`
+    - `GATEWAY_USER_V6`
+    - `GATEWAY_PASSWORD_V6`
 
 If the mapper is running locally (happens automatically):
 
