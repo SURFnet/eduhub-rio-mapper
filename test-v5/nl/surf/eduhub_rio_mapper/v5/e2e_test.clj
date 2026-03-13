@@ -507,6 +507,8 @@
       (set! last-job (post-job :unlink parent-code :education-specifications))
       (and
        (is (job-done? last-job))
+       (is (not= (str generated-sleutel)
+                 (eigen-opleidingseenheid-sleutel parent-code)))
        (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))
 
     (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
