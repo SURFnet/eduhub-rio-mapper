@@ -1,11 +1,12 @@
 {
   "level": "bachelor",
-  "parent": "{{education-specifications/bonusparent-program}}",
+  "parent": "{{programmes/specification-parent-program}}",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
-  "educationSpecificationType": "program",
-  "educationSpecificationId": "{{education-specifications/bonuschild-program}}",
+  "programmeType": "programme",
+  "programmeId": "{{programmes/specification-child-program}}",
   "validFrom": "2016-12-15",
   "abbreviation": "OT",
+  "validTo": "2025-04-25",
   "learningOutcomes": [
     [
       {
@@ -23,18 +24,18 @@
   "name": [
     {
       "language": "en-GB",
-      "value": "bonuschild-program education specification"
+      "value": "child-program education specification"
     },
     {
       "language": "nl-NL",
-      "value": "bonuschild-program education specification"
+      "value": "child-program education specification"
     }
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{education-specifications/bonuschild-program}}"
+    "code": "{{programmes/specification-child-program}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/bonuschild-program}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-child-program}}",
   "fieldsOfStudy": "0612",
   "description": [
     {
