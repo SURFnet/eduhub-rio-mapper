@@ -11,10 +11,10 @@
     }
   ],
   "abbreviation": "INFOMQNM",
-  "studyLoad": {
+  "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 3
-  },
+  }],
   "modeOfDelivery": [
     "situated"
   ],
@@ -129,10 +129,10 @@
           }
         ],
         "abbreviation": "INFOMQNM",
-        "studyLoad": {
+        "studyLoad": [{
           "studyLoadUnit": "ects",
           "value": 3
-        },
+        }],
         "modeOfDelivery": [
           "situated"
         ],
