@@ -233,6 +233,7 @@
   the job result at `:result-delay`."
   [action & args]
   {:pre [(#{:upsert :delete :link :unlink :status :dry-run/upsert} action)]}
+  (spit "logs/e2e-v5-posted-jobs.log" (str action " " (prn-str args)) :append true)
   (let [{:keys [status] {:keys [token]} :body :as res}
         (call-api action args)]
     (assoc res :result-delay
