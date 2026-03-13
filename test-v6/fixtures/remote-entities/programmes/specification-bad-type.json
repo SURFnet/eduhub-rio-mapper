@@ -58,20 +58,18 @@
     }
   ],
   "levelOfQualification": "6",
-  "consumers": [
-    {
-      "consumerKey": "rio",
-      "category": [
-        "business_and_project_support",
-        "education",
-        "cross_sectoral",
-        "language_and_culture",
-        "technology_and_ict"
-      ]
-    }
-  ],
   "studyLoad": {
     "value": 93,
     "studyLoadUnit": "sbu"
+  },
+  "consumer": {
+    "consumerKey": "rio",
+    "category": [
+      "business_and_project_support",
+      "education",
+      "cross_sectoral",
+      "language_and_culture",
+      "technology_and_ict"
+    ]
   }
 }
