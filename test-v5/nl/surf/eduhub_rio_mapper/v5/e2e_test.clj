@@ -37,24 +37,24 @@
         body (json/write-str updated-entity)]
     (remote-helper/os-put-object info container-name {:path path, :body body})))
 
-(deftest ^:e2e try-to-create-a-program-with-invalid-data
+(deftest ^:v5-e2e try-to-create-a-program-with-invalid-data
   (testing "scenario [6a]: Test /job/upsert with a program with an invalid onderwijsaanbieder attribute. You can expect 'error'."
     (is (job-error? (post-job :upsert :programs "bad-edu-offerer"))))
 
   (testing "scenario [6b]: Test /job/upsert with a program with an invalid onderwijslocatie attribute. You can expect 'error'."
     (is (job-error? (post-job :upsert :programs "bad-edu-location")))))
 
-(deftest ^:e2e try-to-create-edspecs-with-invalid-data
+(deftest ^:v5-e2e try-to-create-edspecs-with-invalid-data
   (testing "scenario [3a]: Test /job/upsert/<invalid type> to see how the rio mapper reacts on an invalid api call. You can expect a 404 response."
     (is (= http-status/not-found (:status (post-job :upsert "not-a-valid-type" (UUID/randomUUID))))))
 
-  (testing "scenario [3b]: Test /job/upsert with an edspec parent with an invalid type attribute. You can expect 'error'."
+  (testing "scenario [3b]: Test /job/upsert with an edspec parent with an invalid educationSpecificationType attribute. You can expect 'error'."
     (let [job (post-job :upsert :education-specifications "bad-type")]
       (and
        (is (job-error? job))
        (is (= "fetching-ooapi" (job-result job :phase)))))))
 
-(deftest ^:e2e test-program-without-eduspecs
+(deftest ^:v5-e2e test-program-without-eduspecs
   (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
     (and
      (is (nil? (rio-resolve "education-specification" (ooapi-id :education-specifications "dorothy"))))
@@ -64,7 +64,7 @@
         (is (str/starts-with? (job-result job :message)
                               "No 'opleidingseenheid' found in RIO with eigensleutel:")))))))
 
-(deftest ^:e2e test-upsert-eduspec-dry-run
+(deftest ^:v5-e2e test-upsert-eduspec-dry-run
   (testing "scenario [1a]: Test /job/dry-run to see the difference between the edspec parent in OOAPI en de opleidingeenheid in RIO. You can expect RIO to be empty, when you start fresh."
     (let [job (post-job :dry-run/upsert :education-specifications "orphan-eduspec")]
       (and
@@ -85,7 +85,7 @@
 (def ^:dynamic bonus-parent-code nil)
 (def ^:dynamic bonus-child-code nil)
 
-(deftest ^:e2e test-program-with-eduspecs
+(deftest ^:v5-e2e test-program-with-eduspecs
   ;; insert eduspec "parent-program"
   (binding [last-job (post-job :upsert :education-specifications "parent-program")
             parent-code nil
@@ -326,8 +326,8 @@
               (set (kenmerken-values-aangeboden-opleiding last-xml "voertaal" :kenmerkwaardeEnumeratiewaarde))))
        (is (= "2008-10-18"
               (get-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingPeriode" "begindatum"])))
-       (is "2022-08-24"
-           (first (kenmerken-values-aangeboden-opleiding last-xml "laatsteInstroomdatum" :kenmerkwaardeDatum)))
+       (is (= "2022-08-24"
+           (first (kenmerken-values-aangeboden-opleiding last-xml "laatsteInstroomdatum" :kenmerkwaardeDatum))))
        (is (= ["1234asd12" "1234poi12" "1234qwe12"]
               (sort
                (get-all-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingCohort" "cohortcode"]))))))
@@ -389,7 +389,7 @@
 
 (def ^:dynamic course-id nil)
 
-(deftest ^:e2e test-course-with-eduspecs
+(deftest ^:v5-e2e test-course-with-eduspecs
   (binding [last-job (post-job :upsert :education-specifications "parent-course")
             course-id nil
             generated-sleutel nil
@@ -477,7 +477,7 @@
         (is (job-done? last-job))
         (is (nil? (rio-resolve "course" course-id))))))))
 
-(deftest ^:e2e test-accredited-program
+(deftest ^:v5-e2e test-accredited-program
   (binding [generated-sleutel (UUID/randomUUID)
             parent-code       "1001O5220"
             variant-code      nil
@@ -519,7 +519,7 @@
    #(set-education-unit-code-in-consumer % unit-code)
    consumers))
 
-(deftest ^:e2e test-update-remote-entities
+(deftest ^:v5-e2e test-update-remote-entities
   ;; insert eduspec "joint"
   (binding [parent-code "2345O5432"
             last-xml nil
@@ -535,7 +535,7 @@
           updated-program (remote-helper/os-get-object  info container-name {:path path})]
       (is (= parent-code (get-in updated-program [:consumers 1 :educationUnitCode]))))))
 
-(deftest ^:e2e test-joint-program
+(deftest ^:v5-e2e test-joint-program
   ;; insert eduspec "joint"
   (binding [last-job (post-job :upsert :education-specifications "joint")
             parent-code nil
