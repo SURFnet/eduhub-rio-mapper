@@ -87,13 +87,6 @@
     (when-not (= missing-entity foutcode)
       (throw (ex-info error-msg {:retryable? false})))))
 
-(defn- rio-resolver-response [^Element element]
-  {:pre [element]
-   :post [(or (string? %) (nil? %))]}
-  (if (rio-utils/goedgekeurd? element)
-    (handle-resolver-success element)
-    (handle-resolver-error element)))
-
 (defn- rio-relation-getter-response [^Element element]
   {:post [(s/valid? (s/nilable ::relations/relation-vector) %)]}
   (when (rio-utils/goedgekeurd? element)
@@ -165,11 +158,15 @@
                      :headers {"SOAPAction" (str contract "/opvragen_rioIdentificatiecode")}
                      :connection-timeout connection-timeout-millis
                      :content-type :xml}
-            tag "ns2:opvragen_rioIdentificatiecode_response"]
-        (-> (http-utils/send-http-request (merge credentials request))
-            (guard-getter-response "rioIdentificatiecode" tag)
-            (extract-body-element tag)
-            rio-resolver-response)))))
+            tag "ns2:opvragen_rioIdentificatiecode_response"
+            element (-> (http-utils/send-http-request (merge credentials request))
+                        (guard-getter-response "rioIdentificatiecode" tag)
+                        (extract-body-element tag))]
+
+        (if (rio-utils/goedgekeurd? element)
+          (let [code (handle-resolver-success element)]
+             code)
+           (handle-resolver-error element))))))
 
 (defn- valid-onderwijsbestuurcode? [code]
   {:pre [code]}
