@@ -1,5 +1,5 @@
 {:request
- {:url "https://gateway.test.surfeduhub.nl/education-specifications/9338214e-3978-484c-676d-427303a92748?returnTimelineOverrides=true",
+ {:url "https://gateway.test.surfeduhub.nl/programs/9338214e-3978-484c-676d-427303a92748?returnTimelineOverrides=true",
   :method :get
   :headers {}},
  :response
