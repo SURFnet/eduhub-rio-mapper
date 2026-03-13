@@ -246,8 +246,9 @@
                            (map #(vector % (UUID/randomUUID)))))]
     ;; In record mode, this ENV var set to true, and the mapping is written in the fixtures/vcr dir as an edn file.
     (when (= "true" (System/getenv "VCR_RECORD"))
-     (spit (str "test-" OOAPI-VERSION "/fixtures/vcr/mapping.edn")
-           (prn-str (update-vals mapping str))))
+      (let [file-path (str "test-" OOAPI-VERSION "/fixtures/vcr/mapping.edn")]
+        (clojure.java.io/make-parents file-path)
+        (spit file-path (prn-str (update-vals mapping str)))))
     mapping))
 
 (defn- replace-content-exprs
