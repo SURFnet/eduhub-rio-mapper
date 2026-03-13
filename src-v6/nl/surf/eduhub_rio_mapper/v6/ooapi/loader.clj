@@ -33,23 +33,20 @@
   250)
 
 (defn- ooapi-type->path [ooapi-type id page]
+  {:pre  [(string? ooapi-type)
+          (or (#{"programme" "programme-offerings" "course" "course-offerings"} ooapi-type) (prn ooapi-type))]}
   (if id
     (let [page-suffix (if page (str "&pageNumber=" page) "")
           path        (case ooapi-type
-                        "education-specification" "programmes/%s?returnTimelineOverrides=true"
-                        ;; TODO remove program variant
-                        "program"                 "programmes/%s?returnTimelineOverrides=true"
                         "programme"               "programmes/%s?returnTimelineOverrides=true"
                         "course"                  "courses/%s?returnTimelineOverrides=true"
                         "course-offerings"        (str "courses/%s/course-offerings?pageSize=" page-size "&consumer=rio" page-suffix)
-                        "program-offerings"       (str "programmes/%s/programme-offerings?pageSize=" page-size "&consumer=rio" page-suffix)
                         "programme-offerings"     (str "programmes/%s/programme-offerings?pageSize=" page-size "&consumer=rio" page-suffix))]
       (format path id))
     (case ooapi-type
-      "education-specifications" "programmes"
-      "programmes"               "programmes"
-      "programs"                 "programmes"
-      "courses"                  "courses")))
+      "programmes" "programmes"
+      "courses" "courses"
+      (throw (ex-info "No id, wrong type" {:id id, :ooapi-type ooapi-type})))))
 
 (defn- wrap-ooapi-request->ring-request
   "Middleware translating ::ooapi/request into ring-style HTTP request.
@@ -118,11 +115,9 @@
         (assoc :uri-prefix uri-prefix)
         (validator/response-validator))))
 
-;; We validate according to the OOAPI v6. Disable some types from
-;; validations since we're stil migrating from v5.
-
-(def ^:private disabled-validations
-  #{"education-specification" "program" "program-offerings" "course" "course-offerings"})
+;; We validate according to the OOAPI v6. Choose for which types validation is enabled.
+(def ^:private enabled-validations
+  #{})
 
 (defn- wrap-response-validator
   "Middleware validating OOAPI responses.
@@ -136,9 +131,10 @@
   (fn [{root-url ::ooapi/root-url type ::ooapi/type :as request}]
     {:pre [root-url type]}
     (let [validate-response (response-validator root-url)
-          response (handler request)]
-      (when-not (disabled-validations type)
-        (when-let [issues (validate-response {:request request :response (update response :body walk/stringify-keys)} [])]
+          response (handler request)
+          to-be-validated {:request request :response (update response :body walk/stringify-keys)}]
+      (when (enabled-validations type)
+        (when-let [issues (validate-response to-be-validated [])]
           (throw (ex-info "Error validating OOAPI Response"
                           {:issues issues
                            :request request
@@ -193,51 +189,51 @@
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
   {:pre [type id]}
-  (let [path (str "test-v6/fixtures/ooapi-loader/" type "-" id ".json")
-        json (json/read-str (slurp path) :key-fn keyword)]
-    json))
+  (let [path (str "test-v6/fixtures/ooapi-loader/" type "-" id ".json")]
+    (json/read-str (slurp path) :key-fn keyword)))
 
 (defn load-offerings
   [loader {::ooapi/keys [id type] :as request}]
-  (case type
-    "education-specification"
-    nil
-
-    ("course" "program")
-    (-> request
-        (assoc ::ooapi/id id
-               ::ooapi/type (str type "-offerings"))
-        (loader)
-        :items)))
+  {:pre [(or (#{"programme" "course"} type) (prn type))]}
+  (-> request
+      (assoc ::ooapi/id id
+             ::ooapi/type (str type "-offerings"))
+      (loader)
+      :items))
 
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
   [loader {::ooapi/keys [type] :as request}]
-  {:post [(some? (::ooapi/entity %))
-          (not-empty (::ooapi/entity %))]}
+  {:pre  [(or (#{"programme" "course"} type) (prn type))]
+   :post [(some? (::ooapi/entity %))
+          (not-empty (::ooapi/entity %))]
+   }
   (let [entity                  (loader request)
         consumer                (:consumer entity)
-        joint-program?          (= "true" (str (:jointProgram consumer)))
-        offerings               (load-offerings loader request)
-        eduspec-type            (cond
-                                  joint-program?
+        joint-programme?          (= "true" (str (:jointProgramme consumer)))
+        ;; load offerings unless prgspec (type = programme and programmeType = specification)
+        offerings               (when (or (not= type "programme")
+                                          (not= "specification" (:programmeType entity)))
+                                  (load-offerings loader request))
+        prgspec-type            (cond
+                                  joint-programme?
                                   "programme"
 
-                                  (= type "education-specification")
+                                  (= "specification" (:programmeType entity))
                                   (:specificationType consumer)
 
                                   :else
                                   (-> request
-                                      (assoc ::ooapi/type "education-specification"
+                                      (assoc ::ooapi/type "programme"
                                              ::ooapi/id (:specificationId consumer))
                                       (loader)
                                       (get-in [:consumer :specificationType])))]
     (cond-> request
-      joint-program?
+      joint-programme?
       (assoc
        ::rio/opleidingscode (:educationUnitCode consumer))
 
       :always
       (assoc
        ::ooapi/entity (assoc entity :offerings offerings)
-       ::ooapi-v6/specification-type eduspec-type))))
+       ::ooapi-v6/specification-type prgspec-type))))

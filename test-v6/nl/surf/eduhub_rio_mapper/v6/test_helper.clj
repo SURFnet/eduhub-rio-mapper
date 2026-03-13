@@ -26,7 +26,8 @@
    [nl.surf.eduhub-rio-mapper.specs.rio :as-alias rio]
    [nl.surf.eduhub-rio-mapper.v6.config :as config]
    [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
-   [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]))
+   [nl.surf.eduhub-rio-mapper.v6.rio.updated-handler :as updated-handler]
+   [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]))
 
 (defn load-json [path]
   (some-> path
@@ -34,16 +35,18 @@
           slurp
           (json/read-str :key-fn keyword)))
 
-(defn test-resolve-request [{::ooapi/keys [type] ::rio/keys [opleidingscode] :as request} resolver]
+(defn test-resolve-request [{:keys [rio-type] ::rio/keys [opleidingscode] :as request} resolver]
   (cond-> request
-    (#{"course" "program"} type)
+    (= :ao rio-type)
     (assoc ::rio/aangeboden-opleiding-code
-           (resolver type))
+           (resolver rio-type)
+           ::ooapi-v6/specification-type
+           "programme")
 
     :always
     (assoc ::rio/opleidingscode
            (or opleidingscode
-               (resolver "education-specification")))))
+               (resolver :oe)))))
 
 (def test-client-info {:client-id              "rio-mapper-dev.jomco.nl"
                        :institution-schac-home "demo06.test.surfeduhub.nl"
