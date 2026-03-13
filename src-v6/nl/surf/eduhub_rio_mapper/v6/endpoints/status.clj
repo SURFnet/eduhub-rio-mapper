@@ -70,21 +70,21 @@
                 :throw-exceptions       false}]
     (async/thread
       (trace-context/with-context trace-context
-                                  (logging/with-mdc (assoc trace-context
-                                                      :token                  token
-                                                      :url                    (::job/callback-url job)
-                                                      :institution-schac-home (:institution-schac-home job)
-                                                      :institution-name       (:institution-name job))
-                                                    (try
-                                                      (loop [retries-left 3]
-                                                        (let [status (-> req http-utils/send-http-request :status)]
-                                                          (when-not (http-status/success-status? status)
-                                                            (log/debugf "Could not reach webhook %s, %d retries left" (:url req) retries-left)
-                                                            (Thread/sleep callback-retry-sleep-ms)
-                                                            (when (pos? retries-left)
-                                                              (recur (dec retries-left))))))
-                                                      (catch Exception ex
-                                                        (logging/log-exception ex nil))))))))
+        (logging/with-mdc (assoc trace-context
+                                 :token                  token
+                                 :url                    (::job/callback-url job)
+                                 :institution-schac-home (:institution-schac-home job)
+                                 :institution-name       (:institution-name job))
+          (try
+            (loop [retries-left 3]
+              (let [status (-> req http-utils/send-http-request :status)]
+                (when-not (http-status/success-status? status)
+                  (log/debugf "Could not reach webhook %s, %d retries left" (:url req) retries-left)
+                  (Thread/sleep callback-retry-sleep-ms)
+                  (when (pos? retries-left)
+                    (recur (dec retries-left))))))
+            (catch Exception ex
+              (logging/log-exception ex nil))))))))
 
 (def final-status? #{:done :error :time-out})
 
@@ -115,45 +115,45 @@
                                          :resource   (str type "/" id)}
 
                                         ; set finished-at in status, not in job. the job is no longer needed.
-                                        (#{:done :error :time-out} status)
-                                        (assoc :finished-at (str (Instant/now)))
+                                  (#{:done :error :time-out} status)
+                                  (assoc :finished-at (str (Instant/now)))
 
-                                        (and (= :done status)
-                                             opleidingseenheidcode)
+                                  (and (= :done status)
+                                       opleidingseenheidcode)
                                         ;; Data is result of run-job-fn, which is result of
                                         ;; job/run!, which is result of update-and-mutate
                                         ;; or delete-and-mutate which is the result of the
                                         ;; mutator/make-mutator, which is the result of
                                         ;; handle-rio-mutate-response, which is the parsed
                                         ;; xml response converted to edn.
-                                        (assoc :attributes {:opleidingseenheidcode opleidingseenheidcode})
+                                  (assoc :attributes {:opleidingseenheidcode opleidingseenheidcode})
 
-                                        (and (:store-http-requests config)
-                                             (#{:done :error :time-out} status)
-                                             (-> data :http-messages))
-                                        (assoc :http-messages (-> data :http-messages))
+                                  (and (:store-http-requests config)
+                                       (#{:done :error :time-out} status)
+                                       (-> data :http-messages))
+                                  (assoc :http-messages (-> data :http-messages))
 
-                                        (and (= :done status)
-                                             (:aanleveren_aangebodenOpleiding_response data))
-                                        (assoc :attributes {:aangebodenopleidingcode aangeb-opleidingcode})
+                                  (and (= :done status)
+                                       (:aanleveren_aangebodenOpleiding_response data))
+                                  (assoc :attributes {:aangebodenopleidingcode aangeb-opleidingcode})
 
-                                        (:dry-run data)
-                                        (assoc :attributes (:dry-run data))
+                                  (:dry-run data)
+                                  (assoc :attributes (:dry-run data))
 
-                                        (:link data)
-                                        (assoc :attributes (:link data))
+                                  (:link data)
+                                  (assoc :attributes (:link data))
 
-                                        (#{:error :time-out} status)
-                                        (assoc :phase (-> data :errors :phase)
-                                               :message (-> data :errors :message)))]
+                                  (#{:error :time-out} status)
+                                  (assoc :phase (-> data :errors :phase)
+                                         :message (-> data :errors :message)))]
 
       (logging/with-mdc value
-                        (case status
-                          :done (log/infof "Finished job, token %s, type %s, id %s" token type id)
-                          :error (log/warnf "Failed job, token %s, type %s, id %s" token type id)
-                          :time-out (log/warnf "Timed out job, token %s, type %s, id %s" token type id)
+        (case status
+          :done (log/infof "Finished job, token %s, type %s, id %s" token type id)
+          :error (log/warnf "Failed job, token %s, type %s, id %s" token type id)
+          :time-out (log/warnf "Timed out job, token %s, type %s, id %s" token type id)
                           ;; Only log final statuses, not statuses such as "in-progress"
-                          nil))
+          nil))
 
       (rset! config token value))
 

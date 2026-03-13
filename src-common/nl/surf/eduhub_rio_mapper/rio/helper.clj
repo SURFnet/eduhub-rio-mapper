@@ -216,7 +216,8 @@
         (rio-obj child-type)))
 
 (defn ->xml [rio-obj object-name]
-  {:pre [(string? object-name)
+  {:pre [(some? object-name)
+         (string? object-name)
          (or (fn? rio-obj)
              (map? rio-obj))]}
   (let [process #(if (:ref %)
