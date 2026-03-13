@@ -24,12 +24,12 @@
       "consumer"
       {"consumerKey" "rio",
        "category" ["business_and_project_support"],
+       "variantIds" ["f151e068-3265-cf5a-84cc-bee97567dec1"],
        "specificationType" "cluster"},
       "studyLoad" {"value" 169, "studyLoadUnit" "contacttime"},
       "validFrom" "2004-03-31",
       "programmeType" "specification",
       "sector" "higher professional education",
-      "children" ["f151e068-3265-cf5a-84cc-bee97567dec1"],
       "programmeId" "9338214e-3978-484c-676d-427303a92748",
       "name"
       [{"language" "en-GB",
