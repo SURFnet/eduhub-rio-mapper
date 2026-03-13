@@ -58,22 +58,12 @@
   } ],
   "teachingLanguage" : "eng",
   "level" : "undefined",
-  "consumers" : [ {
-    "alliances" : [ {
-      "name" : "ewuu",
-      "enrollmentForOwnStudents" : "broker",
-      "type" : "broadening",
-      "visibleForOwnStudents" : true,
-      "selection" : false,
-      "theme" : "Engineering, Manufacturing and Construction"
-    } ],
-    "consumerKey" : "eduxchange"
-  }, {
+  "consumer" : {
     "consumerKey" : "rio",
     "educationOffererCode" : "110A133",
     "educationLocationCode" : "107X215",
     "consentParticipationSTAP" : "permission_not_granted"
-  } ],
+  },
   "link" : "https://hogeschool-van-manderveen.nl/courses/{{courses/some}}",
   "otherCodes" : [ {
     "codeType" : "identifier",
