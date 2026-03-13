@@ -35,7 +35,7 @@
     "studyLoadUnit" : "ects"
   },
   "fieldsOfStudy" : "0522",
-  "educationSpecification": "{{education-specifications/parent-course}}",
+  "educationSpecification": "{{education-specifications/specification-parent-course}}",
   "name" : [ {
     "language" : "en-GB",
     "value" : "Some course"
