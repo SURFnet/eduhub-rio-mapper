@@ -34,7 +34,7 @@
       "resultExpected": false,
       "minNumberStudents": 3,
       "startDateTime": "1994-09-05T22:04:02+00:00",
-      "flexibleEntryPeriodStart": "1994-09-05",
+      "flexibleEntryPeriodStartDateTime": "1994-09-05T02:10:10+00:00",
       "endDateTime": "1995-01-31T05:02:07+00:00",
       "primaryCode": {
         "codeType": "offeringCode",
@@ -70,7 +70,7 @@
         }
       ],
       "enrolledNumberStudents": 57,
-      "flexibleEntryPeriodEnd": "2026-01-31",
+      "flexibleEntryPeriodEndDateTime": "2026-01-31T04:01:03+00:00",
       "consumer": {
         "consumerKey": "rio",
         "requiredPermissionRegistration": "no",

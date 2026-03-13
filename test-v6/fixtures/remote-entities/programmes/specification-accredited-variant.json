@@ -1,8 +1,5 @@
 {
   "level": "bachelor",
-  "children": [
-    "6bbdff63-1cf9-4356-9030-198215a5b906"
-  ],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "programmeType": "specification",
   "programmeId": "{{programmes/specification-accredited-variant}}",
