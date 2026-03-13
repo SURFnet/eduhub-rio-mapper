@@ -78,7 +78,8 @@
   (use-fixtures :once remote-entities-fixture))
 
 (defn- load-relations [getter client-info code]
-  {:pre [(string? code)]}
+  {:pre [(some? code)
+         (string? code)]}
   (getter {::rio/type           "opleidingsrelatiesBijOpleidingseenheid"
            :institution-oin     (:institution-oin client-info)
            ::rio/opleidingscode code}))
@@ -117,8 +118,8 @@
         handlers             (processing/make-handlers {:rio-config rio-config
                                                         :gateway-root-url (:gateway-root-url config)
                                                         :gateway-credentials (:gateway-credentials config)})
-        eduspec-parent-id    (entity-name-to-id "education-specifications/specification-interaction-eduspec-parent")
-        eduspec-child-id     (entity-name-to-id "education-specifications/specification-interaction-eduspec-child")
+        eduspec-parent-id    (entity-name-to-id "programmes/specification-interaction-eduspec-parent")
+        eduspec-child-id     (entity-name-to-id "programmes/specification-interaction-eduspec-child")
         program-id           (entity-name-to-id "programmes/interaction-programme-some")
 
         runner               (make-runner handlers
@@ -144,7 +145,7 @@
                                                                          (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
     (doseq [[idx action ootype id pred?] commands]
       (testing (str "Command " idx " " action " " id)
-      (if (= "sleep" action)
+        (if (= "sleep" action)
           (when (= vcr.helper/vcr-mode :record)
             (Thread/sleep 5000))
           (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/interaction" idx (str action "-" (name ootype)))]
@@ -210,7 +211,7 @@
     (testing "programme"
       (let [request      {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
                           ::ooapi/type     "programme"
-                          ::ooapi/id       (entity-name-to-id "programmes/interaction-programme-some")
+                          ::ooapi/id       (entity-name-to-id "programmes/v5-program")
                           :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "programme")]
           (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]

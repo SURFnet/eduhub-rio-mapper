@@ -39,7 +39,8 @@
    [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities]
    [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper])
   (:import
-   [java.io PushbackReader]))
+   [java.io PushbackReader]
+   [java.net URI]))
 
 (def vcr-mode (if (= "true" (System/getenv "VCR_RECORD"))
                 :record
@@ -75,28 +76,43 @@
   (assert (< (count list) 2) (prn-str list))
   (first list))
 
+(defn- numbered-dir [basedir nr]
+  {:post [(some? %)]}
+  (let [dirname (->> basedir
+                      (ls)
+                      (filter #(.startsWith % (str nr "-")))
+                      (only-one-if-any))]
+    (when-not dirname (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
+    (str basedir "/" dirname)))
+
 (defn- numbered-file [basedir nr]
   {:post [(some? %)]}
   (let [filename (->> basedir
                       (ls)
                       (filter #(.startsWith % (str nr "-")))
+                      (filter #(.endsWith % ".edn"))
                       (only-one-if-any))]
     (when-not filename (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
     (str basedir "/" filename)))
+
+(defn path-for [url]
+  (-> url
+      (URI.)
+      (.getPath)
+      (str/replace-first #"^/" "")))
 
 (defn req-name [request]
   (let [action (get-in request [:headers "SOAPAction"])]
     (if action
       (last (str/split action #"/"))
-      (-> request :url
-          (subs (count "https://gateway.test.surfeduhub.nl/"))
-          (str/replace \/ \-)
-          (str/split #"\?")
-          first))))
+      (-> request
+          :url
+          path-for
+          (str/replace \/ \-)))))
 
 (defn- make-playbacker [root idx _]
   (let [count-atom (atom 0)
-        dir        (numbered-file root idx)]
+        dir        (numbered-dir root idx)]
     (fn [_ actual-request]
       (let [url              (cond-> (:url actual-request)
                                (not remote-entities/programme-supported?)

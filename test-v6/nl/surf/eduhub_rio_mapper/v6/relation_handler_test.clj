@@ -18,16 +18,16 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.relation-handler-test
   (:require
-    [clj-http.client :as client]
-    [clojure.data.json :as json]
-    [clojure.java.io :as io]
-    [clojure.test :refer :all]
-    [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
-    [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-    [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
-    [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
-    [nl.surf.eduhub-rio-mapper.utils.soap :as soap]
-    [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as rh]))
+   [clj-http.client :as client]
+   [clojure.data.json :as json]
+   [clojure.java.io :as io]
+   [clojure.test :refer :all]
+   [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
+   [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+   [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
+   [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
+   [nl.surf.eduhub-rio-mapper.utils.soap :as soap]
+   [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as rh]))
 
 (def education-specification (-> "fixtures/ooapi/education-specification.json"
                                  io/resource
@@ -39,9 +39,9 @@
     (let [actual-relations #{}
           {:keys [missing superfluous]} (rh/relation-differences
                                          (assoc education-specification ::rio/opleidingscode "234O432")
-                                          :parent
-                                          [(assoc education-specification ::rio/opleidingscode "654O456")]
-                                          actual-relations)]
+                                         :parent
+                                         [(assoc education-specification ::rio/opleidingscode "654O456")]
+                                         actual-relations)]
       (is (= missing #{{:opleidingseenheidcodes #{"234O432" "654O456"}, :valid-from "2019-08-24", :valid-to "2019-08-24"}}))
       (is (= superfluous #{}))))
 
@@ -49,42 +49,41 @@
     (let [actual-relations #{{:opleidingseenheidcodes #{"234O432" "654O456"}, :valid-from "2019-08-24", :valid-to "2019-08-24"}}
           {:keys [missing superfluous]} (rh/relation-differences
                                          (assoc education-specification ::rio/opleidingscode "234O432")
-                                          :parent
-                                          [(assoc education-specification ::rio/opleidingscode "654O456")]
-                                          actual-relations)]
+                                         :parent
+                                         [(assoc education-specification ::rio/opleidingscode "654O456")]
+                                         actual-relations)]
       (is (= missing #{}))
       (is (= superfluous #{}))))
 
   (testing "parent with inverted relation"
     (let [actual-relations #{{:opleidingseenheidcodes #{"234O432" "654O456"}, :valid-from "2019-08-24", :valid-to "2019-08-24"}}
           {:keys [missing superfluous]} (rh/relation-differences
-                                          (assoc education-specification ::rio/opleidingscode "654O456")
-                                          :parent
-                                          [(assoc education-specification ::rio/opleidingscode "234O432")]
-                                          actual-relations)]
+                                         (assoc education-specification ::rio/opleidingscode "654O456")
+                                         :parent
+                                         [(assoc education-specification ::rio/opleidingscode "234O432")]
+                                         actual-relations)]
       (is (= missing #{}))
       (is (= superfluous #{}))))
 
   (testing "parent with existing relations different start date"
     (let [actual-relations #{{:opleidingseenheidcodes #{"234O432" "654O456"}, :valid-from "2011-08-24", :valid-to "2019-08-24"}}
           {:keys [missing superfluous]} (rh/relation-differences
-                                          (assoc education-specification ::rio/opleidingscode "234O432")
-                                          :parent
-                                          [(assoc education-specification ::rio/opleidingscode "654O456")]
-                                          actual-relations)]
+                                         (assoc education-specification ::rio/opleidingscode "234O432")
+                                         :parent
+                                         [(assoc education-specification ::rio/opleidingscode "654O456")]
+                                         actual-relations)]
       (is (= missing #{(assoc (first actual-relations) :valid-from "2019-08-24")}))
       (is (= superfluous actual-relations)))))
 
 (defn- child [id parent-id valid-from & {:keys [] :as opts}]
   (merge opts
-         {:educationSpecificationId id, :parent parent-id, :validFrom valid-from,
-          :educationSpecificationType "program", :consumers [{:consumerKey "rio"
-                                                              :educationSpecificationSubType "variant"}]}))
+         {:programmeId id, :parent parent-id, :validFrom valid-from, :programmeType "specification",
+          :consumer {:consumerKey "rio", :variantOf parent-id, :specificationType "programme"}}))
 
 (defn- parent [id children-ids valid-from & {:keys [] :as opts}]
   (merge opts
-         {:educationSpecificationId id, :children children-ids, :validFrom valid-from,
-          :educationSpecificationType "program"}))
+         {:programmeId id, :children children-ids, :validFrom valid-from, :programmeType "specification",
+          :consumer {:consumerKey "rio", :specificationType "programme"}}))
 
 (deftest test-mutate-relation
   (let [job      {:institution-schac-home "a" :institution-oin "b"}
@@ -139,10 +138,10 @@
           recipient-oin "5783648273648372"
           credentials (keystore/credentials "test/keystore.jks" "xxxxxx" "test-surf")
           actual (rh/relation-mutation
-                   :delete
-                   sender-oin
-                   {:opleidingseenheidcodes #{"1234O1234" "2234O2234"}
-                    :valid-from             "2022-10-10"})
+                  :delete
+                  sender-oin
+                  {:opleidingseenheidcodes #{"1234O1234" "2234O2234"}
+                   :valid-from             "2022-10-10"})
           xml-or-error (soap/prepare-soap-call (:action actual)
                                                (:rio-sexp actual)
                                                (mutator/make-datamap sender-oin recipient-oin)
