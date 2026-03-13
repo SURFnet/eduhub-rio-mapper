@@ -22,6 +22,7 @@
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
             [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
+            [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]))
 
 (defn- strip-duo [kw]
@@ -136,6 +137,8 @@
                       (linker))]
     [rio-new (some finder rio-obj)]))
 
+;; The id contains new ooapi id, which in RIO is the "eigen sleutel"
+;; The loader loads the RIO object based on the request, which contains either ::rio/opleidingscode or ::rio/aangeboden-opleiding-code
 (defn- execute-link [{::ooapi/keys [id type] :keys [institution-oin] :as _request} rio-loader-fn rio-config]
   {:pre [(#{"education-specification" "course" "program"} type)]}
   (let [eduspec? (= type "education-specification")
