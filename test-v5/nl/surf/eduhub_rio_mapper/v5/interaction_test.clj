@@ -33,7 +33,7 @@
 ;; - Requires environment variables (same as e2e tests):
 ;;
 ;;   # Gateway credentials
-;;   GATEWAY_ROOT_URL=https://gateway.test.surfeduhub.nl/
+;;   GATEWAY_ROOT_URL=<url>
 ;;   GATEWAY_USER=<username>
 ;;   GATEWAY_PASSWORD=<password>
 ;;
