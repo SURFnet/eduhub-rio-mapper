@@ -175,7 +175,7 @@
         config (update cfg :worker merge
                        {:queues               (clients-info/institution-schac-homes clients)
                         :queue-fn             :institution-schac-home
-                        :run-job-fn           #(job/run! handlers % (:store-http-requests cfg))
+                        :run-job-fn           (fn [job] (job/run! handlers job (:store-http-requests cfg)))
                         :set-status-fn        (status/make-set-status-fn cfg)
                         :retryable-fn         status/retryable?
                         :error-fn             status/errors?
