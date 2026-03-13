@@ -6,7 +6,7 @@
   "name": [
     {
       "language": "en-GB",
-      "value": "Biology"
+      "value": "Biology0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789Biology0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789Biology0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
     }
   ],
   "abbreviation": "BIO",
@@ -111,12 +111,12 @@
     {
       "validFrom": "2021-09-01",
       "validTo": "2022-08-31",
-      "program": {
+      "programme": {
         "primaryCode": {
           "codeType": "crohoCreboCode",
           "code": "string"
         },
-        "programType": "program",
+        "programmeType": "programme",
         "name": [
           {
             "language": "en-GB",
@@ -183,7 +183,6 @@
           }
         ],
         "link": "https://bijvak.nl",
-        "educationSpecification": "9fa40013-369e-4f7a-839b-5bf76128b51e",
         "otherCodes": [
           {
             "codeType": "CROHO",
@@ -219,12 +218,10 @@
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
-        "consumer":
-          {
+        "consumer": {
             "consumerKey": "rio",
             "educationOffererCode": "122A112",
             "educationLocationCode": "123X122",
-            "consentParticipationSTAP": "permission_granted",
             "jointPartnerCodes": [
               "122A113"
             ],
@@ -256,8 +253,8 @@
     "propaedeuticPhase": "no_propaedeutic_phase",
     "studyChoiceCheck": "no_study_choice_check",
     "acceleratedRoute": "accelerated_route",
-    "specificationId": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
+    "specificationId": "10030000-0000-0000-0000-000000000000"
   },
   "programmeType": "programme",
-  "programmeId": "123e4567-e89b-12d3-a456-426614174000"
+  "programmeId": "20030000-0000-0000-0000-000000000000"
 }
