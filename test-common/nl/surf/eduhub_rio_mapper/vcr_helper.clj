@@ -31,6 +31,7 @@
 
 (ns nl.surf.eduhub-rio-mapper.vcr-helper
   (:require
+   [clojure.data.json :as json]
    [clojure.edn :as edn]
    [clojure.java.io :as io]
    [clojure.pprint :refer [pprint]]
@@ -110,6 +111,19 @@
           (str/replace \/ \-)
         (str/replace-first #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" "ooapi-id")))))
 
+(defn- wrap-json-body [body]
+  (if (string? body)
+    (try
+      (assoc {} :JSONSTRING (json/read-str body))
+      (catch Exception _
+        body))
+    body))
+
+(defn- unwrap-json-body [body]
+  (if (and (map? body) (contains? body :JSONSTRING))
+    (json/write-str (:JSONSTRING body))
+    body))
+
 (defn- make-playbacker [root idx _]
   (let [count-atom (atom 0)
         dir        (numbered-dir root idx)]
@@ -123,7 +137,7 @@
                 actual   (get-in actual-request property-path)]
             (is (= expected actual)
                 (str "Unexpected property " (last property-path)))))
-        (:response recording)))))
+        (update (:response recording) :body unwrap-json-body)))))
 
 (defn- make-recorder [root idx desc]
   (let [mycounter (atom 0)]
@@ -135,13 +149,17 @@
             headers      (select-keys (:headers request) ["SOAPAction" "X-Route"])]
         (io/make-parents file-name)
         (with-open [w (io/writer file-name)]
-          (pprint {:request  (assoc (select-keys request [:method :url :body])
-                                    :headers headers)
-                   :response (assoc (select-keys response [:status :body])
-                                    ;; ooapi validation expects exactly "application/json"
-                                    :headers {"content-type" content-type})}
+          (pprint {:request  (-> request
+                                (select-keys [:method :url :body])
+                                (assoc :headers headers)
+                                (update :body wrap-json-body))
+                   :response (-> response
+                                (select-keys [:status :body])
+                                (assoc :headers {"content-type" content-type})
+                                (update :body wrap-json-body))}
                   w))
         response))))
+
 
 (defn make-vcr []
   (case vcr-mode
