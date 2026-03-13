@@ -68,22 +68,11 @@
       ],
       "enrolledNumberStudents": 57,
       "flexibleEntryPeriodEnd": "2026-01-31",
-      "consumers": [
-        {
-          "alliances": [
-            {
-              "name": "ewuu",
-              "enrollmentUrl": "https://www.eigen-inschrijf-url.nl/schrijf-hier-in"
-            }
-          ],
-          "consumerKey": "eduxchange"
-        },
-        {
+      "consumer": {
           "consumerKey": "rio",
           "requiredPermissionRegistration": "no",
           "registrationStatus": "open"
-        }
-      ],
+        },
       "programmeOfferingId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "programOffering": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "maxNumberStudents": 137,
