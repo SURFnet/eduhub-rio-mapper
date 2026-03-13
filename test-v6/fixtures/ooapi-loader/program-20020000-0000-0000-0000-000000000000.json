@@ -218,8 +218,7 @@
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
-        "consumers": [
-          {
+        "consumer": {
             "consumerKey": "rio",
             "educationOffererCode": "122A112",
             "educationLocationCode": "123X122",
@@ -234,8 +233,7 @@
             "propaedeuticPhase": "no_propaedeutic_phase",
             "studyChoiceCheck": "no_study_choice_check",
             "acceleratedRoute": "accelerated_route"
-          }
-        ],
+          },
         "ext": {}
       }
     }
