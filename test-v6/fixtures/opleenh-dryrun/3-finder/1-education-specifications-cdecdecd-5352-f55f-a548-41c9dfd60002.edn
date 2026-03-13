@@ -1,7 +1,7 @@
 {:request
  {:method :get,
   :url
-  "https://gateway.test.surfeduhub.nl/programs/cdecdecd-5352-f55f-a548-41c9dfd60002?returnTimelineOverrides=true",
+  "https://gateway-v6-sandbox.dev.surfeduhub.nl/programmes/cdecdecd-5352-f55f-a548-41c9dfd60002?returnTimelineOverrides=true",
   :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"}},
  :response
  {:status 200N,
