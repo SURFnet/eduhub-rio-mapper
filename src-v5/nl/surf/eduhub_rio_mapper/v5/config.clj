@@ -37,11 +37,12 @@
    :connection-timeout-millis          ["HTTP connection timeout in milliseconds" :int
                                         :default 10000
                                         :in [:rio-config :connection-timeout]]
-   :gateway-user                       ["OOAPI Gateway Username" :str
+   :gateway-user-v5                    ["OOAPI Gateway Username" :str
                                         :in [:gateway-credentials :username]]
-   :gateway-password                   ["OOAPI Gateway Password" :str
+   :gateway-password-v5                ["OOAPI Gateway Password" :str
                                         :in [:gateway-credentials :password]]
-   :gateway-root-url                   ["OOAPI Gateway Root URL" :http]
+   :gateway-root-url-v5                ["OOAPI Gateway Root URL" :http
+                                        :in [:gateway-root-url]]
    :keystore                           ["Path to keystore" :file]
    :keystore-password                  ["Keystore password" :str
                                         :in [:keystore-pass]] ; name compatibility with clj-http
@@ -126,7 +127,7 @@
 ;; These ENV keys may alternatively have a form in which the secret is contained in a file.
 ;; These ENV keys have a -file suffix, e.g.: gateway-basic-auth-pass-file
 (def env-keys-with-alternate-file-secret
-  [:gateway-password :keystore-password :surf-conext-client-secret :redis-uri])
+  [:gateway-password-v5 :keystore-password :surf-conext-client-secret :redis-uri])
 
 (defn load-config-from-env [env-map]
   (-> (reduce file-secret-loader-reducer env-map env-keys-with-alternate-file-secret)
@@ -140,6 +141,7 @@
    (let [[config errs] (load-config-from-env env)]
      (when errs
        (.println *err* "Configuration error")
+       (.println *err* (prn-str (keys env)))
        (.println *err* (envopts/errs-description errs))
        (System/exit 1))
      (let [{:keys [clients-info-config
@@ -152,6 +154,7 @@
                                  keystore-pass
                                  keystore-alias)]
        (-> cfg
+           (update :gateway-root-url #(str (str/replace % #"/+$" "") "/")) ;; ensure 1 trailing slash
            (assoc-in [:rio-config :credentials] credentials)
            (assoc :clients (clients-info/read-clients-data clients-info-config)))))))
 
