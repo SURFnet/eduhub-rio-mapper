@@ -158,8 +158,11 @@
 (defn ooapi-id
   "Get OOAPI UUID of automatically uploaded fixture."
   [type id]
-  (let [name (str (name type) "/" id)]
-    (get remote-entities/*session* name)))
+  {:pre [(#{:programmes :courses} type)]}
+  (get remote-entities/*session*
+  (case type
+    :programmes (str "programmes" "/" id)
+    :courses (str "courses" "/" id))))
 
 (defn- interpret-post-job-args
   "Automatically find OOAPI ID from session.
@@ -173,7 +176,7 @@
     (concat (drop-last args)
             [(if (and (keyword? type) (string? id))
                (let [uuid (ooapi-id type id)]
-                 (assert uuid (str "Expect a UUID for " id))
+                 (assert uuid (str "Expect a UUID for " type " " id))
                  uuid)
                id)])))
 
@@ -225,40 +228,41 @@
 (def job-status-poll-sleep-msecs 500)
 (def job-status-poll-total-msecs 60000)
 
+(defn- delayed-result [{:keys [status] {:keys [token]} :body}]
+  (delay
+    (if (not= http-status/created status)
+      (println (str "failed to post job - status: " status))
+      (loop [tries-left (/ job-status-poll-total-msecs
+                           job-status-poll-sleep-msecs)]
+        (let [{:keys [status body] :as res}
+              (call-api-status token)]
+          (cond
+            (zero? tries-left)
+            (do
+              (println "\n\n⚠ too many retries on status\n")
+              ::time-out)
+
+            (not= http-status/ok status)
+            (do
+              (println "\n\n⚠ get status failed\n")
+              ::get-status-failed)
+
+            (api-status-final? res)
+            body
+
+            :else
+            (do
+              (Thread/sleep ^long job-status-poll-sleep-msecs)
+              (recur (dec tries-left)))))))))
+
 (defn post-job
   "Post a job through the API.
   Return the HTTP response of the call and includes a \"delay\" to access
   the job result at `:result-delay`."
   [action & args]
   {:pre [(#{:upsert :delete :link :unlink :status :dry-run/upsert} action)]}
-  (let [{:keys [status] {:keys [token]} :body :as res}
-        (call-api action args)]
-    (assoc res :result-delay
-           (delay
-             (if (not= http-status/ok status)
-               (println "failed to post job")
-               (loop [tries-left (/ job-status-poll-total-msecs
-                                    job-status-poll-sleep-msecs)]
-                 (let [{:keys [status body] :as res}
-                       (call-api-status token)]
-                   (cond
-                     (zero? tries-left)
-                     (do
-                       (println "\n\n⚠ too many retries on status\n")
-                       ::time-out)
-
-                     (not= http-status/ok status)
-                     (do
-                       (println "\n\n⚠ get status failed\n")
-                       ::get-status-failed)
-
-                     (api-status-final? res)
-                     body
-
-                     :else
-                     (do
-                       (Thread/sleep ^long job-status-poll-sleep-msecs)
-                       (recur (dec tries-left)))))))))))
+  (let [res (call-api action args)]
+    (assoc res :result-delay (delayed-result res))))
 
 (defn job-result
   "Use `get-in` to access job response from `post-job`."
@@ -407,7 +411,8 @@
     result))
 
 (defn rio-resolve [rio-type id]
-  {:pre [(#{"education-specification" "course" "program"} rio-type)]}
+  {:pre [(#{:oe :ao} rio-type)
+         (string? id)]}
   (let [messages-atom (atom [])
         result (binding [http-utils/*http-messages* messages-atom]
                  (@rio-resolver rio-type id (:institution-oin @client-info)))]
@@ -553,7 +558,7 @@
       (System/exit 1)))
   (doseq [{:keys [cmd proc-atom ^String log-file]} services]
 
-    (let [process-builder (ProcessBuilder. ^List (into ["clojure" "-M:mapper"] cmd))
+    (let [process-builder (ProcessBuilder. ^List (into ["clojure" "-M:mapper-v6"] cmd))
           log-file (File. log-file)]
       (when-let [parent (.getParentFile log-file)]
         (.mkdirs parent))
