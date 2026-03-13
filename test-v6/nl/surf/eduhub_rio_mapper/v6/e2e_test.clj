@@ -391,6 +391,14 @@
 
 (def ^:dynamic course-id nil)
 
+(deftest ^:v6-e2e test-insert-variant-eduspecs
+  ;; insert eduspec "child-program"
+  ;; this should fail because it's parent is not present in RIO
+  (binding [last-job (post-job :upsert :programmes "specification-child-program")]
+    (and
+     (is last-job)
+     (is (job-error? last-job)))))
+
 (deftest ^:v6-e2e test-course-with-prgspecs
   (binding [last-job (post-job :upsert :programmes "specification-parent-course")
             course-id nil
