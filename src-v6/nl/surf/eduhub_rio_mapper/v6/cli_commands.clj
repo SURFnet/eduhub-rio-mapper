@@ -84,7 +84,7 @@
           old-uuid     (str (UUID/randomUUID))
           new-uuid     (str (UUID/randomUUID))
 
-          eduspec (-> "eduspec-test-rio.json"
+          prgspec (-> "prgspec-test-rio-v6.json"
                       io/resource
                       slurp
                       (json/read-str :key-fn keyword)
@@ -94,16 +94,14 @@
         (try
           (let [insert-req {:institution-oin        (:institution-oin client-info)
                             :institution-schac-home (:institution-schac-home client-info)
-                            ::ooapi/type            "education-specification"
+                            ::ooapi/type            "programme"
                             ::ooapi/id              old-uuid
-                            ::ooapi/entity          eduspec}
+                            ::ooapi/entity          prgspec
+                            :rio-type               :oe}
                 rio-code   (-> insert-req insert! :aanleveren_opleidingseenheid_response :opleidingseenheidcode)
-                _ (println "INSERTED: RIO CODE" rio-code)
                 link-req   (merge insert-req {::ooapi/id new-uuid ::rio/opleidingscode rio-code})]
             (link! link-req)
-            (println "LINKED")
             (let [rio-obj        (rio.loader/find-rio-object rio-code getter (:institution-oin client-info) "opleidingseenheid")
-                  _ (println "LOADED RIO OBJECT")
                   nieuwe-sleutel (->> rio-obj
                                       :content
                                       (filter #(= :kenmerken (:tag %)))
@@ -143,13 +141,14 @@
 
     "link"
     (let [[client-info [code type id]] (parse-client-info-args args clients)
-          codename (if (= type "education-specification") ::rio/opleidingscode ::rio/aangeboden-opleiding-code)
+          codename (if (= type "programme-specification") ::rio/opleidingscode ::rio/aangeboden-opleiding-code)
           request (merge client-info {::ooapi/id id ::ooapi/type type codename code})]
       (link! request))
 
+    ;; rio-type is "oe" or "ae"
     "resolve"
-    (let [[client-info [type id]] (parse-client-info-args args clients)]
-      (resolver type id (:institution-oin client-info)))
+    (let [[client-info [rio-type id]] (parse-client-info-args args clients)]
+      (resolver (:keyword rio-type) id (:institution-oin client-info)))
 
     "document-env-vars"
     (envopts/specs-description config/opts-spec)
@@ -160,7 +159,7 @@
                             ::ooapi/type type
                             :args rest-args)
                      (if (= "delete-by-code" command)
-                       (let [name-id (if (= type "education-specification")
+                       (let [name-id (if (= type "programme-specification")
                                        ::rio/opleidingscode
                                        ::rio/aangeboden-opleiding-code)]
                          {:action "delete"

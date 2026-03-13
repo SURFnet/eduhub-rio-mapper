@@ -56,7 +56,7 @@
                      "1234" "12345"))
 
 (defn test-resolver [ootype]
-  (if (= "education-specification" ootype)
+  (if (= :oe ootype)
     "1009O1234"
     "12345678-9abc-def0-1234-56789abcdef0"))
 
@@ -68,38 +68,47 @@
                (soap/guard-valid-sexp mutator/validator)))
 
     {::ooapi/id "10010000-0000-0000-0000-000000000000"
-     ::ooapi/type "education-specification"
+     ::ooapi/type "programme"
+     :rio-type :oe
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "10020000-0000-0000-0000-000000000000"
-     ::ooapi/type "education-specification"
+     ::ooapi/type "programme"
+     :rio-type :oe
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "10030000-0000-0000-0000-000000000000"
-     ::ooapi/type "education-specification"
+     ::ooapi/type "programme"
+     :rio-type :oe
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "10040000-0000-0000-0000-000000000000"
-     ::ooapi/type "education-specification"
+     ::ooapi/type "programme"
+     :rio-type :oe
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "20010000-0000-0000-0000-000000000000"
-     ::ooapi/type "program"
+     ::ooapi/type "programme"
+     :rio-type :ao
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "20020000-0000-0000-0000-000000000000"
-     ::ooapi/type "program"
+     ::ooapi/type "programme"
+     :rio-type :ao
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "20030000-0000-0000-0000-000000000000"
-     ::ooapi/type "program"
+     ::ooapi/type "programme"
+     :rio-type :ao
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "20030000-0000-0000-0000-000000000000"
-     ::ooapi/type "program"
+     ::ooapi/type "programme"
+     :rio-type :ao
      :client-id "rio-mapper-dev.jomco.nl"}
     {::ooapi/id "30010000-0000-0000-0000-000000000000"
      ::ooapi/type "course"
+     :rio-type :ao
      :client-id "rio-mapper-dev.jomco.nl"}))
 
 ;; eigenNaamInternationaal is over 225 chars, which is > max-length
 ;; but no exception, since fields gets truncated.
 (deftest test-and-validate-program-4-valid
   (let [request (helper/test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
-                                      ::ooapi/type "program"
+                                      ::ooapi/type "programme"
                                       :client-id "rio-mapper-dev.jomco.nl"}
                                      test-resolver
                                      ooapi.loader/ooapi-file-loader)]
@@ -254,7 +263,7 @@
        ::ooapi/entity))
 
 (deftest to-rio-obj
-  (testing "eduspec"
+  (testing "prgspec"
     (is (= [:duo:hoOpleiding
             [:duo:begindatum "2019-08-24"]
             [:duo:einddatum "2022-08-29"]
@@ -266,7 +275,7 @@
             [:duo:niveau "WO-MA"]
             [:duo:ISCED "073"]]
 
-           (-> {::ooapi/id "10010000-0000-0000-0000-000000000000" ::ooapi/type "education-specification"}
+           (-> {::ooapi/id "10010000-0000-0000-0000-000000000000" ::ooapi/type "programme" :rio-test :oe}
                ooapi.loader/ooapi-file-loader
                opl-eenh/education-specification->opleidingseenheid))))
 
@@ -309,9 +318,9 @@
 
            (-> {::ooapi/id "30010000-0000-0000-0000-000000000001" ::ooapi/type "course"}
                ooapi.loader/ooapi-file-loader
-               (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" {::ooapi-v6/specification-type "course"}))))
+               (aangeboden-opl/->aangeboden-opleiding :course "1234O1234" {::ooapi-v6/specification-type "course"})))))
 
-  (testing "program"
+  (testing "programme"
     (is (= [:duo:aangebodenHOOpleiding
             [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
             [:duo:onderwijsaanbiedercode "110A133"]
@@ -346,9 +355,9 @@
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
 
-           (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
+           (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
                (assoc-in [:consumer :lastStartDate] "2022-08-24")
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"})))))
+               (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
   (testing "program with laatsteInstroomdatum and multiple teaching languages"
     (is (= [:duo:aangebodenHOOpleiding
@@ -387,11 +396,11 @@
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "ENG"]]]
 
          ;; teaching languages in rio consumer override teaching language in program
-           (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
+           (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
                (assoc-in [:consumer :lastStartDate] "2022-08-24")
                (assoc-in [:consumer :teachingLanguages] ["nld", "eng"])
                (assoc :teachingLanguages "fra")
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"})))))
+               (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
   (testing "program with nonstandard mode of delivery"
     (is (= [:duo:aangebodenHOOpleiding
@@ -408,14 +417,14 @@
             [:duo:kenmerken [:duo:kenmerknaam "eigenAangebodenOpleidingSleutel"] [:duo:kenmerkwaardeTekst "20010000-0000-0000-0000-000000000000"]]
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
-           (-> (test-loader "20010000-0000-0000-0000-000000000000" "program")
+           (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
                (assoc-in [:offerings 0 :consumer :modeOfDelivery] ["coaching"])
-               (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"})))))
+               (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
   (testing "program with mode of delivery in consumer"
     (let [mode-of-delivery-loader
           #(let [json (ooapi.loader/ooapi-file-loader %)]
-             (if (#{"program-offerings" "course-offerings"} (::ooapi/type %))
+             (if (#{"programme-offerings" "course-offerings"} (::ooapi/type %))
                (-> json
                    (update-in [:items 0] dissoc :modeOfDelivery)
                    (assoc-in [:items 0 :consumer :modeOfDelivery] ["coaching"]))
@@ -437,12 +446,12 @@
 
              (-> (ooapi.loader/load-entities
                   mode-of-delivery-loader
-                  {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "program"})
+                  {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "programme"})
                  ::ooapi/entity
-                 (aangeboden-opl/->aangeboden-opleiding :program "1234O1234" {::ooapi-v6/specification-type "programme"}))))))
+                 (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"}))))))
 
   (testing "private program does not include nlqf and eqf fields"
-    (let [result (-> {::ooapi/id "10020000-0000-0000-0000-000000000000" ::ooapi/type "education-specification"}
+    (let [result (-> {::ooapi/id "10020000-0000-0000-0000-000000000000" ::ooapi/type "programme" :rio-type :oe}
                      ooapi.loader/ooapi-file-loader
                      opl-eenh/education-specification->opleidingseenheid)
           result-keys (->> (rest result)
@@ -451,4 +460,4 @@
                            set)]
       (is (not (contains? result-keys :duo:nlqf)) "Private program should not have nlqf field")
       (is (not (contains? result-keys :duo:eqf)) "Private program should not have eqf field")
-      (is (= (first result) :duo:particuliereOpleiding) "Result should be a particuliereOpleiding")))))
+      (is (= (first result) :duo:particuliereOpleiding) "Result should be a particuliereOpleiding"))))

@@ -70,15 +70,18 @@
       (-> res
           (prepare-job-for-enqueuement token suppress-header)
           enqueue-fn))
-    (assoc res
-           :status http-status/created
-           :body {:token token})))
+    (if (not-empty res)
+      (assoc res
+             :status http-status/created
+             :body {:token token})
+      res)))
 
 (defn wrap-job-enqueuer
   [app enqueue-fn]
   (fn job-enqueuer [req]
-    (cond->> (app req)
-      :job (enqueue-job enqueue-fn req))))
+    (let [res (app req)]
+      (cond->> res
+        (:job res) (enqueue-job enqueue-fn req)))))
 
 (defn- valid-url? [url]
   (try
@@ -177,9 +180,8 @@
       (app req)
       (response/status http-status/forbidden))))
 
-(def types {"courses"                  "course"
-            "education-specifications" "education-specification"
-            "programs"                 "program"})
+(def types {"courses"    "course"
+            "programmes" "programme"})
 
 (def actions #{"upsert" "delete" "dry-run-upsert" "link"})
 
@@ -196,10 +198,9 @@
                        ::ooapi-specs/type type
                        ::ooapi-specs/id   id))})))
 
-(defn link-route [{{:keys [rio-code type]} :params :as request}]
-  {:pre [(types type)]}
+(defn link-route [{{:keys [rio-code]} :params :as request}]
   (let [result   (job-route (assoc-in request [:params :action] "link"))
-        codename (if (= type "education-specifications") ::rio/opleidingscode ::rio/aangeboden-opleiding-code)]
+        codename (if (re-matches #"\d{4}O\d{4}" rio-code) ::rio/opleidingscode ::rio/aangeboden-opleiding-code)]
     (when result
       (assoc-in result [:job codename] rio-code))))
 
