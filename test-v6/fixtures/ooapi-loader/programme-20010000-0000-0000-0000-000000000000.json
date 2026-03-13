@@ -111,12 +111,12 @@
     {
       "validFrom": "2021-09-01",
       "validTo": "2022-08-31",
-      "program": {
+      "programme": {
         "primaryCode": {
           "codeType": "crohoCreboCode",
           "code": "string"
         },
-        "programType": "program",
+        "programmeType": "programme",
         "name": [
           {
             "language": "nl",

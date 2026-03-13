@@ -13,7 +13,7 @@
   "description": [
     {
       "language": "en-GB",
-      "value": "The meaning of liff"
+      "value": "The study of life"
     }
   ],
   "teachingLanguage": "nld",
@@ -46,7 +46,7 @@
     [
       {
         "language": "en-GB",
-        "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms and knowledge of liff."
+        "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
       }
     ]
   ],
@@ -96,7 +96,7 @@
       "ext": {}
     }
   ],
-  "parent": "123e4567-e89b-7777-a456-426614000001",
+  "parent": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
   "children": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
@@ -106,17 +106,17 @@
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "ext": {},
   "validFrom": "2019-08-24",
-  "validTo": "2023-08-24",
+  "validTo": "2019-08-24",
   "timelineOverrides": [
     {
       "validFrom": "2021-09-01",
       "validTo": "2022-08-31",
-      "program": {
+      "programme": {
         "primaryCode": {
           "codeType": "crohoCreboCode",
           "code": "string"
         },
-        "programType": "program",
+        "programmeType": "programme",
         "name": [
           {
             "language": "en-GB",
@@ -183,7 +183,6 @@
           }
         ],
         "link": "https://bijvak.nl",
-        "educationSpecification": "1009O0996",
         "otherCodes": [
           {
             "codeType": "CROHO",
@@ -219,12 +218,10 @@
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
-        "consumer":
-          {
+        "consumer": {
             "consumerKey": "rio",
             "educationOffererCode": "122A112",
             "educationLocationCode": "123X122",
-            "consentParticipationSTAP": "permission_granted",
             "jointPartnerCodes": [
               "122A113"
             ],
@@ -249,10 +246,15 @@
       "122A113"
     ],
     "foreignPartners": [
-      "Oxford University"
+      "Harvard University"
     ],
-    "specificationId": "1009O0996"
+    "deficiency": "deficiencies",
+    "requirementsActivities": "requirements",
+    "propaedeuticPhase": "no_propaedeutic_phase",
+    "studyChoiceCheck": "no_study_choice_check",
+    "acceleratedRoute": "accelerated_route",
+    "specificationId": "10030000-0000-0000-0000-000000000000"
   },
-  "programmeType": "course",
-  "programmeId": "123e4567-e89b-12d3-a456-426614174004"
+  "programmeType": "programme",
+  "programmeId": "20030000-0000-0000-0000-000000000000"
 }
