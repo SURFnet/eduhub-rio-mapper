@@ -10,9 +10,6 @@
     }
   ],
   "validFrom": "1950-09-20",
-  "children": [
-    "{{programmes/specification-interaction-prgspec-child}}"
-  ],
   "studyLoad": [
     {
       "value": 93,
@@ -73,6 +70,7 @@
       "language_and_culture",
       "technology_and_ict"
     ],
+    "variantIds": [ "{{programmes/specification-interaction-prgspec-child}}" ],
     "specificationType": "programme"
   }
 }
