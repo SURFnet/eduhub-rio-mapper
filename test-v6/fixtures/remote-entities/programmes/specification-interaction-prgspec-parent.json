@@ -11,7 +11,7 @@
   ],
   "validFrom": "1950-09-20",
   "children": [
-    "{{programmes/specification-interaction-eduspec-child}}"
+    "{{programmes/specification-interaction-prgspec-child}}"
   ],
   "studyLoad": [
     {
@@ -33,12 +33,12 @@
   "sector": "higher professional education",
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{programmes/specification-interaction-eduspec-parent}}"
+    "code": "{{programmes/specification-interaction-prgspec-parent}}"
   },
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "level": "bachelor",
   "levelOfQualification": "6",
-  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-eduspec-parent}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-prgspec-parent}}",
   "validTo": "2060-08-28",
   "learningOutcomes": [
     [
@@ -64,7 +64,7 @@
   ],
   "abbreviation": "1T",
   "formalDocument": "diploma",
-  "programmeId": "{{programmes/specification-interaction-eduspec-parent}}",
+  "programmeId": "{{programmes/specification-interaction-prgspec-parent}}",
   "programmeType": "specification",
   "consumer": {
     "consumerKey": "rio",
