@@ -39,6 +39,13 @@
     (when (= "aanleveren_opleidingseenheid" (:action result))
       entity)))
 
+;; If resolve not successful, nil is returned or exception thrown.
+(defn- can-resolve? [resolver rio-type ooapi-id institution-oin]
+  (try
+    (some? (resolver rio-type ooapi-id institution-oin))
+    (catch Exception _ex
+      false)))
+
 (defn- quick-validate-specification [{:keys [consumer] :as entity}]
   (when (nil? (:specificationType consumer))
     (let [error-msg "Invalid programme specification: specificationType required"]
@@ -97,11 +104,13 @@
                       ::ooapi/keys [type id entity]
                       ::rio/keys [opleidingscode] :as request}]
     {:pre [institution-oin id rio-type]}
-    (let [edu-id          (if (= :oe rio-type)
+    (let [consumer        (:consumer entity)
+          ooapi-id        (if (= :oe rio-type)
                             id
                             (-> entity :consumer :specificationId))
           oe-code         (or opleidingscode
-                              (when edu-id (resolver :oe edu-id institution-oin)))
+                              (when ooapi-id
+                                (resolver :oe ooapi-id institution-oin)))
           ao-code         (when-not (= :oe rio-type) (resolver rio-type id institution-oin))]
       ;; Inserting a course or program while the education
       ;; specification has not been added to RIO will throw an error.
@@ -109,11 +118,22 @@
       ;; that cannot be resolved.
       (when (or (and (nil? oe-code) (= :ao rio-type) (= "upsert" action))
                 (and (nil? oe-code) (= :oe rio-type) (= "delete" action)))
-        (throw (ex-info (str "No 'opleidingseenheid' found in RIO with eigensleutel: " edu-id)
+        (throw (ex-info (str "No 'opleidingseenheid' found in RIO with eigensleutel: " ooapi-id)
                         {:code       oe-code
                          :type       type
                          :action     action
                          :retryable? false})))
+      ;; For variants, we need to check if the eduspec this is a variant of (the parent) actually exists in RIO - if not, abort now
+      (when (and
+             (= rio-type :oe)
+             (some? (:variantOf consumer))
+             (not (can-resolve? resolver :oe (:variantOf consumer) institution-oin)))
+        (throw (ex-info (str "No 'opleidingseenheid' found in RIO for the parent of this variant with eigensleutel: " (:variantOf consumer))
+                        {:code       oe-code
+                         :type       type
+                         :action     action
+                         :retryable? false})))
+
       (cond-> request
         oe-code (assoc ::rio/opleidingscode oe-code)
         ao-code (assoc ::rio/aangeboden-opleiding-code ao-code)))))
