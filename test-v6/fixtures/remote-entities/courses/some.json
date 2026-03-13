@@ -54,7 +54,6 @@
     }
   ],
   "fieldsOfStudy": "0522",
-  "educationSpecification": "{{programmes/specification-parent-course}}",
   "name": [
     {
       "language": "en-GB",
@@ -87,7 +86,8 @@
     "consumerKey": "rio",
     "educationOffererCode": "110A133",
     "educationLocationCode": "107X215",
-    "consentParticipationSTAP": "permission_not_granted"
+    "consentParticipationSTAP": "permission_not_granted",
+    "specificationId": "{{programmes/specification-parent-course}}"
   },
   "link": "https://hogeschool-van-manderveen.nl/courses/{{courses/some}}",
   "otherCodes": [
