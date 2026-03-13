@@ -2,17 +2,22 @@
   "description": [
     {
       "language": "en-GB",
-      "value": "EN TRANSLATION: The excursion is part of the MSc MADE programme, students will learn about the chemistry of the course.\u00a0If possible, a visit of one week. More recently attention is paid to: 1. In less developed countries, livestock production should not only the 'end' of the course by contacting the course coordinator prior to registration.The innovator's course enables students to appreciate the relevance of our course)."
+      "value": "EN TRANSLATION: The excursion is part of the MSc MADE programme, students will learn about the chemistry of the course. If possible, a visit of one week. More recently attention is paid to: 1. In less developed countries, livestock production should not only the 'end' of the course by contacting the course coordinator prior to registration.The innovator's course enables students to appreciate the relevance of our course)."
     },
     {
       "language": "nl-NL",
-      "value": "NL VERTALING: The excursion is part of the MSc MADE programme, students will learn about the chemistry of the course.\u00a0If possible, a visit of one week. More recently attention is paid to: 1. In less developed countries, livestock production should not only the 'end' of the course by contacting the course coordinator prior to registration.The innovator's course enables students to appreciate the relevance of our course)."
+      "value": "NL VERTALING: The excursion is part of the MSc MADE programme, students will learn about the chemistry of the course. If possible, a visit of one week. More recently attention is paid to: 1. In less developed countries, livestock production should not only the 'end' of the course by contacting the course coordinator prior to registration.The innovator's course enables students to appreciate the relevance of our course)."
     }
   ],
   "validFrom": "2018-10-18",
   "addresses": [
     {
-      "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+      "countryCode": {
+        "iso3166-1-alpha2": "NL",
+        "iso3166-1-alpha3": "NLD",
+        "iso3166-2": "BQ-BO",
+        "iso3166-3": "ANHH"
+      },
       "city": "Morra",
       "geoLocation": {
         "longitude": 88,
@@ -46,7 +51,6 @@
     "studyLoadUnit": "ects"
   },
   "fieldsOfStudy": "0612",
-  "educationSpecification": "{{education-specifications/specification-interaction-eduspec-parent}}",
   "name": [
     {
       "language": "en-GB",
@@ -78,34 +82,6 @@
   "teachingLanguage": "eng",
   "level": "nt2-2",
   "levelOfQualification": "2",
-  "consumers": [
-    {
-      "alliances": [
-        {
-          "name": "lde",
-          "enrollmentForOwnStudents": "broker",
-          "type": "broadening",
-          "visibleForOwnStudents": false,
-          "selection": true,
-          "theme": "13"
-        }
-      ],
-      "consumerKey": "eduxchange"
-    },
-    {
-      "educationOffererCode": "110A133",
-      "acceleratedRoute": "no_accelerated_route",
-      "consumerKey": "rio",
-      "requirementsActivities": "requirements",
-      "consentParticipationSTAP": "permission_not_granted",
-      "studyChoiceCheck": "no_study_choice_check",
-      "deficiency": "deficiencies",
-      "educationLocationCode": "107X215",
-      "propaedeuticPhase": "no_propaedeutic_phase"
-    }
-  ],
-  "programId": "{{programmes/interaction-programme-some}}",
-  "programType": "program",
   "firstStartDate": "2020-01-31",
   "qualificationAwarded": "Phd",
   "link": "https://universiteit-van-morra.nl/programs/{{programmes/interaction-programme-some}}",
@@ -186,5 +162,18 @@
       "language": "nl-NL",
       "value": "NL VERTALING: Basic mathematics, thermodynamics (chemical potential), physical transport phenomena (continuity equations). . ."
     }
-  ]
+  ],
+  "consumer": {
+    "educationOffererCode": "110A133",
+    "acceleratedRoute": "no_accelerated_route",
+    "consumerKey": "rio",
+    "requirementsActivities": "requirements",
+    "studyChoiceCheck": "no_study_choice_check",
+    "deficiency": "deficiencies",
+    "educationLocationCode": "107X215",
+    "propaedeuticPhase": "no_propaedeutic_phase",
+    "specificationId": "{{programmes/specification-interaction-eduspec-parent}}"
+  },
+  "programmeId": "{{programmes/interaction-programme-some}}",
+  "programmeType": "program"
 }
