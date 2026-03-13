@@ -1,6 +1,6 @@
 {:request
  {:url
-  "https://gateway.test.surfeduhub.nl/programs/9338214e-3978-484c-676d-427303a92748?returnTimelineOverrides=true",
+  "https://gateway-v6-sandbox.dev.surfeduhub.nl/programmes/9338214e-3978-484c-676d-427303a92748?returnTimelineOverrides=true",
   :method :get,
   :headers {}},
  :response
