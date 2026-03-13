@@ -46,10 +46,12 @@
     "hybrid",
     "online"
   ],
-  "studyLoad": {
-    "value": 155,
-    "studyLoadUnit": "ects"
-  },
+  "studyLoad": [
+    {
+      "value": 155,
+      "studyLoadUnit": "ects"
+    }
+  ],
   "fieldsOfStudy": "0612",
   "name": [
     {
