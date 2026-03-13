@@ -246,32 +246,10 @@
                            (map #(vector % (UUID/randomUUID)))))]
     ;; In record mode, this ENV var set to true, and the mapping is written in the fixtures/vcr dir as an edn file.
     (when (= "true" (System/getenv "VCR_RECORD"))
-     (spit (str "test-" OOAPI-VERSION "/fixtures/vcr/mapping.edn")
-           (prn-str (update-vals mapping str))))
+      (let [file-path (str "test-" OOAPI-VERSION "/fixtures/vcr/mapping.edn")]
+        (clojure.java.io/make-parents file-path)
+        (spit file-path (prn-str (update-vals mapping str)))))
     mapping))
-
-;; TODO Remove as soon as gateway supports "programmes"
-(def programme-supported? false)
-
-;; we try to use v6 naming everywhere except when interacting with the gateway
-(defn convert-entity-to-v5 [entity-name]
-  (cond
-    (re-matches #"courses/[^/]+/course-offerings" entity-name)
-    (str/replace entity-name #"/course-offerings$" "/offerings")
-
-    (re-matches #"programmes/[^/]+/programme-offerings" entity-name)
-    (str/replace entity-name #"^programmes/([^/]+)/programme-offerings$" "programs/$1/offerings")
-
-    (re-matches #"programmes/[^/]+" entity-name)
-    (str/replace entity-name #"^programmes/" "programs/")
-
-    :else
-    entity-name))
-
-(defn convert-url-to-v5 [url]
-  (if-let [[_ prefix path query-fragment] (re-matches #"(https?://[^/]+/)([^?#]+)(.*)" url)]
-    (str prefix (convert-entity-to-v5 path) query-fragment)
-    url))
 
 (defn- replace-content-exprs
   [templ session]
@@ -305,12 +283,8 @@
     ;; Sequence of strings like "/app/eduhub-mapper/test-v6/fixtures/remote-entities/courses/some.json"
     ;; location looks like: programmes/7f1567ac-a06b-47e7-9641-a9dc1451659a or programmes/8e54eca4-4096-48df-8735-6b41d114fd13/programme-offerings
     (map (fn [f]
-           (let [loc (object-location f session)]
-             ;; TODO remove when programme-supported is true
-             ;; convert programmes/8e54eca4-4096-48df-8735-6b41d114fd13/programme-offerings
-             ;; to      programs/8e54eca4-4096-48df-8735-6b41d114fd13/offerings
-             {:path (if programme-supported? loc (convert-entity-to-v5 loc))
-               :body (object-content f session)}))
+           {:path (object-location f session)
+            :body (object-content f session)})
          i)))
 
 (defn- put-session

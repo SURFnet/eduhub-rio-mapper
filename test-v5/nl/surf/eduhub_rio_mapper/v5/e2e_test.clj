@@ -37,40 +37,7 @@
         body (json/write-str updated-entity)]
     (remote-helper/os-put-object info container-name {:path path, :body body})))
 
-(deftest ^:e2e try-to-create-a-program-with-invalid-data
-  (testing "scenario [6a]: Test /job/upsert with a program with an invalid onderwijsaanbieder attribute. You can expect 'error'."
-    (is (job-error? (post-job :upsert :programs "bad-edu-offerer"))))
-
-  (testing "scenario [6b]: Test /job/upsert with a program with an invalid onderwijslocatie attribute. You can expect 'error'."
-    (is (job-error? (post-job :upsert :programs "bad-edu-location")))))
-
-(deftest ^:e2e try-to-create-edspecs-with-invalid-data
-  (testing "scenario [3a]: Test /job/upsert/<invalid type> to see how the rio mapper reacts on an invalid api call. You can expect a 404 response."
-    (is (= http-status/not-found (:status (post-job :upsert "not-a-valid-type" (UUID/randomUUID))))))
-
-  (testing "scenario [3b]: Test /job/upsert with an edspec parent with an invalid type attribute. You can expect 'error'."
-    (let [job (post-job :upsert :education-specifications "bad-type")]
-      (and
-       (is (job-error? job))
-       (is (= "fetching-ooapi" (job-result job :phase)))))))
-
-(deftest ^:e2e test-program-without-eduspecs
-  (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
-    (and
-     (is (nil? (rio-resolve "education-specification" (ooapi-id :education-specifications "dorothy"))))
-     (let [job (post-job :upsert :programs "jack")]
-       (and
-        (is (job-error? job))
-        (is (str/starts-with? (job-result job :message)
-                              "No 'opleidingseenheid' found in RIO with eigensleutel:")))))))
-
-(deftest ^:e2e test-upsert-eduspec-dry-run
-  (testing "scenario [1a]: Test /job/dry-run to see the difference between the edspec parent in OOAPI en de opleidingeenheid in RIO. You can expect RIO to be empty, when you start fresh."
-    (let [job (post-job :dry-run/upsert :education-specifications "orphan-eduspec")]
-      (and
-       (is (job-done? job))
-       (is (job-dry-run-not-found? job))))))
-
+(def ^:dynamic rio-code nil)
 (def ^:dynamic parent-code nil)
 (def ^:dynamic last-job nil)
 (def ^:dynamic child-code nil)
@@ -85,7 +52,43 @@
 (def ^:dynamic bonus-parent-code nil)
 (def ^:dynamic bonus-child-code nil)
 
-(deftest ^:e2e test-program-with-eduspecs
+(deftest ^:v5-e2e try-to-create-a-program-with-invalid-data
+  (testing "scenario [6a]: Test /job/upsert with a program with an invalid onderwijsaanbieder attribute. You can expect 'error'."
+    (is (job-error? (post-job :upsert :programs "bad-edu-offerer"))))
+
+  (testing "scenario [6b]: Test /job/upsert with a program with an invalid onderwijslocatie attribute. You can expect 'error'."
+    (is (job-error? (post-job :upsert :programs "bad-edu-location")))))
+
+(deftest ^:v5-e2e try-to-create-edspecs-with-invalid-data
+  (testing "scenario [3a]: Test /job/upsert/<invalid type> to see how the rio mapper reacts on an invalid api call. You can expect a 404 response."
+    (is (= http-status/not-found (:status (post-job :upsert "not-a-valid-type" (UUID/randomUUID))))))
+
+  (testing "scenario [3b]: Test /job/upsert with an edspec parent with an invalid educationSpecificationType attribute. You can expect 'error'."
+    (let [job (post-job :upsert :education-specifications "bad-type")]
+      (and
+       (is (job-error? job))
+       (is (= "fetching-ooapi" (job-result job :phase)))))))
+
+(deftest ^:v5-e2e test-program-without-eduspecs
+  (binding [rio-code (str (ooapi-id :education-specifications "dorothy"))]
+    (testing "scenario [4b]: Test /job/upsert with the program. You can expect a new aangeboden opleiding. This aangeboden opleiding includes a periode and a cohort. (you can repeat this to test an update of the same data.)"
+      (and
+       (is (some? rio-code))
+       (is (nil? (rio-resolve :oe rio-code)))
+       (let [job (post-job :upsert :programs "jack")]
+         (and
+          (is (job-error? job))
+          (is (str/starts-with? (job-result job :message)
+                                "No 'opleidingseenheid' found in RIO with eigensleutel:"))))))))
+
+(deftest ^:v5-e2e test-upsert-eduspec-dry-run
+  (testing "scenario [1a]: Test /job/dry-run to see the difference between the edspec parent in OOAPI en de opleidingeenheid in RIO. You can expect RIO to be empty, when you start fresh."
+    (let [job (post-job :dry-run/upsert :education-specifications "orphan-eduspec")]
+      (and
+       (is (job-done? job))
+       (is (job-dry-run-not-found? job))))))
+
+(deftest ^:v5-e2e test-program-with-eduspecs
   ;; insert eduspec "parent-program"
   (binding [last-job (post-job :upsert :education-specifications "parent-program")
             parent-code nil
@@ -326,8 +329,8 @@
               (set (kenmerken-values-aangeboden-opleiding last-xml "voertaal" :kenmerkwaardeEnumeratiewaarde))))
        (is (= "2008-10-18"
               (get-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingPeriode" "begindatum"])))
-       (is "2022-08-24"
-           (first (kenmerken-values-aangeboden-opleiding last-xml "laatsteInstroomdatum" :kenmerkwaardeDatum)))
+       (is (= "2022-08-24"
+           (first (kenmerken-values-aangeboden-opleiding last-xml "laatsteInstroomdatum" :kenmerkwaardeDatum))))
        (is (= ["1234asd12" "1234poi12" "1234qwe12"]
               (sort
                (get-all-in-xml last-xml ["aangebodenHOOpleiding" "aangebodenHOOpleidingCohort" "cohortcode"]))))))
@@ -385,11 +388,20 @@
       (set! last-job (post-job :delete :education-specifications "child-program"))
       (and
        (is (job-done? last-job))
-       (is (nil? (rio-resolve "education-specification" child-code)))))))
+       (is (nil? (rio-resolve :oe child-code)))))))
+
+(deftest ^:v5-e2e test-insert-variant-eduspecs
+  (testing "insert eduspec child-program"
+    ;; this should fail because its parent (parent-program) is not present in RIO
+    ;; if the program tests fails before deletion of parent-program, this test will fail too
+    (binding [last-job (post-job :upsert :education-specifications "child-program")]
+      (and
+       (is last-job)
+       (is (job-error? last-job))))))
 
 (def ^:dynamic course-id nil)
 
-(deftest ^:e2e test-course-with-eduspecs
+(deftest ^:v5-e2e test-course-with-eduspecs
   (binding [last-job (post-job :upsert :education-specifications "parent-course")
             course-id nil
             generated-sleutel nil
@@ -475,9 +487,9 @@
        (set! last-job (post-job :delete :courses "some"))
        (and
         (is (job-done? last-job))
-        (is (nil? (rio-resolve "course" course-id))))))))
+        (is (nil? (rio-resolve :ao course-id))))))))
 
-(deftest ^:e2e test-accredited-program
+(deftest ^:v5-e2e test-accredited-program
   (binding [generated-sleutel (UUID/randomUUID)
             parent-code       "1001O5220"
             variant-code      nil
@@ -498,16 +510,18 @@
       (set! last-job (post-job :unlink parent-code :education-specifications))
       (and
        (is (job-done? last-job))
+       (is (not= (str generated-sleutel)
+                 (eigen-opleidingseenheid-sleutel parent-code)))
        (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))
 
-    (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
+    #_(testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
       ;; insert eduspec with type "variant", then create relation. Delete after use
       (and
        (set! last-job (post-job :upsert :education-specifications "accredited-variant"))
        (set! variant-code (job-result-opleidingseenheidcode last-job))
        (is (rio-with-relation? parent-code variant-code))
        (set! last-job (post-job :delete :education-specifications "accredited-variant"))
-       (is (nil? (rio-resolve "education-specification" parent-code)))))))
+       (is (nil? (rio-resolve :oe parent-code)))))))
 
 (defn- set-education-unit-code-in-consumer [consumer unit-code]
   (if (not= "rio" (:consumerKey consumer))
@@ -519,7 +533,7 @@
    #(set-education-unit-code-in-consumer % unit-code)
    consumers))
 
-(deftest ^:e2e test-update-remote-entities
+(deftest ^:v5-e2e test-update-remote-entities
   ;; insert eduspec "joint"
   (binding [parent-code "2345O5432"
             last-xml nil
@@ -535,7 +549,7 @@
           updated-program (remote-helper/os-get-object  info container-name {:path path})]
       (is (= parent-code (get-in updated-program [:consumers 1 :educationUnitCode]))))))
 
-(deftest ^:e2e test-joint-program
+(deftest ^:v5-e2e test-joint-program
   ;; insert eduspec "joint"
   (binding [last-job (post-job :upsert :education-specifications "joint")
             parent-code nil

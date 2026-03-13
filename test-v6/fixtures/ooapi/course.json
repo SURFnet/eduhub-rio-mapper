@@ -19,7 +19,7 @@
     "situated"
   ],
   "duration": "P1DT30H4S",
-  "firstStartDate": "2019-08-24",
+  "firstStartDateTime": "2019-08-24T08:30:00+01:00",
   "description": [
     {
       "language": "en-GB",
@@ -61,7 +61,6 @@
     }
   ],
   "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
-  "educationSpecification": "9fa40013-369e-4f7a-839b-5bf76128b51e",
   "addresses": [
     {
       "addressType": "postal",
@@ -89,20 +88,19 @@
       "code": "string"
     }
   ],
-  "consumers": [
+  "consumer":
     {
       "consumerKey": "rio",
+      "specificationId": "9fa40013-369e-4f7a-839b-5bf76128b51e",
       "educationOffererCode": "123A321",
       "educationLocationCode": "334X123",
-      "consentParticipationSTAP": "permission_granted",
       "jointPartnerCodes": [
         "123A123"
       ],
       "foreignPartners": [
         "Harvard University"
       ]
-    }
-  ],
+    },
   "ext": {},
   "programs": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
@@ -137,7 +135,7 @@
           "situated"
         ],
         "duration": "P1DT30H4S",
-        "firstStartDate": "2019-08-24",
+        "firstStartDateTime": "2019-08-24T08:30:00+01:00",
         "description": [
           {
             "language": "en-GB",
@@ -179,7 +177,6 @@
           }
         ],
         "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
-        "educationSpecification": "9fa40013-369e-4f7a-839b-5bf76128b51e",
         "addresses": [
           {
             "addressType": "postal",
@@ -205,18 +202,6 @@
           {
             "codeType": "crohoCreboCode",
             "code": "string"
-          }
-        ],
-        "consumers": [
-          {
-            "consumerKey": "rio",
-            "educationOffererCode": "123A321",
-            "educationLocationCode": "334X123",
-            "consentParticipationSTAP": "permission_granted",
-            "jointPartnerCodes": [
-              "123A123"
-            ],
-            "foreignPartners": "Harvard University"
           }
         ],
         "ext": {},

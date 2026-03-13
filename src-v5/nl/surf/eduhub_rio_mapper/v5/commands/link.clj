@@ -20,9 +20,9 @@
   (:require [clojure.string :as str]
             [clojure.test :refer :all]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
+            [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
-            [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
-            [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]))
+            [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]))
 
 (defn- strip-duo [kw]
   (-> kw
@@ -146,8 +146,9 @@
                   :rio-sexp   [(vec (keep (sleutel-changer id finder) rio-new))]
                   :sender-oin institution-oin}
         success? (mutator/mutate! mutation rio-config)
-        predicate (fn [] (let [rio-obj (rio-loader-fn)]
-                           (= id (last (rio-obj-raadplegen->beheren rio-obj finder)))))]
+        predicate (fn [] (let [rio-obj (rio-loader-fn)
+                               loaded-id (last (rio-obj-raadplegen->beheren rio-obj finder))]
+                           (= id loaded-id)))]
 
     ;; Ensure RIO has processed the update
     (when success?
@@ -162,8 +163,9 @@
                                  (assoc :old-id old-id
                                         :new-id id))}}))
 
-(defn- load-rio-obj-for-link [getter request]
-  (let [rio-obj (rio.loader/rio-finder getter request)]
+(defn- load-rio-obj-for-link [getter {::ooapi/keys [type] :as request}]
+  (let [req (assoc request :rio-type (if (= "education-specification" type) :oe :ao))
+        rio-obj (rio.loader/rio-finder getter req)]
     (or rio-obj
         (throw (ex-info "404 Not Found" {:phase :resolving})))))
 

@@ -1,0 +1,78 @@
+{
+  "level": "bachelor",
+  "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+  "programmeType": "specification",
+  "programmeId": "{{programmes/specification-orphan-prgspec}}",
+  "validFrom": "1950-09-20",
+  "abbreviation": "1T",
+  "validTo": "2060-08-28",
+  "learningOutcomes": [
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ]
+  ],
+  "formalDocument": "diploma",
+  "sector": "higher professional education",
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "parent-program education specification"
+    },
+    {
+      "language": "nl-NL",
+      "value": "parent-program education specification"
+    }
+  ],
+  "primaryCode": {
+    "codeType": "identifier",
+    "code": "{{programmes/specification-orphan-prgspec}}"
+  },
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-orphan-prgspec}}",
+  "fieldsOfStudy": "0912",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "levelOfQualification": "6",
+  "studyLoad": [
+    {
+      "value": 93,
+      "studyLoadUnit": "sbu"
+    }
+  ],
+  "consumer": {
+    "consumerKey": "rio",
+    "category": [
+      "business_and_project_support",
+      "education",
+      "cross_sectoral",
+      "language_and_culture",
+      "technology_and_ict"
+    ],
+    "variantIds": [ "{{programmes/specification-child-program}}" ],
+    "specificationType": "programme"
+  }
+}

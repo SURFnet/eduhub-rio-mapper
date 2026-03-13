@@ -30,10 +30,9 @@
 
 (defn authenticated-request [method path]
   (assoc (request method path)
-    :client-id 123
-    :institution-oin "123"))
+         :client-id 123
+         :institution-oin "123"))
 
-(def config nil)
 (def last-job (atom nil))
 (def api-routes (api/routes {:enqueuer-fn      (fn [job] (reset! last-job job) nil)
                              :status-getter-fn (constantly {:test :dummy})}))
@@ -43,13 +42,13 @@
 
 (deftest routes
   (are [method path]
-      (= http-status/bad-request (:status (api-routes (authenticated-request method path))))
+       (= http-status/bad-request (:status (api-routes (authenticated-request method path))))
     :get  "/status/1"
     :post "/job/upsert/courses/bleh"
     :post "/job/link/1234O4321/courses/abcdefgh-ijkl-mnop-qrst-uvwxyzabcdef")
 
   (are [method path]
-      (is (= http-status/not-found (:status (api-routes (authenticated-request method path)))))
+       (= http-status/not-found (:status (api-routes (authenticated-request method path))))
     :get  "/blerk"
     :get  "/job/upsert/courses/31415"
     :get  "/status"
@@ -57,13 +56,12 @@
     :post "/job/blerk/courses/12345678-1234-2345-3456-123456789abc")
 
   (are [expected-job path]
-      (let [{:keys [job status]} (-> :post
-                                     (authenticated-request path)
-                                     (assoc :institution-schac-home "edu.nl")
-                                     api-routes)]
-        (is (= http-status/ok status))
-        (is (= expected-job job)))
-
+       (let [{:keys [job status]} (-> :post
+                                      (authenticated-request path)
+                                      (assoc :institution-schac-home "edu.nl")
+                                      api-routes)]
+         (is (= http-status/created status))
+         (is (= expected-job job)))
     {:action                 "upsert"
      ::ooapi/type            "course"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
@@ -72,18 +70,18 @@
     "/job/upsert/courses/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "upsert"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/upsert/education-specifications/12345678-1234-2345-3456-123456789abc"
+    "/job/upsert/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "upsert"
-     ::ooapi/type            "program"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/upsert/programs/12345678-1234-2345-3456-123456789abc"
+    "/job/upsert/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "delete"
      ::ooapi/type            "course"
@@ -93,19 +91,19 @@
     "/job/delete/courses/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "delete"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/delete/education-specifications/12345678-1234-2345-3456-123456789abc"
+    "/job/delete/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                 "link"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      ::rio/opleidingscode    "1234O4321"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/link/1234O4321/education-specifications/12345678-1234-2345-3456-123456789abc"
+    "/job/link/1234O4321/programmes/12345678-1234-2345-3456-123456789abc"
 
     {:action                         "link"
      ::ooapi/type                    "course"
@@ -116,21 +114,21 @@
     "/job/link/00000000-0000-0000-0000-000000000000/courses/12345678-1234-2345-3456-123456789abc"
 
     {:action                         "link"
-     ::ooapi/type                    "program"
+     ::ooapi/type                    "programme"
      ::ooapi/id                      "12345678-1234-2345-3456-123456789abc"
      ::rio/aangeboden-opleiding-code "00000000-0000-0000-0000-000000000000"
      :institution-schac-home         "edu.nl"
      :institution-oin                "123"}
-    "/job/link/00000000-0000-0000-0000-000000000000/programs/12345678-1234-2345-3456-123456789abc"
+    "/job/link/00000000-0000-0000-0000-000000000000/programmes/12345678-1234-2345-3456-123456789abc"
 
     ;; Unlink is link to id with value `nil`
     {:action                 "link"
-     ::ooapi/type            "education-specification"
+     ::ooapi/type            "programme"
      ::ooapi/id              nil
      ::rio/opleidingscode    "1234O4321"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/unlink/1234O4321/education-specifications"
+    "/job/unlink/1234O4321/programmes"
 
     {:action                         "link"
      ::ooapi/type                    "course"
@@ -141,23 +139,23 @@
     "/job/unlink/00000000-0000-0000-0000-000000000000/courses"
 
     {:action                         "link"
-     ::ooapi/type                    "program"
+     ::ooapi/type                    "programme"
      ::ooapi/id                      nil
      ::rio/aangeboden-opleiding-code "00000000-0000-0000-0000-000000000000"
      :institution-schac-home         "edu.nl"
      :institution-oin                "123"}
-    "/job/unlink/00000000-0000-0000-0000-000000000000/programs"
+    "/job/unlink/00000000-0000-0000-0000-000000000000/programmes"
 
     {:action                 "delete"
-     ::ooapi/type            "program"
+     ::ooapi/type            "programme"
      ::ooapi/id              "12345678-1234-2345-3456-123456789abc"
      :institution-schac-home "edu.nl"
      :institution-oin        "123"}
-    "/job/delete/programs/12345678-1234-2345-3456-123456789abc")
+    "/job/delete/programmes/12345678-1234-2345-3456-123456789abc")
 
   (is (= "12345678-1234-2345-3456-123456789abc"
          (-> (assoc (request :get "/status/12345678-1234-2345-3456-123456789abc")
-               :client-id "123")
+                    :client-id "123")
              (api-routes)
              :token))))
 
@@ -176,17 +174,17 @@
 
   (is (= http-status/ok
          (:status (api-routes (assoc (request :get "/status/12345678-1234-2345-3456-123456789abc")
-                                :client-id "wolfgang"
-                                :institution-oin "123",
-                                :institution-schac-home "uu.nl"))))
-        "real client, status request")
+                                     :client-id "wolfgang"
+                                     :institution-oin "123",
+                                     :institution-schac-home "uu.nl"))))
+      "real client, status request")
 
-  (is (= http-status/ok
+  (is (= http-status/created
          (:status (api-routes (assoc (request :post "/job/delete/courses/12345678-1234-2345-3456-123456789abc")
-                                :client-id "wolfgang"
-                                :institution-oin "123",
-                                :institution-schac-home "uu.nl"))))
-        "real client, mutation request"))
+                                     :client-id "wolfgang"
+                                     :institution-oin "123",
+                                     :institution-schac-home "uu.nl"))))
+      "real client, mutation request"))
 
 (deftest wrap-code-validator
   (let [app (api/wrap-code-validator identity)]
@@ -280,8 +278,8 @@
         status {:http-messages http-messages-json, :profile "rio"}
         f (fn mocked-wrap-status-getter [req status-getter]
             (let [f (api/wrap-status-getter
-                      (fn [req] {:token (:token req)})
-                      {:status-getter-fn status-getter})]
+                     (fn [req] {:token (:token req)})
+                     {:status-getter-fn status-getter})]
               (f req)))]
     (testing "Token is nil"
       (let [actual (f {:token nil} (constantly status))]
@@ -378,7 +376,7 @@
                      :started-at nil
                      :resource "test/314"}}
            (cond-> (app {:token "test-pending"})
-                   :created-at (assoc-in [:body :created-at] true))))
+             :created-at (assoc-in [:body :created-at] true))))
 
     ;; test done status
     (is (= {:token  "test-done"
@@ -392,8 +390,8 @@
                      :finished-at true
                      :attributes {:opleidingseenheidcode "code"}}}
            (cond-> (app {:token "test-done"})
-                   :created-at (assoc-in [:body :created-at] true)
-                   :finished-at (assoc-in [:body :finished-at] true))))
+             :created-at (assoc-in [:body :created-at] true)
+             :finished-at (assoc-in [:body :finished-at] true))))
 
     ;; test error status
     (is (= {:token  "test-error"
@@ -408,14 +406,14 @@
                      :phase    "middle"
                      :message  "error"}}
            (cond-> (app {:token "test-error"})
-                   :created-at (assoc-in [:body :created-at] true)
-                   :finished-at (assoc-in [:body :finished-at] true))))
+             :created-at (assoc-in [:body :created-at] true)
+             :finished-at (assoc-in [:body :finished-at] true))))
     (status/purge! config)))
 
 (deftest jobqueue
-  (let [req (authenticated-request :post "/job/upsert/education-specifications/12345678-1234-2345-3456-123456789abc")
+  (let [req (authenticated-request :post "/job/upsert/programmes/12345678-1234-2345-3456-123456789abc")
         req (assoc-in req [:headers "x-callback"] "https://google.com/")]
-    (is (= http-status/ok (:status (api-routes req))))
+    (is (= http-status/created (:status (api-routes req))))
     (is (= "https://google.com/" (::job/callback-url @last-job)))))
 
 ;; In the http-messages, generally keywords are used for keys, except for the headers, there we use strings.
@@ -425,12 +423,12 @@
 
 (deftest status-http-messages
   (let [http-message (-> (slurp "test-v6/fixtures/http-messages-1.json")
-                          (json/read-str :key-fn keyword)
-                          :http-messages
-                          first
-                          stringify-headers
-                          api/add-single-parsed-json-response)]
+                         (json/read-str :key-fn keyword)
+                         :http-messages
+                         first
+                         stringify-headers
+                         api/add-single-parsed-json-response)]
     (is (string? (get-in http-message [:res :body])))
     (is (map? (get-in http-message [:res :json-body])))
-    (is (= "/programs/0f212491-c96a-4141-8718-86d40a4ebfd3?returnTimelineOverrides=true"
+    (is (= "/programmes/0f212491-c96a-4141-8718-86d40a4ebfd3?returnTimelineOverrides=true"
            (get-in http-message [:res :json-body :gateway :request])))))

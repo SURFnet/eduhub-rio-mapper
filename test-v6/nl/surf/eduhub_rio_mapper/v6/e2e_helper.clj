@@ -24,13 +24,13 @@
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities]
+            [nl.surf.eduhub-rio-mapper.rio.loader :as rio-loader]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.utils.printer :as printer]
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v6.config :as config]
-            [nl.surf.eduhub-rio-mapper.v6.endpoints.status :as status]
-            [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio-loader])
+            [nl.surf.eduhub-rio-mapper.v6.endpoints.status :as status])
   (:import [java.io File StringWriter]
            [java.net ConnectException]
            [java.util Base64 List]
@@ -85,8 +85,6 @@
   "Print HTTP message as returned by API status."
   [http-messages]
   (printer/print-http-messages-with-boxed-printer http-messages print-single-http-message))
-
-
 
 ;; Defer running make-config so running some (other!) tests is still
 ;; possible when environment incomplete.
@@ -160,8 +158,11 @@
 (defn ooapi-id
   "Get OOAPI UUID of automatically uploaded fixture."
   [type id]
-  (let [name (str (name type) "/" id)]
-    (get remote-entities/*session* name)))
+  {:pre [(#{:programmes :courses} type)]}
+  (get remote-entities/*session*
+  (case type
+    :programmes (str "programmes" "/" id)
+    :courses (str "courses" "/" id))))
 
 (defn- interpret-post-job-args
   "Automatically find OOAPI ID from session.
@@ -175,7 +176,7 @@
     (concat (drop-last args)
             [(if (and (keyword? type) (string? id))
                (let [uuid (ooapi-id type id)]
-                 (assert uuid (str "Expect a UUID for " id))
+                 (assert uuid (str "Expect a UUID for " type " " id))
                  uuid)
                id)])))
 
@@ -216,7 +217,7 @@
                  (print-api-message {:req req, :res res}))
     (when (seq http-messages)
       (print-boxed "Job HTTP messages"
-        (print-http-messages http-messages)))
+                   (print-http-messages http-messages)))
     res))
 
 (defn- api-status-final?
@@ -227,40 +228,42 @@
 (def job-status-poll-sleep-msecs 500)
 (def job-status-poll-total-msecs 60000)
 
+(defn- delayed-result [{:keys [status] {:keys [token]} :body}]
+  (delay
+    (if (not= http-status/created status)
+      (println (str "failed to post job - status: " status))
+      (loop [tries-left (/ job-status-poll-total-msecs
+                           job-status-poll-sleep-msecs)]
+        (let [{:keys [status body] :as res}
+              (call-api-status token)]
+          (cond
+            (zero? tries-left)
+            (do
+              (println "\n\n⚠ too many retries on status\n")
+              ::time-out)
+
+            (not= http-status/ok status)
+            (do
+              (println "\n\n⚠ get status failed\n")
+              ::get-status-failed)
+
+            (api-status-final? res)
+            body
+
+            :else
+            (do
+              (Thread/sleep ^long job-status-poll-sleep-msecs)
+              (recur (dec tries-left)))))))))
+
 (defn post-job
   "Post a job through the API.
   Return the HTTP response of the call and includes a \"delay\" to access
   the job result at `:result-delay`."
   [action & args]
   {:pre [(#{:upsert :delete :link :unlink :status :dry-run/upsert} action)]}
-  (let [{:keys [status] {:keys [token]} :body :as res}
-        (call-api action args)]
-    (assoc res :result-delay
-           (delay
-             (if (not= http-status/ok status)
-               (println "failed to post job")
-               (loop [tries-left (/ job-status-poll-total-msecs
-                                    job-status-poll-sleep-msecs)]
-                 (let [{:keys [status body] :as res}
-                       (call-api-status token)]
-                   (cond
-                     (zero? tries-left)
-                     (do
-                       (println "\n\n⚠ too many retries on status\n")
-                       ::time-out)
-
-                     (not= http-status/ok status)
-                     (do
-                       (println "\n\n⚠ get status failed\n")
-                       ::get-status-failed)
-
-                     (api-status-final? res)
-                     body
-
-                     :else
-                     (do
-                       (Thread/sleep ^long job-status-poll-sleep-msecs)
-                       (recur (dec tries-left)))))))))))
+  (spit "logs/e2e-v6-posted-jobs.log" (str action " " (prn-str args)) :append true)
+  (let [res (call-api action args)]
+    (assoc res :result-delay (delayed-result res))))
 
 (defn job-result
   "Use `get-in` to access job response from `post-job`."
@@ -295,8 +298,8 @@
   "Short cut to `post-job` job response attributes aangebodenopleidingcode."
   [job]
   (or
-    (job-result-attributes job :aangebodenopleidingcode)
-    (throw (ex-info "error job-result-aangebodenopleidingcode" job))))
+   (job-result-attributes job :aangebodenopleidingcode)
+   (throw (ex-info "error job-result-aangebodenopleidingcode" job))))
 
 (defmethod test/assert-expr 'job-result-aangebodenopleidingcode [msg form]
   `(let [job# ~(second form)
@@ -349,10 +352,10 @@
   `(let [job# ~(second form)
          status# (job-result-status job#)
          result# (= "done" status#)]
-    (test/do-report {:type (if result# :pass :fail)
-                     :message (or ~msg "Expect final job status to equal 'done'"),
-                     :expected "done", :actual status#})
-    result#))
+     (test/do-report {:type (if result# :pass :fail)
+                      :message (or ~msg "Expect final job status to equal 'done'"),
+                      :expected "done", :actual status#})
+     result#))
 
 (defn job-error?
   "Final job status is 'error'."
@@ -395,7 +398,6 @@
                       :message (or ~msg "Expect final job status attributes status to equal 'not-found'"),
                       :expected "not-found", :actual status#})
      result#))
-
 
 (def ^:private rio-getter (delay (rio-loader/make-getter (:rio-config @config))))
 (def ^:private rio-resolver (delay (rio-loader/make-resolver (:rio-config @config))))
@@ -410,7 +412,8 @@
     result))
 
 (defn rio-resolve [rio-type id]
-  {:pre [(#{"education-specification" "course" "program"} rio-type)]}
+  {:pre [(#{:oe :ao} rio-type)
+         (string? id)]}
   (let [messages-atom (atom [])
         result (binding [http-utils/*http-messages* messages-atom]
                  (@rio-resolver rio-type id (:institution-oin @client-info)))]
@@ -422,9 +425,9 @@
   [code]
   {:pre [code]}
   (print-boxed "rio-relations"
-    (rio-get {::rio/type           rio-loader/opleidingsrelaties-bij-opleidingseenheid-type
-              ::rio/opleidingscode code
-              :institution-oin            (:institution-oin @client-info)})))
+               (rio-get {::rio/type           rio-loader/opleidingsrelaties-bij-opleidingseenheid-type
+                         ::rio/opleidingscode code
+                         :institution-oin            (:institution-oin @client-info)})))
 
 (defn rio-with-relation?
   "Fetch relations of `rio-child` and test if it includes `rio-parent`.
@@ -449,12 +452,12 @@
   [code]
   {:pre [code]}
   (print-boxed "rio-opleidingseenheid"
-    (-> {::rio/type           rio-loader/opleidingseenheid-type
-         ::rio/opleidingscode code
-         :institution-oin            (:institution-oin @client-info)
-         :response-type              :literal}
-        rio-get
-        xml-utils/str->dom)))
+               (-> {::rio/type           rio-loader/opleidingseenheid-type
+                    ::rio/opleidingscode code
+                    :institution-oin            (:institution-oin @client-info)
+                    :response-type              :literal}
+                   rio-get
+                   xml-utils/str->dom)))
 
 (defn- extract-kenmerken [node]
   (if (map? node)
@@ -463,30 +466,31 @@
 
 (defn- kenmerken-tekst-opleidingseenheid [rio-code naam]
   (as-> rio-code $
-        (rio-opleidingseenheid $)
-        (xml-utils/element->edn $)
-        (:Envelope $)
-        (:Body $)
-        (:opvragen_opleidingseenheid_response $)
-        (some $ rio-loader/opleidingseenheid-namen)
-        (extract-kenmerken $)
-        (filter #(= naam (:kenmerknaam %)) $)
-        (first $)
-        (:kenmerkwaardeTekst $)))
+    (rio-opleidingseenheid $)
+    (xml-utils/element->edn $)
+    (:Envelope $)
+    (:Body $)
+    (:opvragen_opleidingseenheid_response $)
+    (some $ rio-loader/opleidingseenheid-namen)
+    (extract-kenmerken $)
+    (filter #(= naam (:kenmerknaam %)) $)
+    (first $)
+    (:kenmerkwaardeTekst $)))
 
 (defn eigen-opleidingseenheid-sleutel [rio-code]
+  {:pre [(string? rio-code)]}
   (kenmerken-tekst-opleidingseenheid rio-code "eigenOpleidingseenheidSleutel"))
 
 (defn rio-aangebodenopleiding
   "Call RIO `opvragen_aangebodenOpleiding`."
   [id]
   (print-boxed "rio-aangebodenopleiding"
-    (-> {::rio/type                      rio-loader/aangeboden-opleiding-type
-         ::rio/aangeboden-opleiding-code id
-         :institution-oin                (:institution-oin @client-info)
-         :response-type                  :literal}
-        rio-get
-        xml-utils/str->dom)))
+               (-> {::rio/type                      rio-loader/aangeboden-opleiding-type
+                    ::rio/aangeboden-opleiding-code id
+                    :institution-oin                (:institution-oin @client-info)
+                    :response-type                  :literal}
+                   rio-get
+                   xml-utils/str->dom)))
 
 (defn kenmerken-values-aangeboden-opleiding [ao-dom naam kenmerk-type]
   (as-> ao-dom $
@@ -522,9 +526,9 @@
   [node path]
   {:pre [(instance? Node node)]}
   (let [xpath           (str "//"
-                   (->> path
-                        (map #(str "*[local-name()='" % "']"))
-                        (str/join "/")))
+                             (->> path
+                                  (map #(str "*[local-name()='" % "']"))
+                                  (str/join "/")))
         ^NodeList nodes (.evaluate (.newXPath (XPathFactory/newInstance))
                                    xpath
                                    node
@@ -533,8 +537,6 @@
         values          (mapv #(.getTextContent (.item nodes %))
                               (range node-length))]
     values))
-
-
 
 ;; Using atoms to keep process to make interactive development easier.
 (defonce ^:private serve-api-process-atom (atom nil))
@@ -557,7 +559,7 @@
       (System/exit 1)))
   (doseq [{:keys [cmd proc-atom ^String log-file]} services]
 
-    (let [process-builder (ProcessBuilder. ^List (into ["clojure" "-M:mapper"] cmd))
+    (let [process-builder (ProcessBuilder. ^List (into ["clojure" "-M:mapper-v6"] cmd))
           log-file (File. log-file)]
       (when-let [parent (.getParentFile log-file)]
         (.mkdirs parent))
