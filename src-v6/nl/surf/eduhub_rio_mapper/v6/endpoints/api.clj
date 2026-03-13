@@ -70,7 +70,9 @@
                                        :token token
                                        :created-at (str (Instant/now))
                                        :suppress-http-messages (= "true" suppress-header))))
-          (assoc res :body {:token token}))
+          (assoc res
+                 :status http-status/created
+                 :body {:token token}))
         res))))
 
 (defn- valid-url? [url]

@@ -24,7 +24,7 @@
 
 ;; middleware to add to the http client
 
-;; Can be rebound dynamically; this happens a.o. in the interaction test.
+;; Can be rebound dynamically; this happens a.o. in the smoketest.
 (defn ^:dynamic *vcr* [handler request]
   (handler request))
 
