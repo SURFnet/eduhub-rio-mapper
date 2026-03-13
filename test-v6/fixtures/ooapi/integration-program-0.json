@@ -1,10 +1,10 @@
 {
   "fieldsOfStudy": "0542",
   "teachingLanguage": "nld",
-  "studyLoad": {
+  "studyLoad": [{
     "value": 79,
     "studyLoadUnit": "ects"
-  },
+  }],
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "level": "secondary vocational education 2",
   "name": [
