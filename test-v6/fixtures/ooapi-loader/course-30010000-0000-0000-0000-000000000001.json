@@ -1,0 +1,239 @@
+{
+  "courseId": "30010000-0000-0000-0000-000000000001",
+  "primaryCode": {
+    "codeType": "crohoCreboCode",
+    "code": "string"
+  },
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "Academic and Professional Writing"
+    }
+  ],
+  "abbreviation": "INFOMQNM",
+  "studyLoad": {
+    "studyLoadUnit": "ects",
+    "value": 3
+  },
+  "modeOfDelivery": [
+    "situated"
+  ],
+  "duration": "P1DT30H4S",
+  "firstStartDate": "2019-08-24",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."
+    }
+  ],
+  "teachingLanguage": "nld",
+  "fieldsOfStudy": "0732",
+  "learningOutcomes": [
+    [
+      {
+        "language": "en-GB",
+        "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
+      }
+    ]
+  ],
+  "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
+  "qualificationRequirements": [
+    {
+      "language": "en-GB",
+      "value": "program that is a place holder for all courses that are made available for student mobility"
+    }
+  ],
+  "level": "master",
+  "enrollment": [
+    {
+      "language": "en-GB",
+      "value": "enrollment through SIS. [The limited implementation of Git Hub Markdown syntax](#tag/formatting-and-displaying-results-from-API) MAY be used for rich text representation."
+    }
+  ],
+  "resources": [
+    "book to be announced",
+    "on-line resource x"
+  ],
+  "assessment": [
+    {
+      "language": "en-GB",
+      "value": "Exam on campus"
+    }
+  ],
+  "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
+  "educationSpecification": "10030000-0000-0000-0000-000000000000",
+  "addresses": [
+    {
+      "addressType": "postal",
+      "street": "Moreelsepark",
+      "streetNumber": "48",
+      "additional": [
+        {
+          "language": "en-GB",
+          "value": "On the other side of the road"
+        }
+      ],
+      "postalCode": "3511 EP",
+      "city": "Utrecht",
+      "countryCode": "NL",
+      "geolocation": {
+        "latitude": 52.089123,
+        "longitude": 5.113337
+      },
+      "ext": {}
+    }
+  ],
+  "otherCodes": [
+    {
+      "codeType": "crohoCreboCode",
+      "code": "string"
+    }
+  ],
+  "consumers": [
+    {
+      "consumerKey": "rio",
+      "educationOffererCode": "123A321",
+      "educationLocationCode": "334X123",
+      "consentParticipationSTAP": "permission_granted",
+      "jointPartnerCodes": [
+        "123A123"
+      ],
+      "teachingLanguages": ["nld", "eng"],
+      "foreignPartners": [
+        "Harvard University"
+      ]
+    }
+  ],
+  "ext": {},
+  "programs": [
+    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+  ],
+  "coordinators": [
+    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+  ],
+  "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
+  "validFrom": "2019-08-24",
+  "validTo": "2024-08-24",
+  "timelineOverrides": [
+    {
+      "validFrom": "2021-09-01",
+      "validTo": "2022-08-31",
+      "course": {
+        "primaryCode": {
+          "codeType": "crohoCreboCode",
+          "code": "string"
+        },
+        "name": [
+          {
+            "language": "en-GB",
+            "value": "OVERRIDE Academic and Professional Writing"
+          }
+        ],
+        "abbreviation": "INFOMQNM",
+        "studyLoad": {
+          "studyLoadUnit": "ects",
+          "value": 3
+        },
+        "modeOfDelivery": [
+          "situated"
+        ],
+        "duration": "P1DT30H4S",
+        "firstStartDate": "2019-08-24",
+        "description": [
+          {
+            "language": "en-GB",
+            "value": "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."
+          }
+        ],
+        "teachingLanguage": "nld",
+        "fieldsOfStudy": "0732",
+        "learningOutcomes": [
+          [
+            {
+              "language": "en-GB",
+              "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
+            }
+          ]
+        ],
+        "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
+        "qualificationRequirements": [
+          {
+            "language": "en-GB",
+            "value": "program that is a place holder for all courses that are made available for student mobility"
+          }
+        ],
+        "level": "master",
+        "enrollment": [
+          {
+            "language": "en-GB",
+            "value": "enrollment through SIS. [The limited implementation of Git Hub Markdown syntax](#tag/formatting-and-displaying-results-from-API) MAY be used for rich text representation."
+          }
+        ],
+        "resources": [
+          "book to be announced",
+          "on-line resource x"
+        ],
+        "assessment": [
+          {
+            "language": "en-GB",
+            "value": "Exam on campus"
+          }
+        ],
+        "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
+        "educationSpecification": "9fa40013-369e-4f7a-839b-5bf76128b51e",
+        "addresses": [
+          {
+            "addressType": "postal",
+            "street": "Moreelsepark",
+            "streetNumber": "48",
+            "additional": [
+              {
+                "language": "en-GB",
+                "value": "On the other side of the road"
+              }
+            ],
+            "postalCode": "3511 EP",
+            "city": "Utrecht",
+            "countryCode": "NL",
+            "geolocation": {
+              "latitude": 52.089123,
+              "longitude": 5.113337
+            },
+            "ext": {}
+          }
+        ],
+        "otherCodes": [
+          {
+            "codeType": "crohoCreboCode",
+            "code": "string"
+          }
+        ],
+        "consumers": [
+          {
+            "consumerKey": "rio",
+            "educationOffererCode": "123A321",
+            "educationLocationCode": "334X123",
+            "consentParticipationSTAP": "permission_granted",
+            "jointPartnerCodes": [
+              "999A123"
+            ],
+            "foreignPartners": "Harvard University"
+          }
+        ],
+        "ext": {},
+        "programs": [
+          "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+        ],
+        "coordinators": [
+          "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+        ],
+        "organization": "452c1a86-a0af-475b-b03f-724878b0f387"
+      }
+    },
+    {
+      "validFrom": "2022-09-01",
+      "validTo": "2023-08-31",
+      "course": {}
+    }
+  ]
+}
