@@ -19,10 +19,10 @@
             "latitude": 49
           },
           "addressType": "teaching",
-          "streetNumber": 84,
+          "streetNumber": "84",
           "postalCode": "3465IQ",
           "street": "Kappeyne van de Coppellolaan",
-          "additional": ""
+          "additional": []
         }
       ],
       "teachingLanguage": "nld",

@@ -24,7 +24,7 @@
         "latitude": 0
       },
       "addressType": "teaching",
-      "streetNumber": 23,
+      "streetNumber": "23",
       "postalCode": "4184QU",
       "street": "Tollenslaan",
       "additional": "a"
@@ -93,52 +93,7 @@
       "code": "60740"
     }
   ],
-  "coordinators": [
-    "3f11a38d-83de-bd0d-d8de-6fce507a95cd"
-  ],
   "validTo": "2021-12-18",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: inzicht in de bijzondere eigenschappen van materialen"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: inzicht in de bijzondere eigenschappen van materialen"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: algemene empathie voor levende wezens"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: algemene empathie voor levende wezens"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuw talent op het gebied van programmeren"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuw talent op het gebied van programmeren"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      }
-    ]
-  ],
   "admissionRequirements": [
     {
       "language": "en-GB",

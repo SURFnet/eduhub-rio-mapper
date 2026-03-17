@@ -73,10 +73,9 @@
         "city" "Morra",
         "geoLocation" {"longitude" 88, "latitude" 0},
         "addressType" "teaching",
-        "streetNumber" 23,
+        "streetNumber" "23",
         "postalCode" "4184QU",
-        "street" "Tollenslaan",
-        "additional" "a"}],
+        "street" "Tollenslaan"}],
       "enrollment"
       [{"language" "en-GB", "value" "EN TRANSLATION: . . ."}
        {"language" "nl-NL", "value" "NL VERTALING: . . ."}],
@@ -85,31 +84,6 @@
       "validTo" "2021-12-18",
       "link"
       "https://universiteit-van-morra.nl/programs/cc37e2a4-e93b-41b8-afda-9599b62dc3d6",
-      "learningOutcomes"
-      [[{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: inzicht in de bijzondere eigenschappen van materialen"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: inzicht in de bijzondere eigenschappen van materialen"}]
-       [{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: algemene empathie voor levende wezens"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: algemene empathie voor levende wezens"}]
-       [{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: nieuw talent op het gebied van programmeren"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: nieuw talent op het gebied van programmeren"}]
-       [{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}]],
       "assessment"
       [{"language" "en-GB",
         "value"
@@ -132,6 +106,5 @@
         "EN TRANSLATION: The excursion is part of the MSc MADE programme, students will learn about the chemistry of the course. If possible, a visit of one week. More recently attention is paid to: 1. In less developed countries, livestock production should not only the 'end' of the course by contacting the course coordinator prior to registration.The innovator's course enables students to appreciate the relevance of our course)."}
        {"language" "nl-NL",
         "value"
-        "NL VERTALING: The excursion is part of the MSc MADE programme, students will learn about the chemistry of the course. If possible, a visit of one week. More recently attention is paid to: 1. In less developed countries, livestock production should not only the 'end' of the course by contacting the course coordinator prior to registration.The innovator's course enables students to appreciate the relevance of our course)."}],
-      "coordinators" ["3f11a38d-83de-bd0d-d8de-6fce507a95cd"]}}}},
+        "NL VERTALING: The excursion is part of the MSc MADE programme, students will learn about the chemistry of the course. If possible, a visit of one week. More recently attention is paid to: 1. In less developed countries, livestock production should not only the 'end' of the course by contacting the course coordinator prior to registration.The innovator's course enables students to appreciate the relevance of our course)."}]}}}},
   :headers {"content-type" "application/json; charset=utf-8"}}}

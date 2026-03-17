@@ -1,23 +1,10 @@
 {
   "level": "bachelor",
-  "parent": "{{programmes/specification-bonusparent-program}}",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "programmeType": "specification",
   "programmeId": "{{programmes/specification-bonuschild-program}}",
   "validFrom": "2016-12-15",
   "abbreviation": "OT",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "child program prgspec"
-      },
-      {
-        "language": "nl-NL",
-        "value": "child program prgspec"
-      }
-    ]
-  ],
   "formalDocument": "diploma",
   "sector": "higher professional education",
   "name": [

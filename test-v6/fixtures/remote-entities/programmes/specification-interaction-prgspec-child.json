@@ -16,7 +16,6 @@
       "studyLoadUnit": "ects"
     }
   ],
-  "parent": "{{programmes/specification-interaction-prgspec-parent}}",
   "fieldsOfStudy": "0612",
   "name": [
     {
@@ -38,18 +37,6 @@
   "levelOfQualification": "6",
   "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-prgspec-child}}",
   "validTo": "2025-04-25",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: algemene empathie voor levende wezens"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: algemene empathie voor levende wezens"
-      }
-    ]
-  ],
   "abbreviation": "OT",
   "formalDocument": "diploma",
   "programmeId": "{{programmes/specification-interaction-prgspec-child}}",

@@ -30,8 +30,7 @@
       "addressType": "teaching",
       "streetNumber": "160",
       "postalCode": "4945JP",
-      "street": "GranprÃ© MoliÃ¨restraat",
-      "additional": []
+      "street": "GranprÃ© MoliÃ¨restraat"
     }
   ],
   "primaryCode": {
@@ -44,9 +43,6 @@
   "duration": "P1DT30H4S",
   "qualificationAwarded": "LLB",
   "link": "https://universiteit-van-boxtel.nl/programs/db9ea35d-d8b7-1db6-2b08-4092c1fd57c1",
-  "coordinators": [
-    "2ca0b20a-e179-f5dd-d98c-dc6a505dd6b0"
-  ],
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -93,48 +89,6 @@
     }
   ],
   "abbreviation": "D",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuw talent op het gebied van programmeren"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuw talent op het gebied van programmeren"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: algemene empathie voor levende wezens"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: algemene empathie voor levende wezens"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: kennis van de meestgebruikte ingrediÃ«nten in dit vak"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: kennis van de meestgebruikte ingrediÃ«nten in dit vak"
-      }
-    ]
-  ],
   "admissionRequirements": [
     {
       "language": "en-GB",

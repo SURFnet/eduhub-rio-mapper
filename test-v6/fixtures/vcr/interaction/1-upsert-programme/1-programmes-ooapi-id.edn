@@ -47,19 +47,6 @@
       "validTo" "2060-08-28",
       "link"
       "https://universiteit-van-boxtel.nl/programmes/5ecb3d9c-0ece-469f-92ea-a9606f269b3e",
-      "learningOutcomes"
-      [[{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}]
-       [{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: nieuw talent op het gebied van programmeren"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: nieuw talent op het gebied van programmeren"}]],
       "formalDocument" "diploma",
       "abbreviation" "1T",
       "organization" "c388522c-ebc1-2889-1899-06a89e4f5091",

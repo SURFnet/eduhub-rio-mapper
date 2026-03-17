@@ -36,7 +36,6 @@
       "validFrom" "2016-12-16",
       "programmeType" "specification",
       "sector" "higher professional education",
-      "parent" "5ecb3d9c-0ece-469f-92ea-a9606f269b3e",
       "programmeId" "7f3ecba7-6aed-49c9-93f7-646d9f352526",
       "name"
       [{"language" "en-GB",
@@ -50,13 +49,6 @@
       "validTo" "2025-04-25",
       "link"
       "https://universiteit-van-boxtel.nl/programmes/7f3ecba7-6aed-49c9-93f7-646d9f352526",
-      "learningOutcomes"
-      [[{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: algemene empathie voor levende wezens"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: algemene empathie voor levende wezens"}]],
       "formalDocument" "diploma",
       "abbreviation" "OT",
       "organization" "c388522c-ebc1-2889-1899-06a89e4f5091",
