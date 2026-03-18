@@ -40,7 +40,7 @@
       "validFrom" "2018-10-18",
       "programmeType" "programme",
       "sector" "secondary vocational education",
-      "teachingLanguage" "eng",
+      "teachingLanguages" ["eng"],
       "programmeId" "cc37e2a4-e93b-41b8-afda-9599b62dc3d6",
       "qualificationRequirements"
       [{"language" "en-GB",

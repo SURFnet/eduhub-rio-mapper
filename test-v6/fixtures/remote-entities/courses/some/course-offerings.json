@@ -25,7 +25,7 @@
           "additional": []
         }
       ],
-      "teachingLanguage": "nld",
+      "teachingLanguages": ["nld"],
       "modeOfDelivery": [
         "situated",
         "distance-learning"

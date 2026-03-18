@@ -40,7 +40,7 @@
         "resultExpected" true,
         "minNumberStudents" 15,
         "maxNumberStudents" 200,
-        "teachingLanguage" "nld",
+        "teachingLanguages" ["nld"],
         "offeringType" "component",
         "name"
         [{"language" "en-GB",
@@ -101,7 +101,7 @@
         "resultExpected" true,
         "minNumberStudents" 15,
         "maxNumberStudents" 200,
-        "teachingLanguage" "nld",
+        "teachingLanguages" ["nld"],
         "offeringType" "component",
         "name"
         [{"language" "en-GB",
@@ -162,7 +162,7 @@
         "resultExpected" true,
         "minNumberStudents" 15,
         "maxNumberStudents" 200,
-        "teachingLanguage" "nld",
+        "teachingLanguages" ["nld"],
         "offeringType" "component",
         "name"
         [{"language" "en-GB",

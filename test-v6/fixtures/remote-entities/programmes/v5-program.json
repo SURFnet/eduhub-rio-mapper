@@ -81,7 +81,7 @@
     }
   ],
   "modeOfStudy": "dual training",
-  "teachingLanguage": "eng",
+  "teachingLanguages": ["eng"],
   "level": "nt2-2",
   "levelOfQualification": "2",
   "consumer": {
