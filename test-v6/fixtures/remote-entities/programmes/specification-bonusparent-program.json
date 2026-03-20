@@ -1,0 +1,55 @@
+{
+  "level": "bachelor",
+  "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+  "programmeType": "specification",
+  "programmeId": "{{programmes/specification-bonusparent-program}}",
+  "validFrom": "1950-09-20",
+  "abbreviation": "1T",
+  "formalDocument": "diploma",
+  "sector": "higher professional education",
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "bonusparent-program education specification"
+    },
+    {
+      "language": "nl-NL",
+      "value": "bonusparent-program education specification"
+    }
+  ],
+  "primaryCode": {
+    "codeType": "identifier",
+    "code": "{{programmes/specification-bonusparent-program}}"
+  },
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-bonusparent-program}}",
+  "fieldsOfStudy": "0912",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "levelOfQualification": "6",
+  "studyLoad": [
+    {
+      "value": 93,
+      "studyLoadUnit": "sbu"
+    }
+  ],
+  "consumer": {
+    "consumerKey": "rio",
+    "category": [
+      "business_and_project_support",
+      "education",
+      "cross_sectoral",
+      "language_and_culture",
+      "technology_and_ict"
+    ],
+    "variantIds": [ "{{programmes/specification-bonuschild-program}}" ],
+    "specificationType": "programme"
+  }
+}

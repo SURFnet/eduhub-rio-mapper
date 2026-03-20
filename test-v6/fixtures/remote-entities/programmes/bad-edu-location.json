@@ -1,13 +1,14 @@
 {
   "fieldsOfStudy": "0612",
-  "teachingLanguage": "eng",
-  "studyLoad": {
-    "value": 155,
-    "studyLoadUnit": "ects"
-  },
+  "teachingLanguages": ["eng"],
+  "studyLoad": [
+    {
+      "value": 155,
+      "studyLoadUnit": "ects"
+    }
+  ],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "level": "nt2-2",
-  "educationSpecification": "{{education-specifications/parent-program}}",
   "name": [
     {
       "language": "en-GB",
@@ -22,7 +23,12 @@
   "validFrom": "2008-10-18",
   "addresses": [
     {
-      "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+      "countryCode": {
+        "iso3166-1-alpha2": "NL",
+        "iso3166-1-alpha3": "NLD",
+        "iso3166-2": "BQ-BO",
+        "iso3166-3": "ANHH"
+      },
       "city": "Morra",
       "geoLocation": {
         "longitude": 88,
@@ -31,11 +37,9 @@
       "addressType": "teaching",
       "streetNumber": "23",
       "postalCode": "4184QU",
-      "street": "Tollenslaan",
-      "additional": []
+      "street": "Tollenslaan"
     }
   ],
-  "programType": "program",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "60740"
@@ -49,9 +53,6 @@
   "duration": "P1DT30H4S",
   "qualificationAwarded": "Phd",
   "link": "https://universiteit-van-morra.nl/programs/{{programmes/some}}",
-  "coordinators": [
-    "cafecafe-cafe-cafe-cafe-cafecafecafe"
-  ],
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -81,34 +82,7 @@
     }
   ],
   "levelOfQualification": "2",
-  "consumers": [
-    {
-      "alliances": [
-        {
-          "name": "lde",
-          "enrollmentForOwnStudents": "broker",
-          "type": "broadening",
-          "visibleForOwnStudents": false,
-          "selection": true,
-          "theme": "13"
-        }
-      ],
-      "consumerKey": "eduxchange"
-    },
-    {
-      "educationOffererCode": "110A133",
-      "acceleratedRoute": "no_accelerated_route",
-      "consentParticipationSTAP": "permission_not_granted",
-      "deficiency": "deficiencies",
-      "studyChoiceCheck": "no_study_choice_check",
-      "consumerKey": "rio",
-      "requirementsActivities": "requirements",
-      "propaedeuticPhase": "no_propaedeutic_phase",
-      "educationLocationCode": "BAD-CODE"
-    }
-  ],
-  "programId": "{{programmes/some}}",
-  "firstStartDate": "2010-01-31",
+  "firstStartDateTime": "2010-01-31T08:30:00+01:00",
   "resources": [
     "Lelieveldt, H. Course guide. Sage.Miles, M.",
     "- lecture hand-outs and additional book chapters will be available online. Sage. Mourato (2006).",
@@ -125,48 +99,6 @@
     }
   ],
   "abbreviation": "TEC",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ]
-  ],
   "admissionRequirements": [
     {
       "language": "en-GB",
@@ -186,5 +118,18 @@
       "language": "nl-NL",
       "value": "NL VERTALING: . . ."
     }
-  ]
+  ],
+  "consumer": {
+    "educationOffererCode": "110A133",
+    "acceleratedRoute": "no_accelerated_route",
+    "deficiency": "deficiencies",
+    "studyChoiceCheck": "no_study_choice_check",
+    "consumerKey": "rio",
+    "requirementsActivities": "requirements",
+    "propaedeuticPhase": "no_propaedeutic_phase",
+    "educationLocationCode": "BAD-CODE",
+    "specificationId": "{{programmes/specification-parent-program}}"
+  },
+  "programmeId": "{{programmes/some}}",
+  "programmeType": "programme"
 }

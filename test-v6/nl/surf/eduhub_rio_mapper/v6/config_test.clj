@@ -24,15 +24,15 @@
 
 (def default-env {:surf-conext-introspection-endpoint "https://gateway.dev.surfnet.nl/",
                   :keystore-alias "default",
-                  :gateway-password "default",
+                  :gateway-password-v6 "default",
                   :keystore "test/keystore.jks",
                   :clients-info-path "test/test-clients.json",
                   :rio-recipient-oin "default",
                   :rio-update-url "default",
-                  :gateway-user "default",
+                  :gateway-user-v6 "default",
                   :surf-conext-client-id "default",
                   :surf-conext-client-secret "default",
-                  :gateway-root-url "https://gateway.test.surfeduhub.nl/",
+                  :gateway-root-url-v6 "https://gateway.test.surfeduhub.nl/",
                   :rio-read-url "default"})
 
 (def default-expected-value {:keystore-pass "repelsteeltje!",

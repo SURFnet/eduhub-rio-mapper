@@ -19,23 +19,15 @@
     "situated"
   ],
   "duration": "P1DT30H4S",
-  "firstStartDate": "2019-08-24",
+  "firstStartDateTime": "2019-08-24T08:30:00+01:00",
   "description": [
     {
       "language": "en-GB",
       "value": "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R. As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."
     }
   ],
-  "teachingLanguage": "nld",
+  "teachingLanguages": ["nld"],
   "fieldsOfStudy": "0732",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
-      }
-    ]
-  ],
   "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
   "qualificationRequirements": [
     {
@@ -61,7 +53,6 @@
     }
   ],
   "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
-  "educationSpecification": "9fa40013-369e-4f7a-839b-5bf76128b51e",
   "addresses": [
     {
       "addressType": "postal",
@@ -89,25 +80,21 @@
       "code": "string"
     }
   ],
-  "consumers": [
+  "consumer":
     {
       "consumerKey": "rio",
+      "specificationId": "9fa40013-369e-4f7a-839b-5bf76128b51e",
       "educationOffererCode": "123A321",
       "educationLocationCode": "334X123",
-      "consentParticipationSTAP": "permission_granted",
       "jointPartnerCodes": [
         "123A123"
       ],
       "foreignPartners": [
         "Harvard University"
       ]
-    }
-  ],
+    },
   "ext": {},
   "programs": [
-    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-  ],
-  "coordinators": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
@@ -137,23 +124,15 @@
           "situated"
         ],
         "duration": "P1DT30H4S",
-        "firstStartDate": "2019-08-24",
+        "firstStartDateTime": "2019-08-24T08:30:00+01:00",
         "description": [
           {
             "language": "en-GB",
             "value": "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R."
           }
         ],
-        "teachingLanguage": "nld",
+        "teachingLanguages": ["nld"],
         "fieldsOfStudy": "0732",
-        "learningOutcomes": [
-          [
-            {
-              "language": "en-GB",
-              "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
-            }
-          ]
-        ],
         "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
         "qualificationRequirements": [
           {
@@ -179,7 +158,6 @@
           }
         ],
         "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
-        "educationSpecification": "9fa40013-369e-4f7a-839b-5bf76128b51e",
         "addresses": [
           {
             "addressType": "postal",
@@ -207,23 +185,8 @@
             "code": "string"
           }
         ],
-        "consumers": [
-          {
-            "consumerKey": "rio",
-            "educationOffererCode": "123A321",
-            "educationLocationCode": "334X123",
-            "consentParticipationSTAP": "permission_granted",
-            "jointPartnerCodes": [
-              "123A123"
-            ],
-            "foreignPartners": "Harvard University"
-          }
-        ],
         "ext": {},
         "programs": [
-          "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-        ],
-        "coordinators": [
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387"

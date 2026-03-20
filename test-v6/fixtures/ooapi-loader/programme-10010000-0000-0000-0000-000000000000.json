@@ -1,0 +1,65 @@
+{
+  "programmeId": "10010000-0000-0000-0000-000000000000",
+  "primaryCode": {
+    "codeType": "crohoCreboCode",
+    "code": "string"
+  },
+  "otherCodes": [
+    {
+      "codeType": "crohoCreboCode",
+      "code": "1234123"
+    }
+  ],
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "Bachelor Petrochemical technology"
+    },
+    {
+      "language": "nl-NL",
+      "value": "Bachelor Petrochemische technologie"
+    }
+  ],
+  "abbreviation": "B Petrochem Tech",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": "program that is a place holder for all courses that are made available for student mobility"
+    }
+  ],
+  "formalDocument": "diploma",
+  "level": "master",
+  "sector": "university education",
+  "levelOfQualification": "6",
+  "fieldsOfStudy": "0732",
+  "studyLoad": [{
+    "studyLoadUnit": "ects",
+    "value": 3
+  }],
+  "link": "https://shell.nl",
+  "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
+  "ext": {},
+  "validFrom": "2019-08-24",
+  "validTo": "2022-08-29",
+  "timelineOverrides": [
+    {
+      "validFrom": "2020-08-25",
+      "validTo": "2021-08-24",
+      "programme": {
+        "name": [
+          {
+            "language": "en-GB",
+            "value": "OVERRIDE Bachelor Petrochemical technology"
+          }
+        ]
+      }
+    }
+  ],
+  "consumer": {
+    "consumerKey": "rio",
+    "specificationType": "programme",
+    "variantIds": [ "497f6eca-6276-4993-bfeb-53cbbbba6f08" ],
+    "variantOf": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
+  },
+  "programmeType": "specification"
+}

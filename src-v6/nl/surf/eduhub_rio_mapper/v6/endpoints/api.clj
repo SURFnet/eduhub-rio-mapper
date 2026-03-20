@@ -57,21 +57,31 @@
         (finally
           (swap! nr-active-requests dec))))))
 
+(defn- prepare-job-for-enqueuement [res token suppress-header]
+  (assoc (:job res)
+         :token token
+         :created-at (str (Instant/now)) ; store created-at in job itself as soon as it is created
+         :suppress-http-messages (= "true" suppress-header)))
+
+(defn- enqueue-job [enqueue-fn req res]
+  (let [token (UUID/randomUUID)
+        suppress-header (get-in req [:headers "x-suppress-http-messages"])]
+    (with-mdc {:token token}
+      (-> res
+          (prepare-job-for-enqueuement token suppress-header)
+          enqueue-fn))
+    (if (not-empty res)
+      (assoc res
+             :status http-status/created
+             :body {:token token})
+      res)))
+
 (defn wrap-job-enqueuer
   [app enqueue-fn]
   (fn job-enqueuer [req]
-    (let [{:keys [job] :as res} (app req)]
-      (if job
-        (let [token (UUID/randomUUID)
-              suppress-header (get-in req [:headers "x-suppress-http-messages"])]
-          (with-mdc {:token token}
-                    ; store created-at in job itself as soon as it is created
-                    (enqueue-fn (assoc job
-                                       :token token
-                                       :created-at (str (Instant/now))
-                                       :suppress-http-messages (= "true" suppress-header))))
-          (assoc res :body {:token token}))
-        res))))
+    (let [res (app req)]
+      (cond->> res
+        (:job res) (enqueue-job enqueue-fn req)))))
 
 (defn- valid-url? [url]
   (try
@@ -170,9 +180,8 @@
       (app req)
       (response/status http-status/forbidden))))
 
-(def types {"courses"                  "course"
-            "education-specifications" "education-specification"
-            "programs"                 "program"})
+(def types {"courses"    "course"
+            "programmes" "programme"})
 
 (def actions #{"upsert" "delete" "dry-run-upsert" "link"})
 
@@ -189,27 +198,26 @@
                        ::ooapi-specs/type type
                        ::ooapi-specs/id   id))})))
 
-(defn link-route [{{:keys [rio-code type]} :params :as request}]
-  {:pre [(types type)]}
+(defn link-route [{{:keys [rio-code]} :params :as request}]
   (let [result   (job-route (assoc-in request [:params :action] "link"))
-        codename (if (= type "education-specifications") ::rio/opleidingscode ::rio/aangeboden-opleiding-code)]
+        codename (if (re-matches #"\d{4}O\d{4}" rio-code) ::rio/opleidingscode ::rio/aangeboden-opleiding-code)]
     (when result
       (assoc-in result [:job codename] rio-code))))
 
 (defn private-routes [{:keys [enqueuer-fn]}]
   (-> (compojure.core/routes
         ;; Unlink is link to `nil`
-        (POST "/job/unlink/:rio-code/:type" request
-          (link-route request))
+       (POST "/job/unlink/:rio-code/:type" request
+         (link-route request))
 
-        (POST "/job/dry-run/upsert/:type/:id" request
-          (job-route (assoc-in request [:params :action] "dry-run-upsert")))
+       (POST "/job/dry-run/upsert/:type/:id" request
+         (job-route (assoc-in request [:params :action] "dry-run-upsert")))
 
-        (POST "/job/link/:rio-code/:type/:id" request
-          (link-route request))
+       (POST "/job/link/:rio-code/:type/:id" request
+         (link-route request))
 
-        (POST "/job/:action/:type/:id" request
-          (job-route request)))
+       (POST "/job/:action/:type/:id" request
+         (job-route request)))
 
       (compojure.core/wrap-routes wrap-callback-extractor)
       (compojure.core/wrap-routes wrap-job-enqueuer enqueuer-fn)
@@ -219,8 +227,8 @@
 
 (def public-routes
   (compojure.core/routes
-    (GET "/health" []
-      {:health true})))
+   (GET "/health" []
+     {:health true})))
 
 (defn read-only-routes [config]
   (-> (GET "/status/:token" [token] {:token token})
