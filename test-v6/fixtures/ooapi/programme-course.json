@@ -42,14 +42,6 @@
     "book to be announced",
     "on-line resource x"
   ],
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms and knowledge of liff."
-      }
-    ]
-  ],
   "assessment": [
     {
       "language": "en-GB",
@@ -96,11 +88,7 @@
       "ext": {}
     }
   ],
-  "parent": "123e4567-e89b-7777-a456-426614000001",
   "children": [
-    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-  ],
-  "coordinators": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
@@ -156,14 +144,6 @@
           "book to be announced",
           "on-line resource x"
         ],
-        "learningOutcomes": [
-          [
-            {
-              "language": "en-GB",
-              "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
-            }
-          ]
-        ],
         "assessment": [
           {
             "language": "en-GB",
@@ -211,11 +191,7 @@
             "ext": {}
           }
         ],
-        "parent": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
-        "children": [
-          "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-        ],
-        "coordinators": [
+              "children": [
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
