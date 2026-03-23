@@ -395,12 +395,18 @@
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "ENG"]]]
 
-         ;; teaching languages in rio consumer override teaching language in program
+           ;; teaching languages in rio consumer override teaching language in program
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
                (assoc-in [:consumer :lastStartDate] "2022-08-24")
                (assoc-in [:consumer :teachingLanguages] ["nld", "eng"])
                (assoc :teachingLanguages "fra")
                (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
+
+  (testing "program with too many teaching languages"
+    (is (thrown? clojure.lang.ExceptionInfo
+                 (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
+                     (assoc-in [:consumer :teachingLanguages] ["nld", "eng", "fra", "esp"])
+                     (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
   (testing "program with nonstandard mode of delivery"
     (is (= [:duo:aangebodenHOOpleiding
