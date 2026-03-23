@@ -161,6 +161,12 @@
     (subs s 0 (min (count s) n))
     s))
 
+;; input: like 2025-08-28T08:30:00+01:00
+;; output: like 2015-09-21
+(defn datetime->date [s]
+  (when s
+    (-> (str/split s #"T") first)))
+
 (defn- render-name-value [attr-name attr-value type]
   (let [type-data (xsd-types type)
         max-len   (-> type-data :restrictions :maxLength)
@@ -216,7 +222,8 @@
         (rio-obj child-type)))
 
 (defn ->xml [rio-obj object-name]
-  {:pre [(string? object-name)
+  {:pre [(some? object-name)
+         (string? object-name)
          (or (fn? rio-obj)
              (map? rio-obj))]}
   (let [process #(if (:ref %)

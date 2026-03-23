@@ -26,7 +26,7 @@
           "value": ".."
         }
       ],
-      "teachingLanguage": "nld",
+      "teachingLanguages": ["nld"],
       "modeOfDelivery": [
         "situated"
       ],
@@ -43,21 +43,11 @@
           "code": "1234qwe12"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "open"
-        }
-      ],
       "ext": {},
-      "startDate": "2019-08-21",
-      "endDate": "2023-06-15",
-      "enrollStartDate": "2019-05-01",
-      "enrollEndDate": "2019-08-01",
-      "flexibleEntryPeriodStart": "2019-08-24",
-      "flexibleEntryPeriodEnd": "2019-09-24",
+      "startDateTime": "2019-08-21T07:55:06+00:00",
+      "endDateTime": "2023-06-15T02:59:27+00:00",
+      "flexibleEntryPeriodStartDateTime": "2019-08-24T19:53:56+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-09-24T03:30:39+00:00",
       "addresses": [
         {
           "addressType": "postal",
@@ -71,7 +61,12 @@
           ],
           "postalCode": "3511 EP",
           "city": "Utrecht",
-          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+          "countryCode": {
+            "iso3166-1-alpha2": "NL",
+            "iso3166-1-alpha3": "NLD",
+            "iso3166-2": "BQ-BO",
+            "iso3166-3": "ANHH"
+          },
           "geolocation": {
             "latitude": 52.089123,
             "longitude": 5.113337
@@ -99,7 +94,19 @@
           "ext": {}
         }
       ],
-      "program": "{{programmes/interaction-programme-some}}"
+      "programme": "{{programmes/interaction-programme-some}}",
+      "consumer": {
+        "consumerKey": "rio",
+        "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "open"
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2019-05-01T00:00:00+00:00",
+          "endDateTime": "2019-08-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programmeOfferingId": "c08efade-fade-fade-fade-fadefadefade",
@@ -122,7 +129,7 @@
           "value": ".."
         }
       ],
-      "teachingLanguage": "nld",
+      "teachingLanguages": ["nld"],
       "modeOfDelivery": [
         "situated"
       ],
@@ -139,21 +146,11 @@
           "code": "1234poi12"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "open"
-        }
-      ],
       "ext": {},
-      "startDate": "2019-08-25",
-      "endDate": "2023-06-15",
-      "enrollStartDate": "2019-05-01",
-      "enrollEndDate": "2019-08-01",
-      "flexibleEntryPeriodStart": "2019-08-27",
-      "flexibleEntryPeriodEnd": "2019-09-24",
+      "startDateTime": "2019-08-25T12:17:29+00:00",
+      "endDateTime": "2023-06-15T20:05:09+00:00",
+      "flexibleEntryPeriodStartDateTime": "2019-08-27T13:18:34+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-09-24T08:18:29+00:00",
       "addresses": [
         {
           "addressType": "postal",
@@ -167,7 +164,12 @@
           ],
           "postalCode": "3511 EP",
           "city": "Utrecht",
-          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+          "countryCode": {
+            "iso3166-1-alpha2": "NL",
+            "iso3166-1-alpha3": "NLD",
+            "iso3166-2": "BQ-BO",
+            "iso3166-3": "ANHH"
+          },
           "geolocation": {
             "latitude": 52.089123,
             "longitude": 5.113337
@@ -195,7 +197,19 @@
           "ext": {}
         }
       ],
-      "program": "{{programmes/interaction-programme-some}}"
+      "programme": "{{programmes/interaction-programme-some}}",
+      "consumer": {
+        "consumerKey": "rio",
+        "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "open"
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2019-05-01T00:00:00+00:00",
+          "endDateTime": "2019-08-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "programmeOfferingId": "c08ebead-bead-bead-bead-beadbeadbead",
@@ -218,7 +232,7 @@
           "value": ".."
         }
       ],
-      "teachingLanguage": "nld",
+      "teachingLanguages": ["nld"],
       "modeOfDelivery": [
         "situated"
       ],
@@ -235,21 +249,11 @@
           "code": "1234asd12"
         }
       ],
-      "consumers": [
-        {
-          "consumerKey": "rio",
-          "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
-          "requiredPermissionRegistration": "yes",
-          "registrationStatus": "open"
-        }
-      ],
       "ext": {},
-      "startDate": "2019-08-29",
-      "endDate": "2023-06-15",
-      "enrollStartDate": "2019-05-01",
-      "enrollEndDate": "2019-08-01",
-      "flexibleEntryPeriodStart": "2019-08-31",
-      "flexibleEntryPeriodEnd": "2019-09-24",
+      "startDateTime": "2019-08-29T20:53:23+00:00",
+      "endDateTime": "2023-06-15T09:39:00+00:00",
+      "flexibleEntryPeriodStartDateTime": "2019-08-31T06:01:37+00:00",
+      "flexibleEntryPeriodEndDateTime": "2019-09-24T15:04:02+00:00",
       "addresses": [
         {
           "addressType": "postal",
@@ -263,7 +267,12 @@
           ],
           "postalCode": "3511 EP",
           "city": "Utrecht",
-          "countryCode": { "iso3166-1-alpha2": "NL", "iso3166-1-alpha3": "NLD", "iso3166-2": "BQ-BO", "iso3166-3": "ANHH" },
+          "countryCode": {
+            "iso3166-1-alpha2": "NL",
+            "iso3166-1-alpha3": "NLD",
+            "iso3166-2": "BQ-BO",
+            "iso3166-3": "ANHH"
+          },
           "geolocation": {
             "latitude": 52.089123,
             "longitude": 5.113337
@@ -291,7 +300,20 @@
           "ext": {}
         }
       ],
-      "program": "{{programmes/interaction-programme-some}}"
-    }],
+      "programme": "{{programmes/interaction-programme-some}}",
+      "consumer": {
+        "consumerKey": "rio",
+        "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
+        "requiredPermissionRegistration": "yes",
+        "registrationStatus": "open"
+      },
+      "enrolmentPeriods": [
+        {
+          "startDateTime": "2019-05-01T00:00:00+00:00",
+          "endDateTime": "2019-08-01T00:00:00+00:00"
+        }
+      ]
+    }
+  ],
   "ext": {}
 }

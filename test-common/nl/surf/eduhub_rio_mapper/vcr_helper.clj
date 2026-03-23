@@ -31,6 +31,7 @@
 
 (ns nl.surf.eduhub-rio-mapper.vcr-helper
   (:require
+   [clojure.data.json :as json]
    [clojure.edn :as edn]
    [clojure.java.io :as io]
    [clojure.pprint :refer [pprint]]
@@ -39,7 +40,8 @@
    [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities]
    [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper])
   (:import
-   [java.io PushbackReader]))
+   [java.io PushbackReader]
+   [java.net URI]))
 
 (def vcr-mode (if (= "true" (System/getenv "VCR_RECORD"))
                 :record
@@ -75,34 +77,58 @@
   (assert (< (count list) 2) (prn-str list))
   (first list))
 
+(defn- numbered-dir [basedir nr]
+  {:post [(some? %)]}
+  (let [dirname (->> basedir
+                      (ls)
+                      (filter #(.startsWith % (str nr "-")))
+                      (only-one-if-any))]
+    (when-not dirname (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
+    (str basedir "/" dirname)))
+
 (defn- numbered-file [basedir nr]
   {:post [(some? %)]}
   (let [filename (->> basedir
                       (ls)
                       (filter #(.startsWith % (str nr "-")))
+                      (filter #(.endsWith % ".edn"))
                       (only-one-if-any))]
     (when-not filename (throw (ex-info (format "No recorded request found for dir %s nr %d" basedir nr) {})))
     (str basedir "/" filename)))
+
+(defn path-for [url]
+  (-> url
+      (URI.)
+      (.getPath)
+      (str/replace-first #"^/" "")))
 
 (defn req-name [request]
   (let [action (get-in request [:headers "SOAPAction"])]
     (if action
       (last (str/split action #"/"))
-      (-> request :url
-          (subs (count "https://gateway.test.surfeduhub.nl/"))
+      (-> (:url request)
+          path-for
           (str/replace \/ \-)
-          (str/split #"\?")
-          first))))
+        (str/replace-first #"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}" "ooapi-id")))))
+
+(defn- wrap-json-body [body]
+  (if (string? body)
+    (try
+      (assoc {} :JSONSTRING (json/read-str body))
+      (catch Exception _
+        body))
+    body))
+
+(defn- unwrap-json-body [body]
+  (if (and (map? body) (contains? body :JSONSTRING))
+    (json/write-str (:JSONSTRING body))
+    body))
 
 (defn- make-playbacker [root idx _]
   (let [count-atom (atom 0)
-        dir        (numbered-file root idx)]
+        dir        (numbered-dir root idx)]
     (fn [_ actual-request]
-      (let [url              (cond-> (:url actual-request)
-                               (not remote-entities/programme-supported?)
-                               (remote-entities/convert-url-to-v5))
-            actual-request   (assoc actual-request :url url)
-            i                (swap! count-atom inc)
+      (let [i                (swap! count-atom inc)
             fname            (numbered-file dir i)
             recording        (with-open [r (io/reader fname)] (edn/read (PushbackReader. r)))
             recorded-request (:request recording)]
@@ -111,29 +137,29 @@
                 actual   (get-in actual-request property-path)]
             (is (= expected actual)
                 (str "Unexpected property " (last property-path)))))
-        (:response recording)))))
+        (update (:response recording) :body unwrap-json-body)))))
 
 (defn- make-recorder [root idx desc]
   (let [mycounter (atom 0)]
     (fn [handler request]
-      (let [url          (cond-> (:url request)
-                           (not remote-entities/programme-supported?)
-                           (remote-entities/convert-url-to-v5))
-            request      (assoc request :url url)
-            response     (handler request)
+      (let [response     (handler request)
             content-type (get (:headers response) "Content-Type")
             counter      (swap! mycounter inc)
             file-name    (str root "/" idx "-" desc "/" counter "-" (req-name request) ".edn")
             headers      (select-keys (:headers request) ["SOAPAction" "X-Route"])]
         (io/make-parents file-name)
         (with-open [w (io/writer file-name)]
-          (pprint {:request  (assoc (select-keys request [:method :url :body])
-                                    :headers headers)
-                   :response (assoc (select-keys response [:status :body])
-                                    ;; ooapi validation expects exactly "application/json"
-                                    :headers {"content-type" content-type})}
+          (pprint {:request  (-> request
+                                (select-keys [:method :url :body])
+                                (assoc :headers headers)
+                                (update :body wrap-json-body))
+                   :response (-> response
+                                (select-keys [:status :body])
+                                (assoc :headers {"content-type" content-type})
+                                (update :body wrap-json-body))}
                   w))
         response))))
+
 
 (defn make-vcr []
   (case vcr-mode

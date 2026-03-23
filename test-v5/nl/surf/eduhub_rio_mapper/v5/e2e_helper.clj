@@ -24,13 +24,13 @@
             [nl.jomco.http-status-codes :as http-status]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.remote-entities-helper :as remote-entities]
+            [nl.surf.eduhub-rio-mapper.rio.loader :as rio-loader]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.utils.printer :as printer]
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v5.config :as config]
-            [nl.surf.eduhub-rio-mapper.v5.endpoints.status :as status]
-            [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio-loader])
+            [nl.surf.eduhub-rio-mapper.v5.endpoints.status :as status])
   (:import [java.io File StringWriter]
            [java.net ConnectException]
            [java.util Base64 List]
@@ -233,6 +233,7 @@
   the job result at `:result-delay`."
   [action & args]
   {:pre [(#{:upsert :delete :link :unlink :status :dry-run/upsert} action)]}
+  (spit "logs/e2e-v5-posted-jobs.log" (str action " " (prn-str args)) :append true)
   (let [{:keys [status] {:keys [token]} :body :as res}
         (call-api action args)]
     (assoc res :result-delay
@@ -410,7 +411,8 @@
     result))
 
 (defn rio-resolve [rio-type id]
-  {:pre [(#{"education-specification" "course" "program"} rio-type)]}
+  {:pre [(#{:oe :ao} rio-type)
+         (string? id)]}
   (let [messages-atom (atom [])
         result (binding [http-utils/*http-messages* messages-atom]
                  (@rio-resolver rio-type id (:institution-oin @client-info)))]
@@ -432,17 +434,15 @@
   Note: RIO may take some time to register relations so we retry for
   10 seconds."
   [rio-parent rio-child]
-  (loop [tries 20]
+  (loop [tries 4]
     (let [relations (rio-relations rio-child)
           result    (some #(contains? (:opleidingseenheidcodes %) rio-parent)
                           relations)]
       (if result
         result
-        (if (pos? tries)
-          (do
-            (Thread/sleep 500)
-            (recur (dec tries)))
-          result)))))
+        (when (pos? tries)
+          (Thread/sleep 2500)
+          (recur (dec tries)))))))
 
 (defn rio-opleidingseenheid
   "Call RIO `opvragen_opleidingseenheid`."

@@ -24,6 +24,7 @@
             [nl.jomco.envopts :as envopts]
             [nl.surf.eduhub-rio-mapper.clients-info :as clients-info]
             [nl.surf.eduhub-rio-mapper.endpoints.worker-api :as worker-api]
+            [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :refer [*http-messages*]]
@@ -31,7 +32,6 @@
             [nl.surf.eduhub-rio-mapper.v5.config :as config]
             [nl.surf.eduhub-rio-mapper.v5.endpoints.api :as api]
             [nl.surf.eduhub-rio-mapper.v5.job :as job]
-            [nl.surf.eduhub-rio-mapper.v5.rio.loader :as rio.loader]
             [nl.surf.eduhub-rio-mapper.worker :as worker])
   (:import [java.util UUID]))
 
@@ -84,7 +84,7 @@
           old-uuid     (UUID/randomUUID)
           new-uuid     (UUID/randomUUID)
 
-          eduspec (-> "eduspec-test-rio.json"
+          eduspec (-> "eduspec-test-rio-v5.json"
                       io/resource
                       slurp
                       (json/read-str :key-fn keyword)

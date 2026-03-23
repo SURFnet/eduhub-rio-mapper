@@ -17,11 +17,12 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.v6.commands.dry-run
-  (:require [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
+  (:require [nl.surf.eduhub-rio-mapper.rio.helper :as rio.helper]
+            [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opleiding]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
 
-(def aangeboden-opleiding-namen (->> aangeboden-opleiding/education-specification-type-mapping
+(def aangeboden-opleiding-namen (->> aangeboden-opleiding/specification-type-mapping
                                      vals
                                      (map keyword)
                                      set))
@@ -34,11 +35,11 @@
 (defn generate-diff-ooapi-rio [& {:keys [rio-summary ooapi-summary]}]
   (reduce (fn [h k]
             (assoc h k
-                     (if (= (k rio-summary) (k ooapi-summary))
-                       {:diff false}
-                       {:diff     true
-                        :current  (k rio-summary)
-                        :proposed (k ooapi-summary)})))
+                   (if (= (k rio-summary) (k ooapi-summary))
+                     {:diff false}
+                     {:diff     true
+                      :current  (k rio-summary)
+                      :proposed (k ooapi-summary)})))
           {}
           (into (set (keys ooapi-summary)) (keys rio-summary))))
 
@@ -66,30 +67,27 @@
 
 (defn- kenmerk-content [xmlspec naam kenmerk-type]
   (xml-utils/find-in-xmlseq
-    xmlspec
-    #(let [[n v] (:content %)]
-       (and (= :kenmerken (:tag %))
-            (= :kenmerknaam (:tag n))
-            (= naam (first (:content n)))
-            (= kenmerk-type (:tag v))
-            (first (:content v))))))
+   xmlspec
+   #(let [[n v] (:content %)]
+      (and (= :kenmerken (:tag %))
+           (= :kenmerknaam (:tag n))
+           (= naam (first (:content n)))
+           (= kenmerk-type (:tag v))
+           (first (:content v))))))
 
-(defn summarize-eduspec [eduspec]
-  (let [current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods eduspec :educationSpecification) :validFrom)]
+(defn summarize-prgspec [prgspec]
+  (let [current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods prgspec :programme) :validFrom)]
     {:begindatum                    (:validFrom current-period),
      :naamLang                      (ooapi-utils/get-localized-value (:name current-period) dutch-locales),
      :naamKort                      (:abbreviation current-period),
      :internationaleNaam            (ooapi-utils/get-localized-value (:name current-period)),
      :omschrijving                  (ooapi-utils/get-localized-value (:description current-period) dutch-locales),
-     :eigenOpleidingseenheidSleutel (:educationSpecificationId eduspec)}))
+     :eigenOpleidingseenheidSleutel (:programmeId prgspec)}))
 
 (defn summarize-course-program [course-program]
-  (let [ooapi-type (if (:courseId course-program) :course :program)
+  (let [ooapi-type (if (:courseId course-program) :course :programme)
         current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods course-program ooapi-type) :validFrom)
-        consumer (->> course-program
-                      :consumers
-                      (filter #(= "rio" (:consumerKey %)))
-                      first)]
+        consumer (:consumer course-program)]
     {:begindatum                   (:validFrom current-period)
      :onderwijsaanbiedercode       (:educationOffererCode consumer)
      :onderwijslocatiecode         (:educationLocationCode consumer)
@@ -110,9 +108,10 @@
     (zipmap keys (map finder keys))))
 
 (defn summarize-offering [offering]
-  {:cohortcode (-> offering :primaryCode :code)
-   :beginAanmeldperiode (:enrollStartDate offering)
-   :eindeAanmeldperiode (:enrollEndDate offering)})
+  (let [period (-> (:enrolmentPeriods offering) first)]
+    {:cohortcode (-> offering :primaryCode :code)
+     :beginAanmeldperiode (rio.helper/datetime->date (:startDateTime period))
+     :eindeAanmeldperiode (rio.helper/datetime->date (:endDateTime period))}))
 
 (defn summarize-opleidingseenheid [opleidingseenheid]
   (let [periods     (xml-utils/find-all-in-xmlseq (xml-seq opleidingseenheid)
@@ -122,7 +121,7 @@
         current-period (ooapi-utils/current-period period-data :begindatum)
         ooapi-id (kenmerk-content (xml-seq opleidingseenheid) "eigenOpleidingseenheidSleutel" :kenmerkwaardeTekst)]
     (assoc current-period
-      :eigenOpleidingseenheidSleutel ooapi-id)))
+           :eigenOpleidingseenheidSleutel ooapi-id)))
 
 (defn summarize-aangebodenopleiding-xml [rio-obj]
   (when rio-obj
@@ -140,7 +139,7 @@
           cohorten    (xml-utils/find-all-in-xmlseq (xml-seq rio-obj)
                                                     #(when (contains? cohortnamen (:tag %)) %))]
       (assoc (merge current-period rio-summary)
-        :cohorten (->> cohorten
-                       (mapv (comp summarize-cohort-xml xml-seq))
-                       (sort-by :cohortcode)
-                       vec)))))
+             :cohorten (->> cohorten
+                            (mapv (comp summarize-cohort-xml xml-seq))
+                            (sort-by :cohortcode)
+                            vec)))))

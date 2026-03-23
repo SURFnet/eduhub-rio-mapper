@@ -26,42 +26,47 @@
   (:import java.util.UUID)
   (:refer-clojure :exclude [run!]))
 
+(def job-fields
+  [:action
+   :args
+   :institution-oin
+   :institution-name
+   :institution-schac-home
+   ::rio/aangeboden-opleiding-code
+   ::rio/opleidingscode
+   ::ooapi/type
+   ::ooapi/id])
+
+(def context-fields
+  [:token
+   :institution-oin
+   :institution-name
+   :institution-schac-home])
+
 (defn run!
   "Run given job and return result."
   [{:keys [delete! update! dry-run! link!] :as _handlers}
    {::ooapi/keys [id type]
-    :keys        [token action institution-schac-home institution-name institution-oin trace-context] :as request}
+    :keys        [token action institution-schac-home institution-oin trace-context] :as request}
    http-logging-enabled]
-  {:pre [id (string? id) (not= "" id) type action institution-schac-home institution-oin
+  {:pre [type action institution-schac-home institution-oin
          delete! update! dry-run! link!
          (boolean? http-logging-enabled)]}
-  (let [log-context (assoc trace-context
-                      :token token
-                      :institution-schac-home institution-schac-home
-                      :institution-oin institution-oin
-                      :institution-name institution-name)
-        job         (select-keys request [:action
-                                          :args
-                                          :institution-oin
-                                          :institution-name
-                                          :institution-schac-home
-                                          ::rio/aangeboden-opleiding-code
-                                          ::rio/opleidingscode
-                                          ::ooapi/type
-                                          ::ooapi/id])]
+  (let [log-context (merge trace-context (select-keys request context-fields))
+        job         (select-keys request job-fields)]
     (logging/with-mdc log-context
       (log/infof "Started job %s, action %s, type %s, id %s" token action type id)
       (binding [*http-messages* (if http-logging-enabled (atom []) nil)]
         (try
           (with-context trace-context
             (let [handler (case action
-                           "delete" delete!
-                           "upsert" update!
-                           "dry-run-upsert" dry-run!
-                           "link" link!)]
+                            "delete" delete!
+                            "upsert" update!
+                            "dry-run-upsert" dry-run!
+                            "link" link!)]
               (cond-> (handler job)
-                      *http-messages*
-                      (assoc :http-messages @*http-messages*))))
+                *http-messages*
+                (assoc :http-messages @*http-messages*))))
           (catch Exception ex
             (let [error-id                   (UUID/randomUUID)
                   {:keys [phase retryable?]} (ex-data ex)]
@@ -73,6 +78,6 @@
                                        :message       (ex-message ex)
                                        ;; we default to retrying, since that captures
                                        ;; all kinds of unexpected issues.
-                                      :retryable?    (not= retryable? false)}}
-                      *http-messages*
-                      (assoc :http-messages @*http-messages*)))))))))
+                                       :retryable?    (not= retryable? false)}}
+                *http-messages*
+                (assoc :http-messages @*http-messages*)))))))))
