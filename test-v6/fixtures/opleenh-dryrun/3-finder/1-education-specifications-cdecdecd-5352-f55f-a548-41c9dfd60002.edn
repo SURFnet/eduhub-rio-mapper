@@ -31,11 +31,10 @@
         "technology_and_ict"],
        "specificationType" "programme",
        "variantOf" "42e2bc1b-6741-4e2e-b138-97b4a342c999"},
-      "studyLoad" {"value" 128, "studyLoadUnit" "ects"},
+      "studyLoad" [{"value" 128, "studyLoadUnit" "ects"}],
       "validFrom" "2000-12-16",
       "programmeType" "specification",
       "sector" "higher professional education",
-      "parent" "42e2bc1b-6741-4e2e-b138-97b4a342c999",
       "programmeId" "cdecdecd-5352-f55f-a548-41c9dfd60002",
       "name"
       [{"language" "en-GB",
@@ -49,8 +48,9 @@
       "timelineOverrides"
       [{"validFrom" "2022-12-17",
         "programme"
-        {"fieldsOfStudy" "0732",
-         "studyLoad" {"studyLoadUnit" "ects", "value" 3},
+        {"programmeType" "specification",
+         "fieldsOfStudy" "0732",
+         "studyLoad" [{"studyLoadUnit" "ects", "value" 3}],
          "consumers"
          [{"consumerKey" "rio",
            "educationSpecificationSubType" "variant",
@@ -67,10 +67,6 @@
          "primaryCode" {"codeType" "identifier", "code" "1234qwe12"},
          "otherCodes"
          [{"codeType" "crohoCreboCode", "code" "1234123"}],
-         "learningOutcomes"
-         [[{"language" "en-GB",
-            "value"
-            "Executable knowledge of Chemical technology, including: Acquire knowledge of research paradigms."}]],
          "educationSpecificationType" "program",
          "formalDocument" "diploma",
          "abbreviation" "B Scheikundige Technologie",
@@ -82,13 +78,6 @@
       "validTo" "2030-12-18",
       "link"
       "https://universiteit-van-boxtel.nl/education-specifications/cdecdecd-5352-f55f-a548-41c9dfd60002",
-      "learningOutcomes"
-      [[{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: algemene empathie voor levende wezens"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: algemene empathie voor levende wezens"}]],
       "formalDocument" "diploma",
       "abbreviation" "OT",
       "organization" "c388522c-ebc1-2889-1899-06a89e4f5091",

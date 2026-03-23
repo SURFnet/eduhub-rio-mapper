@@ -1,53 +1,10 @@
 {
   "level": "nt2-1",
-  "parent": "f2d020bc-5fac-b2e9-4ea7-4b35a08dfbeb",
   "organization": "c388522c-ebc1-2889-1899-06a89e4f5091",
   "educationSpecificationId": "790c6569-2bcc-d046-dae2-7b73e77231f3",
   "validFrom": "2015-09-19",
   "abbreviation": "CS",
   "validTo": "2025-05-12",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuw talent op het gebied van programmeren"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuw talent op het gebied van programmeren"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: algemene empathie voor levende wezens"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: algemene empathie voor levende wezens"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: inzicht in de bijzondere eigenschappen van materialen"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: inzicht in de bijzondere eigenschappen van materialen"
-      }
-    ]
-  ],
   "formalDocument": "diploma",
   "sector": "higher professional education",
   "name": [
