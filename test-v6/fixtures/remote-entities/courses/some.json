@@ -26,10 +26,9 @@
         "latitude": 49
       },
       "addressType": "teaching",
-      "streetNumber": 84,
+      "streetNumber": "84",
       "postalCode": "3465IQ",
-      "street": "Kappeyne van de Coppellolaan",
-      "additional": ""
+      "street": "Kappeyne van de Coppellolaan"
     }
   ],
   "enrollment": [
@@ -95,51 +94,6 @@
       "codeType": "identifier",
       "code": "cafecafe-cafe-cafe-cafe-cafecafecafe"
     }
-  ],
-  "coordinators": [
-    "cafecafe-cafe-cafe-cafe-cafecafecafe"
-  ],
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ]
   ],
   "admissionRequirements": [
     {
