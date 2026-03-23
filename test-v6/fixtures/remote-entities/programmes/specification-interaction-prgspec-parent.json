@@ -37,28 +37,6 @@
   "levelOfQualification": "6",
   "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-interaction-prgspec-parent}}",
   "validTo": "2060-08-28",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuw talent op het gebied van programmeren"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuw talent op het gebied van programmeren"
-      }
-    ]
-  ],
   "abbreviation": "1T",
   "formalDocument": "diploma",
   "programmeId": "{{programmes/specification-interaction-prgspec-parent}}",

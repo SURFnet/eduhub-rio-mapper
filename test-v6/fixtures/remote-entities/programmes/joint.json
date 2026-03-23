@@ -37,8 +37,7 @@
       "addressType": "teaching",
       "streetNumber": "23",
       "postalCode": "4184QU",
-      "street": "Tollenslaan",
-      "additional": []
+      "street": "Tollenslaan"
     }
   ],
   "primaryCode": {
@@ -54,9 +53,6 @@
   "duration": "P1DT30H4S",
   "qualificationAwarded": "Phd",
   "link": "https://universiteit-van-morra.nl/programs/{{programmes/joint}}",
-  "coordinators": [
-    "cafecafe-cafe-cafe-cafe-cafecafecafe"
-  ],
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -103,48 +99,6 @@
     }
   ],
   "abbreviation": "TEC",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": ".."
-      },
-      {
-        "language": "nl-NL",
-        "value": ".."
-      }
-    ]
-  ],
   "admissionRequirements": [
     {
       "language": "en-GB",
