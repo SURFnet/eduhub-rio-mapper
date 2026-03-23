@@ -43,6 +43,7 @@
   ],
   "consumer": {
     "consumerKey": "rio",
+    "variantOf": "6bbdff63-1cf9-4356-9030-198215a5b906",
     "category": [
       "business_and_project_support",
       "education",
