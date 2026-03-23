@@ -79,7 +79,7 @@
       "value": ".."
     }
   ],
-  "teachingLanguage": "eng",
+  "teachingLanguages": ["eng"],
   "level": "undefined",
   "consumer": {
     "consumerKey": "rio",
