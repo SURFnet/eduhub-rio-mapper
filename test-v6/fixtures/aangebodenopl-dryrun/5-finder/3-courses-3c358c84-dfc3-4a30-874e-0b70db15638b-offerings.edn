@@ -36,7 +36,7 @@
         "resultExpected" false,
         "minNumberStudents" 3,
         "maxNumberStudents" 137,
-        "teachingLanguage" "nld",
+        "teachingLanguages" ["nld"],
         "offeringType" "course",
         "flexibleEntryPeriodEndDateTime" "2019-01-31T04:48:53+00:00",
         "name"
@@ -89,7 +89,7 @@
         "resultExpected" false,
         "minNumberStudents" 1,
         "maxNumberStudents" 170,
-        "teachingLanguage" "nld",
+        "teachingLanguages" ["nld"],
         "offeringType" "course",
         "flexibleEntryPeriodEndDateTime" "2020-08-31T07:05:42+00:00",
         "name"

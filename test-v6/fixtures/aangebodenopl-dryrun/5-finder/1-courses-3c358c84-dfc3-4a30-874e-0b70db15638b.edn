@@ -33,7 +33,7 @@
       "validFrom" "2017-01-01",
       "programs" ["280dd8a6-968b-1b2b-9fb2-9d4230a66511"],
       "courseId" "3c358c84-dfc3-4a30-874e-0b70db15638b",
-      "teachingLanguage" "eng",
+      "teachingLanguages" ["eng"],
       "qualificationRequirements"
       [{"language" "en-GB",
         "value"

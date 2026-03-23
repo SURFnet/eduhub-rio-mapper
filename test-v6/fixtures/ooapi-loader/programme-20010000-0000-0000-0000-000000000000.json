@@ -16,7 +16,7 @@
       "value": "The study of life"
     }
   ],
-  "teachingLanguage": "nld",
+  "teachingLanguages": ["nld"],
   "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 3
@@ -118,7 +118,7 @@
             "value": "The study of life"
           }
         ],
-        "teachingLanguage": "nld",
+        "teachingLanguages": ["nld"],
         "studyLoad": {
           "studyLoadUnit": "ects",
           "value": 3
