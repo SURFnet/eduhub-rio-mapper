@@ -117,7 +117,7 @@
 
 ;; We validate according to the OOAPI v6. Choose for which types validation is enabled.
 (def ^:private enabled-validations
-  #{})
+  #{"course" "programme"})
 
 (defn- wrap-response-validator
   "Middleware validating OOAPI responses.
@@ -131,7 +131,7 @@
   (fn [{root-url ::ooapi/root-url type ::ooapi/type :as request}]
     {:pre [root-url type]}
     (let [validate-response (response-validator root-url)
-          response (handler request)
+          response (assoc (handler request) :headers {"content-type" "application/json"})
           to-be-validated {:request request :response (update response :body walk/stringify-keys)}]
       (when (enabled-validations type)
         (when-let [issues (validate-response to-be-validated [])]
