@@ -36,16 +36,7 @@
     "studyLoadUnit": "ects",
     "value": 3
   }],
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "Executable knowledge of Petrochemical technology, including: Acquire knowledge of research paradigms."
-      }
-    ]
-  ],
   "link": "https://shell.nl",
-  "parent": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "ext": {},
   "validFrom": "2019-08-24",
