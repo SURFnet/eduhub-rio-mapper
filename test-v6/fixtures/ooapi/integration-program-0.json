@@ -1,6 +1,6 @@
 {
   "fieldsOfStudy": "0542",
-  "teachingLanguage": "nld",
+  "teachingLanguages": ["nld"],
   "studyLoad": [{
     "value": 79,
     "studyLoadUnit": "ects"
