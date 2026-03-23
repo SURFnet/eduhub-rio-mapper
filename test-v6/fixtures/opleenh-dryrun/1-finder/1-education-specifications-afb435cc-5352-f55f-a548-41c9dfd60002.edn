@@ -29,11 +29,10 @@
        ["business_and_project_support" "hobby_and_leisure_time" "law"],
        "specificationType" "programme",
        "variantOf" "fddec347-8ca1-c991-8d39-9a85d09c0004"},
-      "studyLoad" {"value" 128, "studyLoadUnit" "ects"},
+      "studyLoad" [{"value" 128, "studyLoadUnit" "ects"}],
       "validFrom" "2016-12-15",
       "programmeType" "specification",
       "sector" "higher professional education",
-      "parent" "fddec347-8ca1-c991-8d39-9a85d09c0004",
       "programmeId" "afb435cc-5352-f55f-a548-41c9dfd60002",
       "name"
       [{"language" "en-GB",
@@ -47,13 +46,6 @@
       "validTo" "2025-04-25",
       "link"
       "https://universiteit-van-boxtel.nl/education-specifications/afb435cc-5352-f55f-a548-41c9dfd60002",
-      "learningOutcomes"
-      [[{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: algemene empathie voor levende wezens"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: algemene empathie voor levende wezens"}]],
       "formalDocument" "diploma",
       "abbreviation" "OT",
       "organization" "c388522c-ebc1-2889-1899-06a89e4f5091",

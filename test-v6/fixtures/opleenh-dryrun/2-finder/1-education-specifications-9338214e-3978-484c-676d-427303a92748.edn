@@ -26,7 +26,7 @@
        "category" ["business_and_project_support"],
        "variantIds" ["f151e068-3265-cf5a-84cc-bee97567dec1"],
        "specificationType" "cluster"},
-      "studyLoad" {"value" 169, "studyLoadUnit" "contacttime"},
+      "studyLoad" [{"value" 169, "studyLoadUnit" "contacttime"}],
       "validFrom" "2004-03-31",
       "programmeType" "specification",
       "sector" "higher professional education",
@@ -43,13 +43,6 @@
       "validTo" "2038-09-13",
       "link"
       "https://universiteit-van-dreischor.nl/education-specifications/8338214e-3978-484c-676d-427303a92748",
-      "learningOutcomes"
-      [[{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: nieuw talent op het gebied van programmeren"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: nieuw talent op het gebied van programmeren"}]],
       "formalDocument" "no official document",
       "abbreviation" "AT",
       "organization" "22cb83ef-42ff-0583-2f25-2c576aba3ca4",
