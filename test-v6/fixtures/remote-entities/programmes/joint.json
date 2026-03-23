@@ -1,6 +1,6 @@
 {
   "fieldsOfStudy": "0612",
-  "teachingLanguage": "eng",
+  "teachingLanguages": ["eng"],
   "studyLoad": [
     {
       "value": 155,
