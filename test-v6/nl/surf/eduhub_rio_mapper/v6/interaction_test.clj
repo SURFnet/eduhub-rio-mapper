@@ -68,8 +68,11 @@
    [nl.surf.eduhub-rio-mapper.v6.commands.processing :as processing]
    [nl.surf.eduhub-rio-mapper.v6.config :as config]
    [nl.surf.eduhub-rio-mapper.v6.job :as job]
+   [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
    [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper]
-   [nl.surf.eduhub-rio-mapper.vcr-helper :as vcr.helper]))
+   [nl.surf.eduhub-rio-mapper.vcr-helper :as vcr.helper])
+  (:import [clojure.lang ExceptionInfo]
+           [java.net URI]))
 
 (when (= :record vcr.helper/vcr-mode)
   (use-fixtures :once remote-entities-fixture))
@@ -195,8 +198,7 @@
         (let [result (rio.loader/find-aangebodenopleiding "bbbbbbbb-3f4e-49c2-a1f7-e24ae82b0673" getter (:institution-oin client-info))]
           (is (nil? result)))))))
 
-;; There are still issues with validation
-#_(deftest ^:vcr test-ooapi-loader
+(deftest ^:vcr test-ooapi-loader
   (let [vcr          (vcr.helper/make-vcr)
         config       (if (= vcr.helper/vcr-mode :record)
                        (config/make-config env)
