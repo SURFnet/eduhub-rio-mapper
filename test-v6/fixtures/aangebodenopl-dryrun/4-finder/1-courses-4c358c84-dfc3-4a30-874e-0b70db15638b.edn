@@ -29,7 +29,7 @@
        "educationLocationCode" "107X215",
        "specificationId" "b1091a8c-5352-f55f-a548-41c9dfd60001"},
       "modeOfDelivery" ["distance-learning" "situated" "on campus"],
-      "studyLoad" {"value" 154, "studyLoadUnit" "ects"},
+      "studyLoad" [{"value" 154, "studyLoadUnit" "ects"}],
       "validFrom" "2017-01-01",
       "programs" ["280dd8a6-968b-1b2b-9fb2-9d4230a66511"],
       "courseId" "4c358c84-dfc3-4a30-874e-0b70db15638b",
@@ -58,14 +58,14 @@
       {"codeType" "identifier",
        "code" "af28b74b-6a63-d901-ec5a-51b6f2e68ebc"},
       "addresses"
-      [{"countryCode" "NL",
+      [{"countryCode" { "iso3166-1-alpha2" "NL" },
         "city" "Manderveen",
         "geoLocation" {"longitude" 21, "latitude" 49},
         "addressType" "teaching",
-        "streetNumber" 84,
+        "streetNumber" "84",
         "postalCode" "3465IQ",
         "street" "Kappeyne van de Coppellolaan",
-        "additional" ""}],
+        }],
       "enrollment"
       [{"language" "en-GB", "value" "EN TRANSLATION: . . ."}
        {"language" "nl-NL", "value" "NL VERTALING: . . ."}],
@@ -76,31 +76,6 @@
       "validTo" "2024-01-01",
       "link"
       "https://hogeschool-van-manderveen.nl/courses/af28b74b-6a63-d901-ec5a-51b6f2e68ebc",
-      "learningOutcomes"
-      [[{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: kennis van de meestgebruikte ingrediënten in dit vak"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: kennis van de meestgebruikte ingrediënten in dit vak"}]
-       [{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: inzicht in de bijzondere eigenschappen van materialen"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: inzicht in de bijzondere eigenschappen van materialen"}]
-       [{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: algemene empathie voor levende wezens"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: algemene empathie voor levende wezens"}]
-       [{"language" "en-GB",
-         "value"
-         "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}
-        {"language" "nl-NL",
-         "value"
-         "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"}]],
       "assessment"
       [{"language" "en-GB",
         "value"
@@ -119,5 +94,4 @@
         "EN TRANSLATION: . ridge, lasso, elastic net) and Bayesian statistics. In many practical aspects of physiology in to planning and design approaches (amongst which are discussed in this industry, it’s important to evaluate alternative processes.Working group sessions:Design and evaluation of sustainability are approached both in scope and scale, quantization of energies, driving forces, change and rural development processes."}
        {"language" "nl-NL",
         "value"
-        "NL VERTALING: . ridge, lasso, elastic net) and Bayesian statistics. In many practical aspects of physiology in to planning and design approaches (amongst which are discussed in this industry, it’s important to evaluate alternative processes.Working group sessions:Design and evaluation of sustainability are approached both in scope and scale, quantization of energies, driving forces, change and rural development processes."}],
-      "coordinators" ["2f682653-fc55-e316-100a-9b38d53221c1"]}}}}}}
+        "NL VERTALING: . ridge, lasso, elastic net) and Bayesian statistics. In many practical aspects of physiology in to planning and design approaches (amongst which are discussed in this industry, it’s important to evaluate alternative processes.Working group sessions:Design and evaluation of sustainability are approached both in scope and scale, quantization of energies, driving forces, change and rural development processes."}]}}}}}}
