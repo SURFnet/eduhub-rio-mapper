@@ -28,14 +28,6 @@
   ],
   "teachingLanguage": "nld",
   "fieldsOfStudy": "0732",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
-      }
-    ]
-  ],
   "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
   "qualificationRequirements": [
     {
@@ -105,9 +97,6 @@
   "programs": [
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
-  "coordinators": [
-    "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-  ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "validFrom": "2019-08-24",
   "validTo": "2024-08-24",
@@ -144,14 +133,6 @@
         ],
         "teachingLanguage": "nld",
         "fieldsOfStudy": "0732",
-        "learningOutcomes": [
-          [
-            {
-              "language": "en-GB",
-              "value": "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms."
-            }
-          ]
-        ],
         "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
         "qualificationRequirements": [
           {
@@ -206,9 +187,6 @@
         ],
       "ext": {},
         "programs": [
-          "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-        ],
-        "coordinators": [
           "497f6eca-6276-4993-bfeb-53cbbbba6f08"
         ],
         "organization": "452c1a86-a0af-475b-b03f-724878b0f387"

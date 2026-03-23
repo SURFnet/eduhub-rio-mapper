@@ -30,8 +30,7 @@
       "addressType": "postal",
       "streetNumber": "66",
       "postalCode": "3480IT",
-      "street": "Jan Fabriciusstraat",
-      "additional": []
+      "street": "Jan Fabriciusstraat"
     }
   ],
   "primaryCode": {
@@ -44,9 +43,6 @@
   "duration": "P1DT30H4S",
   "qualificationAwarded": "Phd",
   "link": "https://academie-van-aalsmeerderbrug.nl/programs/58095060-d18c-fcd2-04df-c20b156736f6",
-  "coordinators": [
-    "8f7e1567-114a-5e78-70ce-aae7c7020bf8"
-  ],
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -92,48 +88,6 @@
     }
   ],
   "abbreviation": "OTOM",
-  "learningOutcomes": [
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuw talent op het gebied van programmeren"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuw talent op het gebied van programmeren"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: kennis van de meestgebruikte ingrediënten in dit vak"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: kennis van de meestgebruikte ingrediënten in dit vak"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: nieuwe inzichten over het opdoen van kennis in een complexe wereld"
-      }
-    ],
-    [
-      {
-        "language": "en-GB",
-        "value": "EN TRANSLATION: inzicht in de bijzondere eigenschappen van materialen"
-      },
-      {
-        "language": "nl-NL",
-        "value": "NL VERTALING: inzicht in de bijzondere eigenschappen van materialen"
-      }
-    ]
-  ],
   "admissionRequirements": [
     {
       "language": "en-GB",
