@@ -434,17 +434,15 @@
   Note: RIO may take some time to register relations so we retry for
   10 seconds."
   [rio-parent rio-child]
-  (loop [tries 20]
+  (loop [tries 4]
     (let [relations (rio-relations rio-child)
           result    (some #(contains? (:opleidingseenheidcodes %) rio-parent)
                           relations)]
       (if result
         result
-        (if (pos? tries)
-          (do
-            (Thread/sleep 500)
-            (recur (dec tries)))
-          result)))))
+        (when (pos? tries)
+          (Thread/sleep 2500)
+          (recur (dec tries)))))))
 
 (defn rio-opleidingseenheid
   "Call RIO `opvragen_opleidingseenheid`."

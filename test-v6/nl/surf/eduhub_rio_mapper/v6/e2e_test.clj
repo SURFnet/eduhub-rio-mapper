@@ -488,7 +488,7 @@
         (is (nil? (rio-resolve :ao course-id))))))))
 
 (deftest ^:v6-e2e test-accredited-program
-  (binding [generated-sleutel (UUID/randomUUID)
+  (binding [generated-sleutel (UUID/fromString "6bbdff63-1cf9-4356-9030-198215a5b906")
             parent-code       "1001O5220"
             variant-code      nil
             last-job          nil]
@@ -504,20 +504,20 @@
        (is (= (str generated-sleutel)
               (eigen-opleidingseenheid-sleutel parent-code)))))
 
-    (testing "scenario [9e]: Unlink from accredited program > done"
-      (set! last-job (post-job :unlink parent-code :programmes))
-      (and
-       (is (job-done? last-job))
-       (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))
-
-    #_(testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
+    (testing "scenario [9c]: Upsert variant > done. The new variant should be added and have a relation to the accredited program."
       ;; insert prgspec with type "variant", then create relation. Delete after use
       (and
        (set! last-job (post-job :upsert :programmes "specification-accredited-variant"))
        (set! variant-code (job-result-opleidingseenheidcode last-job))
        (is (rio-with-relation? parent-code variant-code))
        (set! last-job (post-job :delete :programmes "specification-accredited-variant"))
-       (is (nil? (rio-resolve :oe parent-code)))))))
+       (is (nil? (rio-resolve :oe parent-code)))))
+
+    (testing "scenario [9e]: Unlink from accredited program > done"
+      (set! last-job (post-job :unlink parent-code :programmes))
+      (and
+       (is (job-done? last-job))
+       (is (nil? (eigen-opleidingseenheid-sleutel parent-code)))))))
 
 (deftest ^:v6-e2e test-update-remote-entities
   ;; insert prgspec "joint"

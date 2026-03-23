@@ -299,7 +299,7 @@
   [job]
   (or
    (job-result-attributes job :aangebodenopleidingcode)
-   (throw (ex-info "error job-result-aangebodenopleidingcode" job))))
+   (throw (ex-info "error job-result-aangebodenopleidingcode" (dissoc @(:result-delay job) :http-messages)))))
 
 (defmethod test/assert-expr 'job-result-aangebodenopleidingcode [msg form]
   `(let [job# ~(second form)
