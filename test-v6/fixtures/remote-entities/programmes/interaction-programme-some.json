@@ -80,7 +80,7 @@
     }
   ],
   "modeOfStudy": "dual training",
-  "teachingLanguage": "eng",
+  "teachingLanguages": ["eng"],
   "level": "nt2-2",
   "levelOfQualification": "2",
   "firstStartDateTime": "2020-01-31T08:30:00+01:00",
