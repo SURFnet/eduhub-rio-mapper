@@ -6,13 +6,12 @@
   "totalPages": 8,
   "items": [
     {
-      "offeringId": "123e4567-e89b-12d3-a456-134564174000",
+      "courseOfferingId": "123e4567-e89b-12d3-a456-134564174000",
       "primaryCode": {
         "codeType": "identifier",
         "code": "1234qwe12"
       },
       "offeringType": "component",
-      "academicSession": "937983ad-cc0f-45a6-95ca-a8f60b7cf125",
       "name": [
         {
           "language": "en-GB",
