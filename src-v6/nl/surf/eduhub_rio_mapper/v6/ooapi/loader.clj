@@ -115,10 +115,6 @@
         (assoc :uri-prefix uri-prefix)
         (validator/response-validator))))
 
-;; We validate according to the OOAPI v6. Choose for which types validation is enabled.
-(def ^:private enabled-validations
-  #{"course" "programme"})
-
 (defn- wrap-response-validator
   "Middleware validating OOAPI responses.
 
@@ -132,13 +128,13 @@
     {:pre [root-url type]}
     (let [validate-response (response-validator root-url)
           response (assoc (handler request) :headers {"content-type" "application/json"})
-          to-be-validated {:request request :response (update response :body walk/stringify-keys)}]
-      (when (enabled-validations type)
-        (when-let [issues (validate-response to-be-validated [])]
-          (throw (ex-info "Error validating OOAPI Response"
-                          {:issues issues
-                           :request request
-                           :response response}))))
+          to-be-validated {:request request :response (update response :body walk/stringify-keys)}
+          issues (validate-response to-be-validated [])]
+      (when issues
+        (throw (ex-info "Error validating OOAPI Response"
+                        {:issues issues
+                         :request request
+                         :response response})))
       response)))
 
 (def max-pages 50)
