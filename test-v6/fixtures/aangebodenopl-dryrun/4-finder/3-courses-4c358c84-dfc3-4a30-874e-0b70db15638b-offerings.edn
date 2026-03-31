@@ -63,11 +63,10 @@
         "enrolledNumberStudents" 57,
         "link"
         "https://hogeschool-van-manderveen.nl/offerings/aeb74fae-0dbe-9611-addd-32be49f47d81",
-        "academicSession" "e57a12c1-3425-cba4-90f0-a0b29cbc8b38",
         "abbreviation" "MB",
         "resultValueType" "0-100",
-        "course" "4c358c84-dfc3-4a30-874e-0b70db15638b",
-        "offeringId" "aeb74fae-0dbe-9611-addd-32be49f47d81",
+        "courseId" "4c358c84-dfc3-4a30-874e-0b70db15638b",
+        "courseOfferingId" "aeb74fae-0dbe-9611-addd-32be49f47d81",
         "endDateTime" "2019-01-31T14:38:59+00:00",
         "organization" "31e03faa-4669-0fa2-8e42-9253251fa21b",
         "description"
@@ -115,11 +114,10 @@
         "enrolledNumberStudents" 138,
         "link"
         "https://hogeschool-van-manderveen.nl/offerings/ea7d7413-f342-9007-2832-69d2d58932a6",
-        "academicSession" "97c9bd75-7f23-ff3f-3593-d79f2433d5ce",
         "abbreviation" "MB",
         "resultValueType" "pass-or-fail",
-        "course" "af28b74b-6a63-d901-ec5a-51b6f2e68ebc",
-        "offeringId" "ea7d7413-f342-9007-2832-69d2d58932a6",
+        "courseId" "af28b74b-6a63-d901-ec5a-51b6f2e68ebc",
+        "courseOfferingId" "ea7d7413-f342-9007-2832-69d2d58932a6",
         "endDateTime" "2020-08-31T05:32:42+00:00",
         "organization" "31e03faa-4669-0fa2-8e42-9253251fa21b",
         "description"
