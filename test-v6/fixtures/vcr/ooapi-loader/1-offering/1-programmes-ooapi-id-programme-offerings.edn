@@ -84,7 +84,7 @@
         "link"
         "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
         "academicSessionId" "c08ecafe-cafe-cafe-cafe-cafecafecafe",
-        "programme" "f31426a0-6e39-44d0-8fe8-46a2a7d529a7",
+        "programmeId" "f31426a0-6e39-44d0-8fe8-46a2a7d529a7",
         "programmeOfferingId" "c08ecafe-cafe-cafe-cafe-cafecafecafe",
         "abbreviation" "Test-INFOMQNM-20FS",
         "resultValueType" "1-10",
@@ -145,7 +145,7 @@
         "link"
         "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
         "academicSessionId" "c08efade-fade-fade-fade-fadefadefade",
-        "programme" "f31426a0-6e39-44d0-8fe8-46a2a7d529a7",
+        "programmeId" "f31426a0-6e39-44d0-8fe8-46a2a7d529a7",
         "programmeOfferingId" "c08efade-fade-fade-fade-fadefadefade",
         "abbreviation" "Test-INFOMQNM-21FS",
         "resultValueType" "1-10",
@@ -206,7 +206,7 @@
         "link"
         "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
         "academicSessionId" "c08ebead-bead-bead-bead-beadbeadbead",
-        "programme" "f31426a0-6e39-44d0-8fe8-46a2a7d529a7",
+        "programmeId" "f31426a0-6e39-44d0-8fe8-46a2a7d529a7",
         "programmeOfferingId" "c08ebead-bead-bead-bead-beadbeadbead",
         "abbreviation" "Test-INFOMQNM-20FS",
         "resultValueType" "1-10",
