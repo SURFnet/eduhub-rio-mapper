@@ -35,7 +35,8 @@
          nl.jomco/envopts     {:mvn/version "0.0.7"}
          clj-http/clj-http    {:mvn/version "3.13.1"}
          clj-time/clj-time    {:mvn/version "0.15.2"}
-         com.taoensso/carmine {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader]}
+         com.taoensso/carmine    {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader io.airlift/aircompressor]}
+         io.airlift/aircompressor {:mvn/version "2.0.3"}
 
          ;; logging
          org.clojure/tools.logging                   {:mvn/version "1.3.1"}
