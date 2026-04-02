@@ -44,20 +44,20 @@ record-v5:
 	OOAPI_VERSION=v5 VCR_RECORD=true clojure -M:test-vcr-v5
 
 test-v6: test-common
-	clojure -M:test-v6
+	clojure -M:test-v6 --focus :v6
 
 test-v6-redis:
-	clojure -M:test-v6-redis
+	clojure -M:test-v6 --focus :v6-redis
 
 test-v6-e2e:
-	clojure -M:test-v6-e2e --no-capture-output
+	clojure -M:test-v6-e2e --focus :v6-e2e
 
 playback-v6:
-	clojure -M:test-vcr-v6
+	clojure -M:test-v6 --focus :v6-vcr
 
 record-v6:
 	rm -rf test-v6/fixtures/vcr/*
-	OOAPI_VERSION=v6 VCR_RECORD=true clojure -M:test-vcr-v6
+	OOAPI_VERSION=v6 VCR_RECORD=true clojure -M:test-v6 --focus :vcr-v6
 
 test-common:
 	clojure -M:test-common  --focus :common
