@@ -17,7 +17,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: eduhub-docker-production.artie.ia.surfsara.nl/rio-mapper
+          images: eduhub-docker-production.artie.ia.surfsara.nl/rio-mapper-v6
           tags: |
             type=match,pattern=v\d+.\d+
             type=sha,format=long
@@ -33,4 +33,5 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
+          file: Dockerfile.v6
           tags: ${{ steps.meta.outputs.tags }}
