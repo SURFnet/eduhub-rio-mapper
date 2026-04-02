@@ -1,12 +1,5 @@
 .PHONY: all jar lint proof-specs test test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean
 
-MAIN_CLASS=nl.surf.eduhub-rio-mapper.v5.main
-JAR_FILE=target/eduhub-rio-mapper.jar
-
-DEPS_EDN=deps.edn
-DEPS_PATHS=src-v5 src-common resources # should be the same as defined in deps.edn
-CLASSES_DIR=target/classes
-TEST_OPTS=
 
 all: lint proof-specs test watson clean jar
 
@@ -78,16 +71,13 @@ types-edn:
 	clojure -M:dev -m xsd-to-edn.main types
 
 clean:
-	rm -rf $(CLASSES_DIR) $(JAR_FILE)
+	rm -rf target
+	mkdir -p target/classes
 
-MAIN_CLASS_FILE = $(subst -,_,$(subst .,/,$(MAIN_CLASS)))
-MAIN_CLASS_FILE_CLASS = $(join $(CLASSES_DIR)/,$(addsuffix .class,$(MAIN_CLASS_FILE)))
-COMPILE_EXPR = $(subst CLASSES_DIR,$(CLASSES_DIR),"(binding [*compile-path* \"CLASSES_DIR\"] (compile 'MAIN_CLASS))")
+target/eduhub-rio-mapper-v5.jar: clean $(shell find src-v5 src-common resources -type f)
+	clojure -M:v5 -e "(binding [*compile-path* \"target/classes\"] (compile 'nl.surf.eduhub-rio-mapper.v5.main))"
+	clojure -M:uberjar --aliases v5:package --main-class nl.surf.eduhub_rio_mapper.v5.main --target $@
 
-$(MAIN_CLASS_FILE_CLASS): $(DEPS_EDN) $(shell find $(DEPS_PATHS) -type f)
-	rm -rf $(CLASSES_DIR)
-	mkdir -p $(CLASSES_DIR)
-	clojure -M -e $(subst MAIN_CLASS,$(MAIN_CLASS),$(COMPILE_EXPR))
-
-$(JAR_FILE): $(MAIN_CLASS_FILE_CLASS)
-	clojure -M:uberjar --main-class $(MAIN_CLASS) --target $@
+target/eduhub-rio-mapper-v6.jar: clean $(shell find src-v6 src-common resources -type f)
+	clojure -M:v6 -e "(binding [*compile-path* \"target/classes\"] (compile 'nl.surf.eduhub-rio-mapper.v6.main))"
+	clojure -M:uberjar --aliases v6:package --main-class nl.surf.eduhub_rio_mapper.v6.main --target $@

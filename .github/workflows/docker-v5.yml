@@ -1,0 +1,43 @@
+name: Build and publish docker image
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'v[0-9]+.[0-9]+'
+
+jobs:
+  docker:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: eduhub-docker-production.artie.ia.surfsara.nl/rio-mapper-v5
+          tags: |
+            type=match,pattern=v\d+.\d+
+            type=sha,format=long
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          registry: eduhub-docker-production.artie.ia.surfsara.nl
+          username: ${{ secrets.ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          registry: cr.surf.nl
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          file: Dockerfile.v5
+          tags: ${{ steps.meta.outputs.tags }}
