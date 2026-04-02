@@ -28,20 +28,20 @@ proof-specs:
 test: test-v5 test-v6
 
 test-v5: test-common
-	clojure -M:test-v5
+	clojure -M:test-v5 --focus :v5
 
 test-v5-redis:
-	clojure -M:test-v5-redis
+	clojure -M:test-v5 --focus :v5-redis
 
 test-v5-e2e:
-	clojure -M:test-v5-e2e --no-capture-output
+	clojure -M:test-v5-e2e --focus :v5-e2e
 
 playback-v5:
-	clojure -M:test-vcr-v5
+	clojure -M:test-v5 --focus :v5-vcr
 
 record-v5:
 	rm -rf test-v5/fixtures/vcr/*
-	OOAPI_VERSION=v5 VCR_RECORD=true clojure -M:test-vcr-v5
+	OOAPI_VERSION=v5 VCR_RECORD=true clojure -M:test-v5 --focus :vcr-v5
 
 test-v6: test-common
 	clojure -M:test-v6 --focus :v6
