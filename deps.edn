@@ -88,7 +88,7 @@
          :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-v6" "src-common" "test-v5" "test-v6" "test-common"]}
 
   :package-v5 {:extra-paths ["target/classes-v5"]}
-  :package-v6 {:extra-paths ["target/classes-v5"]}
+  :package-v6 {:extra-paths ["target/classes-v6"]}
   :uberjar {:replace-deps {uberdeps/uberdeps   {:mvn/version "RELEASE"}
                            org.clojure/clojure {:mvn/version "RELEASE"}}
             :main-opts    ["-m" "uberdeps.uberjar"]}
