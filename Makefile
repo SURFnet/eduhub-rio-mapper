@@ -3,7 +3,7 @@
 
 all: lint proof-specs test watson clean jar
 
-jar: target/eduhub-rio-mapper.jar
+jar: target/eduhub-rio-mapper-v5.jar target/eduhub-rio-mapper-v6.jar
 
 test-all-units:
 	clojure -M:test-v5
@@ -71,13 +71,16 @@ types-edn:
 	clojure -M:dev -m xsd-to-edn.main types
 
 clean:
-	rm -rf target
-	mkdir -p target/classes
+	rm -r target
 
-target/eduhub-rio-mapper-v5.jar: clean $(shell find src-v5 src-common resources -type f)
-	clojure -M:v5 -e "(binding [*compile-path* \"target/classes\"] (compile 'nl.surf.eduhub-rio-mapper.v5.main))"
-	clojure -M:uberjar --aliases v5:package --main-class nl.surf.eduhub_rio_mapper.v5.main --target $@
+target/eduhub-rio-mapper-v5.jar: $(shell find src-v5 src-common resources -type f)
+	rm -rf target/classes-v5
+	mkdir -p target/classes-v5
+	clojure -M:v5 -e "(binding [*compile-path* \"target/classes-v5\"] (compile 'nl.surf.eduhub-rio-mapper.v5.main))"
+	clojure -M:uberjar --aliases v5:package-v5 --main-class nl.surf.eduhub_rio_mapper.v5.main --target $@
 
-target/eduhub-rio-mapper-v6.jar: clean $(shell find src-v6 src-common resources -type f)
-	clojure -M:v6 -e "(binding [*compile-path* \"target/classes\"] (compile 'nl.surf.eduhub-rio-mapper.v6.main))"
-	clojure -M:uberjar --aliases v6:package --main-class nl.surf.eduhub_rio_mapper.v6.main --target $@
+target/eduhub-rio-mapper-v6.jar: $(shell find src-v6 src-common resources -type f)
+	rm -rf target/classes-v6
+	mkdir -p target/classes-v6
+	clojure -M:v6 -e "(binding [*compile-path* \"target/classes-v6\"] (compile 'nl.surf.eduhub-rio-mapper.v6.main))"
+	clojure -M:uberjar --aliases v6:package-v6 --main-class nl.surf.eduhub_rio_mapper.v6.main --target $@
