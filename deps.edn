@@ -1,4 +1,4 @@
-{:paths ["src-v5" "src-common" "resources"]
+{:paths ["src-common" "resources"]
  :deps  {org.clojure/clojure      {:mvn/version "1.12.4"}
          org.clojure/core.async   {:mvn/version "1.8.741"}
          org.clojure/core.memoize {:mvn/version "1.2.281"}
@@ -32,10 +32,10 @@
          org.eclipse.jetty.ee9.websocket/jetty-ee9-websocket-jetty-server {:mvn/version "12.1.7"}
 
          ;; interface
-         nl.jomco/envopts     {:mvn/version "0.0.7"}
-         clj-http/clj-http    {:mvn/version "3.13.1"}
-         clj-time/clj-time    {:mvn/version "0.15.2"}
-         com.taoensso/carmine    {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader io.airlift/aircompressor]}
+         nl.jomco/envopts         {:mvn/version "0.0.7"}
+         clj-http/clj-http        {:mvn/version "3.13.1"}
+         clj-time/clj-time        {:mvn/version "0.15.2"}
+         com.taoensso/carmine     {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader io.airlift/aircompressor]}
          io.airlift/aircompressor {:mvn/version "2.0.3"}
 
          ;; logging
@@ -48,27 +48,27 @@
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.10"}}
 
  :aliases
- {:dev {:extra-paths ["dev" "test-v6" "src-v6"] ;; include v6 paths when running in the REPL
+ {:dev {:extra-paths ["dev" "src-v5" "test-v5" "test-v6" "src-v6"] ;; include v6 paths when running in the REPL
         :extra-deps  {clj-commons/clj-yaml {:mvn/version "RELEASE"}
                       expound/expound      {:mvn/version "RELEASE"}}}
 
-  :test-v5 {:extra-paths ["test-v5" "test-common"]
+  :test-common {:extra-paths ["test-common"]
+                :jvm-opts    ["-Dclojure.main.report=stderr"]
+                :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                              ring/ring-mock      {:mvn/version "RELEASE"}}
+                :main-opts   ["-m" "kaocha.runner"]}
+
+  :test-v5 {:extra-paths ["test-common" "src-v5" "test-v5"]
             :jvm-opts    ["-Dclojure.main.report=stderr"]
             :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
                           ring/ring-mock      {:mvn/version "RELEASE"}}
             :main-opts   ["-m" "kaocha.runner"]}
 
-  :test-common {:replace-paths ["src-common" "test-common" "resources"]
-                :jvm-opts      ["-Dclojure.main.report=stderr"]
-                :extra-deps    {lambdaisland/kaocha {:mvn/version "RELEASE"}
-                                ring/ring-mock      {:mvn/version "RELEASE"}}
-                :main-opts     ["-m" "kaocha.runner" "--focus" ":common"]}
-
-  :test-v6 {:replace-paths ["src-v6" "src-common" "resources" "test-v6" "test-common"]
-            :jvm-opts      ["-Dclojure.main.report=stderr"]
-            :extra-deps    {lambdaisland/kaocha {:mvn/version "RELEASE"}
-                            ring/ring-mock      {:mvn/version "RELEASE"}}
-            :main-opts     ["-m" "kaocha.runner"]}
+  :test-v6 {:extra-paths ["test-common" "src-v6" "test-v6"]
+            :jvm-opts    ["-Dclojure.main.report=stderr"]
+            :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                          ring/ring-mock      {:mvn/version "RELEASE"}}
+            :main-opts   ["-m" "kaocha.runner"]}
 
   :proof-specs {:extra-deps {nl.jomco/proof-specs {:mvn/version "RELEASE"}}
                 :main-opts  ["-m" "nl.jomco.proof-specs"

@@ -28,39 +28,39 @@ proof-specs:
 test: test-v5 test-v6
 
 test-v5: test-common
-	clojure -M:test-v5 --focus :v5
+	clojure -M:test-v5 v5
 
 test-v5-redis:
-	clojure -M:test-v5 --focus :v5-redis
+	clojure -M:test-v5 v5-redis
 
 test-v5-e2e:
-	clojure -M:test-v5-e2e --focus :v5-e2e
+	clojure -M:test-v5 v5-e2e --no-capture-output
 
 playback-v5:
-	clojure -M:test-v5 --focus :v5-vcr
+	clojure -M:test-v5 v5-vcr
 
 record-v5:
 	rm -rf test-v5/fixtures/vcr/*
-	OOAPI_VERSION=v5 VCR_RECORD=true clojure -M:test-v5 --focus :vcr-v5
+	OOAPI_VERSION=v5 VCR_RECORD=true clojure -M:test-v5 v5-vcr
 
 test-v6: test-common
-	clojure -M:test-v6 --focus :v6
+	clojure -M:test-v6 v6
 
 test-v6-redis:
-	clojure -M:test-v6 --focus :v6-redis
+	clojure -M:test-v6 v6-redis
 
 test-v6-e2e:
-	clojure -M:test-v6-e2e --focus :v6-e2e
+	clojure -M:test-v6 v6-e2e --no-capture-output
 
 playback-v6:
-	clojure -M:test-v6 --focus :v6-vcr
+	clojure -M:test-v6 v6-vcr
 
 record-v6:
 	rm -rf test-v6/fixtures/vcr/*
-	OOAPI_VERSION=v6 VCR_RECORD=true clojure -M:test-v6 --focus :vcr-v6
+	OOAPI_VERSION=v6 VCR_RECORD=true clojure -M:test-v6 v6-vcr
 
 test-common:
-	clojure -M:test-common  --focus :common
+	clojure -M:test-common  common
 
 watson:
 	clojure -M:watson
