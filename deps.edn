@@ -48,7 +48,7 @@
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.10"}}
 
  :aliases
- {:dev {:extra-paths ["dev" "src-v5" "test-v5" "test-v6" "src-v6"] ;; include v6 paths when running in the REPL
+ {:dev {:extra-paths ["dev" "src-v5" "test-v5" "test-v6" "src-v6"] ;; include all paths when running in the REPL
         :extra-deps  {clj-commons/clj-yaml {:mvn/version "RELEASE"}
                       expound/expound      {:mvn/version "RELEASE"}}}
 
@@ -58,11 +58,16 @@
                               ring/ring-mock      {:mvn/version "RELEASE"}}
                 :main-opts   ["-m" "kaocha.runner"]}
 
+  :v5 {:extra-paths ["src-v5"]}
+  
   :test-v5 {:extra-paths ["test-common" "src-v5" "test-v5"]
             :jvm-opts    ["-Dclojure.main.report=stderr"]
             :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
                           ring/ring-mock      {:mvn/version "RELEASE"}}
             :main-opts   ["-m" "kaocha.runner"]}
+
+
+  :v6 {:extra-paths ["src-v6"]}
 
   :test-v6 {:extra-paths ["test-common" "src-v6" "test-v6"]
             :jvm-opts    ["-Dclojure.main.report=stderr"]
@@ -77,16 +82,16 @@
                              "--limit-ms" "5000"
                              "--include" "nl.surf.*"
                              "--require" "nl.surf.eduhub-rio-mapper.specs.ooapi"]}
-
+  
   :lint {:paths        []
          :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
          :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-v6" "src-common" "test-v5" "test-v6" "test-common"]}
 
   :package {:extra-paths ["target/classes"]}
-  :uberjar {:replace-deps  {uberdeps/uberdeps   {:mvn/version "RELEASE"}
-                            org.clojure/clojure {:mvn/version "RELEASE"}}
-            :replace-paths []
-            :main-opts     ["-m" "uberdeps.uberjar" "--aliases" "package"]}
+  :uberjar {:replace-deps {uberdeps/uberdeps   {:mvn/version "RELEASE"}
+                           org.clojure/clojure {:mvn/version "RELEASE"}}
+            :main-opts    ["-m" "uberdeps.uberjar"]}
+
 
   :watson {:paths        []
            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.0.1"
@@ -102,6 +107,6 @@
            :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.v5.main"]}
 
   :mapper-v6 {:replace-paths ["src-v6" "src-common" "resources" "test-v6" "test-common"]
-              :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.v6.main"]}
+              :main-opts     ["-m" "nl.surf.eduhub-rio-mapper.v6.main"]}
 
   :deps-to-scan {:extra-deps {io.opentelemetry.javaagent/opentelemetry-javaagent ^:antq/exclude {:mvn/version "2.9.0"}}}}}
