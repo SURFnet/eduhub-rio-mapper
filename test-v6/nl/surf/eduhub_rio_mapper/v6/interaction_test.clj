@@ -203,9 +203,9 @@
         config       (if (= vcr.helper/vcr-mode :record)
                        (config/make-config env)
                        (helper/make-test-config))
-        ooapi-loader (ooapi.loader/make-ooapi-http-loader (:gateway-root-url config)
-                                                          (:gateway-credentials config)
-                                                          config)
+        ooapi-loader-config (ooapi.loader/make-ooapi-http-loader-config (:gateway-root-url config)
+                                                                        (:gateway-credentials config)
+                                                                        config)
 
         client-info  (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")]
     (testing "programme"
@@ -214,7 +214,8 @@
                           ::ooapi/id       (entity-name-to-id "programmes/v5-program")
                           :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "programme")]
-          (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]
+          (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request)
+                                                  (ooapi.loader/ooapi-http-load ooapi-loader-config))))]
             (is (= {:issue "schema-validation-error"
                     :canonical-schema-path ["components" "schemas" "ProgrammeId" "required"]}
                    (select-keys (first (:issues (ex-data ex)))
@@ -226,5 +227,5 @@
                      ::ooapi/id       (entity-name-to-id "programmes/interaction-programme-some")
                      :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 1 "offering")]
-          (let [items (:items (ooapi-loader (merge client-info request)))]
+          (let [items (:items (ooapi.loader/ooapi-http-load (merge client-info request)  ooapi-loader-config))]
             (is (= 3 (count items)))))))))

@@ -23,6 +23,7 @@
             [nl.surf.eduhub-rio-mapper.specs.mutation :as-alias mutation]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
+            [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
             [nl.surf.eduhub-rio-mapper.v6.specs.relations :as relations]))
 
 (defn- narrow-valid-daterange
@@ -122,7 +123,7 @@
                        (-> prgspec :consumer :variantIds)
                        job
                        handlers))
-  ([prgspec primary-key variant-of variants {:keys [institution-oin institution-schac-home] :as _job} {:keys [getter resolver ooapi-loader]}]
+  ([prgspec primary-key variant-of variants {:keys [institution-oin institution-schac-home] :as _job} {:keys [getter resolver ooapi-loader-config]}]
    {:pre [prgspec]}
    (let [add-rio-code (fn add-rio-code [entity]
                         (if (::rio/opleidingscode entity)
@@ -131,9 +132,10 @@
                             (assoc entity ::rio/opleidingscode rio-code))))
          load-prgspec (fn load-prgspec [id]
                         {:pre [id]}
-                        (when-let [es (ooapi-loader {::ooapi/type            "programme"
-                                                     ::ooapi/id              id
-                                                     :institution-schac-home institution-schac-home})]
+                        (when-let [es (ooapi.loader/ooapi-http-load {::ooapi/type            "programme"
+                                                                     ::ooapi/id              id
+                                                                     :institution-schac-home institution-schac-home}
+                                                                    ooapi-loader-config)]
                           (add-rio-code es)))
          prgspec (add-rio-code prgspec)
          actual (load-relation-data getter (::rio/opleidingscode prgspec) institution-oin)
