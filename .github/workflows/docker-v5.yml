@@ -17,7 +17,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: eduhub-docker-production.artie.ia.surfsara.nl/rio-mapper-v5
+          images: |
+            eduhub-docker-production.artie.ia.surfsara.nl/rio-mapper
+            cr.surf.nl/surfeduhub-riomapper/riomapper
           tags: |
             type=match,pattern=v\d+.\d+
             type=sha,format=long
