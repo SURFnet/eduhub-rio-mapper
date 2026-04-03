@@ -70,7 +70,7 @@
 ;; programmes from programme-specifications, which are different object in RIO
 (defn- make-deleter-load-ooapi-phase [{:keys [ooapi-loader]}]
   (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
-    {:pre  [(or (#{"programme" "course"} type) (prn {:unknown-type type}))]
+    {:pre  [(#{"programme" "course"} type)]
      :post [(:rio-type %)]}
     (if (= type "course")
       (assoc request :rio-type :ao)
@@ -87,7 +87,7 @@
 :nl.surf.eduhub-rio-mapper.v6.specs.ooapi/specification-type
 (defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
   (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
-    {:pre  [(or (#{"programme" "course"} type) (prn {:unknown-type type}))]
+    {:pre  [(#{"programme" "course"} type)]
      :post [(:rio-type %)]}
     (logging/with-mdc
       {:ooapi-type type :ooapi-id id}
