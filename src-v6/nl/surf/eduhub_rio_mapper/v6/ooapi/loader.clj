@@ -119,10 +119,7 @@
   "Middleware validating OOAPI responses.
 
   When a response is not valid according to the OOAPI v6 spec, throws
-  an exception.
-
-  Requests for ::ooapi/type specifified in `disabled-validations` are
-  not validated."
+  an exception."
   [handler]
   (fn [{root-url ::ooapi/root-url type ::ooapi/type :as request}]
     {:pre [root-url type]}
@@ -190,7 +187,7 @@
 
 (defn load-offerings
   [loader {::ooapi/keys [id type] :as request}]
-  {:pre [(or (#{"programme" "course"} type) (prn type))]}
+  {:pre [(#{"programme" "course"} type)]}
   (-> request
       (assoc ::ooapi/id id
              ::ooapi/type (str type "-offerings"))
@@ -200,10 +197,9 @@
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
   [loader {::ooapi/keys [type] :as request}]
-  {:pre  [(or (#{"programme" "course"} type) (prn type))]
+  {:pre  [(#{"programme" "course"} type)]
    :post [(some? (::ooapi/entity %))
-          (not-empty (::ooapi/entity %))]
-   }
+          (not-empty (::ooapi/entity %))]}
   (let [entity                  (loader request)
         consumer                (:consumer entity)
         joint-programme?          (= "true" (str (:jointProgramme consumer)))
