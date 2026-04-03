@@ -52,14 +52,24 @@
                        :institution-schac-home "demo06.test.surfeduhub.nl"
                        :institution-oin        "0000000700025BE00000"})
 
+(defmacro with-ooapi-loader
+  "Temporarily overrides the OOAPI HTTP loader with the given function."
+  [loader & body]
+  `(let [loader-fn# ~loader]
+     (with-redefs [ooapi.loader/ooapi-http-load (fn [request# _config#]
+                                                 (loader-fn# request#))]
+       ~@body)))
+
 (defn test-handler
   "Loads ooapi fixtures from file and fakes resolver."
-  [{::ooapi/keys [type] :as req} resolver ooapi-loader]
-  (-> (cond->> (merge req test-client-info)
-        (not= "relation" type)
-        (ooapi.loader/load-entities ooapi-loader))
-      (test-resolve-request resolver)
-      updated-handler/update-mutation))
+  ([req resolver]
+   (test-handler req resolver nil))
+  ([{::ooapi/keys [type] :as req} resolver ooapi-loader-config]
+   (-> (cond->> (merge req test-client-info)
+         (not= "relation" type)
+         (ooapi.loader/load-entities ooapi-loader-config))
+       (test-resolve-request resolver)
+       updated-handler/update-mutation)))
 
 (defn wait-while-predicate [predicate val-atom max-sec]
   (loop [ttl (* max-sec 10)]

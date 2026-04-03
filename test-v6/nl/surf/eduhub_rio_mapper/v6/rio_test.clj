@@ -61,62 +61,63 @@
     "12345678-9abc-def0-1234-56789abcdef0"))
 
 (deftest test-and-validate-entities
-  (are [updated]
-       (is (-> updated
-               (helper/test-handler test-resolver ooapi.loader/ooapi-file-loader)
-               (prep-body)
-               (soap/guard-valid-sexp mutator/validator)))
+  (helper/with-ooapi-loader ooapi.loader/ooapi-file-loader
+    (are [updated]
+         (is (-> updated
+                 (helper/test-handler test-resolver)
+                 (prep-body)
+                 (soap/guard-valid-sexp mutator/validator)))
 
-    {::ooapi/id "10010000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "10020000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "10030000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "10040000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20010000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20020000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20030000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20030000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "30010000-0000-0000-0000-000000000000"
-     ::ooapi/type "course"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}))
+      {::ooapi/id "10010000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "10020000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "10030000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "10040000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20010000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20020000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20030000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20030000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "30010000-0000-0000-0000-000000000000"
+       ::ooapi/type "course"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"})))
 
 ;; eigenNaamInternationaal is over 225 chars, which is > max-length
 ;; but no exception, since fields gets truncated.
 (deftest test-and-validate-program-4-valid
-  (let [request (helper/test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
-                                      ::ooapi/type "programme"
-                                      :client-id "rio-mapper-dev.jomco.nl"}
-                                     test-resolver
-                                     ooapi.loader/ooapi-file-loader)]
-    (is (= :duo:aanleveren_aangebodenOpleiding_request
-           (first (-> request
-                      prep-body
-                      (soap/guard-valid-sexp mutator/validator))))
-        "guard throws an exception if XML invalid according to XSD")))
+  (helper/with-ooapi-loader ooapi.loader/ooapi-file-loader
+    (let [request (helper/test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
+                                        ::ooapi/type "programme"
+                                        :client-id "rio-mapper-dev.jomco.nl"}
+                                       test-resolver)]
+      (is (= :duo:aanleveren_aangebodenOpleiding_request
+             (first (-> request
+                        prep-body
+                        (soap/guard-valid-sexp mutator/validator))))
+          "guard throws an exception if XML invalid according to XSD"))))
 
 (defn collect-paths
   "If leaf-node, add current path (and node if include-leaves is true) to acc.
@@ -258,9 +259,10 @@
              volatile-paths)))))
 
 (defn- test-loader [id ooapi-type]
-  (->> {::ooapi/id id ::ooapi/type ooapi-type}
-       (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader)
-       ::ooapi/entity))
+  (helper/with-ooapi-loader ooapi.loader/ooapi-file-loader
+    (->> {::ooapi/id id ::ooapi/type ooapi-type}
+         (ooapi.loader/load-entities nil)
+         ::ooapi/entity)))
 
 (deftest to-rio-obj
   (testing "prgspec"
@@ -450,11 +452,12 @@
               [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
               [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
 
-             (-> (ooapi.loader/load-entities
-                  mode-of-delivery-loader
-                  {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "programme"})
-                 ::ooapi/entity
-                 (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"}))))))
+             (helper/with-ooapi-loader mode-of-delivery-loader
+               (-> (ooapi.loader/load-entities
+                    nil
+                    {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "programme"})
+                   ::ooapi/entity
+                   (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))))
 
   (testing "private program does not include nlqf and eqf fields"
     (let [result (-> {::ooapi/id "10020000-0000-0000-0000-000000000000" ::ooapi/type "programme" :rio-type :oe}

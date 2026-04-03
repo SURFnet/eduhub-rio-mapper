@@ -68,7 +68,7 @@
 
 ;; Only function of this phase is to load programmes in order to distinguish
 ;; programmes from programme-specifications, which are different object in RIO
-(defn- make-deleter-load-ooapi-phase [{:keys [ooapi-loader]}]
+(defn- make-deleter-load-ooapi-phase [{:keys [ooapi-loader-config]}]
   (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
     {:pre  [(#{"programme" "course"} type)]
      :post [(:rio-type %)]}
@@ -76,7 +76,7 @@
       (assoc request :rio-type :ao)
       (logging/with-mdc
         {:ooapi-type type :ooapi-id id}
-        (let [entity (ooapi-loader request)]
+        (let [entity (ooapi.loader/ooapi-http-load request ooapi-loader-config)]
           (assoc request :rio-type (if (and (= "programme" type)
                                             (= "specification" (:programmeType entity)))
                                      :oe
@@ -85,13 +85,13 @@
 ;; in:  {::ooapi/keys [type id] :keys [action institution-name institution-oin institution-schac-home]}
 ;; diff out: {:keys [rio-type] ::ooapi/keys [entity]}
 :nl.surf.eduhub-rio-mapper.v6.specs.ooapi/specification-type
-(defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
+(defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader-config]}]
   (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
     {:pre  [(#{"programme" "course"} type)]
      :post [(:rio-type %)]}
     (logging/with-mdc
       {:ooapi-type type :ooapi-id id}
-      (let [{::ooapi/keys [entity] :as result} (ooapi.loader/load-entities ooapi-loader request)]
+      (let [{::ooapi/keys [entity] :as result} (ooapi.loader/load-entities ooapi-loader-config request)]
         (quick-validate entity type)
         (assoc result :rio-type (if (and (= "programme" type)
                                          (= "specification" (:programmeType entity)))
@@ -353,10 +353,10 @@
         output (if (nil? ooapi-summary) diff (assoc diff :opleidingseenheidcode rio-code))]
     (merge output (dry-run-status rio-summary ooapi-summary))))
 
-(defn- course-program-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin] :as request} {:keys [getter ooapi-loader]}]
+(defn- course-program-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin] :as request} {:keys [getter ooapi-loader-config]}]
   (let [rio-obj     (rio.loader/find-aangebodenopleiding id getter institution-oin)
         rio-summary (dry-run/summarize-aangebodenopleiding-xml rio-obj)
-        offering-summary (->> (ooapi.loader/load-offerings ooapi-loader request)
+        offering-summary (->> (ooapi.loader/load-offerings ooapi-loader-config request)
                               (map dry-run/summarize-offering)
                               (sort-by :cohortcode)
                               vec)
@@ -377,11 +377,11 @@
         (ex-data ex)
         (throw ex)))))
 
-(defn- make-dry-runner [{:keys [rio-config ooapi-loader] :as handlers}]
+(defn- make-dry-runner [{:keys [rio-config ooapi-loader-config] :as handlers}]
   {:pre [rio-config]}
   (fn [{::ooapi/keys [type] :as request}]
     {:pre [(:institution-oin request)]}
-    (let [ooapi-entity (safe-loader (fn [] (ooapi-loader request)))
+    (let [ooapi-entity (safe-loader (fn [] (ooapi.loader/ooapi-http-load request ooapi-loader-config)))
           value (if (not-found? ooapi-entity)
                   {:status "error"}
                   (let [handler (if (or (= type "course")
@@ -398,13 +398,13 @@
   {:pre [(:recipient-oin rio-config)]}
   (let [resolver     (rio.loader/make-resolver rio-config)
         getter       (rio.loader/make-getter rio-config)
-        ooapi-loader (ooapi.loader/make-ooapi-http-loader gateway-root-url
-                                                          gateway-credentials
-                                                          rio-config)
-        handlers     {:ooapi-loader ooapi-loader
-                      :rio-config   rio-config
-                      :getter       getter
-                      :resolver     resolver}
+        ooapi-loader-config (ooapi.loader/make-ooapi-http-loader-config gateway-root-url
+                                                                        gateway-credentials
+                                                                        rio-config)
+        handlers     {:ooapi-loader-config ooapi-loader-config
+                      :rio-config          rio-config
+                      :getter              getter
+                      :resolver            resolver}
         update!      (make-update handlers rio-config)
         delete!      (make-deleter handlers)
         insert!      (make-insert handlers rio-config)

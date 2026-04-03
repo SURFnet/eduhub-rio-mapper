@@ -56,6 +56,7 @@
   (fn [{::ooapi/keys [root-url type id]
         :keys        [institution-schac-home gateway-credentials connection-timeout page]
         :as          request}]
+    {:pre [type]}
     (let [url (str root-url (ooapi-type->path type id page))
           uri (string/replace url #"\?.*" "")]
       (:body (handler (merge request
@@ -166,18 +167,24 @@
       wrap-ooapi-request->ring-request
       wrap-pagination))
 
-(defn make-ooapi-http-loader
+(defn ooapi-http-load [request {:keys [root-url gateway-credentials connection-timeout-millis]}]
+  {:pre [root-url]}
+  (let [request (assoc request
+                       ::ooapi/root-url root-url
+                       :gateway-credentials gateway-credentials
+                       :connection-timeout connection-timeout-millis)]
+    (ooapi-http-loader request)))
+
+(defn make-ooapi-http-loader-config
   "Returns an ooapi-loader function for the given configuration.
 
   The returned loader takes a map with ::ooapi/id, ::ooapi/type
   attributes"
   [root-url credentials rio-config]
-  (fn wrapped-ooapi-http-loader [context]
-    (let [request (assoc context
-                         ::ooapi/root-url root-url
-                         :gateway-credentials credentials
-                         :connection-timeout (:connection-timeout-millis rio-config))]
-      (ooapi-http-loader request))))
+  {:pre [root-url]}
+  {:root-url root-url
+   :gateway-credentials credentials
+   :connection-timeout-millis (:connection-timeout-millis rio-config)})
 
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
@@ -186,27 +193,27 @@
     (json/read-str (slurp path) :key-fn keyword)))
 
 (defn load-offerings
-  [loader {::ooapi/keys [id type] :as request}]
+  [loader-config {::ooapi/keys [id type] :as request}]
   {:pre [(#{"programme" "course"} type)]}
   (-> request
       (assoc ::ooapi/id id
              ::ooapi/type (str type "-offerings"))
-      (loader)
+      (ooapi-http-load loader-config)
       :items))
 
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
-  [loader {::ooapi/keys [type] :as request}]
-  {:pre  [(#{"programme" "course"} type)]
-   :post [(some? (::ooapi/entity %))
+  [loader-config request]
+  {:post [(some? (::ooapi/entity %))
           (not-empty (::ooapi/entity %))]}
-  (let [entity                  (loader request)
+  (let [type                    (::ooapi/type request)
+        entity                  (ooapi-http-load request loader-config)
         consumer                (:consumer entity)
         joint-programme?          (= "true" (str (:jointProgramme consumer)))
         ;; load offerings unless prgspec (type = programme and programmeType = specification)
         offerings               (when (or (not= type "programme")
                                           (not= "specification" (:programmeType entity)))
-                                  (load-offerings loader request))
+                                  (load-offerings loader-config request))
         prgspec-type            (cond
                                   joint-programme?
                                   "programme"
@@ -218,7 +225,7 @@
                                   (-> request
                                       (assoc ::ooapi/type "programme"
                                              ::ooapi/id (:specificationId consumer))
-                                      (loader)
+                                      (ooapi-http-load loader-config)
                                       (get-in [:consumer :specificationType])))]
     (cond-> request
       joint-programme?
