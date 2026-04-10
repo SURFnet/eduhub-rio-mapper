@@ -68,35 +68,32 @@
 
 ;; Only function of this phase is to load programmes in order to distinguish
 ;; programmes from programme-specifications, which are different object in RIO
-(defn- make-deleter-load-ooapi-phase [{:keys [ooapi-loader]}]
-  (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
-    {:pre  [(#{"programme" "course"} type)]
-     :post [(:rio-type %)]}
-    (if (= type "course")
-      (assoc request :rio-type :ao)
-      (logging/with-mdc
-        {:ooapi-type type :ooapi-id id}
-        (let [entity (ooapi-loader request)]
-          (assoc request :rio-type (if (and (= "programme" type)
-                                            (= "specification" (:programmeType entity)))
-                                     :oe
-                                     :ao)))))))
+(defn- load-ooapi-phase-for-delete [{::ooapi/keys [type id] :as request}]
+  {:pre  [(#{"programme" "course"} type)]
+   :post [(:rio-type %)]}
+  (if (= type "course")
+    (assoc request :rio-type :ao)
+    (logging/with-mdc
+      {:ooapi-type type :ooapi-id id}
+      (let [entity (ooapi.loader/ooapi-http-loader request)]
+        (assoc request :rio-type (if (and (= "programme" type)
+                                          (= "specification" (:programmeType entity)))
+                                   :oe
+                                   :ao))))))
 
 ;; in:  {::ooapi/keys [type id] :keys [action institution-name institution-oin institution-schac-home]}
 ;; diff out: {:keys [rio-type] ::ooapi/keys [entity]}
-:nl.surf.eduhub-rio-mapper.v6.specs.ooapi/specification-type
-(defn- make-updater-load-ooapi-phase [{:keys [ooapi-loader]}]
-  (fn load-ooapi-phase [{::ooapi/keys [type id] :as request}]
-    {:pre  [(#{"programme" "course"} type)]
-     :post [(:rio-type %)]}
-    (logging/with-mdc
-      {:ooapi-type type :ooapi-id id}
-      (let [{::ooapi/keys [entity] :as result} (ooapi.loader/load-entities ooapi-loader request)]
-        (quick-validate entity type)
-        (assoc result :rio-type (if (and (= "programme" type)
-                                         (= "specification" (:programmeType entity)))
-                                  :oe
-                                  :ao))))))
+(defn- load-ooapi-phase-for-update [{::ooapi/keys [type id] :as request}]
+  {:pre  [(#{"programme" "course"} type)]
+   :post [(:rio-type %)]}
+  (logging/with-mdc
+    {:ooapi-type type :ooapi-id id}
+    (let [{::ooapi/keys [entity] :as result} (ooapi.loader/load-entities request)]
+      (quick-validate entity type)
+      (assoc result :rio-type (if (and (= "programme" type)
+                                       (= "specification" (:programmeType entity)))
+                                :oe
+                                :ao)))))
 
 ;; in:  {::ooapi/keys [type id entity] :keys [action rio-type institution-name institution-oin institution-schac-home]}
 ;; diff out: {::rio/keys [opleidingscode aangeboden-opleiding-code]}
@@ -198,36 +195,28 @@
 
 ;; in:  {::ooapi/keys [type id entity] :keys [rio-relations action rio-type institution-name institution-oin institution-schac-home] ::rio/keys [opleidingscode aangeboden-opleiding-code]}
 ;; out {:job job :result result :prgspec prgspec}
-(defn- make-updater-soap-phase
-  "Phase definition for creating the soap document.
+(defn- soap-phase-for-update [{:keys [institution-oin] :as job}]
+  {:pre [institution-oin (job :institution-schac-home)]}
+  (let [result  (updated-handler/update-mutation job)
+        prgspec (extract-prgspec-from-result result)]
+    {:job job :result result :prgspec prgspec}))
 
-   Returns function that takes request, and returns map with keys
-   :job (request), :result (::Mutation/mutation-response) and :prgspec (education specification)
-  "
-  []
-  (fn soap-phase [{:keys [institution-oin] :as job}]
-    {:pre [institution-oin (job :institution-schac-home)]}
-    (let [result  (updated-handler/update-mutation job)
-          prgspec (extract-prgspec-from-result result)]
-      {:job job :result result :prgspec prgspec})))
-
-(defn- make-deleter-prune-relations-phase [handlers]
+(defn- make-deleter-prune-relations-phase [handlers rio-config]
   (fn [{::rio/keys [opleidingscode] :keys [institution-oin rio-type] :as request}]
     {:pre [rio-type]}
     (when (and opleidingscode (= :oe rio-type))
-      (relation-handler/delete-relations opleidingscode rio-type institution-oin handlers))
+      (relation-handler/delete-relations opleidingscode rio-type institution-oin (:getter handlers) rio-config))
     request))
 
-(defn- make-deleter-soap-phase []
-  (fn soap-phase [{:keys [institution-oin] :as job}]
-    {:pre [institution-oin (job :institution-schac-home)]}
-    (let [result  (updated-handler/deletion-mutation job)
-          prgspec (extract-prgspec-from-result result)]
-      {:job job :result result :prgspec prgspec})))
+(defn- soap-phase-for-delete [{:keys [institution-oin] :as job}]
+  {:pre [institution-oin (job :institution-schac-home)]}
+  (let [result  (updated-handler/deletion-mutation job)
+        prgspec (extract-prgspec-from-result result)]
+    {:job job :result result :prgspec prgspec}))
 
 ;; in:  {:job job :result result :prgspec prgspec}
 ;; out: {:job job :mutate-result result :prgspec prgspec}
-(defn- make-updater-mutate-rio-phase [{:keys [rio-config]}]
+(defn- make-updater-mutate-rio-phase [rio-config]
   (fn mutate-rio-phase [{:keys [job result prgspec]}]
     {:pre [(s/valid? ::mutation/mutation-response result)]}
     (logging/with-mdc {:soap-action (:action result) :ooapi-id (::ooapi/id job)}
@@ -269,14 +258,15 @@
   one with no subtype and one with subtype variant.
   To perform synchronization, relations are added and deleted in RIO."
   [{:keys [getter] :as handlers} config]
+
   (fn sync-relations-phase [{:keys [job prgspec] :as request}]
     (if (nil? prgspec)
       request
-      (let [{:keys [missing superfluous] :as diff} (relation-handler/relation-mutations prgspec job handlers)
+      (let [{:keys [missing superfluous] :as diff} (relation-handler/relation-mutations prgspec job handlers config)
             {:keys [institution-oin]} job
             {::rio/keys [opleidingscode]} prgspec]
 
-        (relation-handler/mutate-relations! diff job handlers)
+        (relation-handler/mutate-relations! diff job (:rio-config config))
         (rio.helper/blocking-retry (fn in-sync? []
                                      (let [rio-relations (relation-handler/load-relation-data getter opleidingscode institution-oin)
                                            rio-relations-set (set rio-relations)
@@ -298,8 +288,8 @@
                         ex))))))
 
 (defn- make-insert [handlers rio-config]
-  (let [fs [[:preparing      (make-updater-soap-phase)]
-            [:upserting      (make-updater-mutate-rio-phase handlers)]
+  (let [fs [[:preparing      soap-phase-for-update]
+            [:upserting      (make-updater-mutate-rio-phase rio-config)]
             [:confirming     (make-updater-confirm-rio-phase handlers rio-config)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
@@ -309,34 +299,37 @@
         (reduce (fn [req f] (f req)) $ wrapped-fs)
         (:mutate-result $)))))
 
-(defn- make-update [handlers rio-config]
-  (let [fs [[:fetching-ooapi  (make-updater-load-ooapi-phase handlers)]
+(defn- make-update [handlers {:keys [rio-config] :as config}]
+  (let [fs [[:fetching-ooapi  load-ooapi-phase-for-update]
             [:resolving       (make-updater-resolve-phase handlers)]
             [:load-relations  (make-load-relations-phase handlers)]
             [:prune-relations (make-prune-relations-phase handlers rio-config)]
-            [:preparing       (make-updater-soap-phase)]
-            [:upserting       (make-updater-mutate-rio-phase handlers)]
+            [:preparing       soap-phase-for-update]
+            [:upserting       (make-updater-mutate-rio-phase rio-config)]
             [:confirming      (make-updater-confirm-rio-phase handlers rio-config)]
-            [:associating     (make-updater-sync-relations-phase handlers rio-config)]]
+            [:associating     (make-updater-sync-relations-phase handlers config)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
       {:pre [(:institution-oin request)]}
       (as-> request $
+        (merge $ (ooapi.loader/request-gateway-opts config))
         (reduce (fn [req f] (f req)) $ wrapped-fs)
         (merge (:mutate-result $) (select-keys (:job $) [::rio/aangeboden-opleiding-code]))))))
 
-(defn- make-deleter [{:keys [rio-config] :as handlers}]
+(defn- make-deleter [handlers
+                     {:keys [rio-config] :as config}]
   {:pre [rio-config]}
-  (let [fs [[:fetching-ooapi (make-deleter-load-ooapi-phase handlers)]
+  (let [fs [[:fetching-ooapi load-ooapi-phase-for-delete]
             [:resolving      (make-updater-resolve-phase handlers)]
-            [:deleting       (make-deleter-prune-relations-phase handlers)]
-            [:preparing      (make-deleter-soap-phase)]
-            [:deleting       (make-updater-mutate-rio-phase handlers)]
+            [:deleting       (make-deleter-prune-relations-phase handlers rio-config)]
+            [:preparing      soap-phase-for-delete]
+            [:deleting       (make-updater-mutate-rio-phase rio-config)]
             [:confirming     (make-deleter-confirm-rio-phase handlers rio-config)]]
         wrapped-fs (map wrap-phase fs)]
     (fn [request]
       {:pre [(:institution-oin request)]}
       (as-> request $
+        (merge $ (ooapi.loader/request-gateway-opts config))
         (reduce (fn [req f] (f req)) $ wrapped-fs)
         (:mutate-result $)))))
 
@@ -353,10 +346,10 @@
         output (if (nil? ooapi-summary) diff (assoc diff :opleidingseenheidcode rio-code))]
     (merge output (dry-run-status rio-summary ooapi-summary))))
 
-(defn- course-program-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin] :as request} {:keys [getter ooapi-loader]}]
+(defn- course-program-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin] :as request} {:keys [getter]}]
   (let [rio-obj     (rio.loader/find-aangebodenopleiding id getter institution-oin)
         rio-summary (dry-run/summarize-aangebodenopleiding-xml rio-obj)
-        offering-summary (->> (ooapi.loader/load-offerings ooapi-loader request)
+        offering-summary (->> (ooapi.loader/load-offerings request)
                               (map dry-run/summarize-offering)
                               (sort-by :cohortcode)
                               vec)
@@ -366,48 +359,39 @@
         output (if (nil? ooapi-summary) diff (assoc diff :aangebodenOpleidingCode rio-code))]
     (merge output (dry-run-status rio-summary ooapi-summary))))
 
-(defn- not-found? [obj]
-  (= http-status/not-found (:status obj)))
-
-(defn- safe-loader [f]
+(defn- try-load-entity
+  "Load an OOAPI entity, returning nil for 404 responses."
+  [request]
   (try
-    (f)
+    (ooapi.loader/ooapi-http-loader request)
     (catch Exception ex
-      (if (not-found? (ex-data ex))
-        (ex-data ex)
+      (when (not= http-status/not-found (:status (ex-data ex)))
         (throw ex)))))
 
-(defn- make-dry-runner [{:keys [rio-config ooapi-loader] :as handlers}]
-  {:pre [rio-config]}
+(defn- make-dry-runner [handlers config]
   (fn [{::ooapi/keys [type] :as request}]
     {:pre [(:institution-oin request)]}
-    (let [ooapi-entity (safe-loader (fn [] (ooapi-loader request)))
-          value (if (not-found? ooapi-entity)
-                  {:status "error"}
-                  (let [handler (if (or (= type "course")
-                                        (not= "specification" (:programmeType ooapi-entity)))
-                                  course-program-dry-run-handler
-                                  prgspec-dry-run-handler)]
-                    (handler ooapi-entity request handlers)))]
+    (let [request (merge request (ooapi.loader/request-gateway-opts config))
+          entity  (try-load-entity request)
+          value   (if-not entity
+                    {:status "error"}
+                    (let [handler (if (and (= type "programme")
+                                           (= "specification" (:programmeType entity)))
+                                    prgspec-dry-run-handler
+                                    course-program-dry-run-handler)]
+                      (handler entity request handlers)))]
       {:dry-run value})))
 
 (defn make-handlers
-  [{:keys [rio-config
-           gateway-root-url
-           gateway-credentials]}]
+  [{:keys [rio-config] :as config}]
   {:pre [(:recipient-oin rio-config)]}
   (let [resolver     (rio.loader/make-resolver rio-config)
         getter       (rio.loader/make-getter rio-config)
-        ooapi-loader (ooapi.loader/make-ooapi-http-loader gateway-root-url
-                                                          gateway-credentials
-                                                          rio-config)
-        handlers     {:ooapi-loader ooapi-loader
-                      :rio-config   rio-config
-                      :getter       getter
-                      :resolver     resolver}
-        update!      (make-update handlers rio-config)
-        delete!      (make-deleter handlers)
+        handlers     {:getter              getter
+                      :resolver            resolver}
+        update!      (make-update handlers config)
+        delete!      (make-deleter handlers config)
         insert!      (make-insert handlers rio-config)
-        dry-run!     (make-dry-runner handlers)
+        dry-run!     (make-dry-runner handlers config)
         link!        (link/make-linker rio-config getter)]
     (assoc handlers :update! update!, :delete! delete!, :insert! insert!, :dry-run! dry-run!, :link! link!)))

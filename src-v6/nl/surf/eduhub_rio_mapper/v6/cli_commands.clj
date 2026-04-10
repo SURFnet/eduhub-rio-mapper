@@ -32,6 +32,7 @@
             [nl.surf.eduhub-rio-mapper.v6.config :as config]
             [nl.surf.eduhub-rio-mapper.v6.endpoints.api :as api]
             [nl.surf.eduhub-rio-mapper.v6.job :as job]
+            [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
             [nl.surf.eduhub-rio-mapper.worker :as worker])
   (:import [java.util UUID]))
 
@@ -63,7 +64,7 @@
       (System/exit 1))
     [client-info rest-args]))
 
-(defn process-command [command args {{:keys [getter resolver ooapi-loader dry-run! link! insert!] :as handlers} :handlers {:keys [clients] :as config} :config}]
+(defn process-command [command args {{:keys [getter resolver dry-run! link! insert!] :as handlers} :handlers {:keys [clients] :as config} :config}]
   {:pre [getter]}
   (case command
     "serve-api"
@@ -135,7 +136,7 @@
     (let [[client-info [type id]] (parse-client-info-args args clients)
           request (merge client-info {::ooapi/id id ::ooapi/type type})]
       (if (= "show" command)
-        (-> (ooapi-loader request)
+        (-> (ooapi.loader/ooapi-http-loader (merge request (ooapi.loader/request-gateway-opts config)))
             (json/pprint))
         (dry-run! request)))
 
