@@ -261,7 +261,7 @@
 (defn- test-loader [id ooapi-type]
   (helper/with-ooapi-loader ooapi.loader/ooapi-file-loader
     (->> {::ooapi/id id ::ooapi/type ooapi-type}
-         (ooapi.loader/load-entities nil)
+         (ooapi.loader/load-entities)
          ::ooapi/entity)))
 
 (deftest to-rio-obj
@@ -454,7 +454,6 @@
 
              (helper/with-ooapi-loader mode-of-delivery-loader
                (-> (ooapi.loader/load-entities
-                    nil
                     {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "programme"})
                    ::ooapi/entity
                    (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))))

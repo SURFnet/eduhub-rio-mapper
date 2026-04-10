@@ -64,7 +64,7 @@
       (System/exit 1))
     [client-info rest-args]))
 
-(defn process-command [command args {{:keys [getter resolver ooapi-loader-config dry-run! link! insert!] :as handlers} :handlers {:keys [clients] :as config} :config}]
+(defn process-command [command args {{:keys [getter resolver dry-run! link! insert!] :as handlers} :handlers {:keys [clients] :as config} :config}]
   {:pre [getter]}
   (case command
     "serve-api"
@@ -136,7 +136,7 @@
     (let [[client-info [type id]] (parse-client-info-args args clients)
           request (merge client-info {::ooapi/id id ::ooapi/type type})]
       (if (= "show" command)
-        (-> (ooapi.loader/ooapi-http-load request ooapi-loader-config)
+        (-> (ooapi.loader/ooapi-http-loader (merge request (ooapi.loader/request-gateway-opts config)))
             (json/pprint))
         (dry-run! request)))
 
