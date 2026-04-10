@@ -93,8 +93,8 @@
   [prgspec job handlers]
   (when prgspec
     (-> prgspec
-        (rh/relation-mutations job handlers)
-        (rh/mutate-relations! job handlers))))
+        (rh/relation-mutations job handlers nil)
+        (rh/mutate-relations! job (:rio-config handlers)))))
 
 (deftest test-mutate-relation
   (let [job      {:institution-schac-home "a" :institution-oin "b"}

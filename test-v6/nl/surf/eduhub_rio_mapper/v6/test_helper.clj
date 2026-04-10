@@ -56,20 +56,18 @@
   "Temporarily overrides the OOAPI HTTP loader with the given function."
   [loader & body]
   `(let [loader-fn# ~loader]
-     (with-redefs [ooapi.loader/ooapi-http-load (fn [request# _config#]
+     (with-redefs [ooapi.loader/ooapi-http-loader (fn [request#]
                                                  (loader-fn# request#))]
        ~@body)))
 
 (defn test-handler
   "Loads ooapi fixtures from file and fakes resolver."
-  ([req resolver]
-   (test-handler req resolver nil))
-  ([{::ooapi/keys [type] :as req} resolver ooapi-loader-config]
-   (-> (cond->> (merge req test-client-info)
-         (not= "relation" type)
-         (ooapi.loader/load-entities ooapi-loader-config))
-       (test-resolve-request resolver)
-       updated-handler/update-mutation)))
+  [{::ooapi/keys [type] :as req} resolver]
+  (-> (cond->> (merge req test-client-info)
+        (not= "relation" type)
+        (ooapi.loader/load-entities))
+      (test-resolve-request resolver)
+      updated-handler/update-mutation))
 
 (defn wait-while-predicate [predicate val-atom max-sec]
   (loop [ttl (* max-sec 10)]

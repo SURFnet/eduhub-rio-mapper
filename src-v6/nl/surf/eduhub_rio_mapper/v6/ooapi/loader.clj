@@ -34,7 +34,7 @@
 
 (defn- ooapi-type->path [ooapi-type id page]
   {:pre  [(string? ooapi-type)
-          (or (#{"programme" "programme-offerings" "course" "course-offerings"} ooapi-type) (prn ooapi-type))]}
+          (#{"programme" "programme-offerings" "course" "course-offerings"} ooapi-type)]}
   (if id
     (let [page-suffix (if page (str "&pageNumber=" page) "")
           path        (case ooapi-type
@@ -135,7 +135,7 @@
                          :response response})))
       response)))
 
-(def max-pages 50)
+(def ^:private max-pages 50)
 
 (defn- wrap-pagination
   "Middleware for fetching paged items.
@@ -160,31 +160,15 @@
 ;; It expects the request to contain ::ooapi/root-url,
 ;; ::ooapi/id, ::ooapi/type, :gateway-credentials,
 ;; institution-schac-home
-(def ^:private ooapi-http-loader
+(def ^:private ooapi-http-loader-fn
   (-> http-utils/send-http-request
       wrap-ooapi-envelop
       wrap-response-validator
       wrap-ooapi-request->ring-request
       wrap-pagination))
 
-(defn ooapi-http-load [request {:keys [root-url gateway-credentials connection-timeout-millis]}]
-  {:pre [root-url]}
-  (let [request (assoc request
-                       ::ooapi/root-url root-url
-                       :gateway-credentials gateway-credentials
-                       :connection-timeout connection-timeout-millis)]
-    (ooapi-http-loader request)))
-
-(defn make-ooapi-http-loader-config
-  "Returns an ooapi-loader function for the given configuration.
-
-  The returned loader takes a map with ::ooapi/id, ::ooapi/type
-  attributes"
-  [root-url credentials rio-config]
-  {:pre [root-url]}
-  {:root-url root-url
-   :gateway-credentials credentials
-   :connection-timeout-millis (:connection-timeout-millis rio-config)})
+(defn ooapi-http-loader [request]
+  (ooapi-http-loader-fn request))
 
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
@@ -193,27 +177,32 @@
     (json/read-str (slurp path) :key-fn keyword)))
 
 (defn load-offerings
-  [loader-config {::ooapi/keys [id type] :as request}]
+  [{::ooapi/keys [id type] :as request}]
   {:pre [(#{"programme" "course"} type)]}
   (-> request
       (assoc ::ooapi/id id
              ::ooapi/type (str type "-offerings"))
-      (ooapi-http-load loader-config)
+      (ooapi-http-loader)
       :items))
+
+(defn request-gateway-opts [{:keys [rio-config gateway-root-url gateway-credentials]}]
+  {::ooapi/root-url gateway-root-url
+   :gateway-credentials gateway-credentials
+   :connection-timeout (:connection-timeout-millis rio-config)})
 
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
-  [loader-config request]
+  [request]
   {:post [(some? (::ooapi/entity %))
           (not-empty (::ooapi/entity %))]}
   (let [type                    (::ooapi/type request)
-        entity                  (ooapi-http-load request loader-config)
+        entity                  (ooapi-http-loader request)
         consumer                (:consumer entity)
         joint-programme?          (= "true" (str (:jointProgramme consumer)))
         ;; load offerings unless prgspec (type = programme and programmeType = specification)
         offerings               (when (or (not= type "programme")
                                           (not= "specification" (:programmeType entity)))
-                                  (load-offerings loader-config request))
+                                  (load-offerings request))
         prgspec-type            (cond
                                   joint-programme?
                                   "programme"
@@ -225,7 +214,7 @@
                                   (-> request
                                       (assoc ::ooapi/type "programme"
                                              ::ooapi/id (:specificationId consumer))
-                                      (ooapi-http-load loader-config)
+                                      (ooapi-http-loader)
                                       (get-in [:consumer :specificationType])))]
     (cond-> request
       joint-programme?
