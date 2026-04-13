@@ -155,6 +155,16 @@
           response)
         response))))
 
+(defn wrap-gateway-config [handler]
+  (fn [request]
+    (let [gateway-config (when-let [{:keys [rio-config gateway-root-url gateway-credentials]} (:config request)]
+                           {::ooapi/root-url gateway-root-url
+                            :gateway-credentials gateway-credentials
+                            :connection-timeout (:connection-timeout-millis rio-config)})]
+      (-> request
+          (merge gateway-config)
+          handler))))
+
 ;; This function fetches OOAPI data over http.
 ;;
 ;; It expects the request to contain ::ooapi/root-url,
@@ -165,7 +175,8 @@
       wrap-ooapi-envelop
       wrap-response-validator
       wrap-ooapi-request->ring-request
-      wrap-pagination))
+      wrap-pagination
+      wrap-gateway-config))
 
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
@@ -181,11 +192,6 @@
              ::ooapi/type (str type "-offerings"))
       (ooapi-http-loader)
       :items))
-
-(defn request-gateway-opts [{:keys [rio-config gateway-root-url gateway-credentials]}]
-  {::ooapi/root-url gateway-root-url
-   :gateway-credentials gateway-credentials
-   :connection-timeout (:connection-timeout-millis rio-config)})
 
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."

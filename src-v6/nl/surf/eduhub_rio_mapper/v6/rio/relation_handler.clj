@@ -139,10 +139,10 @@
                             (assoc entity ::rio/opleidingscode rio-code))))
          load-prgspec (fn load-prgspec [id]
                         {:pre [id]}
-                        (when-let [es (ooapi.loader/ooapi-http-loader (merge (ooapi.loader/request-gateway-opts config)
-                                                                             {::ooapi/type            "programme"
-                                                                              ::ooapi/id              id
-                                                                              :institution-schac-home institution-schac-home}))]
+                        (when-let [es (ooapi.loader/ooapi-http-loader {::ooapi/type            "programme"
+                                                                       ::ooapi/id              id
+                                                                       :institution-schac-home institution-schac-home
+                                                                       :config                 config})]
                           (add-rio-code es)))
          prgspec (add-rio-code prgspec)
          actual (load-relation-data getter (::rio/opleidingscode prgspec) institution-oin)

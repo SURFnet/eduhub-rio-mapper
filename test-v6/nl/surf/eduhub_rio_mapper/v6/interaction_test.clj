@@ -207,8 +207,7 @@
                           ::ooapi/id       (entity-name-to-id "programmes/v5-program")
                           :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "programme")]
-          (let [ex (is (thrown? ExceptionInfo (-> (merge request client-info (ooapi.loader/request-gateway-opts config))
-                                                  (ooapi.loader/ooapi-http-loader))))]
+          (let [ex (is (thrown? ExceptionInfo (ooapi.loader/ooapi-http-loader (merge request client-info {:config config}))))]
             (is (= {:issue "schema-validation-error"
                     :canonical-schema-path ["components" "schemas" "ProgrammeId" "required"]}
                    (select-keys (first (:issues (ex-data ex)))
@@ -220,5 +219,5 @@
                      ::ooapi/id       (entity-name-to-id "programmes/interaction-programme-some")
                      :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 1 "offering")]
-          (let [items (:items (ooapi.loader/ooapi-http-loader (merge request client-info (ooapi.loader/request-gateway-opts config))))]
+          (let [items (:items (ooapi.loader/ooapi-http-loader (merge request client-info {:config config})))]
             (is (= 3 (count items)))))))))

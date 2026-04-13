@@ -312,7 +312,7 @@
     (fn [request]
       {:pre [(:institution-oin request)]}
       (as-> request $
-        (merge $ (ooapi.loader/request-gateway-opts config))
+        (assoc $ :config config)
         (reduce (fn [req f] (f req)) $ wrapped-fs)
         (merge (:mutate-result $) (select-keys (:job $) [::rio/aangeboden-opleiding-code]))))))
 
@@ -329,7 +329,7 @@
     (fn [request]
       {:pre [(:institution-oin request)]}
       (as-> request $
-        (merge $ (ooapi.loader/request-gateway-opts config))
+        (assoc $ :config config)
         (reduce (fn [req f] (f req)) $ wrapped-fs)
         (:mutate-result $)))))
 
@@ -371,7 +371,7 @@
 (defn- make-dry-runner [handlers config]
   (fn [{::ooapi/keys [type] :as request}]
     {:pre [(:institution-oin request)]}
-    (let [request (merge request (ooapi.loader/request-gateway-opts config))
+    (let [request (assoc request :config config)
           entity  (try-load-entity request)
           value   (if-not entity
                     {:status "error"}

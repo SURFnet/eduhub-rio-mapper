@@ -136,7 +136,7 @@
     (let [[client-info [type id]] (parse-client-info-args args clients)
           request (merge client-info {::ooapi/id id ::ooapi/type type})]
       (if (= "show" command)
-        (-> (ooapi.loader/ooapi-http-loader (merge request (ooapi.loader/request-gateway-opts config)))
+        (-> (ooapi.loader/ooapi-http-loader (assoc request :config config))
             (json/pprint))
         (dry-run! request)))
 
