@@ -110,7 +110,6 @@
                                     3 "3234O1234"
                                     4 "4234O1234"
                                     5 "5234O1234"))
-                  :ooapi-loader-config nil
                   ;; actual relations
                   :getter       (fn [{::rio/keys [opleidingscode]}]
                                   (case opleidingscode

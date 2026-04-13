@@ -160,15 +160,12 @@
 ;; It expects the request to contain ::ooapi/root-url,
 ;; ::ooapi/id, ::ooapi/type, :gateway-credentials,
 ;; institution-schac-home
-(def ^:private ooapi-http-loader-fn
+(def ooapi-http-loader
   (-> http-utils/send-http-request
       wrap-ooapi-envelop
       wrap-response-validator
       wrap-ooapi-request->ring-request
       wrap-pagination))
-
-(defn ooapi-http-loader [request]
-  (ooapi-http-loader-fn request))
 
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
