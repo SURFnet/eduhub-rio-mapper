@@ -22,4 +22,8 @@
     <notes>opentelemetry-semconv (transitive via clj-otel-api) provides semantic-convention constants only; no patched version available.</notes>
     <cve>CVE-2026-39883</cve>
   </suppress>
+  <suppress>
+    <notes>opentelemetry-semconv (transitive via clj-otel-api) provides semantic-convention constants only; no patched version available.</notes>
+    <cve>CVE-2026-29181</cve>
+  </suppress>
 </suppressions>
