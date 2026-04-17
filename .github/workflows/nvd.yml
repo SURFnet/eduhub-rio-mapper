@@ -30,10 +30,10 @@ jobs:
 
     # Restore the NVD (OWASP vulnerability database) so clj-watson only has
     # to fetch incremental updates instead of re-downloading ~350k records.
-    # The path matches `data.directory` in .watson.properties — keeping it
-    # outside ~/.m2 avoids the version-pinned default under
-    # dependency-check-utils/<version>/data/, which broke whenever the
-    # floating "RELEASE" version bumped.
+    # The data.directory JVM property (set on the watson step) points
+    # dependency-check at ~/.owasp-nvd-cache instead of its default under
+    # ~/.m2/repository/org/owasp/dependency-check-utils/<version>/data/,
+    # which broke whenever the floating "RELEASE" version bumped.
     # Restore/save are split so the cache still saves when the scan fails
     # (scan exits non-zero on any CVE found). The run_id in the key forces
     # a fresh save each run; restore-keys falls back to the most recent
@@ -62,7 +62,9 @@ jobs:
       id: watson
       env:
         CLJ_WATSON_NVD_API_KEY: ${{ secrets.NVD_API_TOKEN }}
+        JAVA_TOOL_OPTIONS: "-Ddata.directory=$HOME/.owasp-nvd-cache"
       run: |
+        mkdir -p ~/.owasp-nvd-cache
         make watson
 
     # `if: always()` so a failing scan (e.g. a CVE was found) still updates
