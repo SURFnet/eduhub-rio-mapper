@@ -52,12 +52,20 @@
                        :institution-schac-home "demo06.test.surfeduhub.nl"
                        :institution-oin        "0000000700025BE00000"})
 
+(defmacro with-ooapi-loader
+  "Temporarily overrides the OOAPI HTTP loader with the given function."
+  [loader & body]
+  `(let [loader-fn# ~loader]
+     (with-redefs [ooapi.loader/ooapi-http-loader (fn [request#]
+                                                 (loader-fn# request#))]
+       ~@body)))
+
 (defn test-handler
   "Loads ooapi fixtures from file and fakes resolver."
-  [{::ooapi/keys [type] :as req} resolver ooapi-loader]
+  [{::ooapi/keys [type] :as req} resolver]
   (-> (cond->> (merge req test-client-info)
         (not= "relation" type)
-        (ooapi.loader/load-entities ooapi-loader))
+        (ooapi.loader/load-entities))
       (test-resolve-request resolver)
       updated-handler/update-mutation))
 

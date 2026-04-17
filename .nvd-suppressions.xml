@@ -14,4 +14,18 @@
     <!-- Related to the Jetty HttpURI class. The HttpURI class does insufficient validation on the authority segment of a URI.
          We don't use the HttpURI class or the authority segment of an URI. -->
   </suppress>
+  <!--
+  <suppress>
+    <notes>opentelemetry-semconv (transitive via clj-otel-api) provides semantic-convention constants only; no patched version available.</notes>
+    <cve>CVE-2026-39882</cve>
+  </suppress>
+  <suppress>
+    <notes>opentelemetry-semconv (transitive via clj-otel-api) provides semantic-convention constants only; no patched version available.</notes>
+    <cve>CVE-2026-39883</cve>
+  </suppress>
+  -->
+  <suppress>
+    <notes>opentelemetry-semconv (transitive via clj-otel-api) provides semantic-convention constants only; no patched version available.</notes>
+    <cve>CVE-2026-29181</cve>
+  </suppress>
 </suppressions>
