@@ -54,7 +54,6 @@ jobs:
         make watson
 
     - name: Save NVD database
-      if: always()
       uses: actions/cache/save@v5
       with:
         path: "~/.m2/repository/org/owasp/dependency-check-utils/*/data"
