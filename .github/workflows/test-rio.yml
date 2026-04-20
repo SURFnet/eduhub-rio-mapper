@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
 
       - name: Get status of previous run of this workflow - store in last_status
-        uses: Mercymeilya/last-workflow-status@v0.3.3
+        uses: Mercymeilya/last-workflow-status@v0.3
         id: last_status
 
       - name: Checkout code
