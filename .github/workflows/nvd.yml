@@ -34,7 +34,7 @@ jobs:
         path: "~/.m2/repository/org/owasp/dependency-check-utils/*/data"
         key: "${{ runner.os }}-nvd"
         restore-keys: |
-          ${{ runner.os }}-nvd-
+          ${{ runner.os }}-nvd
 
     - name: Install clj runtime
       run: |
