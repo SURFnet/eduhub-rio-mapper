@@ -36,10 +36,7 @@
   (let [vcr    (vcr.helper/make-vcr)
         config (helper/make-test-config)
         client-info (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
-        rio-config (:rio-config config)
-        handlers (processing/make-handlers {:rio-config rio-config
-                                            :gateway-root-url (:gateway-root-url config)
-                                            :gateway-credentials (:gateway-credentials config)})
+        handlers (processing/make-handlers config)
         dry-run! (:dry-run! handlers)]
 
     (testing "education-specifications"
@@ -144,8 +141,8 @@
         (let [result (dry-run! (assoc client-info
                                       ::ooapi/id "44444444-dfc3-4a30-874e-0b70db15638a"
                                       ::ooapi/type "course"))]
-          (is (= {:status "error"}
-                 (:dry-run result))))))
+          (is (= {:dry-run {:status "error"}}
+                 result)))))
 
     (testing "courses"
       (binding [http-utils/*vcr* (vcr "test-v6/fixtures/aangebodenopl-dryrun" 3 "finder")]

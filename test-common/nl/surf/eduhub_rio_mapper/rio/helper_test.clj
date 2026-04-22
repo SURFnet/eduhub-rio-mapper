@@ -139,33 +139,6 @@
       (is (= [:duo:aangebodenHOOpleiding]
              (helper/->xml {:voertaal nil :eigenAangebodenOpleidingSleutel nil} "aangebodenHOOpleiding")))))
 
-(deftest level-sector-mapping-test
-  (testing "level-sector-mapping for undefined"
-    (is (= "ONBEPAALD" (helper/level-sector-mapping "undefined" nil))))
-
-  (testing "level-sector-mapping for NT2"
-    (is (= "NT2-I" (helper/level-sector-mapping "nt2-1" nil)))
-    (is (= "NT2-II" (helper/level-sector-mapping "nt2-2" nil))))
-
-  (testing "level-sector-mapping for MBO"
-    (is (= "MBO" (helper/level-sector-mapping "secondary vocational education" "secondary vocational education")))
-    (is (= "MBO-1" (helper/level-sector-mapping "secondary vocational education 1" "secondary vocational education")))
-    (is (= "MBO-4" (helper/level-sector-mapping "secondary vocational education 4" "secondary vocational education"))))
-
-  (testing "level-sector-mapping for HBO"
-    (is (= "HBO-AD" (helper/level-sector-mapping "associate degree" "higher professional education")))
-    (is (= "HBO-BA" (helper/level-sector-mapping "bachelor" "higher professional education")))
-    (is (= "HBO-MA" (helper/level-sector-mapping "master" "higher professional education"))))
-
-  (testing "level-sector-mapping for WO"
-    (is (= "WO-BA" (helper/level-sector-mapping "bachelor" "university education")))
-    (is (= "WO-MA" (helper/level-sector-mapping "master" "university education")))
-    (is (= "WO-PM" (helper/level-sector-mapping "doctoral" "university education"))))
-
-  (testing "level-sector-mapping with invalid combinations"
-    (is (nil? (helper/level-sector-mapping "invalid" "secondary vocational education")))
-    (is (nil? (helper/level-sector-mapping "bachelor" "invalid sector")))))
-
 (deftest narrow-isced-test
   (testing "narrow-isced with detailed fields"
     (is (= "012" (helper/narrow-isced "0123")))

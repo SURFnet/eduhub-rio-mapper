@@ -1,6 +1,6 @@
 (ns nl.surf.eduhub-rio-mapper.v5.utils.ooapi
   (:require [clojure.string :as str]
-            [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper])
+            [nl.surf.eduhub-rio-mapper.v5.rio.helper :as rio-helper-v5])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter DateTimeParseException]
            [java.util UUID]))
@@ -16,7 +16,7 @@
   "True if we can map the given level and sector to RIO."
   [{:keys [level sector educationSpecificationType]}]
   (or (= "privateProgram" educationSpecificationType)
-      (some? (rio-helper/level-sector-mapping level sector))))
+      (some? (rio-helper-v5/level-sector-mapping level sector))))
 
 (defn get-localized-value-exclusive
   "Get localized value from LanguageTypedString.

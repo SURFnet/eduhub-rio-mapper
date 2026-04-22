@@ -116,10 +116,7 @@
                                (config/make-config env)
                                (assoc-in (helper/make-test-config) [:rio-config :rio-retry-attempts-seconds] [1 1 1 1]))
         client-info          (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")
-        rio-config           (:rio-config config)
-        handlers             (processing/make-handlers {:rio-config rio-config
-                                                        :gateway-root-url (:gateway-root-url config)
-                                                        :gateway-credentials (:gateway-credentials config)})
+        handlers             (processing/make-handlers config)
         prgspec-parent-id    (entity-name-to-id "programmes/specification-interaction-prgspec-parent")
         prgspec-child-id     (entity-name-to-id "programmes/specification-interaction-prgspec-child")
         program-id           (entity-name-to-id "programmes/interaction-programme-some")
@@ -203,10 +200,6 @@
         config       (if (= vcr.helper/vcr-mode :record)
                        (config/make-config env)
                        (helper/make-test-config))
-        ooapi-loader (ooapi.loader/make-ooapi-http-loader (:gateway-root-url config)
-                                                          (:gateway-credentials config)
-                                                          config)
-
         client-info  (clients-info/client-info (:clients config) "rio-mapper-dev.jomco.nl")]
     (testing "programme"
       (let [request      {::ooapi/root-url (URI. "https://rio-mapper-dev.jomco.nl/")
@@ -214,7 +207,7 @@
                           ::ooapi/id       (entity-name-to-id "programmes/v5-program")
                           :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 2 "programme")]
-          (let [ex (is (thrown? ExceptionInfo (-> (merge client-info request) ooapi-loader)))]
+          (let [ex (is (thrown? ExceptionInfo (ooapi.loader/ooapi-http-loader (merge request client-info {:config config}))))]
             (is (= {:issue "schema-validation-error"
                     :canonical-schema-path ["components" "schemas" "ProgrammeId" "required"]}
                    (select-keys (first (:issues (ex-data ex)))
@@ -226,5 +219,5 @@
                      ::ooapi/id       (entity-name-to-id "programmes/interaction-programme-some")
                      :gateway-credentials (:gateway-credentials config)}]
         (binding [http-utils/*vcr* (vcr "test-v6/fixtures/vcr/ooapi-loader" 1 "offering")]
-          (let [items (:items (ooapi-loader (merge client-info request)))]
+          (let [items (:items (ooapi.loader/ooapi-http-loader (merge request client-info {:config config})))]
             (is (= 3 (count items)))))))))

@@ -54,15 +54,16 @@
 
 (defn- simulate-upsert [ooapi-loader xml-response ooapi-type rio-type]
   {:pre [(some? xml-response) rio-type]}
-  (binding [client/request (constantly {:status 200 :body xml-response})]
-    (let [handle-updated #(helper/test-handler % test-resolver ooapi-loader)
-          mutation       (handle-updated {::ooapi/id ooapi-id
-                                          ::ooapi/type ooapi-type
-                                          :rio-type rio-type
-                                          :institution-oin institution-oin
-                                          ::ooapi-v6/specification-type "programme"})]
-      {:result (mutator/mutate! mutation (:rio-config config))
-       :mutation mutation})))
+  (helper/with-ooapi-loader ooapi-loader
+    (binding [client/request (constantly {:status 200 :body xml-response})]
+      (let [handle-updated #(helper/test-handler % test-resolver)
+            mutation       (handle-updated {::ooapi/id ooapi-id
+                                            ::ooapi/type ooapi-type
+                                            :rio-type rio-type
+                                            :institution-oin institution-oin
+                                            ::ooapi-v6/specification-type "programme"})]
+        {:result (mutator/mutate! mutation (:rio-config config))
+         :mutation mutation}))))
 
 (defn- simulate-delete [ooapi-type rio-type xml-response]
   {:pre [(some? xml-response)]}
@@ -82,12 +83,12 @@
                     :offerings      "fixtures/ooapi/integration-program-offerings-0.json"})
 
 (deftest test-handle-updated-prgspec-0
-  (let [actual (helper/test-handler {::ooapi/id   ooapi-id
-                                     ::ooapi/type "programme"
-                                     :rio-type :oe
-                                     :institution-oin institution-oin}
-                                    test-resolver
-                                    (mock-ooapi-loader prgspec-req-0))]
+  (let [actual (helper/with-ooapi-loader (mock-ooapi-loader prgspec-req-0)
+                 (helper/test-handler {::ooapi/id   ooapi-id
+                                       ::ooapi/type "programme"
+                                       :rio-type :oe
+                                       :institution-oin institution-oin}
+                                      test-resolver))]
     (is (nil? (:errors actual)))
     (is (= "EN TRANSLATION: Computer Science" (-> actual :ooapi :name first :value)))))
 

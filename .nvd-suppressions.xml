@@ -26,4 +26,10 @@
     <cve>CVE-2026-54399</cve>
     <cve>CVE-2026-54428</cve>
   </suppress>
+  <suppress>
+    <notes>These CVEs refer to the Go implementation of OpenTelemetry semconv, not the Java one we use.</notes>
+    <cve>CVE-2026-29181</cve>
+    <cve>CVE-2026-39882</cve>
+    <cve>CVE-2026-39883</cve>
+  </suppress>
 </suppressions>
