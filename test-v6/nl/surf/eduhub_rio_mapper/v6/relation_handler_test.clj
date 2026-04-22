@@ -27,7 +27,8 @@
    [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
    [nl.surf.eduhub-rio-mapper.utils.keystore :as keystore]
    [nl.surf.eduhub-rio-mapper.utils.soap :as soap]
-   [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as rh]))
+   [nl.surf.eduhub-rio-mapper.v6.rio.relation-handler :as rh]
+   [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper]))
 
 (def education-specification (-> "fixtures/ooapi/education-specification.json"
                                  io/resource
@@ -92,8 +93,8 @@
   [prgspec job handlers]
   (when prgspec
     (-> prgspec
-        (rh/relation-mutations job handlers)
-        (rh/mutate-relations! job handlers))))
+        (rh/relation-mutations job handlers nil)
+        (rh/mutate-relations! job (:rio-config handlers)))))
 
 (deftest test-mutate-relation
   (let [job      {:institution-schac-home "a" :institution-oin "b"}
@@ -109,7 +110,6 @@
                                     3 "3234O1234"
                                     4 "4234O1234"
                                     5 "5234O1234"))
-                  :ooapi-loader (fn [{::ooapi/keys [id]}] (loader id))
                   ;; actual relations
                   :getter       (fn [{::rio/keys [opleidingscode]}]
                                   (case opleidingscode
@@ -125,22 +125,24 @@
                                                  "test/keystore.jks"
                                                  "xxxxxx"
                                                  "test-surf")}}]
-    (binding [client/request (constantly {:status 200 :body (slurp "test-v6/fixtures/rio/create-relation.xml")})]
-      (testing "child with one parent"
-        (let [{:keys [missing superfluous]} (update-relations (loader 1) job handlers)]
-          (is (empty? superfluous))
-          (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"2234O1234" "1234O1234"}}}))))
+    (helper/with-ooapi-loader (fn [{::ooapi/keys [id]}]
+                                (loader id))
+      (binding [client/request (constantly {:status 200 :body (slurp "test-v6/fixtures/rio/create-relation.xml")})]
+        (testing "child with one parent"
+          (let [{:keys [missing superfluous]} (update-relations (loader 1) job handlers)]
+            (is (empty? superfluous))
+            (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"2234O1234" "1234O1234"}}}))))
 
-      (testing "parent with one child"
-        (let [{:keys [missing superfluous]} (update-relations (loader 2) job handlers)]
-          (is (empty? superfluous))
-          (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"2234O1234" "1234O1234"}}}))))
+        (testing "parent with one child"
+          (let [{:keys [missing superfluous]} (update-relations (loader 2) job handlers)]
+            (is (empty? superfluous))
+            (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"2234O1234" "1234O1234"}}}))))
 
-      (testing "parent with two children"
-        (let [{:keys [missing superfluous]} (update-relations (loader 3) job handlers)]
-          (is (empty? superfluous))
-          (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"3234O1234" "4234O1234"}}
-                           {:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"3234O1234" "5234O1234"}}})))))))
+        (testing "parent with two children"
+          (let [{:keys [missing superfluous]} (update-relations (loader 3) job handlers)]
+            (is (empty? superfluous))
+            (is (= missing #{{:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"3234O1234" "4234O1234"}}
+                             {:valid-from "2022-01-01", :valid-to nil, :opleidingseenheidcodes #{"3234O1234" "5234O1234"}}}))))))))
 
 (deftest test-relation-mutation
   (testing "Valid call to delete relation"

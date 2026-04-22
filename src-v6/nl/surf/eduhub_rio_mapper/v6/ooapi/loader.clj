@@ -34,7 +34,7 @@
 
 (defn- ooapi-type->path [ooapi-type id page]
   {:pre  [(string? ooapi-type)
-          (or (#{"programme" "programme-offerings" "course" "course-offerings"} ooapi-type) (prn ooapi-type))]}
+          (#{"programme" "programme-offerings" "course" "course-offerings"} ooapi-type)]}
   (if id
     (let [page-suffix (if page (str "&pageNumber=" page) "")
           path        (case ooapi-type
@@ -56,6 +56,7 @@
   (fn [{::ooapi/keys [root-url type id]
         :keys        [institution-schac-home gateway-credentials connection-timeout page]
         :as          request}]
+    {:pre [type]}
     (let [url (str root-url (ooapi-type->path type id page))
           uri (string/replace url #"\?.*" "")]
       (:body (handler (merge request
@@ -134,7 +135,7 @@
                          :response response})))
       response)))
 
-(def max-pages 50)
+(def ^:private max-pages 50)
 
 (defn- wrap-pagination
   "Middleware for fetching paged items.
@@ -154,30 +155,28 @@
           response)
         response))))
 
+(defn wrap-gateway-config [handler]
+  (fn [request]
+    (let [gateway-config (when-let [{:keys [rio-config gateway-root-url gateway-credentials]} (:config request)]
+                           {::ooapi/root-url gateway-root-url
+                            :gateway-credentials gateway-credentials
+                            :connection-timeout (:connection-timeout-millis rio-config)})]
+      (-> request
+          (merge gateway-config)
+          handler))))
+
 ;; This function fetches OOAPI data over http.
 ;;
 ;; It expects the request to contain ::ooapi/root-url,
 ;; ::ooapi/id, ::ooapi/type, :gateway-credentials,
 ;; institution-schac-home
-(def ^:private ooapi-http-loader
+(def ooapi-http-loader
   (-> http-utils/send-http-request
       wrap-ooapi-envelop
       wrap-response-validator
       wrap-ooapi-request->ring-request
-      wrap-pagination))
-
-(defn make-ooapi-http-loader
-  "Returns an ooapi-loader function for the given configuration.
-
-  The returned loader takes a map with ::ooapi/id, ::ooapi/type
-  attributes"
-  [root-url credentials rio-config]
-  (fn wrapped-ooapi-http-loader [context]
-    (let [request (assoc context
-                         ::ooapi/root-url root-url
-                         :gateway-credentials credentials
-                         :connection-timeout (:connection-timeout-millis rio-config))]
-      (ooapi-http-loader request))))
+      wrap-pagination
+      wrap-gateway-config))
 
 (defn ooapi-file-loader
   [{::ooapi/keys [type id]}]
@@ -186,27 +185,27 @@
     (json/read-str (slurp path) :key-fn keyword)))
 
 (defn load-offerings
-  [loader {::ooapi/keys [id type] :as request}]
+  [{::ooapi/keys [id type] :as request}]
   {:pre [(#{"programme" "course"} type)]}
   (-> request
       (assoc ::ooapi/id id
              ::ooapi/type (str type "-offerings"))
-      (loader)
+      (ooapi-http-loader)
       :items))
 
 (defn load-entities
   "Loads ooapi entity, including associated offerings and education specification, if applicable."
-  [loader {::ooapi/keys [type] :as request}]
-  {:pre  [(#{"programme" "course"} type)]
-   :post [(some? (::ooapi/entity %))
+  [request]
+  {:post [(some? (::ooapi/entity %))
           (not-empty (::ooapi/entity %))]}
-  (let [entity                  (loader request)
+  (let [type                    (::ooapi/type request)
+        entity                  (ooapi-http-loader request)
         consumer                (:consumer entity)
         joint-programme?          (= "true" (str (:jointProgramme consumer)))
         ;; load offerings unless prgspec (type = programme and programmeType = specification)
         offerings               (when (or (not= type "programme")
                                           (not= "specification" (:programmeType entity)))
-                                  (load-offerings loader request))
+                                  (load-offerings request))
         prgspec-type            (cond
                                   joint-programme?
                                   "programme"
@@ -218,7 +217,7 @@
                                   (-> request
                                       (assoc ::ooapi/type "programme"
                                              ::ooapi/id (:specificationId consumer))
-                                      (loader)
+                                      (ooapi-http-loader)
                                       (get-in [:consumer :specificationType])))]
     (cond-> request
       joint-programme?
