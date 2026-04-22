@@ -44,7 +44,7 @@
       "resultExpected": true,
       "flexibleEntryPeriodStartDateTime": "2003-09-01T17:07:22+00:00",
       "resultValueType": "UK letter",
-      "modeOfDelivery": [
+      "modesOfDelivery": [
         "online",
         "on campus"
       ],
@@ -109,7 +109,7 @@
       "resultExpected": false,
       "flexibleEntryPeriodStartDateTime": "2011-02-07T12:48:37+00:00",
       "resultValueType": "0-100",
-      "modeOfDelivery": [
+      "modesOfDelivery": [
         "on campus",
         "distance-learning",
         "situated"
@@ -174,7 +174,7 @@
       "resultExpected": true,
       "flexibleEntryPeriodStartDateTime": "2003-09-01T07:36:30+00:00",
       "resultValueType": "US letter",
-      "modeOfDelivery": [
+      "modesOfDelivery": [
         "hybrid",
         "online"
       ],
@@ -239,7 +239,7 @@
       "resultExpected": false,
       "flexibleEntryPeriodStartDateTime": "2011-02-07T12:00:02+00:00",
       "resultValueType": "pass-or-fail",
-      "modeOfDelivery": [
+      "modesOfDelivery": [
         "online"
       ],
       "abbreviation": "OADE",
@@ -303,7 +303,7 @@
       "resultExpected": false,
       "flexibleEntryPeriodStartDateTime": "1991-09-02T01:47:22+00:00",
       "resultValueType": "1-10",
-      "modeOfDelivery": [
+      "modesOfDelivery": [
         "hybrid",
         "situated",
         "distance-learning"
@@ -368,7 +368,7 @@
       "resultExpected": true,
       "flexibleEntryPeriodStartDateTime": "2003-09-01T16:57:36+00:00",
       "resultValueType": "UK letter",
-      "modeOfDelivery": [
+      "modesOfDelivery": [
         "distance-learning",
         "online"
       ],

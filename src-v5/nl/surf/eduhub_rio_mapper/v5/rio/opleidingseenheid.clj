@@ -19,6 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.v5.rio.opleidingseenheid
   (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
+            [nl.surf.eduhub-rio-mapper.v5.rio.helper :as rio-helper-v5]
             [nl.surf.eduhub-rio-mapper.v5.utils.ooapi :as ooapi-utils]))
 
 (def ^:private education-specification-type-mapping
@@ -47,8 +48,8 @@
       :naamLang (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
       :omschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"])
       :studielast (if (= "VARIANT" (soort-mapping eduspec)) nil (:value studyLoad))
-      :studielasteenheid (rio-helper/ooapi-mapping "studielasteenheid" (:studyLoadUnit studyLoad))
-      :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))
+      :studielasteenheid (rio-helper-v5/ooapi-mapping "studielasteenheid" (:studyLoadUnit studyLoad))
+      :waardedocumentsoort (rio-helper-v5/ooapi-mapping "waardedocumentsoort" formalDocument))))
 
 (def ^:private mapping-eduspec->opleidingseenheid
   {:eigenOpleidingseenheidSleutel #(some-> % :educationSpecificationId str/lower-case)
@@ -72,15 +73,15 @@
           :begindatum (first (sort (conj (map :validFrom timelineOverrides) validFrom)))
           :einddatum (last (sort (conj (map :validTo timelineOverrides) validTo)))
           :ISCED (rio-helper/narrow-isced fieldsOfStudy)
-          :categorie (rio-helper/ooapi-mapping "categorie" category)
+          :categorie (rio-helper-v5/ooapi-mapping "categorie" category)
           ;; NLQF/EQF fields are not used for Particuliere Opleidingen (private programs)
-          :eqf (when-not is-private-program? (rio-helper/ooapi-mapping "eqf" levelOfQualification))
-          :niveau (rio-helper/level-sector-mapping level sector)
-          :nlqf (when-not is-private-program? (rio-helper/ooapi-mapping "nlqf" levelOfQualification))
+          :eqf (when-not is-private-program? (rio-helper-v5/ooapi-mapping "eqf" levelOfQualification))
+          :niveau (rio-helper-v5/level-sector-mapping level sector)
+          :nlqf (when-not is-private-program? (rio-helper-v5/ooapi-mapping "nlqf" levelOfQualification))
           ;; eduspec itself is used to represent the main object without adaptations from timelineOverrides.
           :periodes (mapv education-specification-timeline-override-adapter periods)
           :soort (soort-mapping eduspec)
-          :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))))
+          :waardedocumentsoort (rio-helper-v5/ooapi-mapping "waardedocumentsoort" formalDocument))))))
 
 (defn education-specification->opleidingseenheid
   "Converts a education specification into the right kind of Opleidingseenheid."

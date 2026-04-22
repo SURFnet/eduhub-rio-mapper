@@ -19,32 +19,35 @@
 (ns nl.surf.eduhub-rio-mapper.v6.rio.opleidingseenheid
   (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
+            [nl.surf.eduhub-rio-mapper.v6.rio.helper :as rio-helper-v6]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils]))
 
 (def ^:private programme-specification-type-mapping
   {"course"           "hoOnderwijseenheid"
    "programme"        "hoOpleiding"
+   "variant"          "hoOpleiding"
    "private"          "particuliereOpleiding"
    "cluster"          "hoOnderwijseenhedencluster"})
 
 (defn- soort-mapping [{:keys [consumer]}]
   (case (:specificationType consumer)
     "cluster" "HOEC"
-    "programme" (if (:variantOf consumer) "VARIANT" "OPLEIDING")
+    "programme" "OPLEIDING"
+    "variant" "VARIANT"
     nil))
 
 (defn- programme-specification-timeline-override-adapter
   [{:keys [abbreviation description formalDocument name studyLoad validFrom] :as prgspec}]
   (fn [pk]
     (case pk
-      :begindatum validFrom
+      :begindatum (rio-helper/datetime->date validFrom)
       :internationaleNaam (ooapi-utils/get-localized-value-exclusive name ["en"])
       :naamKort abbreviation
       :naamLang (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
       :omschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"])
       :studielast (if (= "VARIANT" (soort-mapping prgspec)) nil (:value (first studyLoad)))
-      :studielasteenheid (rio-helper/ooapi-mapping "studielasteenheid" (:studyLoadUnit (first studyLoad)))
-      :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))
+      :studielasteenheid (rio-helper-v6/ooapi-mapping "studielasteenheid" (:studyLoadUnit (first studyLoad)))
+      :waardedocumentsoort (rio-helper-v6/ooapi-mapping "waardedocumentsoort" formalDocument))))
 
 (def ^:private mapping-progspec->opleidingseenheid
   {:eigenOpleidingseenheidSleutel #(some-> % :programmeId str/lower-case)
@@ -66,18 +69,26 @@
           ;; specify past and future states. However, in RIO's opleidingseenheid, the main object's begindatum and
           ;; einddatum represent the entire lifespan of an opleidingseenheid, while its periodes represent each
           ;; temporary state. Therefore, we calculate the lifespan of an opleidingseenheid below.
-          :begindatum (first (sort (conj (map :validFrom timelineOverrides) validFrom)))
-          :einddatum (last (sort (conj (map :validTo timelineOverrides) validTo)))
+          :begindatum (-> (map :validFrom timelineOverrides)
+                          (conj validFrom)
+                          sort
+                          first
+                          rio-helper/datetime->date)
+          :einddatum (-> (map :validTo timelineOverrides)
+                         (conj validTo)
+                         sort
+                         last
+                         rio-helper/datetime->date)
           :ISCED (rio-helper/narrow-isced fieldsOfStudy)
-          :categorie (rio-helper/ooapi-mapping "categorie" category)
+          :categorie (rio-helper-v6/ooapi-mapping "categorie" category)
           ;; NLQF/EQF fields are not used for Particuliere Opleidingen (private programs)
-          :eqf (when-not is-private-program? (rio-helper/ooapi-mapping "eqf" levelOfQualification))
-          :niveau (rio-helper/level-sector-mapping level sector)
-          :nlqf (when-not is-private-program? (rio-helper/ooapi-mapping "nlqf" levelOfQualification))
+          :eqf (when-not is-private-program? (rio-helper-v6/ooapi-mapping "eqf" levelOfQualification))
+          :niveau (rio-helper-v6/level-sector-mapping level sector)
+          :nlqf (when-not is-private-program? (rio-helper-v6/ooapi-mapping "nlqf" levelOfQualification))
           ;; progspec itself is used to represent the main object without adaptations from timelineOverrides.
           :periodes (mapv programme-specification-timeline-override-adapter periods)
           :soort (soort-mapping progspec)
-          :waardedocumentsoort (rio-helper/ooapi-mapping "waardedocumentsoort" formalDocument))))))
+          :waardedocumentsoort (rio-helper-v6/ooapi-mapping "waardedocumentsoort" formalDocument))))))
 
 (defn education-specification->opleidingseenheid
   "Converts a programme specification into the right kind of Opleidingseenheid."

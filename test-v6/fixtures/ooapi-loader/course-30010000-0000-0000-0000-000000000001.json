@@ -15,7 +15,7 @@
     "studyLoadUnit": "ects",
     "value": 3
   }],
-  "modeOfDelivery": [
+  "modesOfDelivery": [
     "situated"
   ],
   "duration": "P1DT30H4S",
@@ -100,7 +100,7 @@
     "497f6eca-6276-4993-bfeb-53cbbbba6f08"
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
-  "validFrom": "2019-08-24",
+  "validFrom": "2019-08-24T09:00:00+01:00",
   "validTo": "2024-08-24",
   "timelineOverrides": [
     {
@@ -122,7 +122,7 @@
           "studyLoadUnit": "ects",
           "value": 3
         }],
-        "modeOfDelivery": [
+        "modesOfDelivery": [
           "situated"
         ],
         "duration": "P1DT30H4S",

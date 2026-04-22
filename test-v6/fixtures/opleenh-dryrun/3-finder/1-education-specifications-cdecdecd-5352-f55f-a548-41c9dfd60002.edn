@@ -29,7 +29,7 @@
        ["business_and_project_support"
         "hobby_and_leisure_time"
         "technology_and_ict"],
-       "specificationType" "programme",
+       "specificationType" "variant",
        "variantOf" "42e2bc1b-6741-4e2e-b138-97b4a342c999"},
       "studyLoad" [{"value" 128, "studyLoadUnit" "ects"}],
       "validFrom" "2000-12-16",

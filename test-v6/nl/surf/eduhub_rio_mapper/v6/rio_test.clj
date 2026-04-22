@@ -30,6 +30,7 @@
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opl]
+            [nl.surf.eduhub-rio-mapper.v6.rio.helper :as rio-helper-v6]
             [nl.surf.eduhub-rio-mapper.v6.rio.opleidingseenheid :as opl-eenh]
             [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]
             [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper])
@@ -61,62 +62,63 @@
     "12345678-9abc-def0-1234-56789abcdef0"))
 
 (deftest test-and-validate-entities
-  (are [updated]
-       (is (-> updated
-               (helper/test-handler test-resolver ooapi.loader/ooapi-file-loader)
-               (prep-body)
-               (soap/guard-valid-sexp mutator/validator)))
+  (helper/with-ooapi-loader ooapi.loader/ooapi-file-loader
+    (are [updated]
+         (is (-> updated
+                 (helper/test-handler test-resolver)
+                 (prep-body)
+                 (soap/guard-valid-sexp mutator/validator)))
 
-    {::ooapi/id "10010000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "10020000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "10030000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "10040000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :oe
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20010000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20020000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20030000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "20030000-0000-0000-0000-000000000000"
-     ::ooapi/type "programme"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}
-    {::ooapi/id "30010000-0000-0000-0000-000000000000"
-     ::ooapi/type "course"
-     :rio-type :ao
-     :client-id "rio-mapper-dev.jomco.nl"}))
+      {::ooapi/id "10010000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "10020000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "10030000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "10040000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :oe
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20010000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20020000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20030000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "20030000-0000-0000-0000-000000000000"
+       ::ooapi/type "programme"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"}
+      {::ooapi/id "30010000-0000-0000-0000-000000000000"
+       ::ooapi/type "course"
+       :rio-type :ao
+       :client-id "rio-mapper-dev.jomco.nl"})))
 
 ;; eigenNaamInternationaal is over 225 chars, which is > max-length
 ;; but no exception, since fields gets truncated.
 (deftest test-and-validate-program-4-valid
-  (let [request (helper/test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
-                                      ::ooapi/type "programme"
-                                      :client-id "rio-mapper-dev.jomco.nl"}
-                                     test-resolver
-                                     ooapi.loader/ooapi-file-loader)]
-    (is (= :duo:aanleveren_aangebodenOpleiding_request
-           (first (-> request
-                      prep-body
-                      (soap/guard-valid-sexp mutator/validator))))
-        "guard throws an exception if XML invalid according to XSD")))
+  (helper/with-ooapi-loader ooapi.loader/ooapi-file-loader
+    (let [request (helper/test-handler {::ooapi/id "29990000-0000-0000-0000-000000000000"
+                                        ::ooapi/type "programme"
+                                        :client-id "rio-mapper-dev.jomco.nl"}
+                                       test-resolver)]
+      (is (= :duo:aanleveren_aangebodenOpleiding_request
+             (first (-> request
+                        prep-body
+                        (soap/guard-valid-sexp mutator/validator))))
+          "guard throws an exception if XML invalid according to XSD"))))
 
 (defn collect-paths
   "If leaf-node, add current path (and node if include-leaves is true) to acc.
@@ -258,9 +260,10 @@
              volatile-paths)))))
 
 (defn- test-loader [id ooapi-type]
-  (->> {::ooapi/id id ::ooapi/type ooapi-type}
-       (ooapi.loader/load-entities ooapi.loader/ooapi-file-loader)
-       ::ooapi/entity))
+  (helper/with-ooapi-loader ooapi.loader/ooapi-file-loader
+    (->> {::ooapi/id id ::ooapi/type ooapi-type}
+         (ooapi.loader/load-entities)
+         ::ooapi/entity)))
 
 (deftest to-rio-obj
   (testing "prgspec"
@@ -424,7 +427,7 @@
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
-               (assoc-in [:offerings 0 :consumer :modeOfDelivery] ["coaching"])
+               (assoc-in [:offerings 0 :consumer :modesOfDelivery] ["coaching"])
                (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
   (testing "program with mode of delivery in consumer"
@@ -432,8 +435,8 @@
           #(let [json (ooapi.loader/ooapi-file-loader %)]
              (if (#{"programme-offerings" "course-offerings"} (::ooapi/type %))
                (-> json
-                   (update-in [:items 0] dissoc :modeOfDelivery)
-                   (assoc-in [:items 0 :consumer :modeOfDelivery] ["coaching"]))
+                   (update-in [:items 0] dissoc :modesOfDelivery)
+                   (assoc-in [:items 0 :consumer :modesOfDelivery] ["coaching"]))
                json))]
       (is (= [:duo:aangebodenHOOpleiding
               [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
@@ -450,11 +453,11 @@
               [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
               [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
 
-             (-> (ooapi.loader/load-entities
-                  mode-of-delivery-loader
-                  {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "programme"})
-                 ::ooapi/entity
-                 (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"}))))))
+             (helper/with-ooapi-loader mode-of-delivery-loader
+               (-> (ooapi.loader/load-entities
+                    {::ooapi/id "20010000-0000-0000-0000-000000000000" ::ooapi/type "programme"})
+                   ::ooapi/entity
+                   (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))))
 
   (testing "private program does not include nlqf and eqf fields"
     (let [result (-> {::ooapi/id "10020000-0000-0000-0000-000000000000" ::ooapi/type "programme" :rio-type :oe}
@@ -467,3 +470,30 @@
       (is (not (contains? result-keys :duo:nlqf)) "Private program should not have nlqf field")
       (is (not (contains? result-keys :duo:eqf)) "Private program should not have eqf field")
       (is (= (first result) :duo:particuliereOpleiding) "Result should be a particuliereOpleiding"))))
+
+(deftest level-sector-mapping-test
+  (testing "level-sector-mapping for undefined"
+    (is (= "ONBEPAALD" (rio-helper-v6/level-sector-mapping "undefined" nil))))
+
+  (testing "level-sector-mapping for NT2"
+    (is (= "NT2-I" (rio-helper-v6/level-sector-mapping "nt2_1" nil)))
+    (is (= "NT2-II" (rio-helper-v6/level-sector-mapping "nt2_2" nil))))
+
+  (testing "level-sector-mapping for MBO"
+    (is (= "MBO" (rio-helper-v6/level-sector-mapping "secondary_vocational_education" "secondary vocational education")))
+    (is (= "MBO-1" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_1" "secondary vocational education")))
+    (is (= "MBO-4" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_4" "secondary vocational education"))))
+
+  (testing "level-sector-mapping for HBO"
+    (is (= "HBO-AD" (rio-helper-v6/level-sector-mapping "associate_degree" "higher professional education")))
+    (is (= "HBO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "higher professional education")))
+    (is (= "HBO-MA" (rio-helper-v6/level-sector-mapping "master" "higher professional education"))))
+
+  (testing "level-sector-mapping for WO"
+    (is (= "WO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "university education")))
+    (is (= "WO-MA" (rio-helper-v6/level-sector-mapping "master" "university education")))
+    (is (= "WO-PM" (rio-helper-v6/level-sector-mapping "doctoral" "university education"))))
+
+  (testing "level-sector-mapping with invalid combinations"
+    (is (nil? (rio-helper-v6/level-sector-mapping "invalid" "secondary vocational education")))
+    (is (nil? (rio-helper-v6/level-sector-mapping "bachelor" "invalid sector")))))
