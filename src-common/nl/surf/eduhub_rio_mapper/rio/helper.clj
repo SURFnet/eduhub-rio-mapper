@@ -30,57 +30,10 @@
 (defn edn-read-resource [resource]
   (edn/read (PushbackReader. (io/reader (io/resource resource)))))
 
-(def specifications (edn-read-resource "ooapi-mappings.edn"))
 (def xsd-beheren (edn-read-resource "beheren-schema.edn"))
 (def xsd-types (edn-read-resource "beheren-types.edn"))
 
-(defn ooapi-mapping
-  "Look up the matching rio key for given ooapi key (or keys) of rio type `name` (ooapi-mappings.edn)."
-  [name key]
-  {:pre [(string? name)]}
-  (when key
-    (if (coll? key)
-      (mapv #(get-in specifications [:mappings name %]) key)
-      (get-in specifications [:mappings name key]))))
-
 ;; Helpers
-
-(defn level-sector-mapping
-  "Map level and sector to RIO `niveau`.
-
-  Returns nil on invalid level+sector mapping."
-  [level sector]
-  (case level
-    "undefined" "ONBEPAALD"
-    "nt2-1" "NT2-I"
-    "nt2-2" "NT2-II"
-    (case sector
-      "secondary vocational education"
-      (case level
-        "secondary vocational education" "MBO"
-        "secondary vocational education 1" "MBO-1"
-        "secondary vocational education 2" "MBO-2"
-        "secondary vocational education 3" "MBO-3"
-        "secondary vocational education 4" "MBO-4"
-        nil)
-
-      "higher professional education"
-      (case level
-        "associate degree" "HBO-AD"
-        "bachelor" "HBO-BA"
-        "master" "HBO-MA"
-        "doctoral" "HBO-PM"
-        "undivided" "HBO-O"
-        nil)
-
-      "university education"
-      (case level
-        "bachelor" "WO-BA"
-        "master" "WO-MA"
-        "doctoral" "WO-PM"
-        "undivided" "WO-O"
-        nil)
-      nil)))
 
 (def type-mapping
   {:date       :duo:kenmerkwaardeDatum

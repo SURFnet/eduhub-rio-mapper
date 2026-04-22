@@ -26,4 +26,10 @@
     <notes>opentelemetry-semconv (transitive via clj-otel-api) provides semantic-convention constants only; no patched version available.</notes>
     <cve>CVE-2026-29181</cve>
   </suppress>
+  <suppress>
+    <notes>These CVEs refer to the Go implementation of OpenTelemetry semconv, not the Java one we use.</notes>
+    <cve>CVE-2026-29181</cve>
+    <cve>CVE-2026-39882</cve>
+    <cve>CVE-2026-39883</cve>
+  </suppress>
 </suppressions>

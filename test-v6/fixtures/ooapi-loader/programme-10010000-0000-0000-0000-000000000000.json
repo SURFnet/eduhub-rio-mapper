@@ -39,7 +39,7 @@
   "link": "https://shell.nl",
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "ext": {},
-  "validFrom": "2019-08-24",
+  "validFrom": "2019-08-24T09:00:00+01:00",
   "validTo": "2022-08-29",
   "timelineOverrides": [
     {
@@ -57,8 +57,7 @@
   ],
   "consumer": {
     "consumerKey": "rio",
-    "specificationType": "programme",
-    "variantIds": [ "497f6eca-6276-4993-bfeb-53cbbbba6f08" ],
+    "specificationType": "variant",
     "variantOf": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
   },
   "programmeType": "specification"

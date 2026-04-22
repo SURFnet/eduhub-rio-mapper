@@ -27,7 +27,7 @@
         }
       ],
       "teachingLanguages": ["nld"],
-      "modeOfDelivery": [
+      "modesOfDelivery": [
         "situated"
       ],
       "maxNumberStudents": 200,

@@ -22,8 +22,8 @@
     "value": 3
   }],
   "qualificationAwarded": "None",
-  "modeOfStudy": "full-time",
-  "modeOfDelivery": [
+  "modeOfStudy": "full_time",
+  "modesOfDelivery": [
     "situated"
   ],
   "duration": "P1DT30H4S",
@@ -90,7 +90,7 @@
   ],
   "organization": "452c1a86-a0af-475b-b03f-724878b0f387",
   "ext": {},
-  "validFrom": "2019-08-24",
+  "validFrom": "2019-08-24T09:00:00+01:00",
   "validTo": "2019-08-24",
   "timelineOverrides": [
     {
@@ -121,8 +121,8 @@
           "value": 3
         }],
         "qualificationAwarded": "None",
-        "modeOfStudy": "full-time",
-        "modeOfDelivery": [
+        "modeOfStudy": "full_time",
+        "modesOfDelivery": [
           "situated"
         ],
         "duration": "P1DT30H4S",
