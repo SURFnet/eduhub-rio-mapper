@@ -1,6 +1,9 @@
 name: Run checks, tests and docker build
 
-on: push
+on:
+  workflow_call:
+  push:
+    branches: ["*"]
 
 jobs:
   lint:

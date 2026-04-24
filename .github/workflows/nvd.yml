@@ -1,6 +1,10 @@
 name: Check deps for vulnerabilities
 
 on:
+  workflow_call:
+    secrets:
+      NVD_API_TOKEN:
+        required: true
   push:
     branches:
       - 'main'
