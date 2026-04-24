@@ -6,9 +6,20 @@ on:
       - 'main'
     tags:
       - 'v[0-9]+.[0-9]+'
+      - 'test[0-9]+'
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
+  nvd:
+    uses: ./.github/workflows/nvd.yml
+    secrets:
+       NVD_API_TOKEN: ${{ secrets.NVD_API_TOKEN }}
+
   docker:
+    needs: [test, nvd]
+
     runs-on: ubuntu-22.04
     steps:
       - name: Set up QEMU
