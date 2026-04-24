@@ -1,9 +1,12 @@
 name: Check deps for vulnerabilities
 
 on:
+  workflow_call:
+    secrets:
+      NVD_API_TOKEN:
+        required: true
   push:
-    branches: ["*"]
-    tags: ["*"]
+    branches: ["main"]
   schedule:
     - cron: '0 1 * * 1,2,3,4,5' # every workday
 
