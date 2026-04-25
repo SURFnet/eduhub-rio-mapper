@@ -1,9 +1,13 @@
 name: Check deps for vulnerabilities
 
 on:
+  workflow_call:
+    secrets:
+      NVD_API_TOKEN:
+        required: true
   push:
-    branches: ["*"]
-    tags: ["*"]
+    branches:
+      - 'main'
   schedule:
     - cron: '0 1 * * 1,2,3,4,5' # every workday
 
@@ -28,13 +32,24 @@ jobs:
         path: "~/.m2/repository"
         key: "${{ runner.os }}-clojure-${{ hashFiles('**/deps.edn') }}"
 
+    - id: get-dates
+      shell: bash
+      run: |
+        echo "today=$(/bin/date -u "+%Y%m%d")" >> $GITHUB_OUTPUT
+        echo "yesterday=$(/bin/date -u "+%Y%m%d" --date=yesterday)" >> $GITHUB_OUTPUT
+        echo "two_days_ago=$(/bin/date -u "+%Y%m%d" --date='2 days ago')" >> $GITHUB_OUTPUT
+        echo "three_days_ago=$(/bin/date -u "+%Y%m%d" --date='3 days ago')" >> $GITHUB_OUTPUT
+
     - name: Restore NVD database
       uses: actions/cache/restore@v5
       with:
         path: "~/.m2/repository/org/owasp/dependency-check-utils/*/data"
-        key: "${{ runner.os }}-nvd"
+        key: "${{ runner.os }}-nvd-${{ steps.get-dates.outputs.today }}"
         restore-keys: |
-          ${{ runner.os }}-nvd-
+          ${{ runner.os }}-nvd-${{ steps.get-dates.outputs.yesterday }}
+          ${{ runner.os }}-nvd-${{ steps.get-dates.outputs.two_days_ago }}
+          ${{ runner.os }}-nvd-${{ steps.get-dates.outputs.three_days_ago }}
+          ${{ runner.os }}-nvd
 
     - name: Install clj runtime
       run: |
@@ -54,7 +69,8 @@ jobs:
         make watson
 
     - name: Save NVD database
+      if: always()
       uses: actions/cache/save@v5
       with:
         path: "~/.m2/repository/org/owasp/dependency-check-utils/*/data"
-        key: "${{ runner.os }}-nvd"
+        key: "${{ runner.os }}-nvd-${{ steps.get-dates.outputs.today }}"
