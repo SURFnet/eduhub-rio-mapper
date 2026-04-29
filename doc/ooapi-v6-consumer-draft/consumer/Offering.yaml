@@ -27,11 +27,11 @@ properties:
     enum:
       - open
       - closed
-  modeOfDelivery:
+  modesOfDelivery:
     type: array
     description: |
-      An optional modeOfDelivery attribute.
-      Only when present, the value of this optional modeOfDelivery attribute will override the main objects modeOfDelivery value. This value will be mapped one-on-one to opleidingsvorm in RIO:
+      An optional modesOfDelivery attribute.
+      Only when present, the value of this optional modesOfDelivery attribute will override the main objects modesOfDelivery value. This value will be mapped one-on-one to opleidingsvorm in RIO:
       - online: ONLINE
       - hybrid: KLASSIKAAL_EN_ONLINE
       - blended: KLASSIKAAL_EN_ONLINE
