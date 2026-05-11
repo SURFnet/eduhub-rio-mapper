@@ -116,6 +116,9 @@
         (assoc :uri-prefix uri-prefix)
         (validator/response-validator))))
 
+(defn- redact-sensitive-request-info [request]
+  (select-keys request [::ooapi/id :method :headers :institution-schac-home :url ::ooapi/root-url :action :institution-oin ::ooapi/type]))
+
 (defn- wrap-response-validator
   "Middleware validating OOAPI responses.
 
@@ -131,7 +134,7 @@
       (when issues
         (throw (ex-info "Error validating OOAPI Response"
                         {:issues issues
-                         :request request
+                         :request (redact-sensitive-request-info request)
                          :response response})))
       response)))
 
