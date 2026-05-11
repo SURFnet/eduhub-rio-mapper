@@ -426,7 +426,7 @@
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
-               (assoc-in [:offerings 0 :consumer :modeOfDelivery] ["coaching"])
+               (assoc-in [:offerings 0 :consumer :modesOfDelivery] ["coaching"])
                (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
   (testing "program with mode of delivery in consumer"
@@ -434,8 +434,8 @@
           #(let [json (ooapi.loader/ooapi-file-loader %)]
              (if (#{"programme-offerings" "course-offerings"} (::ooapi/type %))
                (-> json
-                   (update-in [:items 0] dissoc :modeOfDelivery)
-                   (assoc-in [:items 0 :consumer :modeOfDelivery] ["coaching"]))
+                   (update-in [:items 0] dissoc :modesOfDelivery)
+                   (assoc-in [:items 0 :consumer :modesOfDelivery] ["coaching"]))
                json))]
       (is (= [:duo:aangebodenHOOpleiding
               [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
