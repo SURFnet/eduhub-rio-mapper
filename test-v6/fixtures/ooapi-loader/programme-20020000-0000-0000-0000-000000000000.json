@@ -22,7 +22,7 @@
     "value": 3
   },
   "qualificationAwarded": "None",
-  "modeOfStudy": "full-time",
+  "modeOfStudy": "full_time",
   "modeOfDelivery": [
     "situated"
   ],
@@ -124,7 +124,7 @@
           "value": 3
         },
         "qualificationAwarded": "None",
-        "modeOfStudy": "full-time",
+        "modeOfStudy": "full_time",
         "modeOfDelivery": [
           "situated"
         ],

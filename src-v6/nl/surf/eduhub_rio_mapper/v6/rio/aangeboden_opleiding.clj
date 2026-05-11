@@ -19,6 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding
   (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
+            [nl.surf.eduhub-rio-mapper.v6.rio.helper :as rio-helper-v6]
             [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]
             [nl.surf.eduhub-rio-mapper.v6.utils.ooapi :as ooapi-utils])
   (:import [java.time Period Duration]))
@@ -43,9 +44,6 @@
           ;; Otherwise use months.
           :else
           {:eenheid "M" :omvang (.toTotalMonths p)})))))
-
-(defn ooapi-mapping? [name]
-  (boolean (get-in rio-helper/specifications [:mappings name])))
 
 ;; keys are ::ooapi/specification-type
 (def specification-type-mapping
@@ -72,17 +70,17 @@
       (case pk
         :begindatum validFrom
         :buitenlandsePartner foreignPartners
-        :deficientie (rio-helper/ooapi-mapping "deficientie" deficiency)
+        :deficientie (rio-helper-v6/ooapi-mapping "deficientie" deficiency)
         :eigenNaamAangebodenOpleiding (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
         :eigenNaamInternationaal (ooapi-utils/get-localized-value-exclusive name ["en"])
         :eigenNaamKort abbreviation
         :eigenOmschrijving (ooapi-utils/get-localized-value description ["nl-NL" "nl"])
-        :eisenWerkzaamheden (rio-helper/ooapi-mapping "eisenWerkzaamheden" requirementsActivities)
+        :eisenWerkzaamheden (rio-helper-v6/ooapi-mapping "eisenWerkzaamheden" requirementsActivities)
         :internationaleNaamDuits (ooapi-utils/get-localized-value-exclusive name ["de"])
-        :propedeutischeFase (rio-helper/ooapi-mapping "propedeutischeFase" propaedeuticPhase)
+        :propedeutischeFase (rio-helper-v6/ooapi-mapping "propedeutischeFase" propaedeuticPhase)
         :samenwerkendeOnderwijsaanbiedercode jointPartnerCodes
-        :studiekeuzecheck (rio-helper/ooapi-mapping "studiekeuzecheck" studyChoiceCheck)
-        :versneldTraject (rio-helper/ooapi-mapping "versneldTraject" acceleratedRoute)
+        :studiekeuzecheck (rio-helper-v6/ooapi-mapping "studiekeuzecheck" studyChoiceCheck)
+        :versneldTraject (rio-helper-v6/ooapi-mapping "versneldTraject" acceleratedRoute)
         :website link))))
 
 ;; Non-standard mapping for modeOfDelivery
@@ -108,7 +106,7 @@
   (let [consumer-modeOfDelivery (:modeOfDelivery rio-consumer)
         mapped-values (if consumer-modeOfDelivery
                         (map lookup-consumer-mode-of-delivery consumer-modeOfDelivery)
-                        (map #(rio-helper/ooapi-mapping "opleidingsvorm" %) modeOfDelivery))]
+                        (map #(rio-helper-v6/ooapi-mapping "opleidingsvorm" %) modeOfDelivery))]
     (first (filter seq mapped-values))))
 
 (defn- validate-max
@@ -148,13 +146,13 @@
           :beginAanmeldperiode (-> (:startDateTime period) rio-helper/datetime->date)
           :eindeAanmeldperiode (-> (:endDateTime period) rio-helper/datetime->date)
           :cohortcode (-> offering :primaryCode :code)
-          :cohortstatus (rio-helper/ooapi-mapping "cohortStatus" registrationStatus)
+          :cohortstatus (rio-helper-v6/ooapi-mapping "cohortStatus" registrationStatus)
           :flexibeleInstroom (and flexibleEntryPeriodStartDateTime {:beginInstroomperiode flexstart
                                                                     :eindeInstroomperiode flexend})
           :opleidingsvorm (extract-opleidingsvorm modeOfDelivery consumer)
-          :prijs (mapv (fn [h] {:soort (rio-helper/ooapi-mapping "soort" (:costType h)) :bedrag (:amount h)})
+          :prijs (mapv (fn [h] {:soort (rio-helper-v6/ooapi-mapping "soort" (:costType h)) :bedrag (:amount h)})
                        priceInformation)
-          :toestemmingVereistVoorAanmelding (rio-helper/ooapi-mapping "toestemmingVereistVoorAanmelding"
+          :toestemmingVereistVoorAanmelding (rio-helper-v6/ooapi-mapping "toestemmingVereistVoorAanmelding"
                                                                       requiredPermissionRegistration)
           :vastInstroommoment (when (nil? flexibleEntryPeriodStartDateTime) {:instroommoment (rio-helper/datetime->date startDateTime)}))))))
 
@@ -173,8 +171,8 @@
                           timelineOverrides)]
     (fn [k] {:pre [(keyword? k)]}
       (if-let [[translation consumer?] (mapping-course-program->aangeboden-opleiding k)]
-        (if (ooapi-mapping? (name k))
-          (rio-helper/ooapi-mapping (name k) (translation (if consumer? consumer course-program)))
+        (if (rio-helper-v6/ooapi-mapping? (name k))
+          (rio-helper-v6/ooapi-mapping (name k) (translation (if consumer? consumer course-program)))
           (translation (if consumer? consumer course-program)))
         (case k
           :opleidingseenheidSleutel opleidingscode
@@ -187,9 +185,9 @@
           :ISCED (rio-helper/narrow-isced fieldsOfStudy)
           :afwijkendeOpleidingsduur (when duration-map {:opleidingsduurEenheid (:eenheid duration-map)
                                                         :opleidingsduurOmvang  (:omvang duration-map)})
-          :niveau (rio-helper/level-sector-mapping level sector)
-          :vorm (rio-helper/ooapi-mapping "vorm" modeOfStudy)
-          :voertaal (rio-helper/ooapi-mapping
+          :niveau (rio-helper-v6/level-sector-mapping level sector)
+          :vorm (rio-helper-v6/ooapi-mapping "vorm" modeOfStudy)
+          :voertaal (rio-helper-v6/ooapi-mapping
                      "voertaal"
                      (consumer-backed course-program consumer :teachingLanguages {:required false, :max 3}))
           :eersteInstroomDatum (rio-helper/datetime->date firstStartDateTime)
