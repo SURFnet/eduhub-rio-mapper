@@ -554,7 +554,7 @@ NOTE: the value of consumer › RIO › modesOfDelivery will override the main o
 
 | studyLoadUnit | studielasteenheid |
 | ------------- | ----------------- |
-| contacttime   | CONTACTUUR        |
+| contact_time   | CONTACTUUR        |
 | ects          | ECTS_PUNT         |
 | sbu           | SBU               |
 | sp            | STUDIEPUNT        |
