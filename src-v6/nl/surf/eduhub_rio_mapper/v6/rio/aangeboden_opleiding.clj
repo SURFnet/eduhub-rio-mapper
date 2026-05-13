@@ -83,9 +83,9 @@
         :versneldTraject (rio-helper-v6/ooapi-mapping "versneldTraject" acceleratedRoute)
         :website link))))
 
-;; Non-standard mapping for modeOfDelivery
+;; Non-standard mapping for modesOfDelivery
 ;; See also https://github.com/open-education-api/specification/issues/295
-(def consumer-modeOfDelivery-mapping
+(def consumer-modesOfDelivery-mapping
   {"online" "ONLINE"
    "hybrid" "KLASSIKAAL_EN_ONLINE"
    "blended" "KLASSIKAAL_EN_ONLINE"
@@ -95,18 +95,18 @@
    "coaching" "COACHING"})
 
 (defn- lookup-consumer-mode-of-delivery [mode-of-delivery]
-  (let [opleidingsvorm (get consumer-modeOfDelivery-mapping mode-of-delivery)]
+  (let [opleidingsvorm (get consumer-modesOfDelivery-mapping mode-of-delivery)]
     (when-not opleidingsvorm
-      (throw (ex-info "modeOfDelivery cannot be mapped to RIO" {:modeOfDelivery mode-of-delivery})))
+      (throw (ex-info "modesOfDelivery cannot be mapped to RIO" {:modesOfDelivery mode-of-delivery})))
     opleidingsvorm)
   )
 
-;; modeOfDelivery in rio-consumer of the offering has precedence over the one in the offering itself.
-(defn- extract-opleidingsvorm [modeOfDelivery rio-consumer]
-  (let [consumer-modeOfDelivery (:modeOfDelivery rio-consumer)
-        mapped-values (if consumer-modeOfDelivery
-                        (map lookup-consumer-mode-of-delivery consumer-modeOfDelivery)
-                        (map #(rio-helper-v6/ooapi-mapping "opleidingsvorm" %) modeOfDelivery))]
+;; modesOfDelivery in rio-consumer of the offering has precedence over the one in the offering itself.
+(defn- extract-opleidingsvorm [modesOfDelivery rio-consumer]
+  (let [consumer-modesOfDelivery (:modesOfDelivery rio-consumer)
+        mapped-values (if consumer-modesOfDelivery
+                        (map lookup-consumer-mode-of-delivery consumer-modesOfDelivery)
+                        (map #(rio-helper-v6/ooapi-mapping "opleidingsvorm" %) modesOfDelivery))]
     (first (filter seq mapped-values))))
 
 (defn- validate-max
@@ -131,7 +131,7 @@
       (throw (ex-info (str "RIO requires the " key " property") {})))))
 
 (defn- course-program-offering-adapter
-  [{:keys [consumer startDateTime endDateTime modeOfDelivery priceInformation
+  [{:keys [consumer startDateTime endDateTime modesOfDelivery priceInformation
            flexibleEntryPeriodStartDateTime flexibleEntryPeriodEndDateTime] :as offering}]
   (let [{:keys [registrationStatus requiredPermissionRegistration]} consumer
         period (first (consumer-backed offering consumer :enrolmentPeriods {:required true, :max 1}))
@@ -149,7 +149,7 @@
           :cohortstatus (rio-helper-v6/ooapi-mapping "cohortStatus" registrationStatus)
           :flexibeleInstroom (and flexibleEntryPeriodStartDateTime {:beginInstroomperiode flexstart
                                                                     :eindeInstroomperiode flexend})
-          :opleidingsvorm (extract-opleidingsvorm modeOfDelivery consumer)
+          :opleidingsvorm (extract-opleidingsvorm modesOfDelivery consumer)
           :prijs (mapv (fn [h] {:soort (rio-helper-v6/ooapi-mapping "soort" (:costType h)) :bedrag (:amount h)})
                        priceInformation)
           :toestemmingVereistVoorAanmelding (rio-helper-v6/ooapi-mapping "toestemmingVereistVoorAanmelding"

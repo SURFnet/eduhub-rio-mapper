@@ -23,7 +23,7 @@
   }],
   "qualificationAwarded": "None",
   "modeOfStudy": "full_time",
-  "modeOfDelivery": [
+  "modesOfDelivery": [
     "situated"
   ],
   "duration": "P1DT30H4S",
@@ -122,7 +122,7 @@
         }],
         "qualificationAwarded": "None",
         "modeOfStudy": "full_time",
-        "modeOfDelivery": [
+        "modesOfDelivery": [
           "situated"
         ],
         "duration": "P1DT30H4S",

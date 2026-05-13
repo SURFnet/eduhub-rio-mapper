@@ -15,7 +15,7 @@
     "studyLoadUnit": "ects",
     "value": 3
   }],
-  "modeOfDelivery": [
+  "modesOfDelivery": [
     "situated"
   ],
   "duration": "P1DT30H4S",
@@ -120,7 +120,7 @@
           "studyLoadUnit": "ects",
           "value": 3
         }],
-        "modeOfDelivery": [
+        "modesOfDelivery": [
           "situated"
         ],
         "duration": "P1DT30H4S",
