@@ -38,7 +38,7 @@
   [{:keys [abbreviation description formalDocument name studyLoad validFrom] :as prgspec}]
   (fn [pk]
     (case pk
-      :begindatum validFrom
+      :begindatum (rio-helper/datetime->date validFrom)
       :internationaleNaam (ooapi-utils/get-localized-value-exclusive name ["en"])
       :naamKort abbreviation
       :naamLang (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
@@ -67,8 +67,14 @@
           ;; specify past and future states. However, in RIO's opleidingseenheid, the main object's begindatum and
           ;; einddatum represent the entire lifespan of an opleidingseenheid, while its periodes represent each
           ;; temporary state. Therefore, we calculate the lifespan of an opleidingseenheid below.
-          :begindatum (first (sort (conj (map :validFrom timelineOverrides) validFrom)))
-          :einddatum (last (sort (conj (map :validTo timelineOverrides) validTo)))
+          :begindatum (-> (conj (map :validFrom timelineOverrides) validFrom)
+                          sort
+                          first
+                          rio-helper/datetime->date)
+          :einddatum (-> (conj (map :validTo timelineOverrides) validTo)
+                         sort
+                         last
+                         rio-helper/datetime->date)
           :ISCED (rio-helper/narrow-isced fieldsOfStudy)
           :categorie (rio-helper-v6/ooapi-mapping "categorie" category)
           ;; NLQF/EQF fields are not used for Particuliere Opleidingen (private programs)

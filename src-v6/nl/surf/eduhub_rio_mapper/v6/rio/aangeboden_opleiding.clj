@@ -68,7 +68,7 @@
                 requirementsActivities studyChoiceCheck]} consumer]
     (fn [pk]
       (case pk
-        :begindatum validFrom
+        :begindatum (rio-helper/datetime->date validFrom)
         :buitenlandsePartner foreignPartners
         :deficientie (rio-helper-v6/ooapi-mapping "deficientie" deficiency)
         :eigenNaamAangebodenOpleiding (ooapi-utils/get-localized-value name ["nl-NL" "nl"])
@@ -180,8 +180,14 @@
           ;; otherwise use the eigen sleutel value (an UUID).
           :aangebodenOpleidingCode (or rioCode id)
           ;; See opleidingseenheid for explanation of timelineOverrides and periods.
-          :begindatum (first (sort (conj (map :validFrom timelineOverrides) validFrom)))
-          :einddatum (last (sort (conj (map :validTo timelineOverrides) validTo)))
+          :begindatum (-> (conj (map :validFrom timelineOverrides) validFrom)
+                          sort
+                          first
+                          rio-helper/datetime->date)
+          :einddatum (-> (conj (map :validTo timelineOverrides) validTo)
+                         sort
+                         last
+                         rio-helper/datetime->date)
           :ISCED (rio-helper/narrow-isced fieldsOfStudy)
           :afwijkendeOpleidingsduur (when duration-map {:opleidingsduurEenheid (:eenheid duration-map)
                                                         :opleidingsduurOmvang  (:omvang duration-map)})

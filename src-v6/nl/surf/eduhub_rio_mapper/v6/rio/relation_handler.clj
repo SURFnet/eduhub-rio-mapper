@@ -19,6 +19,7 @@
 (ns nl.surf.eduhub-rio-mapper.v6.rio.relation-handler
   (:require [clojure.set :as set]
             [clojure.spec.alpha :as s]
+            [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
             [nl.surf.eduhub-rio-mapper.rio.mutator :as mutator]
             [nl.surf.eduhub-rio-mapper.specs.mutation :as-alias mutation]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
@@ -34,8 +35,8 @@
   (let [valid-from (last (sort (map :validFrom [parent child])))
         valid-to (first (sort (keep :validTo [parent child])))]
     (assoc relation
-           :valid-from valid-from
-           :valid-to valid-to)))
+           :valid-from (rio-helper/datetime->date valid-from)
+           :valid-to (rio-helper/datetime->date valid-to))))
 
 (defn- turn-into-relations [{:keys [parent child] :as relation}]
   {:pre  [(::rio/opleidingscode parent)
@@ -144,7 +145,9 @@
                                                                        :institution-schac-home institution-schac-home
                                                                        :config                 config})]
                           (add-rio-code es)))
-         prgspec (add-rio-code prgspec)
+         prgspec (-> prgspec
+                     add-rio-code
+                     (update :valid-from rio-helper/datetime->date))
          actual (load-relation-data getter (::rio/opleidingscode prgspec) institution-oin)
          [rel-dir entity] (if variant-of
                             [:child (load-prgspec variant-of)]
