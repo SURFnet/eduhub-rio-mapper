@@ -79,9 +79,10 @@
   "waardedocumentsoort"
   {"diploma" "DIPLOMA",
    "certificate" "CERTIFICAAT",
-   "no official document" "GEEN_OFFICIEEL_DOCUMENT",
-   "school advice" "SCHOOLADVIES",
-   "testimonial" "GETUIGSCHRIFT"},
+   "no_official_document" "GEEN_OFFICIEEL_DOCUMENT",
+   "school_advice" "SCHOOLADVIES",
+   "testimonial" "GETUIGSCHRIFT",
+   "micro_credential_certificate" "CERTIFICAAT"},
   "eisenWerkzaamheden"
   {"requirements" "EISEN", "no_requirements" "GEEN_EISEN"},
   "opleidingsvorm"
