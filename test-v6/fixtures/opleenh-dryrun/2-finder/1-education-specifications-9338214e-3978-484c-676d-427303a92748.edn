@@ -26,7 +26,7 @@
        "category" ["business_and_project_support"],
        "variantIds" ["f151e068-3265-cf5a-84cc-bee97567dec1"],
        "specificationType" "cluster"},
-      "studyLoad" [{"value" 169, "studyLoadUnit" "contacttime"}],
+      "studyLoad" [{"value" 169, "studyLoadUnit" "contact_time"}],
       "validFrom" "2004-03-31",
       "programmeType" "specification",
       "sector" "higher professional education",

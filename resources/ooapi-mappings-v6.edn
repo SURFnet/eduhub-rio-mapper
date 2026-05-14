@@ -71,7 +71,7 @@
    "4+" "4",
    "2" "2"},
   "studielasteenheid"
-  {"contacttime" "CONTACTUUR",
+  {"contact_time" "CONTACTUUR",
    "ects" "ECTS_PUNT",
    "sbu" "SBU",
    "sp" "STUDIEPUNT",
