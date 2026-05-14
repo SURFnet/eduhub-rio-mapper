@@ -25,13 +25,15 @@
 (def ^:private programme-specification-type-mapping
   {"course"           "hoOnderwijseenheid"
    "programme"        "hoOpleiding"
+   "variant"          "hoOpleiding"
    "private"          "particuliereOpleiding"
    "cluster"          "hoOnderwijseenhedencluster"})
 
 (defn- soort-mapping [{:keys [consumer]}]
   (case (:specificationType consumer)
     "cluster" "HOEC"
-    "programme" (if (:variantOf consumer) "VARIANT" "OPLEIDING")
+    "programme" "OPLEIDING"
+    "variant" "VARIANT"
     nil))
 
 (defn- programme-specification-timeline-override-adapter
