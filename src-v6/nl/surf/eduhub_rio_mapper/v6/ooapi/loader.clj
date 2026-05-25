@@ -117,7 +117,9 @@
         (validator/response-validator))))
 
 (defn- redact-sensitive-request-info [request]
-  (select-keys request [::ooapi/id :method :headers :institution-schac-home :url ::ooapi/root-url :action :institution-oin ::ooapi/type]))
+  (-> request
+      (select-keys [::ooapi/id :method :institution-schac-home :url ::ooapi/root-url :action :institution-oin ::ooapi/type])
+      (update :headers select-keys ["X-Route" "Accept"])))
 
 (defn- wrap-response-validator
   "Middleware validating OOAPI responses.

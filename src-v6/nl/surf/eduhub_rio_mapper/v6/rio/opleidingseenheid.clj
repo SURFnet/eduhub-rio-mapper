@@ -69,11 +69,13 @@
           ;; specify past and future states. However, in RIO's opleidingseenheid, the main object's begindatum and
           ;; einddatum represent the entire lifespan of an opleidingseenheid, while its periodes represent each
           ;; temporary state. Therefore, we calculate the lifespan of an opleidingseenheid below.
-          :begindatum (-> (conj (map :validFrom timelineOverrides) validFrom)
+          :begindatum (-> (map :validFrom timelineOverrides)
+                          (conj validFrom)
                           sort
                           first
                           rio-helper/datetime->date)
-          :einddatum (-> (conj (map :validTo timelineOverrides) validTo)
+          :einddatum (-> (map :validTo timelineOverrides)
+                         (conj validTo)
                          sort
                          last
                          rio-helper/datetime->date)

@@ -180,11 +180,13 @@
           ;; otherwise use the eigen sleutel value (an UUID).
           :aangebodenOpleidingCode (or rioCode id)
           ;; See opleidingseenheid for explanation of timelineOverrides and periods.
-          :begindatum (-> (conj (map :validFrom timelineOverrides) validFrom)
+          :begindatum (-> (map :validFrom timelineOverrides)
+                          (conj validFrom)
                           sort
                           first
                           rio-helper/datetime->date)
-          :einddatum (-> (conj (map :validTo timelineOverrides) validTo)
+          :einddatum (-> (map :validTo timelineOverrides)
+                         (conj validTo)
                          sort
                          last
                          rio-helper/datetime->date)
