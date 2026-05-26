@@ -30,6 +30,7 @@
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v6.ooapi.loader :as ooapi.loader]
             [nl.surf.eduhub-rio-mapper.v6.rio.aangeboden-opleiding :as aangeboden-opl]
+            [nl.surf.eduhub-rio-mapper.v6.rio.helper :as rio-helper-v6]
             [nl.surf.eduhub-rio-mapper.v6.rio.opleidingseenheid :as opl-eenh]
             [nl.surf.eduhub-rio-mapper.v6.specs.ooapi :as ooapi-v6]
             [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper])
@@ -426,7 +427,7 @@
             [:duo:kenmerken [:duo:kenmerknaam "vorm"] [:duo:kenmerkwaardeEnumeratiewaarde "VOLTIJD"]]
             [:duo:kenmerken [:duo:kenmerknaam "voertaal"] [:duo:kenmerkwaardeEnumeratiewaarde "NLD"]]]
            (-> (test-loader "20010000-0000-0000-0000-000000000000" "programme")
-               (assoc-in [:offerings 0 :consumer :modeOfDelivery] ["coaching"])
+               (assoc-in [:offerings 0 :consumer :modesOfDelivery] ["coaching"])
                (aangeboden-opl/->aangeboden-opleiding :programme "1234O1234" {::ooapi-v6/specification-type "programme"})))))
 
   (testing "program with mode of delivery in consumer"
@@ -434,8 +435,8 @@
           #(let [json (ooapi.loader/ooapi-file-loader %)]
              (if (#{"programme-offerings" "course-offerings"} (::ooapi/type %))
                (-> json
-                   (update-in [:items 0] dissoc :modeOfDelivery)
-                   (assoc-in [:items 0 :consumer :modeOfDelivery] ["coaching"]))
+                   (update-in [:items 0] dissoc :modesOfDelivery)
+                   (assoc-in [:items 0 :consumer :modesOfDelivery] ["coaching"]))
                json))]
       (is (= [:duo:aangebodenHOOpleiding
               [:duo:aangebodenOpleidingCode "20010000-0000-0000-0000-000000000000"]
@@ -469,3 +470,30 @@
       (is (not (contains? result-keys :duo:nlqf)) "Private program should not have nlqf field")
       (is (not (contains? result-keys :duo:eqf)) "Private program should not have eqf field")
       (is (= (first result) :duo:particuliereOpleiding) "Result should be a particuliereOpleiding"))))
+
+(deftest level-sector-mapping-test
+  (testing "level-sector-mapping for undefined"
+    (is (= "ONBEPAALD" (rio-helper-v6/level-sector-mapping "undefined" nil))))
+
+  (testing "level-sector-mapping for NT2"
+    (is (= "NT2-I" (rio-helper-v6/level-sector-mapping "nt2_1" nil)))
+    (is (= "NT2-II" (rio-helper-v6/level-sector-mapping "nt2_2" nil))))
+
+  (testing "level-sector-mapping for MBO"
+    (is (= "MBO" (rio-helper-v6/level-sector-mapping "secondary_vocational_education" "secondary vocational education")))
+    (is (= "MBO-1" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_1" "secondary vocational education")))
+    (is (= "MBO-4" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_4" "secondary vocational education"))))
+
+  (testing "level-sector-mapping for HBO"
+    (is (= "HBO-AD" (rio-helper-v6/level-sector-mapping "associate_degree" "higher professional education")))
+    (is (= "HBO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "higher professional education")))
+    (is (= "HBO-MA" (rio-helper-v6/level-sector-mapping "master" "higher professional education"))))
+
+  (testing "level-sector-mapping for WO"
+    (is (= "WO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "university education")))
+    (is (= "WO-MA" (rio-helper-v6/level-sector-mapping "master" "university education")))
+    (is (= "WO-PM" (rio-helper-v6/level-sector-mapping "doctoral" "university education"))))
+
+  (testing "level-sector-mapping with invalid combinations"
+    (is (nil? (rio-helper-v6/level-sector-mapping "invalid" "secondary vocational education")))
+    (is (nil? (rio-helper-v6/level-sector-mapping "bachelor" "invalid sector")))))

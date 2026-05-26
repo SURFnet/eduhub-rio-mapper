@@ -14,4 +14,10 @@
     <!-- Related to the Jetty HttpURI class. The HttpURI class does insufficient validation on the authority segment of a URI.
          We don't use the HttpURI class or the authority segment of an URI. -->
   </suppress>
+  <suppress>
+    <notes>These CVEs refer to the Go implementation of OpenTelemetry semconv, not the Java one we use.</notes>
+    <cve>CVE-2026-29181</cve>
+    <cve>CVE-2026-39882</cve>
+    <cve>CVE-2026-39883</cve>
+  </suppress>
 </suppressions>

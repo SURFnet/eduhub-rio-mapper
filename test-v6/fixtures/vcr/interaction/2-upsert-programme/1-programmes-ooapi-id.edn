@@ -31,7 +31,7 @@
        ["agriculture_food_and_natural_environment"
         "healthcare_and_sport"
         "tourism_hospitality_and_recreation"],
-       "specificationType" "programme"},
+       "specificationType" "variant"},
       "studyLoad" [{"value" 128, "studyLoadUnit" "ects"}],
       "validFrom" "2016-12-16",
       "programmeType" "specification",

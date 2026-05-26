@@ -79,7 +79,7 @@
 (defn- child [id parent-id valid-from & {:keys [] :as opts}]
   (merge opts
          {:programmeId id, :parent parent-id, :validFrom valid-from, :programmeType "specification",
-          :consumer {:consumerKey "rio", :variantOf parent-id, :specificationType "programme"}}))
+          :consumer {:consumerKey "rio", :variantOf parent-id, :specificationType "variant"}}))
 
 (defn- parent [id children-ids valid-from & {:keys [] :as opts}]
   (merge opts
