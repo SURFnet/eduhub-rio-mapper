@@ -492,7 +492,7 @@ Notes:
 
 ### Sector + level › niveau
 
-| level / sector                   | secondary vocational education | higher professional education | university education |
+| level / sector                   | secondary_vocational_education | higher_professional_education | university_education |
 | -------------------------------- | ------------------------------ | ----------------------------- | -------------------- |
 | secondary_vocational_education   | MBO                            |                               |                      |
 | secondary_vocational_education_1 | MBO-1                          |                               |                      |
