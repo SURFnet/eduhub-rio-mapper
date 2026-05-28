@@ -480,20 +480,20 @@
     (is (= "NT2-II" (rio-helper-v6/level-sector-mapping "nt2_2" nil))))
 
   (testing "level-sector-mapping for MBO"
-    (is (= "MBO" (rio-helper-v6/level-sector-mapping "secondary_vocational_education" "secondary vocational education")))
-    (is (= "MBO-1" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_1" "secondary vocational education")))
-    (is (= "MBO-4" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_4" "secondary vocational education"))))
+    (is (= "MBO" (rio-helper-v6/level-sector-mapping "secondary_vocational_education" "secondary_vocational_education")))
+    (is (= "MBO-1" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_1" "secondary_vocational_education")))
+    (is (= "MBO-4" (rio-helper-v6/level-sector-mapping "secondary_vocational_education_4" "secondary_vocational_education"))))
 
   (testing "level-sector-mapping for HBO"
-    (is (= "HBO-AD" (rio-helper-v6/level-sector-mapping "associate_degree" "higher professional education")))
-    (is (= "HBO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "higher professional education")))
-    (is (= "HBO-MA" (rio-helper-v6/level-sector-mapping "master" "higher professional education"))))
+    (is (= "HBO-AD" (rio-helper-v6/level-sector-mapping "associate_degree" "higher_professional_education")))
+    (is (= "HBO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "higher_professional_education")))
+    (is (= "HBO-MA" (rio-helper-v6/level-sector-mapping "master" "higher_professional_education"))))
 
   (testing "level-sector-mapping for WO"
-    (is (= "WO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "university education")))
-    (is (= "WO-MA" (rio-helper-v6/level-sector-mapping "master" "university education")))
-    (is (= "WO-PM" (rio-helper-v6/level-sector-mapping "doctoral" "university education"))))
+    (is (= "WO-BA" (rio-helper-v6/level-sector-mapping "bachelor" "university_education")))
+    (is (= "WO-MA" (rio-helper-v6/level-sector-mapping "master" "university_education")))
+    (is (= "WO-PM" (rio-helper-v6/level-sector-mapping "doctoral" "university_education"))))
 
   (testing "level-sector-mapping with invalid combinations"
-    (is (nil? (rio-helper-v6/level-sector-mapping "invalid" "secondary vocational education")))
-    (is (nil? (rio-helper-v6/level-sector-mapping "bachelor" "invalid sector")))))
+    (is (nil? (rio-helper-v6/level-sector-mapping "invalid" "secondary_vocational_education")))
+    (is (nil? (rio-helper-v6/level-sector-mapping "bachelor" "invalid_sector")))))

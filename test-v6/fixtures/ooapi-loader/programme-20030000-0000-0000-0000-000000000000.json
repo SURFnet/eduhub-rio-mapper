@@ -30,7 +30,7 @@
   "firstStartDateTime": "2019-08-24T08:30:00+01:00",
   "levelOfQualification": "6",
   "level": "master",
-  "sector": "university education",
+  "sector": "university_education",
   "fieldsOfStudy": "0732",
   "enrollment": [
     {
@@ -130,7 +130,7 @@
         "firstStartDateTime": "2019-08-24T08:30:00+01:00",
         "levelOfQualification": "6",
         "level": "master",
-        "sector": "university education",
+        "sector": "university_education",
         "fieldsOfStudy": "0732",
         "enrollment": [
           {
