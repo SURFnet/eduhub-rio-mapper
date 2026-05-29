@@ -50,7 +50,7 @@
     "nt2_1" "NT2-I"
     "nt2_2" "NT2-II"
     (case sector
-      "secondary vocational education"
+      "secondary_vocational_education"
       (case level
         "secondary_vocational_education" "MBO"
         "secondary_vocational_education_1" "MBO-1"
@@ -59,7 +59,7 @@
         "secondary_vocational_education_4" "MBO-4"
         nil)
 
-      "higher professional education"
+      "higher_professional_education"
       (case level
         "associate_degree" "HBO-AD"
         "bachelor" "HBO-BA"
@@ -68,7 +68,7 @@
         "undivided" "HBO-O"
         nil)
 
-      "university education"
+      "university_education"
       (case level
         "bachelor" "WO-BA"
         "master" "WO-MA"
