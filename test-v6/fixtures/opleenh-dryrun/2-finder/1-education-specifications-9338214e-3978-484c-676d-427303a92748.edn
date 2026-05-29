@@ -29,7 +29,7 @@
       "studyLoad" [{"value" 169, "studyLoadUnit" "contact_time"}],
       "validFrom" "2004-03-31",
       "programmeType" "specification",
-      "sector" "higher professional education",
+      "sector" "higher_professional_education",
       "programmeId" "9338214e-3978-484c-676d-427303a92748",
       "name"
       [{"language" "en-GB",

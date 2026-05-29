@@ -18,7 +18,7 @@
   "validFrom": "2021-05-03",
   "formalDocument": "testimonial",
   "level": "bachelor",
-  "sector": "university education",
+  "sector": "university_education",
   "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 180
@@ -39,7 +39,7 @@
       "validFrom": "2003-09-01",
       "formalDocument": "testimonial",
       "level": "bachelor",
-      "sector": "university education",
+      "sector": "university_education",
       "studyLoad": [{
         "studyLoadUnit": "ects",
         "value": 180
