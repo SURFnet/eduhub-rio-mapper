@@ -32,7 +32,7 @@
       "studyLoad" [{"value" 128, "studyLoadUnit" "ects"}],
       "validFrom" "2016-12-15",
       "programmeType" "specification",
-      "sector" "higher professional education",
+      "sector" "higher_professional_education",
       "programmeId" "afb435cc-5352-f55f-a548-41c9dfd60002",
       "name"
       [{"language" "en-GB",
