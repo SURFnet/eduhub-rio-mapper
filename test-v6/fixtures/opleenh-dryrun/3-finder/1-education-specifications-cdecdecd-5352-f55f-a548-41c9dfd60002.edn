@@ -34,7 +34,7 @@
       "studyLoad" [{"value" 128, "studyLoadUnit" "ects"}],
       "validFrom" "2000-12-16",
       "programmeType" "specification",
-      "sector" "higher professional education",
+      "sector" "higher_professional_education",
       "programmeId" "cdecdecd-5352-f55f-a548-41c9dfd60002",
       "name"
       [{"language" "en-GB",
@@ -55,7 +55,7 @@
          [{"consumerKey" "rio",
            "educationSpecificationSubType" "variant",
            "category" ["business_and_project_support" "economy"]}],
-         "sector" "university education",
+         "sector" "university_education",
          "name"
          [{"language" "en-GB",
            "value" "OVERRIDE X Bachelor Chemical technology"}
