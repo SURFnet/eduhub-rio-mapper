@@ -653,7 +653,7 @@ See also [this overview of language tags](https://www.loc.gov/standards/iso639-2
 | ---------------------------------------- | ------------------------------ |
 | business_and_project_support             | BEDRIJFS_PROJECTONDERSTEUNING  |
 | economy                                  | ECONOMIE                       |
-| behavior_and_society                     | GEDRAG_EN_MAATSCHAPPIJ         |
+| behaviour_and_society                    | GEDRAG_EN_MAATSCHAPPIJ         |
 | healthcare_and_sport                     | GEZONDHEID_ZORG_EN_SPORT       |
 | hobby_and_leisure_time                   | HOBBY_EN_VRIJE_TIJD            |
 | agriculture_food_and_natural_environment | LANDBW_VOEDSEL_EN_NAT_OMGEVING |
