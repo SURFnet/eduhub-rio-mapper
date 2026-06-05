@@ -62,7 +62,7 @@
       "value": "NL VERTALING: Talenonderwijs en Communicatie"
     }
   ],
-  "sector": "secondary vocational education",
+  "sector": "secondary_vocational_education",
   "primaryCode": {
     "codeType": "crohoCreboCode",
     "code": "60740"
