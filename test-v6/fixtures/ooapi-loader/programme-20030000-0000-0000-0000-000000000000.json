@@ -30,7 +30,6 @@
   "firstStartDateTime": "2019-08-24T08:30:00+01:00",
   "levelOfQualification": "6",
   "level": "master",
-  "sector": "university_education",
   "fieldsOfStudy": "0732",
   "enrollment": [
     {
@@ -227,7 +226,8 @@
     "propaedeuticPhase": "no_propaedeutic_phase",
     "studyChoiceCheck": "no_study_choice_check",
     "acceleratedRoute": "accelerated_route",
-    "specificationId": "10030000-0000-0000-0000-000000000000"
+    "specificationId": "10030000-0000-0000-0000-000000000000",
+    "sector": "university_education"
   },
   "programmeType": "programme",
   "programmeId": "20030000-0000-0000-0000-000000000000"
