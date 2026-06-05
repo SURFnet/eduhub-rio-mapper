@@ -31,11 +31,11 @@
         "language_and_culture"
         "technology_and_ict"],
        "variantIds" ["713d6834-5701-477c-a838-e1c21e009054"],
-       "specificationType" "programme"},
+       "specificationType" "programme",
+       "sector" "higher_professional_education"},
       "studyLoad" [{"value" 93, "studyLoadUnit" "sbu"}],
       "validFrom" "1950-09-20",
       "programmeType" "specification",
-      "sector" "higher_professional_education",
       "programmeId" "03da5ac9-ac99-4ce8-8bc8-e3bafae1ce4a",
       "name"
       [{"language" "en-GB", "value" "EN TRANSLATION: Toetsdeskundige"}
