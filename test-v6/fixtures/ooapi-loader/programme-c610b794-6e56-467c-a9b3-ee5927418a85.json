@@ -18,7 +18,6 @@
   "validFrom": "2021-05-03",
   "formalDocument": "testimonial",
   "level": "bachelor",
-  "sector": "university_education",
   "studyLoad": [{
     "studyLoadUnit": "ects",
     "value": 180
@@ -48,7 +47,8 @@
   ],
   "consumer": {
     "consumerKey": "rio",
-    "specificationType": "programme"
+    "specificationType": "programme",
+    "sector": "university_education"
   },
   "programmeType": "specification"
 }
