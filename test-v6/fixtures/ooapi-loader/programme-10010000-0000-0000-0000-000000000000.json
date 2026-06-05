@@ -29,7 +29,6 @@
   ],
   "formalDocument": "diploma",
   "level": "master",
-  "sector": "university_education",
   "levelOfQualification": "6",
   "fieldsOfStudy": "0732",
   "studyLoad": [{
@@ -58,7 +57,8 @@
   "consumer": {
     "consumerKey": "rio",
     "specificationType": "variant",
-    "variantOf": "42e2bc1b-6741-4e2e-b138-97b4a342c999"
+    "variantOf": "42e2bc1b-6741-4e2e-b138-97b4a342c999",
+    "sector": "university_education"
   },
   "programmeType": "specification"
 }
