@@ -29,7 +29,6 @@
   ],
   "formalDocument": "diploma",
   "level": "master",
-  "sector": "university_education",
   "levelOfQualification": "6",
   "fieldsOfStudy": "0732",
   "studyLoad": [{
@@ -46,7 +45,8 @@
   "validTo": "2019-08-24",
   "consumer": {
     "consumerKey": "rio",
-    "specificationType": "private"
+    "specificationType": "private",
+    "sector": "university_education"
   },
   "programmeType": "specification"
 }
