@@ -81,8 +81,8 @@
 
     "test-rio"
     (let [[client-info _args] (parse-client-info-args args clients)
-          old-uuid     (UUID/randomUUID)
-          new-uuid     (UUID/randomUUID)
+          old-uuid     (str (UUID/randomUUID))
+          new-uuid     (str (UUID/randomUUID))
 
           eduspec (-> "eduspec-test-rio-v5.json"
                       io/resource
@@ -109,7 +109,7 @@
                                       (filter #(= "eigenOpleidingseenheidSleutel" (:kenmerknaam %)))
                                       first
                                       :kenmerkwaardeTekst)]
-              (when (not= nieuwe-sleutel (str new-uuid))
+              (when (not= nieuwe-sleutel new-uuid)
                 (println "old uuid " old-uuid)
                 (println "new uuid " new-uuid)
                 (throw (ex-info "Failed to set eigenOpleidingseenheidSleutel" {:rio-queue-status :down}))))
