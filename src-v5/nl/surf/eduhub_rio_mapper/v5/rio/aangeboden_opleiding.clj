@@ -127,10 +127,11 @@
   "Given a course or program, a rio-consumer object and an id, return a function.
    This function, given a attribute name from the RIO namespace, returns the corresponding value from the course or program,
    translated if necessary to the RIO domain."
-  [{:keys [rioCode validFrom validTo offerings level modeOfStudy sector fieldsOfStudy consumers teachingLanguage timelineOverrides] :as course-program}
+  [{:keys [rioCode validFrom validTo offerings level modeOfStudy fieldsOfStudy consumers teachingLanguage timelineOverrides] :as course-program}
    opleidingscode
    ooapi-type]
   (let [rio-consumer (ooapi-utils/extract-rio-consumer consumers)
+        sector       (:sector rio-consumer)
         duration-map (some-> rio-consumer :duration parse-duration)
         id           ((if (= :course ooapi-type) :courseId :programId) course-program)
         periods      (map #(assoc (ooapi-type %)

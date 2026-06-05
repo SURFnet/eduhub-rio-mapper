@@ -54,8 +54,8 @@
    :opleidingseenheidcode         :rioCode})
 
 (defn- programme-specification-adapter
-  [{:keys [validFrom validTo formalDocument level levelOfQualification sector fieldsOfStudy timelineOverrides] :as progspec}
-   {:keys [category] :as rio-consumer}]
+  [{:keys [validFrom validTo formalDocument level levelOfQualification fieldsOfStudy timelineOverrides] :as progspec}
+   {:keys [category sector] :as rio-consumer}]
   (fn [opl-eenh-attr-name]
     (let [programme-type (:specificationType rio-consumer)
           periods     (ooapi-utils/ooapi-to-periods progspec :programme)
