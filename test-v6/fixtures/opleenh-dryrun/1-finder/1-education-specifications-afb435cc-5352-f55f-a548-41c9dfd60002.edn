@@ -28,11 +28,11 @@
        "category"
        ["business_and_project_support" "hobby_and_leisure_time" "law"],
        "specificationType" "variant",
-       "variantOf" "fddec347-8ca1-c991-8d39-9a85d09c0004"},
+       "variantOf" "fddec347-8ca1-c991-8d39-9a85d09c0004",
+       "sector" "higher_professional_education"},
       "studyLoad" [{"value" 128, "studyLoadUnit" "ects"}],
       "validFrom" "2016-12-15",
       "programmeType" "specification",
-      "sector" "higher_professional_education",
       "programmeId" "afb435cc-5352-f55f-a548-41c9dfd60002",
       "name"
       [{"language" "en-GB",
