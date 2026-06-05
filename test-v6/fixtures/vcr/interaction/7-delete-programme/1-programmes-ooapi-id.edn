@@ -39,7 +39,7 @@
       "studyLoad" [{"value" 155, "studyLoadUnit" "ects"}],
       "validFrom" "2018-10-18",
       "programmeType" "programme",
-      "sector" "secondary vocational education",
+      "sector" "secondary_vocational_education",
       "teachingLanguages" ["eng"],
       "programmeId" "f31426a0-6e39-44d0-8fe8-46a2a7d529a7",
       "qualificationRequirements"
