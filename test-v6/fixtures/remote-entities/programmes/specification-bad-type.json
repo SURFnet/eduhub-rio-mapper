@@ -8,7 +8,6 @@
   "abbreviation": "1T",
   "validTo": "2060-08-28",
   "formalDocument": "diploma",
-  "sector": "higher_professional_education",
   "name": [
     {
       "language": "en-GB",
@@ -51,6 +50,7 @@
       "cross_sectoral",
       "language_and_culture",
       "technology_and_ict"
-    ]
+    ],
+    "sector": "higher_professional_education"
   }
 }
