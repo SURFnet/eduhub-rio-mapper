@@ -27,7 +27,6 @@
       "value": "NL VERTALING: Orthopedische Technologie"
     }
   ],
-  "sector": "higher_professional_education",
   "primaryCode": {
     "codeType": "identifier",
     "code": "{{programmes/specification-interaction-prgspec-child}}"
@@ -49,6 +48,7 @@
       "healthcare_and_sport",
       "tourism_hospitality_and_recreation"
     ],
-    "specificationType": "variant"
+    "specificationType": "variant",
+    "sector": "higher_professional_education"
   }
 }

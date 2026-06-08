@@ -19,7 +19,6 @@
       "value": "Zomaar een programma"
     }
   ],
-  "sector": "secondary_vocational_education",
   "validFrom": "2008-10-18",
   "addresses": [
     {
@@ -129,7 +128,8 @@
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
     "educationLocationCode": "107X215",
-    "specificationId": "{{programmes/specification-dorothy}}"
+    "specificationId": "{{programmes/specification-dorothy}}",
+    "sector": "secondary_vocational_education"
   },
   "programmeId": "{{programmes/jack}}",
   "programmeType": "programme"

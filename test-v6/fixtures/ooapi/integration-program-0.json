@@ -17,7 +17,6 @@
       "value": "NL VERTALING: Diermanagement"
     }
   ],
-  "sector": "university_education",
   "validFrom": "2006-04-08",
   "addresses": [
     {
@@ -118,7 +117,8 @@
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
     "educationLocationCode": "123X122",
-    "specificationId": "790c6569-2bcc-d046-dae2-7b73e77231f3"
+    "specificationId": "790c6569-2bcc-d046-dae2-7b73e77231f3",
+    "sector": "university_education"
   },
   "programmeType": "specialization",
   "programmeId": "db9ea35d-d8b7-1db6-2b08-4092c1fd57c1"

@@ -30,7 +30,6 @@
   "firstStartDateTime": "2019-08-24T08:30:00+01:00",
   "levelOfQualification": "6",
   "level": "master",
-  "sector": "university_education",
   "fieldsOfStudy": "0732",
   "enrollment": [
     {
@@ -227,7 +226,8 @@
     "foreignPartners": [
       "Oxford University"
     ],
-    "specificationId": "1009O0996"
+    "specificationId": "1009O0996",
+    "sector": "university_education"
   },
   "programmeType": "course",
   "programmeId": "123e4567-e89b-12d3-a456-426614174004"

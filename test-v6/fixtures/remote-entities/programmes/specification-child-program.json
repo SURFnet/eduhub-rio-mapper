@@ -7,7 +7,6 @@
   "abbreviation": "OT",
   "validTo": "2025-04-25",
   "formalDocument": "diploma",
-  "sector": "higher_professional_education",
   "name": [
     {
       "language": "en-GB",
@@ -54,6 +53,7 @@
       "healthcare_and_sport",
       "tourism_hospitality_and_recreation"
     ],
-    "specificationType": "variant"
+    "specificationType": "variant",
+    "sector": "higher_professional_education"
   }
 }
