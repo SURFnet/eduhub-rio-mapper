@@ -27,7 +27,6 @@
       "value": "NL VERTALING: Toetsdeskundige"
     }
   ],
-  "sector": "higher_professional_education",
   "primaryCode": {
     "codeType": "identifier",
     "code": "{{programmes/specification-interaction-prgspec-parent}}"
@@ -49,6 +48,7 @@
       "technology_and_ict"
     ],
     "variantIds": [ "{{programmes/specification-interaction-prgspec-child}}" ],
-    "specificationType": "programme"
+    "specificationType": "programme",
+    "sector": "higher_professional_education"
   }
 }
