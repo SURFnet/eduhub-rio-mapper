@@ -19,7 +19,6 @@
       "value": "bad-edu-location"
     }
   ],
-  "sector": "secondary_vocational_education",
   "validFrom": "2008-10-18",
   "addresses": [
     {
@@ -128,7 +127,8 @@
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
     "educationLocationCode": "BAD-CODE",
-    "specificationId": "{{programmes/specification-parent-program}}"
+    "specificationId": "{{programmes/specification-parent-program}}",
+    "sector": "secondary_vocational_education"
   },
   "programmeId": "{{programmes/some}}",
   "programmeType": "programme"

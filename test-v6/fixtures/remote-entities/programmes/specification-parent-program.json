@@ -7,7 +7,6 @@
   "abbreviation": "1T",
   "validTo": "2060-08-28",
   "formalDocument": "diploma",
-  "sector": "higher_professional_education",
   "name": [
     {
       "language": "en-GB",
@@ -51,6 +50,7 @@
       "technology_and_ict"
     ],
     "variantIds": [ "{{programmes/specification-child-program}}" ],
-    "specificationType": "programme"
+    "specificationType": "programme",
+    "sector": "higher_professional_education"
   }
 }

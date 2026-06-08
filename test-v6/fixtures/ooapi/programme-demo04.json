@@ -17,7 +17,6 @@
       "value": "NL VERTALING: Opleiding tot Oefentherapeut-Mensendieck"
     }
   ],
-  "sector": "university_education",
   "validFrom": "1994-05-04",
   "addresses": [
     {
@@ -117,7 +116,8 @@
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
     "educationLocationCode": "123X122",
-    "specificationId": "7851ba8d-da69-3802-3539-486b74f9698b"
+    "specificationId": "7851ba8d-da69-3802-3539-486b74f9698b",
+    "sector": "university_education"
   },
   "programmeType": "minor",
   "programmeId": "58095060-d18c-fcd2-04df-c20b156736f6"

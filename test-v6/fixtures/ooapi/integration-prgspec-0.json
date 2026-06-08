@@ -6,7 +6,6 @@
   "abbreviation": "CS",
   "validTo": "2025-05-12",
   "formalDocument": "diploma",
-  "sector": "higher_professional_education",
   "name": [
     {
       "language": "en-GB",
@@ -53,7 +52,8 @@
       "language_and_culture",
       "management_and_project_management"
     ],
-    "specificationType": "private"
+    "specificationType": "private",
+    "sector": "higher_professional_education"
   },
   "programmeType": "specification"
 }
