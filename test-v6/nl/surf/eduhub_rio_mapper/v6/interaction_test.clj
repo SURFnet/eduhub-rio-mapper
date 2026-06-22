@@ -110,6 +110,23 @@
 (defn- entity-name-to-id [name]
   (vcr.helper/entity-name-to-id name :v6))
 
+(deftest ooapi-v6-request-uses-accept-header-consumer
+  (let [sent-request (atom nil)
+        handler      (ooapi.loader/wrap-ooapi-request->ring-request
+                      (fn [request]
+                        (reset! sent-request request)
+                        {:body :ok}))]
+    (is (= :ok
+           (handler {::ooapi/root-url (URI. "https://gateway.test/")
+                     ::ooapi/type     "course-offerings"
+                     ::ooapi/id       "course-id"
+                     :institution-schac-home "demo.test"
+                     :page 2})))
+    (is (= "https://gateway.test/courses/course-id/course-offerings?pageSize=250&pageNumber=2"
+           (:url @sent-request)))
+    (is (= "application/vnd.oeapi+json;version=6.0;consumer=rio;consumer-version=6.0"
+           (get-in @sent-request [:headers "Accept"])))))
+
 (deftest ^:vcr interaction-test
   (let [vcr                  (vcr.helper/make-vcr)
         config               (if (= vcr.helper/vcr-mode :record)
