@@ -1,7 +1,7 @@
 {:request
  {:method :get,
   :url
-  "https://gateway-v6-sandbox.dev.surfeduhub.nl/programmes/f31426a0-6e39-44d0-8fe8-46a2a7d529a7/programme-offerings?pageSize=250&consumer=rio",
+  "https://gateway-v6-sandbox.dev.surfeduhub.nl/programmes/f31426a0-6e39-44d0-8fe8-46a2a7d529a7/programme-offerings?pageSize=250",
   :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"},
   :body nil},
  :response
@@ -13,11 +13,11 @@
      "traceparent_trace_id" "a7e64db21ef5d3918bcfc1b5795234ad",
      "traceparent_id" "51d0e273539f3c4a",
      "request"
-     "/programmes/f31426a0-6e39-44d0-8fe8-46a2a7d529a7/programme-offerings?pageSize=250&consumer=rio",
+     "/programmes/f31426a0-6e39-44d0-8fe8-46a2a7d529a7/programme-offerings?pageSize=250",
      "endpoints"
      {"endpoint01.sandbox.jomco.nl"
       {"url"
-       "https://objectstore.surf.nl/swift/v1/AUTH_8e0eecf8d38141f7aa98bc3078fc9ccd/rio-mapper-test-suite/programmes/f31426a0-6e39-44d0-8fe8-46a2a7d529a7/programme-offerings?pageSize=250&consumer=rio",
+       "https://objectstore.surf.nl/swift/v1/AUTH_8e0eecf8d38141f7aa98bc3078fc9ccd/rio-mapper-test-suite/programmes/f31426a0-6e39-44d0-8fe8-46a2a7d529a7/programme-offerings?pageSize=250",
        "responseCode" 200,
        "headers"
        {"content-length" "9045", "content-type" "application/json"}}}},
