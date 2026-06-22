@@ -14,7 +14,7 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - uses: actions/cache@v5
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
@@ -38,7 +38,7 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - uses: actions/cache@v5
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
@@ -94,7 +94,7 @@ jobs:
         java-version: '21'
 
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - uses: actions/cache@v5
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
@@ -116,7 +116,7 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - uses: actions/cache@v5
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
@@ -133,11 +133,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Run docker build
       run: docker build -f Dockerfile.v5 .
 
     - name: Run docker build
       run: docker build -f Dockerfile.v6 .
-      
