@@ -41,8 +41,8 @@
     (when (= "aanleveren_opleidingseenheid" (:action result))
       entity)))
 
-;; TODO better name
-(defn- resolve-no-exception [resolver rio-type ooapi-id institution-oin]
+;; This function wraps the resolver but returns nil if entity not found.
+(defn- resolve-safe [resolver rio-type ooapi-id institution-oin]
   (try
     (resolver rio-type ooapi-id institution-oin)
     (catch Exception _ex
@@ -50,7 +50,7 @@
 
 ;; If resolve not successful, nil is returned or exception thrown.
 (defn- can-resolve? [resolver rio-type ooapi-id institution-oin]
-  (some? (resolve-no-exception resolver rio-type ooapi-id institution-oin)))
+  (some? (resolve-safe resolver rio-type ooapi-id institution-oin)))
 
 (defn- quick-validate-specification [{:keys [consumer] :as entity}]
   (when (nil? (:specificationType consumer))
@@ -71,7 +71,8 @@
              (= "specification" programmeType))
     (quick-validate-specification entity)))
 
-(defn ooapi-http-load-no-exception [request]
+;; This function wraps ooapi.loader/ooapi-http-loader but returns nil if entity not found.
+(defn- ooapi-http-load-safe [request]
   (try
     (ooapi.loader/ooapi-http-loader request)
     (catch ExceptionInfo ex
@@ -88,12 +89,12 @@
     (logging/with-mdc
       {:ooapi-type type :ooapi-id id}
       (assoc request :rio-type
-             (if-let [entity (ooapi-http-load-no-exception request)]
+             (if-let [entity (ooapi-http-load-safe request)]
                (if (and (= "programme" type)
                         (= "specification" (:programmeType entity)))
                  :oe
                  :ao)
-               :both)))))
+               :unknown)))))
 
 ;; in:  {::ooapi/keys [type id] :keys [action institution-name institution-oin institution-schac-home]}
 ;; diff out: {:keys [rio-type] ::ooapi/keys [entity]}
@@ -124,11 +125,8 @@
                               (when ooapi-id
                                 (resolver :oe ooapi-id institution-oin)))
           ao-code         (when-not (= :oe rio-type) (resolver rio-type id institution-oin))]
-      ;; Inserting a course or program while the education
-      ;; specification has not been added to RIO will throw an error.
-      ;; Also throw an error when trying to delete an education specification
-      ;; that cannot be resolved.
-      (when (and (nil? oe-code) (= :ao rio-type) (= "upsert" action))
+      ;; Inserting a course or program while the programme specification has not been added to RIO will throw an error.
+      (when (and (nil? oe-code) (= :ao rio-type))
         (throw (ex-info (str "No 'opleidingseenheid' found in RIO with eigensleutel: " ooapi-id)
                         {:code       oe-code
                          :type       type
@@ -156,42 +154,29 @@
                       ::ooapi/keys [type id entity]
                       ::rio/keys [opleidingscode] :as request}]
     {:pre [institution-oin id rio-type]}
-    (if (= :both rio-type)
+    (if (= :unknown rio-type)
       ;; Special case for deleting unknown rio-type
-      ;; if rio-type is :both, resolve first :oe, and if not found, :ao
+      ;; if rio-type is :unknown, resolve first :oe, and if not found, :ao
       ;; as soon as either is found, continue with that one
       ;; if none is found, abort
-      (let [resolve-for-rio-type (fn [rt] (resolve-no-exception resolver rt id institution-oin))]
+      (let [resolve-for-rio-type (fn [rt] (resolve-safe resolver rt id institution-oin))]
         (if-let [rio-code (resolve-for-rio-type :oe)]
           (assoc request ::rio/opleidingscode rio-code :rio-type :oe)
           (when-let [rio-code (resolve-for-rio-type :ao)]
             (assoc request ::rio/aangeboden-opleiding-code rio-code :rio-type :ao))))
 
       ;; Normal case
-      (let [consumer        (:consumer entity)
-            ooapi-id        (if (= :oe rio-type)
+      (let [ooapi-id        (if (= :oe rio-type)
                               id
                               (-> entity :consumer :specificationId))
             oe-code         (or opleidingscode
                                 (when ooapi-id
                                   (resolver :oe ooapi-id institution-oin)))
             ao-code         (when-not (= :oe rio-type) (resolver rio-type id institution-oin))]
-        ;; Inserting a course or program while the education
-        ;; specification has not been added to RIO will throw an error.
-        ;; Also throw an error when trying to delete an education specification
+        ;; Throw an error when trying to delete an education specification
         ;; that cannot be resolved.
-        (when (and (nil? oe-code) (= :oe rio-type) (= "delete" action))
+        (when (and (nil? oe-code) (= :oe rio-type))
           (throw (ex-info (str "No 'opleidingseenheid' found in RIO with eigensleutel: " ooapi-id)
-                          {:code       oe-code
-                           :type       type
-                           :action     action
-                           :retryable? false})))
-        ;; For variants, we need to check if the eduspec this is a variant of (the parent) actually exists in RIO - if not, abort now
-        (when (and
-               (= rio-type :oe)
-               (some? (:variantOf consumer))
-               (not (can-resolve? resolver :oe (:variantOf consumer) institution-oin)))
-          (throw (ex-info (str "No 'opleidingseenheid' found in RIO for the parent of this variant with eigensleutel: " (:variantOf consumer))
                           {:code       oe-code
                            :type       type
                            :action     action
