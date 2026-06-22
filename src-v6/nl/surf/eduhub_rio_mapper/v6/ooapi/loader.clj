@@ -32,6 +32,9 @@
   "Maximum amount of items to fetch in a single page."
   250)
 
+(def ^:private accept-header
+  "application/vnd.oeapi+json;version=6.0;consumer=rio;consumer-version=6.0")
+
 (defn- ooapi-type->path [ooapi-type id page]
   {:pre  [(string? ooapi-type)
           (#{"programme" "programme-offerings" "course" "course-offerings"} ooapi-type)]}
@@ -40,15 +43,15 @@
           path        (case ooapi-type
                         "programme"               "programmes/%s?returnTimelineOverrides=true"
                         "course"                  "courses/%s?returnTimelineOverrides=true"
-                        "course-offerings"        (str "courses/%s/course-offerings?pageSize=" page-size "&consumer=rio" page-suffix)
-                        "programme-offerings"     (str "programmes/%s/programme-offerings?pageSize=" page-size "&consumer=rio" page-suffix))]
+                        "course-offerings"        (str "courses/%s/course-offerings?pageSize=" page-size page-suffix)
+                        "programme-offerings"     (str "programmes/%s/programme-offerings?pageSize=" page-size page-suffix))]
       (format path id))
     (case ooapi-type
       "programmes" "programmes"
       "courses" "courses"
       (throw (ex-info "No id, wrong type" {:id id, :ooapi-type ooapi-type})))))
 
-(defn- wrap-ooapi-request->ring-request
+(defn wrap-ooapi-request->ring-request
   "Middleware translating ::ooapi/request into ring-style HTTP request.
 
   Returns the response body as the result."
@@ -66,7 +69,7 @@
                               :method             :get
                               :connection-timeout connection-timeout
                               :headers            {"X-Route" (str "endpoint=" institution-schac-home)
-                                                   "Accept"  "application/json; version=6"}}
+                                                   "Accept"  accept-header}}
                              (when-let [{:keys [username password]} gateway-credentials]
                                {:basic-auth [username password]})))))))
 
