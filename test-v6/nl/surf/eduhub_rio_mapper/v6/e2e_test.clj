@@ -87,6 +87,28 @@
 (def ^:dynamic bonus-parent-code nil)
 (def ^:dynamic bonus-child-code nil)
 
+(deftest ^:v6-e2e test-delete-programme-after-linking-new-sleutel
+  (binding [last-job (post-job :upsert :programmes "specification-parent-program")
+            parent-code nil
+            generated-sleutel (UUID/randomUUID)
+            original-rio-sleutel nil]
+    (and
+     (is (job-done? last-job))
+     (set! parent-code (job-result-opleidingseenheidcode last-job))
+     (is parent-code)
+     (set! original-rio-sleutel (eigen-opleidingseenheid-sleutel parent-code))
+     (is (string? original-rio-sleutel))
+
+     (set! last-job (post-job :link parent-code :programmes generated-sleutel))
+     (is (job-done? last-job))
+     (is (some? (rio-resolve :oe (str generated-sleutel))))
+
+     ;; In ooapi, there is no programme with key generated-sleutel, so we don't know its rio-type.
+     ;; We try to resolve both oe and ao, and then try to delete the first match.
+     (set! last-job (post-job :delete :programmes generated-sleutel))
+     (is (job-done? last-job))
+     (is (nil? (rio-resolve :oe (str generated-sleutel)))))))
+
 (deftest ^:v6-e2e test-program-with-prgspecs
   ;; insert prgspec "parent-program"
   (binding [last-job (post-job :upsert :programmes "specification-parent-program")
