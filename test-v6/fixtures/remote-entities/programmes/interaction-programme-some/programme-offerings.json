@@ -28,7 +28,7 @@
       ],
       "teachingLanguages": ["nld"],
       "modesOfDelivery": [
-        "situated"
+        "presential"
       ],
       "maxNumberStudents": 200,
       "enrolledNumberStudents": 150,
@@ -131,7 +131,7 @@
       ],
       "teachingLanguages": ["nld"],
       "modesOfDelivery": [
-        "situated"
+        "presential"
       ],
       "maxNumberStudents": 200,
       "enrolledNumberStudents": 150,
@@ -234,7 +234,7 @@
       ],
       "teachingLanguages": ["nld"],
       "modesOfDelivery": [
-        "situated"
+        "presential"
       ],
       "maxNumberStudents": 200,
       "enrolledNumberStudents": 150,
