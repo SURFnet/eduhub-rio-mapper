@@ -28,7 +28,7 @@
        "educationOffererCode" "110A133",
        "educationLocationCode" "107X215",
        "specificationId" "b1091a8c-5352-f55f-a548-41c9dfd60002"},
-      "modesOfDelivery" ["distance-learning" "presential" "presential"],
+      "modesOfDelivery" ["distance-learning" "presential"],
       "studyLoad" [{"value" 154, "studyLoadUnit" "ects"}],
       "validFrom" "2017-01-01",
       "programs" ["280dd8a6-968b-1b2b-9fb2-9d4230a66511"],
