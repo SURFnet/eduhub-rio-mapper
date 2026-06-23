@@ -85,7 +85,7 @@
 
 ;; Non-standard mapping for modesOfDelivery
 ;; See also https://github.com/open-education-api/specification/issues/295
-(def consumer-modesOfDelivery-mapping
+(def modesOfDelivery-mapping
   {"online" "ONLINE"
    "hybrid" "KLASSIKAAL_EN_ONLINE"
    "blended" "KLASSIKAAL_EN_ONLINE"
@@ -94,19 +94,17 @@
    "self_study" "ZELFSTUDIE"
    "coaching" "COACHING"})
 
-(defn- lookup-consumer-mode-of-delivery [mode-of-delivery]
-  (let [opleidingsvorm (get consumer-modesOfDelivery-mapping mode-of-delivery)]
+(defn- lookup-mode-of-delivery [mode-of-delivery]
+  (let [opleidingsvorm (get modesOfDelivery-mapping mode-of-delivery)]
     (when-not opleidingsvorm
       (throw (ex-info "modesOfDelivery cannot be mapped to RIO" {:modesOfDelivery mode-of-delivery})))
-    opleidingsvorm)
-  )
+    opleidingsvorm))
 
 ;; modesOfDelivery in rio-consumer of the offering has precedence over the one in the offering itself.
 (defn- extract-opleidingsvorm [modesOfDelivery rio-consumer]
   (let [consumer-modesOfDelivery (:modesOfDelivery rio-consumer)
-        mapped-values (if consumer-modesOfDelivery
-                        (map lookup-consumer-mode-of-delivery consumer-modesOfDelivery)
-                        (map #(rio-helper-v6/ooapi-mapping "opleidingsvorm" %) modesOfDelivery))]
+        mapped-values (map lookup-mode-of-delivery
+                           (or consumer-modesOfDelivery modesOfDelivery))]
     (first (filter seq mapped-values))))
 
 (defn- validate-max

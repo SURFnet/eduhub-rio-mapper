@@ -46,7 +46,7 @@
       "resultValueType": "UK letter",
       "modesOfDelivery": [
         "online",
-        "on campus"
+        "presential"
       ],
       "abbreviation": "OADE",
       "pendingNumberStudents": 10,
@@ -110,9 +110,9 @@
       "flexibleEntryPeriodStartDateTime": "2011-02-07T12:48:37+00:00",
       "resultValueType": "0-100",
       "modesOfDelivery": [
-        "on campus",
+        "presential",
         "distance-learning",
-        "situated"
+        "presential"
       ],
       "abbreviation": "OADE",
       "pendingNumberStudents": 2,
@@ -305,7 +305,7 @@
       "resultValueType": "1-10",
       "modesOfDelivery": [
         "hybrid",
-        "situated",
+        "presential",
         "distance-learning"
       ],
       "abbreviation": "OADE",
