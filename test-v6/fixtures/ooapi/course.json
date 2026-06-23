@@ -16,7 +16,7 @@
     "value": 3
   },
   "modesOfDelivery": [
-    "situated"
+    "presential"
   ],
   "duration": "P1DT30H4S",
   "firstStartDateTime": "2019-08-24T08:30:00+01:00",
@@ -49,7 +49,7 @@
   "assessment": [
     {
       "language": "en-GB",
-      "value": "Exam on campus"
+      "value": "Exam presential"
     }
   ],
   "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
@@ -121,7 +121,7 @@
           "value": 3
         },
         "modesOfDelivery": [
-          "situated"
+          "presential"
         ],
         "duration": "P1DT30H4S",
         "firstStartDateTime": "2019-08-24T08:30:00+01:00",
@@ -154,7 +154,7 @@
         "assessment": [
           {
             "language": "en-GB",
-            "value": "Exam on campus"
+            "value": "Exam presential"
           }
         ],
         "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
