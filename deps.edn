@@ -1,4 +1,4 @@
-{:paths ["src-v5" "src-common" "resources"]
+{:paths ["src-common" "resources"]
  :deps  {org.clojure/clojure      {:mvn/version "1.12.5"}
          org.clojure/core.async   {:mvn/version "1.9.865"}
          org.clojure/core.memoize {:mvn/version "1.2.281"}
@@ -19,13 +19,15 @@
          compojure/compojure            {:mvn/version "1.7.2"}
          nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
          nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
+         nl.jomco/openapi-v3-validator  {:mvn/version "0.2.8"}
 
          ;; interface
          nl.jomco/envopts     {:mvn/version "0.0.7"}
+         clj-time/clj-time        {:mvn/version "0.15.2"}
          clj-http/clj-http    {:mvn/version "3.13.1"}
-         clj-time/clj-time    {:mvn/version "0.15.2"}
-         com.taoensso/carmine {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader com.taoensso/nippy]}
-         com.taoensso/nippy   {:mvn/version "3.7.0-RC2"}
+         com.taoensso/carmine {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader com.taoensso/nippy io.airlift/aircompressor]}
+         com.taoensso/nippy   {:mvn/version "3.7.0-beta1"}
+         io.airlift/aircompressor {:mvn/version "2.0.3"}
 
          ;; logging
          org.clojure/tools.logging                   {:mvn/version "1.3.1"}
@@ -37,21 +39,32 @@
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.10"}}
 
  :aliases
- {:dev {:extra-paths ["dev"]
+ {:dev {:extra-paths ["dev" "src-v5" "test-v5" "test-v6" "src-v6"] ;; include all paths when running in the REPL
         :extra-deps  {clj-commons/clj-yaml {:mvn/version "RELEASE"}
                       expound/expound      {:mvn/version "RELEASE"}}}
 
-  :test {:extra-paths ["test-v5" "test-common"]
-         :jvm-opts    ["-Dclojure.main.report=stderr"]
-         :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
-                       ring/ring-mock      {:mvn/version "RELEASE"}}
-         :main-opts   ["-m" "kaocha.runner"]}
+  :test-common {:extra-paths ["test-common"]
+                :jvm-opts    ["-Dclojure.main.report=stderr"]
+                :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                              ring/ring-mock      {:mvn/version "RELEASE"}}
+                :main-opts   ["-m" "kaocha.runner"]}
 
-  :test-common {:replace-paths ["src-common" "test-common" "resources"]
-                :jvm-opts      ["-Dclojure.main.report=stderr"]
-                :extra-deps    {lambdaisland/kaocha {:mvn/version "RELEASE"}
-                                ring/ring-mock      {:mvn/version "RELEASE"}}
-                :main-opts     ["-m" "kaocha.runner" "--focus" ":common"]}
+  :v5 {:extra-paths ["src-v5"]}
+
+  :test-v5 {:extra-paths ["test-common" "src-v5" "test-v5"]
+            :jvm-opts    ["-Dclojure.main.report=stderr"]
+            :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                          ring/ring-mock      {:mvn/version "RELEASE"}}
+            :main-opts   ["-m" "kaocha.runner"]}
+
+
+  :v6 {:extra-paths ["src-v6"]}
+
+  :test-v6 {:extra-paths ["test-common" "src-v6" "test-v6"]
+            :jvm-opts    ["-Dclojure.main.report=stderr"]
+            :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
+                          ring/ring-mock      {:mvn/version "RELEASE"}}
+            :main-opts   ["-m" "kaocha.runner"]}
 
   :proof-specs {:extra-deps {nl.jomco/proof-specs {:mvn/version "RELEASE"}}
                 :main-opts  ["-m" "nl.jomco.proof-specs"
@@ -63,13 +76,14 @@
 
   :lint {:paths        []
          :replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
-         :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-common" "test-v5" "test-common"]}
+         :main-opts    ["-m" "clj-kondo.main" "--lint" "src-v5" "src-v6" "src-common" "test-v5" "test-v6" "test-common"]}
 
-  :package {:extra-paths ["target/classes"]}
-  :uberjar {:replace-deps  {uberdeps/uberdeps   {:mvn/version "RELEASE"}
-                            org.clojure/clojure {:mvn/version "1.12.5"}}
-            :replace-paths []
-            :main-opts     ["-m" "uberdeps.uberjar" "--aliases" "package"]}
+  :package-v5 {:extra-paths ["target/classes-v5"]}
+  :package-v6 {:extra-paths ["target/classes-v6"]}
+  :uberjar {:replace-deps {uberdeps/uberdeps   {:mvn/version "RELEASE"}
+                           org.clojure/clojure {:mvn/version "RELEASE"}}
+            :main-opts    ["-m" "uberdeps.uberjar"]}
+
 
   :watson {:paths        []
            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.1.0"
@@ -83,5 +97,8 @@
 
   :mapper {:extra-paths []
            :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.v5.main"]}
+
+  :mapper-v6 {:replace-paths ["src-v6" "src-common" "resources" "test-v6" "test-common"]
+              :main-opts     ["-m" "nl.surf.eduhub-rio-mapper.v6.main"]}
 
   :deps-to-scan {:extra-deps {io.opentelemetry.javaagent/opentelemetry-javaagent ^:antq/exclude {:mvn/version "2.9.0"}}}}}
