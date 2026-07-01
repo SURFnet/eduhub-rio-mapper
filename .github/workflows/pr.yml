@@ -1,0 +1,16 @@
+name: Run checks for PR
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  nvd:
+    uses: ./.github/workflows/nvd.yml
+
+  check:
+    uses: ./.github/workflows/test.yml
+
+  outdated:
+    uses: ./.github/workflows/outdated.yml
