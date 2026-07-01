@@ -10,6 +10,7 @@ jobs:
 
   check:
     uses: ./.github/workflows/test.yml
+    secrets: inherit
 
   outdated:
     uses: ./.github/workflows/outdated.yml
