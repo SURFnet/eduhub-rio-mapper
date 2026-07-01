@@ -14,9 +14,9 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@v6
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
     - name: Install clj runtime
@@ -38,9 +38,9 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@v6
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
     - name: Install clj runtime
@@ -91,8 +91,8 @@ jobs:
         java-version: '21'
 
 
-    - uses: actions/checkout@v6
-    - uses: actions/cache@v5
+    - uses: actions/checkout@v7
+    - uses: actions/cache@v6
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
     - name: Install clj runtime
@@ -113,9 +113,9 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@v6
       with: { path: "~/.m2", key: "${{ runner.os }}-m2" }
 
     - name: Install clj runtime
@@ -130,7 +130,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Run docker build
       run: docker build -t eduhub-rio-mapper .
