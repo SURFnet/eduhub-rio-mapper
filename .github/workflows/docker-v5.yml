@@ -10,8 +10,6 @@ on:
 jobs:
   nvd:
     uses: ./.github/workflows/nvd.yml
-    secrets:
-       NVD_API_TOKEN: ${{ secrets.NVD_API_TOKEN }}
 
   docker:
     needs: [nvd]
