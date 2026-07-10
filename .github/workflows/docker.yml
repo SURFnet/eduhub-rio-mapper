@@ -12,8 +12,6 @@ jobs:
     uses: ./.github/workflows/nvd.yml
 
   docker:
-    needs: [nvd]
-
     runs-on: ubuntu-22.04
     steps:
       - name: Install Cosign
