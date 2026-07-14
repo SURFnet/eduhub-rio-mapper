@@ -1,0 +1,77 @@
+{
+  "level": "bachelor",
+  "children": [],
+  "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+  "educationSpecificationType": "course",
+  "educationSpecificationId": "{{education-specifications/parent-course}}",
+  "validFrom": "1950-09-20",
+  "abbreviation": "1T",
+  "validTo": "2060-08-28",
+  "learningOutcomes": [
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ],
+    [
+      {
+        "language": "en-GB",
+        "value": ".."
+      },
+      {
+        "language": "nl-NL",
+        "value": ".."
+      }
+    ]
+  ],
+  "formalDocument": "diploma",
+  "sector": "higher professional education",
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "parent-course education specification"
+    },
+    {
+      "language": "nl-NL",
+      "value": "parent-course education specification"
+    }
+  ],
+  "primaryCode": {
+    "codeType": "identifier",
+    "code": "{{education-specifications/parent-course}}"
+  },
+  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/parent-course}}",
+  "fieldsOfStudy": "0912",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "levelOfQualification": "6",
+  "consumers": [
+    {
+      "consumerKey": "rio",
+      "category": [
+        "business_and_project_support",
+        "education",
+        "cross_sectoral",
+        "language_and_culture",
+        "technology_and_ict"
+      ]
+    }
+  ],
+  "studyLoad": {
+    "value": 93,
+    "studyLoadUnit": "sbu"
+  }
+}
