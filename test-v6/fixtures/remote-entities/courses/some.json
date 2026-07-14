@@ -1,0 +1,126 @@
+{
+  "description" : [ {
+    "language" : "en-GB",
+    "value" : "Some course"
+  }, {
+    "language" : "nl-NL",
+    "value" : "Zomaar een cursus"
+  } ],
+  "validFrom" : "1994-05-15",
+  "validTo" : "2050-11-10",
+  "firstStartDate" : "1994-09-05",
+  "addresses" : [ {
+    "countryCode" : "NL",
+    "city" : "Manderveen",
+    "geoLocation" : {
+      "longitude" : 21,
+      "latitude" : 49
+    },
+    "addressType" : "teaching",
+    "streetNumber" : 84,
+    "postalCode" : "3465IQ",
+    "street" : "Kappeyne van de Coppellolaan",
+    "additional" : ""
+  } ],
+  "enrollment" : [ {
+    "language" : "en-GB",
+    "value" : "EN TRANSLATION: . . ."
+  }, {
+    "language" : "nl-NL",
+    "value" : "NL VERTALING: . . ."
+  } ],
+  "modeOfDelivery" : [ "distance-learning", "situated", "on campus" ],
+  "studyLoad" : {
+    "value" : 154,
+    "studyLoadUnit" : "ects"
+  },
+  "fieldsOfStudy" : "0522",
+  "educationSpecification": "{{education-specifications/parent-course}}",
+  "name" : [ {
+    "language" : "en-GB",
+    "value" : "Some course"
+  }, {
+    "language" : "nl-NL",
+    "value" : "Zomaar een cursus"
+  } ],
+  "primaryCode" : {
+    "codeType" : "identifier",
+    "code" : "af28b74b-6a63-d901-ec5a-51b6f2e68ebc"
+  },
+  "duration" : "P1DT30H4S",
+  "organization" : "cafecafe-cafe-cafe-cafe-cafecafecafe",
+  "assessment" : [ {
+    "language" : "en-GB",
+    "value" : ".."
+  }, {
+    "language" : "nl-NL",
+    "value" : ".."
+  } ],
+  "teachingLanguage" : "eng",
+  "level" : "undefined",
+  "consumers" : [ {
+    "alliances" : [ {
+      "name" : "ewuu",
+      "enrollmentForOwnStudents" : "broker",
+      "type" : "broadening",
+      "visibleForOwnStudents" : true,
+      "selection" : false,
+      "theme" : "Engineering, Manufacturing and Construction"
+    } ],
+    "consumerKey" : "eduxchange"
+  }, {
+    "consumerKey" : "rio",
+    "educationOffererCode" : "110A133",
+    "educationLocationCode" : "107X215",
+    "consentParticipationSTAP" : "permission_not_granted"
+  } ],
+  "link" : "https://hogeschool-van-manderveen.nl/courses/{{courses/some}}",
+  "otherCodes" : [ {
+    "codeType" : "identifier",
+    "code" : "cafecafe-cafe-cafe-cafe-cafecafecafe"
+  } ],
+  "coordinators" : [ "cafecafe-cafe-cafe-cafe-cafecafecafe" ],
+  "learningOutcomes" : [ [ {
+    "language" : "en-GB",
+    "value" : ".."
+  }, {
+    "language" : "nl-NL",
+    "value" : ".."
+  } ], [ {
+    "language" : "en-GB",
+    "value" : ".."
+  }, {
+    "language" : "nl-NL",
+    "value" : ".."
+  } ], [ {
+    "language" : "en-GB",
+    "value" : ".."
+  }, {
+    "language" : "nl-NL",
+    "value" : ".."
+  } ], [ {
+    "language" : "en-GB",
+    "value" : ".."
+  }, {
+    "language" : "nl-NL",
+    "value" : ".."
+  } ] ],
+  "admissionRequirements" : [ {
+    "language" : "en-GB",
+    "value" : ".."
+  }, {
+    "language" : "nl-NL",
+    "value" : ".."
+  } ],
+  "programs" : [ "cafecafe-cafe-cafe-cafe-cafecafecafe" ],
+  "resources" : [ "Definitions are provided on Brightspace. . All relevant information is in the workbook, supported by a reader (available at WUR-shop)." ],
+  "courseId" : "{{courses/some}}",
+  "abbreviation" : "MB",
+  "qualificationRequirements" : [ {
+    "language" : "en-GB",
+    "value" : ".."
+  }, {
+    "language" : "nl-NL",
+    "value" : ".."
+  } ]
+}
