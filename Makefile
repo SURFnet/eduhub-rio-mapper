@@ -1,16 +1,16 @@
-.PHONY: all jar lint proof-specs test test-redis test-e2e test-all test-common create-common-test watson antq clean
+.PHONY: all jar lint proof-specs test test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean
 
-MAIN_CLASS=nl.surf.eduhub-rio-mapper.v5.main
-JAR_FILE=target/eduhub-rio-mapper.jar
-
-DEPS_EDN=deps.edn
-DEPS_PATHS=src-v5 src-common resources # should be the same as defined in deps.edn
-CLASSES_DIR=target/classes
-TEST_OPTS=
 
 all: lint proof-specs test watson clean jar
 
-jar: target/eduhub-rio-mapper.jar
+jar: target/eduhub-rio-mapper-v5.jar target/eduhub-rio-mapper-v6.jar
+
+test-all-units:
+	clojure -M:test-v5
+	clojure -M:test-v6
+	clojure -M:test-common
+	clojure -M:test-v5-redis
+	clojure -M:test-v6-redis
 
 lint:
 	clojure -M:lint
@@ -18,20 +18,42 @@ lint:
 proof-specs:
 	clojure -M:proof-specs
 
-test: test-common
-	clojure -M:test $(TEST_OPTS) --skip-meta :redis --skip-meta :e2e
+test: test-v5 test-v6
 
-test-redis:
-	clojure -M:test $(TEST_OPTS) --focus-meta :redis
+test-v5: test-common
+	clojure -M:test-v5 v5
 
-test-e2e:
-	clojure -M:test $(TEST_OPTS) --focus-meta :e2e --no-capture-output
+test-v5-redis:
+	clojure -M:test-v5 v5-redis
 
-test-all:
-	clojure -M:test
+test-v5-e2e:
+	clojure -M:test-v5 v5-e2e --no-capture-output
+
+playback-v5:
+	clojure -M:test-v5 v5-vcr
+
+record-v5:
+	rm -rf test-v5/fixtures/vcr/*
+	OOAPI_VERSION=v5 VCR_RECORD=true clojure -M:test-v5 v5-vcr
+
+test-v6: test-common
+	clojure -M:test-v6 v6
+
+test-v6-redis:
+	clojure -M:test-v6 v6-redis
+
+test-v6-e2e:
+	clojure -M:test-v6 v6-e2e --no-capture-output
+
+playback-v6:
+	clojure -M:test-v6 v6-vcr
+
+record-v6:
+	rm -rf test-v6/fixtures/vcr/*
+	OOAPI_VERSION=v6 VCR_RECORD=true clojure -M:test-v6 v6-vcr
 
 test-common:
-	clojure -M:test-common
+	clojure -M:test-common  common
 
 watson:
 	clojure -M:watson
@@ -49,16 +71,16 @@ types-edn:
 	clojure -M:dev -m xsd-to-edn.main types
 
 clean:
-	rm -rf $(CLASSES_DIR) $(JAR_FILE)
+	rm -r target
 
-MAIN_CLASS_FILE = $(subst -,_,$(subst .,/,$(MAIN_CLASS)))
-MAIN_CLASS_FILE_CLASS = $(join $(CLASSES_DIR)/,$(addsuffix .class,$(MAIN_CLASS_FILE)))
-COMPILE_EXPR = $(subst CLASSES_DIR,$(CLASSES_DIR),"(binding [*compile-path* \"CLASSES_DIR\"] (compile 'MAIN_CLASS))")
+target/eduhub-rio-mapper-v5.jar: $(shell find src-v5 src-common resources -type f)
+	rm -rf target/classes-v5
+	mkdir -p target/classes-v5
+	clojure -M:v5 -e "(binding [*compile-path* \"target/classes-v5\"] (compile 'nl.surf.eduhub-rio-mapper.v5.main))"
+	clojure -M:uberjar --aliases v5:package-v5 --main-class nl.surf.eduhub_rio_mapper.v5.main --target $@
 
-$(MAIN_CLASS_FILE_CLASS): $(DEPS_EDN) $(shell find $(DEPS_PATHS) -type f)
-	rm -rf $(CLASSES_DIR)
-	mkdir -p $(CLASSES_DIR)
-	clojure -M -e $(subst MAIN_CLASS,$(MAIN_CLASS),$(COMPILE_EXPR))
-
-$(JAR_FILE): $(MAIN_CLASS_FILE_CLASS)
-	clojure -M:uberjar --main-class $(MAIN_CLASS) --target $@
+target/eduhub-rio-mapper-v6.jar: $(shell find src-v6 src-common resources -type f)
+	rm -rf target/classes-v6
+	mkdir -p target/classes-v6
+	clojure -M:v6 -e "(binding [*compile-path* \"target/classes-v6\"] (compile 'nl.surf.eduhub-rio-mapper.v6.main))"
+	clojure -M:uberjar --aliases v6:package-v6 --main-class nl.surf.eduhub_rio_mapper.v6.main --target $@
