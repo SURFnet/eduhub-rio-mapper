@@ -1,30 +1,30 @@
 #kaocha/v1
- {:tests [{:id                       :common
-           :test-paths               ["test-common"]}
+{:tests [{:id         :common
+          :test-paths ["test-common"]}
 
-          {:id                       :v5
-           :test-paths               ["test-v5" "test-common"]
-           :kaocha.filter/skip-meta  [:redis :v5-e2e]}
-          {:id                       :v5-redis
-           :test-paths               ["test-v5" "test-common"]
-           :kaocha.filter/focus-meta [:redis]}
-          {:id                       :v5-e2e
-           :test-paths               ["test-v5" "test-common"]
-           :kaocha.filter/focus-meta [:v5-e2e]}
-          {:id                       :v5-vcr
-           :test-paths               ["test-v5" "test-common"]
-           :kaocha.filter/focus-meta [:vcr]}
+         {:id                      :v5
+          :test-paths              ["test-v5"]
+          :kaocha.filter/skip-meta [:redis :v5-e2e]}
+       
+         {:id                       :v5-redis
+          :test-paths               ["test-v5"]
+          :kaocha.filter/focus-meta [:redis]}         
+         {:id                       :v5-e2e
+          :test-paths               ["test-v5"]
+          :kaocha.filter/focus-meta [:v5-e2e]}
+         {:id                       :v5-vcr
+          :test-paths               ["test-v5"]
+          :kaocha.filter/focus-meta [:vcr]}
 
-          {:id                       :v6
-           :test-paths               ["test-v6" "test-common"]
-           :kaocha.filter/skip-meta  [:redis :v6-e2e] }
-
-          {:id                       :v6-redis
-           :test-paths               ["test-v6" "test-common"]
-           :kaocha.filter/focus-meta [:redis]}
-          {:id                       :v6-e2e
-           :test-paths               ["test-v6" "test-common"]
-           :kaocha.filter/focus-meta [:v6-e2e]}
-          {:id                       :v6-vcr
-           :test-paths               ["test-v6" "test-common"]
-           :kaocha.filter/focus-meta [:vcr]}]}
+         {:id                      :v6
+          :test-paths              ["test-v6" ]
+          :kaocha.filter/skip-meta [:redis :v6-e2e]}
+         {:id                       :v6-redis
+          :test-paths               ["test-v6"]
+          :kaocha.filter/focus-meta [:redis]}
+         {:id                       :v6-e2e
+          :test-paths               ["test-v6"]
+          :kaocha.filter/focus-meta [:v6-e2e]}
+         {:id                       :v6-vcr
+          :test-paths               ["test-v6"]
+          :kaocha.filter/focus-meta [:vcr]}]}

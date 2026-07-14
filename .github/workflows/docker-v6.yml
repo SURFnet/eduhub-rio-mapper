@@ -8,14 +8,9 @@ on:
       - 'v[0-9]+.[0-9]+'
 
 jobs:
-  nvd:
-    uses: ./.github/workflows/nvd.yml
-
   docker:
     runs-on: ubuntu-22.04
     steps:
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v4.1.2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       - name: Docker meta
@@ -23,8 +18,8 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: |
-            eduhub-docker-production.artie.ia.surfsara.nl/rio-mapper
-            cr.surf.nl/surfeduhub-riomapper/riomapper
+            eduhub-docker-production.artie.ia.surfsara.nl/rio-mapper-v6
+            cr.surf.nl/surfeduhub-riomapper/riomapper-v6
           tags: |
             type=match,pattern=v\d+.\d+
             type=sha,format=long
@@ -43,19 +38,8 @@ jobs:
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
       - name: Build and push
-        id: build-and-push
         uses: docker/build-push-action@v7
         with:
           push: true
+          file: Dockerfile.v6
           tags: ${{ steps.meta.outputs.tags }}
-      - name: Sign image with a key
-        run: |
-          images=""
-          for tag in ${TAGS}; do
-            cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${tag}@${DIGEST} --new-bundle-format=false --use-signing-config=false
-          done
-        env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
