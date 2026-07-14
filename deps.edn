@@ -19,14 +19,14 @@
          compojure/compojure            {:mvn/version "1.7.2"}
          nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
          nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
-         nl.jomco/openapi-v3-validator  {:mvn/version "0.2.8"}
+         nl.jomco/openapi-v3-validator  {:mvn/version "0.2.9"}
 
          ;; interface
          nl.jomco/envopts     {:mvn/version "0.0.7"}
          clj-time/clj-time        {:mvn/version "0.15.2"}
          clj-http/clj-http    {:mvn/version "3.13.1"}
          com.taoensso/carmine {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader com.taoensso/nippy io.airlift/aircompressor]}
-         com.taoensso/nippy   {:mvn/version "3.7.0-beta1"}
+         com.taoensso/nippy   {:mvn/version "3.7.0-RC2"}
          io.airlift/aircompressor {:mvn/version "2.0.3"}
 
          ;; logging
