@@ -1,0 +1,71 @@
+{
+  "level": "bachelor",
+  "parent": "{{education-specifications/parent-program}}",
+  "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+  "educationSpecificationType": "program",
+  "educationSpecificationId": "{{education-specifications/child-program}}",
+  "validFrom": "2016-12-15",
+  "abbreviation": "OT",
+  "validTo": "2025-04-25",
+  "learningOutcomes": [
+    [
+      {
+        "language": "en-GB",
+        "value": "child program eduspec"
+      },
+      {
+        "language": "nl-NL",
+        "value": "child program eduspec"
+      }
+    ]
+  ],
+  "formalDocument": "diploma",
+  "sector": "higher professional education",
+  "name": [
+    {
+      "language": "en-GB",
+      "value": "child-program education specification"
+    },
+    {
+      "language": "nl-NL",
+      "value": "child-program education specification"
+    }
+  ],
+  "primaryCode": {
+    "codeType": "identifier",
+    "code": "{{education-specifications/child-program}}"
+  },
+  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/child-program}}",
+  "fieldsOfStudy": "0612",
+  "description": [
+    {
+      "language": "en-GB",
+      "value": ".."
+    },
+    {
+      "language": "nl-NL",
+      "value": ".."
+    }
+  ],
+  "levelOfQualification": "6",
+  "consumers": [
+    {
+      "consumerKey": "rio",
+      "educationSpecificationSubType": "variant",
+      "category": [
+        "business_and_project_support",
+        "hobby_and_leisure_time",
+        "technology_and_ict",
+        "transport_and_logistics",
+        "law",
+        "agriculture_food_and_natural_environment",
+        "healthcare_and_sport",
+        "tourism_hospitality_and_recreation"
+      ]
+    }
+  ],
+  "studyLoad": {
+    "value": 128,
+    "studyLoadUnit": "ects"
+  }
+}
