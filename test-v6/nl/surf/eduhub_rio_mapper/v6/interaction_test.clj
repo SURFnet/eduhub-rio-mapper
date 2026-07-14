@@ -67,6 +67,7 @@
     [nl.surf.eduhub-rio-mapper.v6.commands.processing :as processing]
     [nl.surf.eduhub-rio-mapper.v6.config :as config]
     [nl.surf.eduhub-rio-mapper.v6.job :as job]
+    [nl.surf.eduhub-rio-mapper.v6.rio.loader :as rio.loader]
     [nl.surf.eduhub-rio-mapper.v6.test-helper :as helper]))
 
 (def vcr-mode :playback)
@@ -155,9 +156,8 @@
             (is (pred? result) (str action "-" (name ootype) " " idx))))))))
 
 ;; This just does a lookup of an existing RIO opleidingseenheid
-#_(deftest opleidingseenheid-finder-test
-  (let [vcr-mode            :record
-        vcr                 (helper/make-vcr vcr-mode)
+(deftest opleidingseenheid-finder-test
+  (let [vcr                 (helper/make-vcr vcr-mode)
         config              (if (= vcr-mode :record)
                               (config/make-config env)
                               (helper/make-test-config))
@@ -171,9 +171,8 @@
       (let [result (rio.loader/find-opleidingseenheid "1010O3664" (:getter handlers) (:institution-oin client-info))]
         (is (some? result))))))
 
-#_(deftest aangeboden-finder-test
-  (let [vcr-mode             :record
-        vcr                  (helper/make-vcr vcr-mode)
+(deftest aangeboden-finder-test
+  (let [vcr                  (helper/make-vcr vcr-mode)
         config               (if (= vcr-mode :record)
                                (config/make-config env)
                                (helper/make-test-config))
