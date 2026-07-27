@@ -132,15 +132,15 @@
   [handler]
   (fn [{root-url ::ooapi/root-url type ::ooapi/type :as request}]
     {:pre [root-url type]}
-    (let [validate-response (response-validator root-url)
-          response (assoc (handler request) :headers {"content-type" "application/json"})
-          to-be-validated {:request request :response (update response :body walk/stringify-keys)}
-          issues (validate-response to-be-validated [])]
-      (when issues
-        (throw (ex-info "Error validating OOAPI Response"
-                        {:issues issues
-                         :request (redact-sensitive-request-info request)
-                         :response response})))
+    (let [response (assoc (handler request) :headers {"content-type" "application/json"})]
+      (when-not (= http-status/not-found (:status response))
+        (let [validate-response (response-validator root-url)
+              to-be-validated {:request request :response (update response :body walk/stringify-keys)}]
+          (when-let [issues (validate-response to-be-validated [])]
+            (throw (ex-info "Error validating OOAPI Response"
+                            {:issues issues
+                             :request (redact-sensitive-request-info request)
+                             :response response})))))
       response)))
 
 (def ^:private max-pages 50)
