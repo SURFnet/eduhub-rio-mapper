@@ -19,21 +19,21 @@
          compojure/compojure            {:mvn/version "1.7.2"}
          nl.jomco/ring-trace-context    {:mvn/version "0.0.8"}
          nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
-         nl.jomco/openapi-v3-validator  {:mvn/version "0.2.9"}
+         nl.jomco/openapi-v3-validator  {:mvn/version "0.2.10"}
 
          ;; interface
          nl.jomco/envopts     {:mvn/version "0.0.7"}
          clj-time/clj-time        {:mvn/version "0.15.2"}
          clj-http/clj-http    {:mvn/version "3.13.1"}
          com.taoensso/carmine {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader com.taoensso/nippy io.airlift/aircompressor]}
-         com.taoensso/nippy   {:mvn/version "3.7.0-RC2"}
+         com.taoensso/nippy   {:mvn/version "3.8.0"}
          io.airlift/aircompressor {:mvn/version "2.0.3"}
 
          ;; logging
          org.clojure/tools.logging                   {:mvn/version "1.3.1"}
          ch.qos.logback.contrib/logback-jackson      {:mvn/version "0.1.5"}
          ch.qos.logback.contrib/logback-json-classic {:mvn/version "0.1.5"}
-         ch.qos.logback/logback-classic              {:mvn/version "1.5.38"}
+         ch.qos.logback/logback-classic              {:mvn/version "1.6.0"}
          com.fasterxml.jackson.core/jackson-core     {:mvn/version "2.22.1"}
          com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.22.1"}
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.10"}}
