@@ -86,6 +86,10 @@
 (defn education-specification->opleidingseenheid
   "Converts a education specification into the right kind of Opleidingseenheid."
   [eduspec]
+  (when (and (= "OPLEIDING" (soort-mapping eduspec))
+             (str/blank? (:rioCode eduspec)))
+    (throw (ex-info "Cannot create a hoOpleiding without an opleidingseenheidcode"
+                    {:education-specification-id (:educationSpecificationId eduspec)})))
   (-> (education-specification-adapter eduspec (ooapi-utils/extract-rio-consumer (:consumers eduspec)))
       rio-helper/wrapper-periodes-cohorten
       (rio-helper/->xml (education-specification-type-mapping (:educationSpecificationType eduspec)))))
