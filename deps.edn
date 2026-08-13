@@ -94,7 +94,7 @@
          :replace-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
          :main-opts    ["-m" "antq.core" "--skip=github-action"]}
 
-  :mapper {:extra-paths []
+  :mapper {:extra-paths ["src-v5"]
            :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.v5.main"]}
 
   :mapper-v6 {:replace-paths ["src-v6" "src-common" "resources" "test-v6" "test-common"]
