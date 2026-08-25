@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Keep cronjob based triggers of GitHub workflows alive
-        uses: PhrozenByte/gh-workflow-immortality@v1
+        uses: PhrozenByte/gh-workflow-immortality@39378c27dcacbc17e6fbf83057d1fc40c574000d # v1
         with:
           # long lived personal fine-grained access token
           # needs read-write access to actions, for the specified repositories and nothing else

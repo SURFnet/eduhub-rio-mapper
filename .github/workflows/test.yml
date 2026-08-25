@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v7
-    - uses: jomco/clojure-action@v0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - uses: jomco/clojure-action@fae8cb45f4bf09bb63cdcbe8277f14d9243bf609 # v0
       with: { m2-cache-key: m2-lint }
 
     - name: Run linters
@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v7
-    - uses: jomco/clojure-action@v0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - uses: jomco/clojure-action@fae8cb45f4bf09bb63cdcbe8277f14d9243bf609 # v0
       with: { m2-cache-key: m2-test }
 
     - name: Run tests
@@ -60,8 +60,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v7
-    - uses: jomco/clojure-action@v0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - uses: jomco/clojure-action@fae8cb45f4bf09bb63cdcbe8277f14d9243bf609 # v0
       with: { m2-cache-key: m2-specs }
 
     - name: Proof data specs
@@ -71,8 +71,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v7
-    - uses: jomco/clojure-action@v0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - uses: jomco/clojure-action@fae8cb45f4bf09bb63cdcbe8277f14d9243bf609 # v0
       with: { m2-cache-key: m2-uberjar }
 
     - name: Run compile
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
     - name: Run docker build
       run: docker build -f Dockerfile.v5 .
