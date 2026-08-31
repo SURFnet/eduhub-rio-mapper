@@ -21,6 +21,9 @@
          nl.jomco/clj-http-status-codes {:mvn/version "0.2"}
          nl.jomco/openapi-v3-validator  {:mvn/version "0.2.10"}
 
+         org.eclipse.jetty/jetty-unixdomain-server {:mvn/version "12.1.12"}
+         org.eclipse.jetty.ee9.websocket/jetty-ee9-websocket-jetty-server {:mvn/version "12.1.12"}
+
          ;; interface
          nl.jomco/envopts     {:mvn/version "0.0.7"}
          clj-time/clj-time        {:mvn/version "0.15.2"}
@@ -28,6 +31,7 @@
          com.taoensso/carmine {:mvn/version "3.5.0" :exclusions [org.clojure/tools.reader com.taoensso/nippy io.airlift/aircompressor]}
          com.taoensso/nippy   {:mvn/version "3.8.1"}
          io.airlift/aircompressor {:mvn/version "2.0.3"}
+
 
          ;; logging
          org.clojure/tools.logging                   {:mvn/version "1.3.1"}
@@ -85,16 +89,18 @@
             :main-opts    ["-m" "uberdeps.uberjar"]}
 
   :watson {:paths        []
+           :jvm-opts     ["--enable-native-access=ALL-UNNAMED"]
            :replace-deps {io.github.clj-holmes/clj-watson {:git/tag "v6.1.0"
                                                            :git/sha "be98e4db74fb8927db4825cc73bbe2606e44e5e3"}
                           org.owasp/dependency-check-core {:mvn/version "RELEASE"}}
            :main-opts    ["-m" "clj-watson.cli" "scan" "-w" ".watson.properties" "-p" "deps.edn" "-f" "-s" "-a" "deps-to-scan"]}
 
   :antq {:paths        []
-         :replace-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+         :replace-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}
+                        org.slf4j/slf4j-nop    ^:antq/exclude {:mvn/version "1.7.36"}}
          :main-opts    ["-m" "antq.core" "--skip=github-action"]}
 
-  :mapper {:extra-paths []
+  :mapper {:extra-paths ["src-v5"]
            :main-opts   ["-m" "nl.surf.eduhub-rio-mapper.v5.main"]}
 
   :mapper-v6 {:replace-paths ["src-v6" "src-common" "resources" "test-v6" "test-common"]
