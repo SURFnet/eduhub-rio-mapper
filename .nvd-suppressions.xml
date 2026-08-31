@@ -32,9 +32,9 @@
   </suppress>
   <suppress>
     <notes>We don't use websockets in this project</notes>
-    <cve>CVE-2026-10051</cve>
     <cve>CVE-2026-6790</cve>
     <cve>CVE-2026-8384</cve>
     <cve>CVE-2026-10050</cve>
+    <cve>CVE-2026-10051</cve>
   </suppress>
 </suppressions>
