@@ -1,4 +1,4 @@
-FROM clojure:temurin-21-tools-deps-alpine AS builder
+FROM clojure:temurin-26-tools-deps-alpine AS builder
 
 RUN mkdir /app
 WORKDIR /app
