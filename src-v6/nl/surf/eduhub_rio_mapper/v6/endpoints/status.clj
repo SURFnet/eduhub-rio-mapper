@@ -103,7 +103,7 @@
 (defn make-set-status-fn [config]
   (fn [{::job/keys [callback-url] :keys [token action created-at started-at] ::ooapi/keys [id type] :as job}
        status & [data]]
-    (let [opleidingseenheidcode (-> data :aanleveren_opleidingseenheid_response :opleidingseenheidcode)
+    (let [opleidingseenheidcode (:opleidingscode data)
           aangeb-opleidingcode  (-> data ::rio/aangeboden-opleiding-code)
           value                 (cond-> {:status     status
                                          :token      token
@@ -120,12 +120,7 @@
 
                                   (and (= :done status)
                                        opleidingseenheidcode)
-                                        ;; Data is result of run-job-fn, which is result of
-                                        ;; job/run!, which is result of update-and-mutate
-                                        ;; or delete-and-mutate which is the result of the
-                                        ;; mutator/make-mutator, which is the result of
-                                        ;; handle-rio-mutate-response, which is the parsed
-                                        ;; xml response converted to edn.
+                                        ;; The mutator returns the opleidingseenheid code directly.
                                   (assoc :attributes {:opleidingseenheidcode opleidingseenheidcode})
 
                                   (and (:store-http-requests config)
@@ -134,7 +129,7 @@
                                   (assoc :http-messages (-> data :http-messages))
 
                                   (and (= :done status)
-                                       (:aanleveren_aangebodenOpleiding_response data))
+                                       aangeb-opleidingcode)
                                   (assoc :attributes {:aangebodenopleidingcode aangeb-opleidingcode})
 
                                   (:dry-run data)

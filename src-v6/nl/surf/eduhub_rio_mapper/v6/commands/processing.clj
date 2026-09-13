@@ -389,23 +389,30 @@
 
 (defn- prgspec-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin]} {:keys [resolver getter]}]
   (let [rio-code      (resolver :oe id institution-oin)
-        rio-summary   (some-> rio-code
-                              (rio.loader/find-opleidingseenheid getter institution-oin)
-                              (dry-run/summarize-opleidingseenheid))
+        response      (when rio-code
+                        (getter (rio.loader/rio-entity-request :oe rio-code institution-oin :raw-dom)))
+        rio-obj       (when response
+                        (some #(xml-utils/get-in-dom response rio.loader/schema [(name %)])
+                              rio.loader/opleidingseenheid-namen))
+        rio-summary   (dry-run/summarize-opleidingseenheid rio-obj)
         ooapi-summary (dry-run/summarize-prgspec ooapi-entity)
         diff   (dry-run/generate-diff-ooapi-rio :rio-summary rio-summary :ooapi-summary ooapi-summary)
         output (if (nil? ooapi-summary) diff (assoc diff :opleidingseenheidcode rio-code))]
     (merge output (dry-run-status rio-summary ooapi-summary))))
 
 (defn- course-program-dry-run-handler [ooapi-entity {::ooapi/keys [id] :keys [institution-oin] :as request} {:keys [getter]}]
-  (let [rio-obj     (rio.loader/find-aangebodenopleiding id getter institution-oin)
-        rio-summary (dry-run/summarize-aangebodenopleiding-xml rio-obj)
+  (let [response    (getter (rio.loader/rio-entity-request :ao id institution-oin :raw-dom))
+        rio-obj     (some #(xml-utils/get-in-dom response rio.loader/schema [(name %)])
+                          rio.loader/aangeboden-opleiding-namen)
+        rio-summary (dry-run/summarize-aangeboden-opleiding rio-obj)
         offering-summary (->> (ooapi.loader/load-offerings request)
                               (map dry-run/summarize-offering)
                               (sort-by :cohortcode)
                               vec)
         ooapi-summary (dry-run/summarize-course-program (assoc ooapi-entity :offerings offering-summary))
-        rio-code (when rio-obj (xml-utils/find-content-in-xmlseq (xml-seq rio-obj) :aangebodenOpleidingCode))
+        rio-code (when-let [element (xml-utils/get-in-dom rio-obj rio.loader/schema ["aangebodenOpleidingCode"])]
+                   (when (.hasChildNodes element)
+                     (.getTextContent element)))
         diff   (dry-run/generate-diff-ooapi-rio :rio-summary rio-summary :ooapi-summary ooapi-summary)
         output (if (nil? ooapi-summary) diff (assoc diff :aangebodenOpleidingCode rio-code))]
     (merge output (dry-run-status rio-summary ooapi-summary))))

@@ -40,11 +40,22 @@
     (remote-helper/os-put-object info container-name {:path path, :body body})))
 
 (deftest ^:v6-e2e try-to-create-a-program-with-invalid-data
-  (testing "scenario [6a]: Test /job/upsert with a program with an invalid onderwijsaanbieder attribute. You can expect 'error'."
-    (is (job-error? (post-job :upsert :programmes "bad-edu-offerer"))))
-
-  (testing "scenario [6b]: Test /job/upsert with a program with an invalid onderwijslocatie attribute. You can expect 'error'."
-    (is (job-error? (post-job :upsert :programmes "bad-edu-location")))))
+  (try
+    (when (is (job-done? (post-job :upsert :programmes "specification-invalid-data-parent")))
+      (doseq [[fixture-name schema-type]
+              [["bad-edu-offerer" "OnderwijsaanbiederID-v01"]
+               ["bad-edu-location" "OnderwijslocatieID-v01"]]]
+        (testing (str "Reject " fixture-name " during XML schema validation.")
+          (let [job (post-job :upsert :programmes fixture-name)
+                message (or (job-result job :message) "")]
+            (is (job-error? job))
+            (is (= "upserting" (job-result job :phase)))
+            (is (str/starts-with? message "XSD validation error in document:"))
+            (is (str/includes? message schema-type))))))
+    (finally
+      (testing "Clean up the invalid-data test's parent specification."
+        (is (job-done? (post-job :delete :programmes "specification-invalid-data-parent")))
+        (is (nil? (rio-resolve :oe (str (ooapi-id :programmes "specification-invalid-data-parent")))))))))
 
 (deftest ^:v6-e2e try-to-create-edspecs-with-invalid-data
   (testing "scenario [3a]: Test /job/upsert/<invalid type> to see how the rio mapper reacts on an invalid api call. You can expect a 404 response."
@@ -405,11 +416,15 @@
        (is (= program-id
               (eigen-aangeboden-opleiding-sleutel program-id)))))
 
-    (testing "scenario [1e] Delete child prgspec."
-      (set! last-job (post-job :delete :programmes "specification-child-program"))
-      (and
-       (is (job-done? last-job))
-       (is (nil? (rio-resolve :oe child-code)))))))
+    ;; Remove the offered programme before its specification, and the
+    ;; child before its parent, so other tests start without this parent.
+    (doseq [[fixture-name rio-type]
+            [["some" :ao]
+             ["specification-child-program" :oe]
+             ["specification-parent-program" :oe]]]
+      (testing (str "Clean up programmes/" fixture-name)
+        (is (job-done? (post-job :delete :programmes fixture-name)))
+        (is (nil? (rio-resolve rio-type (str (ooapi-id :programmes fixture-name)))))))))
 
 (deftest ^:v6-e2e test-insert-variant-eduspecs
   ;; insert eduspec "child-program"

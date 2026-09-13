@@ -97,18 +97,11 @@
                             ::ooapi/type            "education-specification"
                             ::ooapi/id              old-uuid
                             ::ooapi/entity          eduspec}
-                rio-code   (-> insert-req insert! :aanleveren_opleidingseenheid_response :opleidingseenheidcode)
+                rio-code   (-> insert-req insert! :opleidingscode)
                 link-req   (merge insert-req {::ooapi/id new-uuid ::rio/opleidingscode rio-code})]
             (link! link-req)
-            (let [rio-obj        (rio.loader/find-rio-object rio-code getter (:institution-oin client-info) "opleidingseenheid")
-                  nieuwe-sleutel (->> rio-obj
-                                      :content
-                                      (filter #(= :kenmerken (:tag %)))
-                                      (map :content)
-                                      (map #(reduce (fn [m el] (assoc m (:tag el) (-> el :content first))) {} %))
-                                      (filter #(= "eigenOpleidingseenheidSleutel" (:kenmerknaam %)))
-                                      first
-                                      :kenmerkwaardeTekst)]
+            (let [nieuwe-sleutel (rio.loader/find-eigen-opleidingseenheid-sleutel
+                                 rio-code getter (:institution-oin client-info))]
               (when (not= nieuwe-sleutel new-uuid)
                 (println "old uuid " old-uuid)
                 (println "new uuid " new-uuid)

@@ -30,7 +30,7 @@
    [nl.surf.eduhub-rio-mapper.utils.soap :as soap]
    [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
    [nl.surf.eduhub-rio-mapper.utils.xml-validator :as xml-validator])
-  (:import (org.w3c.dom Element)))
+  (:import (org.w3c.dom Element NodeList)))
 
 (def aangeboden-opleiding-type "aangebodenOpleiding")
 (def aangeboden-opleidingen-van-organisatie-type "aangebodenOpleidingenVanOrganisatie")
@@ -71,14 +71,12 @@
 
 (defn- handle-resolver-error [element]
   {:post [(nil? %)]}
-  (let [foutmelding (-> element
-                        xml-utils/element->edn
-                        :opvragen_rioIdentificatiecode_response
-                        :foutmelding)
-        id          (-> foutmelding
-                        :sleutelgegeven
-                        :sleutelwaarde)
-        foutcode    (:foutcode foutmelding)
+  (let [foutmelding (xml-utils/get-in-dom element ["ns2:foutmelding"])
+        id          (some-> foutmelding
+                            (xml-utils/get-in-dom ["ns2:sleutelgegeven" "ns2:sleutelwaarde"])
+                            (.getFirstChild)
+                            (.getTextContent))
+        foutcode    (xml-utils/single-xml-unwrapper foutmelding "ns2:foutcode")
         error-msg   (if (= missing-entity foutcode)
                       (str "Object with id (" id ") not found in RIO via resolve")
                       (str "Resolve of object " id " failed with error code " foutcode))]
@@ -88,20 +86,22 @@
 
 (defn- rio-relation-getter-response [^Element element]
   (when (rio-utils/goedgekeurd? element)
-    (when-let [samenhang (-> element xml-utils/element->edn
-                             :opvragen_opleidingsrelatiesBijOpleidingseenheid_response
-                             :samenhangOpleidingseenheid)]
-      (s/assert ::rio/opleidingscode (:opleidingseenheidcode samenhang))
-      (when-let [related-opl-eenheden (-> samenhang :gerelateerdeOpleidingseenheid)]
-        (->> (if (map? related-opl-eenheden) [related-opl-eenheden] related-opl-eenheden)
-             ;; Accredited HoOpleidingen have a AFGELEID_VAN relation which is not relevant for the edumapper
-             ;; and should be ignored.
-             (filter (fn [m] (not= (:opleidingsrelatiesoort m) "AFGELEID_VAN")))
-             (mapv (fn [m]
-                     (s/assert ::rio/opleidingscode (:opleidingseenheidcode m))
-                     {:valid-from             (:opleidingsrelatieBegindatum m)
-                      :valid-to               (:opleidingsrelatieEinddatum m)
-                      :opleidingseenheidcodes #{(:opleidingseenheidcode samenhang) (:opleidingseenheidcode m)}})))))))
+    (when-let [samenhang (xml-utils/get-in-dom element ["ns2:samenhangOpleidingseenheid"])]
+      (let [code (xml-utils/single-xml-unwrapper samenhang "ns2:opleidingseenheidcode")
+            ^NodeList related-opl-eenheden (.getElementsByTagName samenhang "ns2:gerelateerdeOpleidingseenheid")]
+        (s/assert ::rio/opleidingscode code)
+        (when (pos? (.getLength related-opl-eenheden))
+          (->> (range (.getLength related-opl-eenheden))
+               (map #(.item related-opl-eenheden %))
+               ;; Accredited HoOpleidingen have a AFGELEID_VAN relation which is not relevant for the edumapper
+               ;; and should be ignored.
+               (remove #(= (xml-utils/single-xml-unwrapper % "ns2:opleidingsrelatiesoort") "AFGELEID_VAN"))
+               (mapv (fn [related]
+                       (let [related-code (xml-utils/single-xml-unwrapper related "ns2:opleidingseenheidcode")]
+                         (s/assert ::rio/opleidingscode related-code)
+                         {:valid-from             (xml-utils/single-xml-unwrapper related "ns2:opleidingsrelatieBegindatum")
+                          :valid-to               (xml-utils/single-xml-unwrapper related "ns2:opleidingsrelatieEinddatum")
+                          :opleidingseenheidcodes #{code related-code}})))))))))
 
 (defn make-datamap
   [sender-oin recipient-oin]
@@ -169,43 +169,48 @@
   {:pre [code]}
   (re-matches #"\d\d\dB\d\d\d" code))
 
-(defn find-named-element [response-body name-set]
-  (-> response-body
-      clj-xml/parse-str
-      xml-seq
-      (xml-utils/find-in-xmlseq #(when (name-set (:tag %))
-                                   %))))
+(defn rio-entity-request [rio-type rio-code institution-oin response-type]
+  (let [[code-name rio-code rio-type-name] (if (= rio-type :oe)
+                                             [::rio/opleidingscode rio-code opleidingseenheid-type]
+                                             [::rio/aangeboden-opleiding-code rio-code aangeboden-opleiding-type])]
+    {::rio/type       rio-type-name
+     code-name        rio-code
+     :institution-oin institution-oin
+     :response-type   response-type}))
 
-(defn find-rio-object [rio-code getter institution-oin type]
+(defn opleidingeenheid-exists?
+  "Return whether the getter response contains an opleidingseenheid."
+  [rio-code getter institution-oin]
   {:pre [rio-code]}
-  (let [[code-name name-set] (if (= type opleidingseenheid-type)
-                               [::rio/opleidingscode opleidingseenheid-namen]
-                               [::rio/aangeboden-opleiding-code aangeboden-opleiding-namen])]
-    (-> (getter {::rio/type       type
-                 code-name        rio-code
-                 :institution-oin institution-oin
-                 :response-type   :literal})
-        (find-named-element name-set))))
+  (getter (rio-entity-request :oe rio-code institution-oin :exists?)))
 
-(defn find-opleidingseenheid [rio-code getter institution-oin]
-  (find-rio-object rio-code getter institution-oin opleidingseenheid-type))
+(defn aangeboden-opleiding-exists?
+  "Return whether the getter response contains an aangeboden opleiding."
+  [rio-code getter institution-oin]
+  {:pre [rio-code]}
+  (getter (rio-entity-request :ao rio-code institution-oin :exists?)))
 
-(defn find-aangebodenopleiding [rio-code getter institution-oin]
-  (find-rio-object rio-code getter institution-oin aangeboden-opleiding-type))
-
-(defn rio-finder [getter {::rio/keys [opleidingscode aangeboden-opleiding-code] :keys [rio-type institution-oin] :as _request}]
-  {:pre [rio-type]}
-  (case rio-type
-    :oe (find-rio-object opleidingscode getter institution-oin opleidingseenheid-type)
-    :ao (find-rio-object aangeboden-opleiding-code getter institution-oin aangeboden-opleiding-type)))
+;; Only used in the "test-rio" CLI command
+(defn find-eigen-opleidingseenheid-sleutel
+  "Fetch an opleidingseenheid and return its eigenOpleidingseenheidSleutel value, or nil if absent."
+  [rio-code getter institution-oin]
+  {:pre [rio-code]}
+  (let [^Element element (getter (rio-entity-request :oe rio-code institution-oin :dom))
+        ^NodeList kenmerken (.getElementsByTagName element "ns2:kenmerken")
+        kenmerk (->> (range (.getLength kenmerken))
+                     (map #(.item kenmerken %))
+                     (filter #(= "eigenOpleidingseenheidSleutel"
+                                 (xml-utils/single-xml-unwrapper % "ns2:kenmerknaam")))
+                     first)]
+    (xml-utils/single-xml-unwrapper kenmerk "ns2:kenmerkwaardeTekst")))
 
 (defn- rio-xml-getter-response [^Element element]
-  (assert (rio-utils/goedgekeurd? element))                           ; should fail elsewhere with error http code otherwise
+  (assert (rio-utils/goedgekeurd? element))
   (-> element xml-utils/dom->str))
 
 (defn- rio-json-getter-response [^Element element]
-  (assert (rio-utils/goedgekeurd? element))                           ; should fail elsewhere with error http code otherwise
-  (-> element xml-utils/element->edn json/write-str))
+  (assert (rio-utils/goedgekeurd? element))
+  (-> element xml-utils/dom->str clj-xml/parse-str xml-utils/xml-event-tree->edn json/write-str))
 
 (defn- generate-rio-sexp-request [{::ooapi/keys [id]
                                    ::rio/keys   [type opleidingscode aangeboden-opleiding-code code]
@@ -236,9 +241,27 @@
     (= :literal response-type)
     resp-obj
 
+    ;; Return the parsed response even when RIO rejects the request (e.g. not found).
+    (= :raw-dom response-type)
+    resp-obj
+
+    (= :exists? response-type)
+    (boolean
+     (some #(xml-utils/get-in-dom resp-obj [(str "ns2:" (name %))])
+           (case rio-entity-type
+             "opleidingseenheid" opleidingseenheid-namen
+             "aangebodenOpleiding" aangeboden-opleiding-namen)))
+
+    (= :dom response-type)
+    (do
+      (assert (rio-utils/goedgekeurd? resp-obj))
+      resp-obj)
+
+    ;; CLI only
     (= :json response-type)
     (rio-json-getter-response resp-obj)
 
+    ;; CLI only
     (= :xml response-type)
     (rio-xml-getter-response resp-obj)
 
@@ -246,10 +269,12 @@
     (= rio-entity-type opleidingsrelaties-bij-opleidingseenheid-type)
     (rio-relation-getter-response resp-obj)
 
+    ;; CLI only
     :else
     (rio-json-getter-response resp-obj)))
 
-;; response-type can be optionally specified. Valid values: :literal, :xml, :json
+;; response-type can be optionally specified. Valid values: :literal, :dom, :raw-dom, :exists?, :xml, :json
+;; :dom requires requestGoedgekeurd; :raw-dom leaves that check to the caller.
 (defn- rio-get [{::ooapi/keys [id]
                  ::rio/keys   [type opleidingscode aangeboden-opleiding-code code]
                  :keys        [response-type]

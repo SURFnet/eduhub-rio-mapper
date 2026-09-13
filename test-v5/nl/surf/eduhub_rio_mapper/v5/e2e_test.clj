@@ -53,11 +53,26 @@
 (def ^:dynamic bonus-child-code nil)
 
 (deftest ^:v5-e2e try-to-create-a-program-with-invalid-data
-  (testing "scenario [6a]: Test /job/upsert with a program with an invalid onderwijsaanbieder attribute. You can expect 'error'."
-    (is (job-error? (post-job :upsert :programs "bad-edu-offerer"))))
+  (try
+    (when (is (job-done? (post-job :upsert :education-specifications "invalid-data-parent")))
+      (testing "scenario [6a]: Reject an invalid onderwijsaanbieder during OOAPI validation."
+        (let [job (post-job :upsert :programs "bad-edu-offerer")]
+          (is (job-error? job))
+          (is (= "fetching-ooapi" (job-result job :phase)))
+          (is (str/includes? (or (job-result job :message) "")
+                             "The `educationOffererCode` attribute of the program's rio consumer does not conform to the required format."))))
 
-  (testing "scenario [6b]: Test /job/upsert with a program with an invalid onderwijslocatie attribute. You can expect 'error'."
-    (is (job-error? (post-job :upsert :programs "bad-edu-location")))))
+      (testing "scenario [6b]: Reject an invalid onderwijslocatie during XML schema validation."
+        (let [job (post-job :upsert :programs "bad-edu-location")
+              message (or (job-result job :message) "")]
+          (is (job-error? job))
+          (is (= "upserting" (job-result job :phase)))
+          (is (str/starts-with? message "XSD validation error in document:"))
+          (is (str/includes? message "OnderwijslocatieID-v01")))))
+    (finally
+      (testing "Clean up the invalid-data test's parent education specification."
+        (is (job-done? (post-job :delete :education-specifications "invalid-data-parent")))
+        (is (nil? (rio-resolve :oe (str (ooapi-id :education-specifications "invalid-data-parent")))))))))
 
 (deftest ^:v5-e2e try-to-create-edspecs-with-invalid-data
   (testing "scenario [3a]: Test /job/upsert/<invalid type> to see how the rio mapper reacts on an invalid api call. You can expect a 404 response."
@@ -384,11 +399,17 @@
        (is (= program-id
               (eigen-aangeboden-opleiding-sleutel program-id)))))
 
-    (testing "scenario [1e] Delete child eduspec."
-      (set! last-job (post-job :delete :education-specifications "child-program"))
-      (and
-       (is (job-done? last-job))
-       (is (nil? (rio-resolve :oe child-code)))))))
+    ;; Remove offered programs before the eduspecs they reference, and
+    ;; children before parents. Each deletion is checked independently.
+    (doseq [[type fixture-name rio-type]
+            [[:programs "some" :ao]
+             [:education-specifications "child-program" :oe]
+             [:education-specifications "parent-program" :oe]
+             [:education-specifications "bonuschild-program" :oe]
+             [:education-specifications "bonusparent-program" :oe]]]
+      (testing (str "Clean up " (name type) "/" fixture-name)
+        (is (job-done? (post-job :delete type fixture-name)))
+        (is (nil? (rio-resolve rio-type (str (ooapi-id type fixture-name)))))))))
 
 (deftest ^:v5-e2e test-insert-variant-eduspecs
   (testing "insert eduspec child-program"
