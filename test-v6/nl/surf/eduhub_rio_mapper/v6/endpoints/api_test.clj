@@ -21,6 +21,7 @@
             [clojure.test :refer :all]
             [clojure.walk :as walk]
             [nl.jomco.http-status-codes :as http-status]
+            [nl.surf.eduhub-rio-mapper.rio.mutation-test-helper :as mutation-helper]
             [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.v6.endpoints.api :as api]
@@ -346,19 +347,7 @@
                   ::ooapi/type "test"
                   ::ooapi/id   "31415"}
                  :done
-                 {:aanleveren_opleidingseenheid_response
-                  {:opleidingseenheidcodeAttrs             {},
-                   :verzendendeInstantie                   "...",
-                   :opleidingseenheidcode                  "code",
-                   :identificatiecodeBedrijfsdocumentAttrs {},
-                   :requestGoedgekeurdAttrs                {},
-                   :ontvangendeInstantieAttrs              {},
-                   :verzendendeInstantieAttrs              {},
-                   :requestGoedgekeurd                     "true",
-                   :identificatiecodeBedrijfsdocument      "...",
-                   :datumTijdBedrijfsdocument              "...",
-                   :ontvangendeInstantie                   "...",
-                   :datumTijdBedrijfsdocumentAttrs         {}}})
+                 (mutation-helper/successful-mutation "aanleveren_opleidingseenheid" "code"))
 
     ;; without status
     (is (= {:token  "unknown"

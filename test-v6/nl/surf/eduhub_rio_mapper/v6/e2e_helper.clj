@@ -18,6 +18,7 @@
 
 (ns nl.surf.eduhub-rio-mapper.v6.e2e-helper
   (:require [clj-http.client :as http]
+            [clojure.data.xml :as clj-xml]
             [clojure.string :as str]
             [clojure.test :as test]
             [environ.core :refer [env]]
@@ -35,7 +36,7 @@
            [java.net ConnectException]
            [java.util Base64 List]
            [javax.xml.xpath XPathConstants XPathFactory]
-           [org.w3c.dom Node NodeList]))
+           [org.w3c.dom Element Node NodeList]))
 
 (def ^:private last-seen-testing-contexts (atom nil))
 
@@ -464,10 +465,15 @@
     [(:kenmerken node)]
     (keep :kenmerken node)))
 
+(defn element->edn
+  "Convert org.w3c.dom.Element into simplified edn structure."
+  [^Element element]
+  (-> element xml-utils/dom->str clj-xml/parse-str xml-utils/xml-event-tree->edn))
+
 (defn- kenmerken-tekst-opleidingseenheid [rio-code naam]
   (as-> rio-code $
     (rio-opleidingseenheid $)
-    (xml-utils/element->edn $)
+    (element->edn $)
     (:Envelope $)
     (:Body $)
     (:opvragen_opleidingseenheid_response $)
@@ -494,7 +500,7 @@
 
 (defn kenmerken-values-aangeboden-opleiding [ao-dom naam kenmerk-type]
   (as-> ao-dom $
-    (xml-utils/element->edn $)
+    (element->edn $)
     (:Envelope $)
     (:Body $)
     (:opvragen_aangebodenOpleiding_response $)

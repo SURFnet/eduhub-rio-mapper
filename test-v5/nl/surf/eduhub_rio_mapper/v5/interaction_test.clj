@@ -125,21 +125,20 @@
                                           client-info
                                           config
                                           false)
-        goedgekeurd?         #(= "true" (-> % vals first :requestGoedgekeurd))
         code                 (atom nil) ; During the tests we'll learn which opleidingscode we should use.
 
-        commands            [[1 "upsert" :eduspec  eduspec-parent-id goedgekeurd?]
-                             [2 "upsert" :eduspec  eduspec-child-id  goedgekeurd?]
+        commands            [[1 "upsert" :eduspec  eduspec-parent-id :goedgekeurd]
+                             [2 "upsert" :eduspec  eduspec-child-id  :goedgekeurd]
                              ;; TODO upsert shouldn't be final until relation updates have been observed
                              ;; but now, RIO needs 5 seconds for the changes to be visible, therefore sleep in record mode
                              [nil "sleep" nil nil nil]
                              [3 "get"    :relation code              identity]
-                             [4 "delete" :eduspec  eduspec-child-id  goedgekeurd?]
+                             [4 "delete" :eduspec  eduspec-child-id  :goedgekeurd]
                              [nil "sleep" nil nil nil]
                              [5 "get"    :relation code              nil?]
-                             [6 "upsert" :program  program-id        goedgekeurd?]
-                             [7 "delete" :program  program-id        goedgekeurd?]
-                             [8 "delete" :eduspec  eduspec-parent-id goedgekeurd?]
+                             [6 "upsert" :program  program-id        :goedgekeurd]
+                             [7 "delete" :program  program-id        :goedgekeurd]
+                             [8 "delete" :eduspec  eduspec-parent-id :goedgekeurd]
                              [9 "upsert" :program  program-id        #(= (-> % :errors :message)
                                                                          (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
     (doseq [[idx action ootype id pred?] commands]
@@ -148,9 +147,9 @@
           (when (= vcr.helper/vcr-mode :record)
             (Thread/sleep 5000))
           (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/interaction" idx (str action "-" (name ootype)))]
-            (let [result  (runner ootype id action)
+            (let [result (runner ootype id action)
                         http-messages (:http-messages result)
-                        oplcode (-> result :aanleveren_opleidingseenheid_response :opleidingseenheidcode)]
+                        oplcode (:opleidingscode result)]
                     (println "oplcode" oplcode)
                     (is (or oplcode
                             (not= "upsert" action)
@@ -174,8 +173,8 @@
                                                         :gateway-credentials (:gateway-credentials config)})]
 
     (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/opleenh-finder" 1 "finder")]
-      (let [result (rio.loader/find-opleidingseenheid "1010O3664" (:getter handlers) (:institution-oin client-info))]
-        (is (some? result))))))
+      (let [result (rio.loader/opleidingeenheid-exists? "1010O3664" (:getter handlers) (:institution-oin client-info))]
+        (is (true? result))))))
 
 (deftest ^:vcr aangeboden-finder-test
   (let [vcr                  (vcr.helper/make-vcr)
@@ -190,12 +189,12 @@
         getter (:getter handlers)]
     (testing "found aangeboden opleiding"
       (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/aangeboden-finder-test" 1 "finder")]
-        (let [result (rio.loader/find-aangebodenopleiding "bd6cb46b-3f4e-49c2-a1f7-e24ae82b0672" getter (:institution-oin client-info))]
-          (is (some? result)))))
+        (let [result (rio.loader/aangeboden-opleiding-exists? "bd6cb46b-3f4e-49c2-a1f7-e24ae82b0672" getter (:institution-oin client-info))]
+          (is (true? result)))))
     (testing "did not find aangeboden opleiding"
       (binding [http-utils/*vcr* (vcr "test-v5/fixtures/vcr/aangeboden-finder-test" 2 "finder")]
-        (let [result (rio.loader/find-aangebodenopleiding "bbbbbbbb-3f4e-49c2-a1f7-e24ae82b0673" getter (:institution-oin client-info))]
-          (is (nil? result)))))))
+        (let [result (rio.loader/aangeboden-opleiding-exists? "bbbbbbbb-3f4e-49c2-a1f7-e24ae82b0673" getter (:institution-oin client-info))]
+          (is (false? result)))))))
 
 (deftest ^:vcr test-ooapi-loader
   (let [vcr          (vcr.helper/make-vcr)

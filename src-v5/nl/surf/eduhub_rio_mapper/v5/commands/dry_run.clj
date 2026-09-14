@@ -17,9 +17,12 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.v5.commands.dry-run
-  (:require [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
+  (:require [nl.surf.eduhub-rio-mapper.rio.loader :as rio.loader]
+            [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils]
             [nl.surf.eduhub-rio-mapper.v5.rio.aangeboden-opleiding :as aangeboden-opleiding]
-            [nl.surf.eduhub-rio-mapper.v5.utils.ooapi :as ooapi-utils]))
+            [nl.surf.eduhub-rio-mapper.v5.utils.ooapi :as ooapi-utils])
+  (:import [java.time LocalDate]
+           [org.w3c.dom Element Node]))
 
 (def aangeboden-opleiding-namen (->> aangeboden-opleiding/education-specification-type-mapping
                                      vals
@@ -52,27 +55,41 @@
        (map keyword)
        set))
 
-(defn extract-period-summary [xmlseq attributes]
-  (->> (:content xmlseq)
-       (filter #(attributes (:tag %)))
-       (map (fn [e] {(:tag e) (-> e :content first)}))
-       (into {})))
-
 (def opleidingseenheid-summary-attributes
   #{:begindatum :einddatum :naamKort :naamLang :omschrijving :internationaleNaam})
 
 (def aangeboden-opleiding-summary-attributes
   #{:begindatum :onderwijsaanbiedercode :onderwijslocatiecode :einddatum :eigenNaamKort :eigenNaamAangebodenOpleiding :eigenNaamInternationaal :eigenOmschrijving})
 
-(defn- kenmerk-content [xmlspec naam kenmerk-type]
-  (xml-utils/find-in-xmlseq
-    xmlspec
-    #(let [[n v] (:content %)]
-       (and (= :kenmerken (:tag %))
-            (= :kenmerknaam (:tag n))
-            (= naam (first (:content n)))
-            (= kenmerk-type (:tag v))
-            (first (:content v))))))
+(defn summarize-opleidingseenheid
+  "Summarize the current period and identifying key of a RIO DOM element, or nil."
+  [^Element rio-obj]
+  (when rio-obj
+    (let [element-text   (fn [^Element element]
+                           (when (and element (.hasChildNodes element))
+                             (.getTextContent element)))
+          current-period (->> (.getElementsByTagNameNS rio-obj rio.loader/schema "*")
+                              xml-utils/node-list->seq
+                              (filter #(opleidingseenheidperiode-namen
+                                        (keyword (.getLocalName ^Element %))))
+                              (map (fn [^Element period]
+                                     (into {}
+                                           (keep (fn [^Node child]
+                                                   (let [tag (some-> (.getLocalName child) keyword)]
+                                                     (when (and (= rio.loader/schema (.getNamespaceURI child))
+                                                                (opleidingseenheid-summary-attributes tag))
+                                                       [tag (element-text child)]))))
+                                           (xml-utils/node-list->seq (.getChildNodes period)))))
+                              (filter #(neg? (compare (:begindatum %) (.format ooapi-utils/date-format (LocalDate/now)))))
+                              (sort-by :begindatum)
+                              last)
+          ooapi-id       (some (fn [kenmerk]
+                                (when (= "eigenOpleidingseenheidSleutel"
+                                         (element-text (xml-utils/get-in-dom kenmerk rio.loader/schema ["kenmerknaam"])))
+                                  (element-text (xml-utils/get-in-dom kenmerk rio.loader/schema ["kenmerkwaardeTekst"]))))
+                              (xml-utils/node-list->seq
+                               (.getElementsByTagNameNS rio-obj rio.loader/schema "kenmerken")))]
+      (assoc current-period :eigenOpleidingseenheidSleutel ooapi-id))))
 
 (defn summarize-eduspec [eduspec]
   (let [current-period (ooapi-utils/current-period (ooapi-utils/ooapi-to-periods eduspec :educationSpecification) :validFrom)]
@@ -82,6 +99,43 @@
      :internationaleNaam            (ooapi-utils/get-localized-value (:name current-period)),
      :omschrijving                  (ooapi-utils/get-localized-value (:description current-period) dutch-locales),
      :eigenOpleidingseenheidSleutel (:educationSpecificationId eduspec)}))
+
+(defn summarize-aangeboden-opleiding
+  "Summarize the current period, provider, location and cohorts of a RIO DOM element, or nil."
+  [^Element rio-obj]
+  (when rio-obj
+    (let [element-text   (fn [^Element element]
+                           (when (and element (.hasChildNodes element))
+                             (.getTextContent element)))
+          descendants    (xml-utils/node-list->seq
+                          (.getElementsByTagNameNS rio-obj rio.loader/schema "*"))
+          current-period (->> descendants
+                              (filter #(aangeboden-opleidingperiode-namen
+                                        (keyword (.getLocalName ^Element %))))
+                              (map (fn [^Element period]
+                                     (into {}
+                                           (keep (fn [^Node child]
+                                                   (let [tag (some-> (.getLocalName child) keyword)]
+                                                     (when (and (= rio.loader/schema (.getNamespaceURI child))
+                                                                (aangeboden-opleiding-summary-attributes tag))
+                                                       [tag (element-text child)]))))
+                                           (xml-utils/node-list->seq (.getChildNodes period)))))
+                              (filter #(neg? (compare (:begindatum %) (.format ooapi-utils/date-format (LocalDate/now)))))
+                              (sort-by :begindatum)
+                              last)
+          finder         #(element-text (xml-utils/get-in-dom rio-obj rio.loader/schema [(name %)]))
+          key-list       [:onderwijsaanbiedercode :onderwijslocatiecode]
+          rio-summary    (zipmap key-list (map finder key-list))
+          cohorten       (filter #(cohortnamen (keyword (.getLocalName ^Element %)))
+                                 descendants)]
+      (assoc (merge current-period rio-summary)
+             :cohorten (->> cohorten
+                            (mapv (fn [cohort]
+                                    (let [keys   [:cohortcode :beginAanmeldperiode :eindeAanmeldperiode]
+                                          finder #(element-text (xml-utils/get-in-dom cohort rio.loader/schema [(name %)]))]
+                                      (zipmap keys (map finder keys)))))
+                            (sort-by :cohortcode)
+                            vec)))))
 
 (defn summarize-course-program [course-program]
   (let [ooapi-type (if (:courseId course-program) :course :program)
@@ -104,43 +158,7 @@
                                        (ooapi-utils/get-localized-value dutch-locales))
      :cohorten                     (-> course-program :offerings)}))
 
-(defn- summarize-cohort-xml [cohort-xml-seq]
-  (let [keys [:cohortcode :beginAanmeldperiode :eindeAanmeldperiode]
-        finder #(xml-utils/find-content-in-xmlseq cohort-xml-seq %)]
-    (zipmap keys (map finder keys))))
-
 (defn summarize-offering [offering]
   {:cohortcode (-> offering :primaryCode :code)
    :beginAanmeldperiode (:enrollStartDate offering)
    :eindeAanmeldperiode (:enrollEndDate offering)})
-
-(defn summarize-opleidingseenheid [opleidingseenheid]
-  (let [periods     (xml-utils/find-all-in-xmlseq (xml-seq opleidingseenheid)
-                                                  #(and (opleidingseenheidperiode-namen (:tag %))
-                                                        %))
-        period-data (map #(extract-period-summary % opleidingseenheid-summary-attributes) periods)
-        current-period (ooapi-utils/current-period period-data :begindatum)
-        ooapi-id (kenmerk-content (xml-seq opleidingseenheid) "eigenOpleidingseenheidSleutel" :kenmerkwaardeTekst)]
-    (assoc current-period
-      :eigenOpleidingseenheidSleutel ooapi-id)))
-
-(defn summarize-aangebodenopleiding-xml [rio-obj]
-  (when rio-obj
-    (let [periods     (xml-utils/find-all-in-xmlseq (xml-seq rio-obj)
-                                                    #(and (aangeboden-opleidingperiode-namen (:tag %))
-                                                          %))
-          period-data (map #(extract-period-summary % aangeboden-opleiding-summary-attributes) periods)
-          current-period (ooapi-utils/current-period period-data :begindatum)
-
-          finder      (fn [k] (xml-utils/find-in-xmlseq (xml-seq rio-obj)
-                                                        #(and (= k (:tag %))
-                                                              (-> % :content first))))
-          key-list    [:onderwijsaanbiedercode :onderwijslocatiecode]
-          rio-summary (reduce (fn [m k] (assoc m k (finder k))) {} key-list)
-          cohorten    (xml-utils/find-all-in-xmlseq (xml-seq rio-obj)
-                                                    #(when (contains? cohortnamen (:tag %)) %))]
-      (assoc (merge current-period rio-summary)
-        :cohorten (->> cohorten
-                       (mapv (comp summarize-cohort-xml xml-seq))
-                       (sort-by :cohortcode)
-                       vec)))))

@@ -1,4 +1,4 @@
-.PHONY: all jar lint proof-specs test test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean
+.PHONY: all jar lint proof-specs test test-all-units test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean
 
 
 all: lint proof-specs test watson clean jar
@@ -6,11 +6,11 @@ all: lint proof-specs test watson clean jar
 jar: target/eduhub-rio-mapper-v5.jar target/eduhub-rio-mapper-v6.jar
 
 test-all-units:
-	clojure -M:test-v5
-	clojure -M:test-v6
-	clojure -M:test-common
-	clojure -M:test-v5-redis
-	clojure -M:test-v6-redis
+	clojure -M:test-v5 v5
+	clojure -M:test-v6 v6
+	clojure -M:test-common common
+	clojure -M:test-v5 v5-redis
+	clojure -M:test-v6 v6-redis
 
 lint:
 	clojure -M:lint

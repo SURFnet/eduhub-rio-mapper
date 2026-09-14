@@ -45,13 +45,13 @@
   },
   "modesOfDelivery": [
     "presential",
-    "distance-learning",
+    "online",
     "hybrid",
     "online"
   ],
   "duration": "P1DT30H4S",
   "qualificationAwarded": "Phd",
-  "link": "https://universiteit-van-morra.nl/programs/{{programmes/some}}",
+  "link": "https://universiteit-van-morra.nl/programs/{{programmes/bad-edu-location}}",
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -59,7 +59,7 @@
     }
   ],
   "validTo": "2023-12-18",
-  "modeOfStudy": "dual training",
+  "modeOfStudy": "dual_training",
   "assessment": [
     {
       "language": "en-GB",
@@ -127,9 +127,9 @@
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
     "educationLocationCode": "BAD-CODE",
-    "specificationId": "{{programmes/specification-parent-program}}",
+    "specificationId": "{{programmes/specification-invalid-data-parent}}",
     "sector": "secondary_vocational_education"
   },
-  "programmeId": "{{programmes/some}}",
+  "programmeId": "{{programmes/bad-edu-location}}",
   "programmeType": "programme"
 }
