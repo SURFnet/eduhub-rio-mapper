@@ -94,7 +94,7 @@
           "ext": {}
         }
       ],
-      "programme": "{{programmes/interaction-programme-some}}",
+      "programmeId": "{{programmes/interaction-programme-some}}",
       "consumer": {
         "consumerKey": "rio",
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
@@ -197,7 +197,7 @@
           "ext": {}
         }
       ],
-      "programme": "{{programmes/interaction-programme-some}}",
+      "programmeId": "{{programmes/interaction-programme-some}}",
       "consumer": {
         "consumerKey": "rio",
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
@@ -300,7 +300,7 @@
           "ext": {}
         }
       ],
-      "programme": "{{programmes/interaction-programme-some}}",
+      "programmeId": "{{programmes/interaction-programme-some}}",
       "consumer": {
         "consumerKey": "rio",
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
