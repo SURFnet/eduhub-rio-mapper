@@ -254,7 +254,8 @@
 
     (= :dom response-type)
     (do
-      (assert (rio-utils/goedgekeurd? resp-obj))
+      (when-not (rio-utils/goedgekeurd? resp-obj)
+        (throw (ex-info "Request not goedgekeurd" {:resp-obj resp-obj})))
       resp-obj)
 
     ;; CLI only

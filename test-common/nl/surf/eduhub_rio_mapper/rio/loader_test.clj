@@ -1,6 +1,6 @@
 ;; This file is part of eduhub-rio-mapper
 ;;
-;; Copyright (C) 2022 SURFnet B.V.
+;; Copyright (C) 2026 SURFnet B.V.
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU Affero General Public License
@@ -22,7 +22,8 @@
             [nl.surf.eduhub-rio-mapper.specs.rio :as rio]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.utils.xml-utils :as xml-utils])
-  (:import [org.w3c.dom Element]))
+  (:import [clojure.lang ExceptionInfo]
+           [org.w3c.dom Element]))
 
 (defn- response [approved content]
   (str "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns2=\"urn:rio\">"
@@ -83,7 +84,7 @@
   (testing "rejected response, such as a missing opleidingseenheid"
     (with-redefs [http-utils/send-http-request
                   (constantly {:body (response "false" "<ns2:foutmelding/>")})]
-      (is (thrown? AssertionError
+      (is (thrown? ExceptionInfo
                    (loader/find-eigen-opleidingseenheid-sleutel "1010O8815" getter "oin"))))))
 
 (deftest opleidingeenheid-exists-test

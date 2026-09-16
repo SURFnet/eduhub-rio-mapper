@@ -1,6 +1,6 @@
 ;; This file is part of eduhub-rio-mapper
 ;;
-;; Copyright (C) 2022 SURFnet B.V.
+;; Copyright (C) 2026 SURFnet B.V.
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU Affero General Public License
@@ -16,6 +16,37 @@
 ;; License along with this program.  If not, see
 ;; <https://www.gnu.org/licenses/>.
 
+;; Types:
+;; dom->duo-hiccup produces a hiccup-like representation of the RIO entity in a XML raadplegen response.
+;; Variables named rio-obj contain these structures
+;; It looks like:
+;; [:duo:hoOpleiding
+;;  [:duo:opleidingseenheidcode "1010O6466"]
+;;  [:duo:herkomstOpleiding "INSTELLING"]
+;;  [:duo:begindatum "2016-12-15"]
+;;  [:duo:einddatum "2025-04-25"]
+;;  [:duo:hoOpleidingPeriode
+;;   [:duo:begindatum "2016-12-15"]
+;;   [:duo:naamLang "NL VERTALING: Orthopedische Technologie"]
+;;   [:duo:naamKort "OT"]
+;;   [:duo:internationaleNaam "EN TRANSLATION: Orthopedische Technologie"]
+;;   [:duo:omschrijving "NL VERTALING: terrestrial systems. Examples include vegetation patterning, and dispersal by organisms, both at the global hydrological cycle contained in different watersheds in Valencia. The 4th semester revolves around two commonly asked questions: i) how can science inform the design tools."]
+;;   [:duo:kenmerken
+;;    [:duo:kenmerknaam "eigenaar"]
+;;    [:duo:kenmerkwaardeTekst "100B490"]]
+;;   [:duo:studielasteenheid "ECTS_PUNT"]]
+;;  [:duo:kenmerken
+;;   [:duo:kenmerknaam "soort"]
+;;   [:duo:kenmerkwaardeEnumeratiewaarde "VARIANT"]]
+;;  [:duo:waardedocumentsoort "DIPLOMA"]
+;;  [:duo:niveau "HBO-BA"]
+;;  [:duo:eqf "6"]
+;;  [:duo:nlqf "6"]
+;;  [:duo:ISCED "61"]
+;;  [:duo:graad "BACHELOR"]]
+;;
+;; soap/prepare-soap-call has a rio-sexp argument which is a vector of hiccup-like representations of XML meant for a request.
+;; soap/request-body wraps it in a duo:${action}_request and adds a few administrative elements (such as UUID and timestamp)
 (ns nl.surf.eduhub-rio-mapper.rio.conversion
   (:require [clojure.string :as str]
             [nl.surf.eduhub-rio-mapper.rio.helper :as rio-helper]
