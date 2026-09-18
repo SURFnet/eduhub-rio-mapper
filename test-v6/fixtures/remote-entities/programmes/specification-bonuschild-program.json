@@ -41,7 +41,6 @@
   ],
   "consumer": {
     "consumerKey": "rio",
-    "variantOf": "{{programmes/specification-bonusparent-program}}",
     "category": [
       "business_and_project_support",
       "hobby_and_leisure_time",
@@ -52,7 +51,7 @@
       "healthcare_and_sport",
       "tourism_hospitality_and_recreation"
     ],
-    "specificationType": "variant",
+    "specificationType": "private",
     "sector": "higher_professional_education"
   }
 }

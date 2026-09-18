@@ -2,7 +2,7 @@
   "level": "bachelor",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "programmeType": "specification",
-  "programmeId": "{{programmes/specification-joint}}",
+  "programmeId": "{{programmes/specification-missing-parent}}",
   "validFrom": "1950-09-20",
   "abbreviation": "1T",
   "validTo": "2060-08-28",
@@ -19,9 +19,9 @@
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{programmes/specification-joint}}"
+    "code": "{{programmes/specification-missing-parent}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-joint}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-missing-parent}}",
   "fieldsOfStudy": "0912",
   "description": [
     {
