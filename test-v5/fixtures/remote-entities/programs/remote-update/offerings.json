@@ -99,7 +99,7 @@
           "ext": {}
         }
       ],
-      "program": "{{programs/joint}}"
+      "program": "{{programs/remote-update}}"
     },
     {
       "offeringId": "fadefade-fade-fade-fade-fadefadefade",
@@ -195,7 +195,7 @@
           "ext": {}
         }
       ],
-      "program": "{{programs/joint}}"
+      "program": "{{programs/remote-update}}"
     },
     {
       "offeringId": "beadbead-bead-bead-bead-beadbeadbead",
@@ -291,7 +291,7 @@
           "ext": {}
         }
       ],
-      "program": "{{programs/joint}}"
+      "program": "{{programs/remote-update}}"
     }],
   "ext": {}
 }

@@ -42,18 +42,12 @@
   ],
   "consumer": {
     "consumerKey": "rio",
-    "variantOf": "{{programmes/specification-parent-program}}",
     "category": [
-      "business_and_project_support",
-      "hobby_and_leisure_time",
-      "technology_and_ict",
-      "transport_and_logistics",
-      "law",
       "agriculture_food_and_natural_environment",
       "healthcare_and_sport",
       "tourism_hospitality_and_recreation"
     ],
-    "specificationType": "variant",
+    "specificationType": "private",
     "sector": "higher_professional_education"
   }
 }

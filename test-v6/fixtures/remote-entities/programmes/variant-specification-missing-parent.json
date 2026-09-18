@@ -2,25 +2,26 @@
   "level": "bachelor",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "programmeType": "specification",
-  "programmeId": "{{programmes/specification-bonuschild-program}}",
+  "programmeId": "{{programmes/variant-specification-missing-parent}}",
   "validFrom": "2016-12-15",
   "abbreviation": "OT",
+  "validTo": "2025-04-25",
   "formalDocument": "diploma",
   "name": [
     {
       "language": "en-GB",
-      "value": "bonuschild-program education specification"
+      "value": "child-program education specification"
     },
     {
       "language": "nl-NL",
-      "value": "bonuschild-program education specification"
+      "value": "child-program education specification"
     }
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{programmes/specification-bonuschild-program}}"
+    "code": "{{programmes/variant-specification-missing-parent}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-bonuschild-program}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/variant-specification-missing-parent}}",
   "fieldsOfStudy": "0612",
   "description": [
     {
@@ -41,15 +42,10 @@
   ],
   "consumer": {
     "consumerKey": "rio",
-    "variantOf": "{{programmes/specification-bonusparent-program}}",
+    "variantOf": "{{programmes/specification-missing-parent}}",
     "category": [
-      "business_and_project_support",
-      "hobby_and_leisure_time",
-      "technology_and_ict",
-      "transport_and_logistics",
       "law",
       "agriculture_food_and_natural_environment",
-      "healthcare_and_sport",
       "tourism_hospitality_and_recreation"
     ],
     "specificationType": "variant",

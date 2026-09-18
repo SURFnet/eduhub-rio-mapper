@@ -94,7 +94,7 @@
           "ext": {}
         }
       ],
-      "programmeId": "{{programmes/joint}}",
+      "programmeId": "{{programmes/remote-update}}",
       "consumer": {
         "consumerKey": "rio",
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
@@ -197,7 +197,7 @@
           "ext": {}
         }
       ],
-      "programmeId": "{{programmes/joint}}",
+      "programmeId": "{{programmes/remote-update}}",
       "consumer": {
         "consumerKey": "rio",
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
@@ -300,7 +300,7 @@
           "ext": {}
         }
       ],
-      "programmeId": "{{programmes/joint}}",
+      "programmeId": "{{programmes/remote-update}}",
       "consumer": {
         "consumerKey": "rio",
         "explanationRequiredPermission": "Toestemming is vereist omdat we daarom vragen.",
