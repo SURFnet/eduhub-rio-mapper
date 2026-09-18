@@ -22,6 +22,7 @@
     [clojure.data.json :as json]
     [clojure.test :refer :all]
     [nl.jomco.http-status-codes :as http-status]
+    [nl.surf.eduhub-rio-mapper.rio.mutation-test-helper :as mutation-helper]
     [nl.surf.eduhub-rio-mapper.specs.ooapi :as ooapi]
     [nl.surf.eduhub-rio-mapper.v5.endpoints.status :as status]
     [nl.surf.eduhub-rio-mapper.v5.job :as job]
@@ -70,7 +71,7 @@
                                     :body   {:active    true
                                              :client_id "institution_client_id"}})]
       (binding [client/request mock-webhook]
-        (set-status-fn job :done {:aanleveren_opleidingseenheid_response {:opleidingseenheidcode "123"}})
+        (set-status-fn job :done (mutation-helper/successful-mutation "aanleveren_opleidingseenheid" "123"))
         (helper/wait-while-predicate nil? last-seen-request-atom 1)
         (let [req @last-seen-request-atom]
           (is (= {:status        "done"
@@ -102,8 +103,9 @@
                                              :client_id "institution_client_id"}})
           setup-test             (fn setup-test [job]
                                    (reset! last-seen-request-atom nil)
-                                   (set-status-fn job :done {:aanleveren_opleidingseenheid_response {:opleidingseenheidcode "1234O4321"}
-                                                             :http-messages http-messages})
+                                   (set-status-fn job :done
+                                                  (assoc (mutation-helper/successful-mutation "aanleveren_opleidingseenheid" "1234O4321")
+                                                         :http-messages http-messages))
                                    (helper/wait-while-predicate nil? last-seen-request-atom 1)
                                    (json/read-str (:body @last-seen-request-atom) {:key-fn keyword}))]
       (binding [client/request mock-webhook]

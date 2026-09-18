@@ -21,14 +21,13 @@
           "addressType": "teaching",
           "streetNumber": "84",
           "postalCode": "3465IQ",
-          "street": "Kappeyne van de Coppellolaan",
-          "additional": []
+          "street": "Kappeyne van de Coppellolaan"
         }
       ],
       "teachingLanguages": ["nld"],
       "modesOfDelivery": [
         "presential",
-        "distance-learning"
+        "online"
       ],
       "offeringType": "course",
       "resultExpected": false,
@@ -62,7 +61,7 @@
         }
       ],
       "link": "https://hogeschool-van-manderveen.nl/offerings/cafecafe-cafe-cafe-cafe-cafecafecafe",
-      "course": "{{courses/some}}",
+      "courseId": "{{courses/some}}",
       "otherCodes": [
         {
           "codeType": "offeringCode",
@@ -76,7 +75,7 @@
         "requiredPermissionRegistration": "no",
         "registrationStatus": "open"
       },
-      "programmeOfferingId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
+      "courseOfferingId": "cafecafe-cafe-cafe-cafe-cafecafecafe",
       "maxNumberStudents": 137,
       "abbreviation": "MB",
       "resultValueType": "0-100",

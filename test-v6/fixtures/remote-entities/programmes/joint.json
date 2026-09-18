@@ -45,7 +45,7 @@
   },
   "modesOfDelivery": [
     "presential",
-    "distance-learning",
+    "online",
     "hybrid",
     "online"
   ],
@@ -59,7 +59,7 @@
     }
   ],
   "validTo": "2023-12-18",
-  "modeOfStudy": "dual training",
+  "modeOfStudy": "dual_training",
   "assessment": [
     {
       "language": "en-GB",

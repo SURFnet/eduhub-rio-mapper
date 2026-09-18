@@ -17,13 +17,12 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.utils.xml-utils
-  (:require [clojure.data.xml :as clj-xml])
   (:import [java.io StringReader StringWriter]
            [javax.xml.parsers DocumentBuilderFactory]
            [javax.xml.transform Transformer TransformerFactory]
            [javax.xml.transform.dom DOMSource]
            [javax.xml.transform.stream StreamResult]
-           [org.w3c.dom Document Element]
+           [org.w3c.dom Document Element NodeList]
            [org.xml.sax InputSource]))
 
 (defn- do-string-writer [write]
@@ -69,6 +68,29 @@
 ;;; element: Single Element within a DOM tree
 ;;; edn: Clojure representation of XML document
 
+(defn sexp-element-with-tag?
+  "Return whether a hiccup-like XML s-expression has the given tag."
+  [element tag]
+  (and (sequential? element) (= tag (first element))))
+
+(defn sexp-child-elements
+  "Return direct child elements of an XML s-expression, ignoring text and attributes."
+  [element]
+  (filter sequential? (rest element)))
+
+(defn sexp-element-text
+  "Concatenate direct text strings in an XML s-expression, preserving whitespace.
+  Returns nil if there are no text strings; excludes text in nested elements."
+  [element]
+  (when-let [parts (seq (filter string? (rest element)))]
+    (apply str parts)))
+
+(defn sexp-child-text
+  "Return direct text from the first child element with the given tag, or nil if absent."
+  [element tag]
+  (some-> (some #(when (sexp-element-with-tag? % tag) %) (sexp-child-elements element))
+          sexp-element-text))
+
 (defn str->dom
   "Parses string with XML content into org.w3c.dom.Document."
   ^Document [^String xml]
@@ -85,13 +107,10 @@
    (do-string-writer
      #(.transform transformer (DOMSource. dom) (StreamResult. ^StringWriter %)))))
 
-(defn element->edn
-  "Convert org.w3c.dom.Element into simplified edn structure."
-  [^Element element]
-  (-> element
-      dom->str
-      clj-xml/parse-str
-      xml-event-tree->edn))
+(defn node-list->seq
+  "Return a lazy sequence of the nodes in a DOM NodeList, in their existing order."
+  [^NodeList nodes]
+  (map #(.item nodes %) (range (.getLength nodes))))
 
 (defn- dom-reducer-jvm [^Element element tagname]
   (when element
@@ -102,29 +121,15 @@
 
   Walks through the DOM-tree starting with element, choosing the first
   element with matching qualified name, returns `nil` if no matching
-  element is found."
-  ^Element [current-element tag-names]
-  (reduce dom-reducer-jvm current-element tag-names))
-
-(defn find-in-xmlseq [xmlseq pred]
-  (loop [xmlseq xmlseq]
-    (when-let [element (first xmlseq)]
-      (or (pred element)
-          (recur (rest xmlseq))))))
-
-(defn find-content-in-xmlseq [xmlseq k]
-  {:pre [(seq? xmlseq)
-         (:tag (first xmlseq))]}
-  (find-in-xmlseq xmlseq #(and (= k (:tag %)) (-> % :content first))))
-
-(defn find-all-in-xmlseq [xmlseq pred]
-  (loop [xmlseq xmlseq
-         acc    []]
-    (if-let [element (first xmlseq)]
-      (let [x (pred element)]
-        (recur (rest xmlseq) (if x (conj acc x) acc)))
-      acc)))
-
+  element is found. With namespace-uri, match local names in that namespace."
+  (^Element [current-element tag-names]
+   (reduce dom-reducer-jvm current-element tag-names))
+  (^Element [current-element namespace-uri local-names]
+   (reduce (fn [^Element element local-name]
+             (when element
+               (.item (.getElementsByTagNameNS element namespace-uri local-name) 0)))
+           current-element
+           local-names)))
 
 
 ;; A simple pretty printer for debugging purposes.  It's slow,

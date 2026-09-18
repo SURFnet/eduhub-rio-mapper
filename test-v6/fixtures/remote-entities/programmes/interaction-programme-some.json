@@ -41,7 +41,7 @@
   ],
   "modesOfDelivery": [
     "presential",
-    "distance-learning",
+    "online",
     "hybrid",
     "online"
   ],
@@ -78,7 +78,7 @@
       "value": "NL VERTALING: Als groep: 1. For both, a minimum of 4 individual assignments: 30%;- the grade for the three course elements is as follows:Individual assignment: 15%;Group assignment: 35%;Written exam: 50%;Tutorial assignments: pass/fail. ."
     }
   ],
-  "modeOfStudy": "dual training",
+  "modeOfStudy": "dual_training",
   "teachingLanguages": ["eng"],
   "level": "nt2-2",
   "levelOfQualification": "2",

@@ -17,8 +17,7 @@
 ;; <https://www.gnu.org/licenses/>.
 
 (ns nl.surf.eduhub-rio-mapper.rio.mutator
-  (:require [clojure.data.xml :as clj-xml]
-            [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as s]
             [nl.surf.eduhub-rio-mapper.specs.mutation :as mutation]
             [nl.surf.eduhub-rio-mapper.utils.http-utils :as http-utils]
             [nl.surf.eduhub-rio-mapper.utils.rio-utils :as rio-utils]
@@ -82,11 +81,11 @@
       (throw (ex-info (str "Rejected by RIO: " code ": " msg)
                       {:element element,
                        :code code,
-                       :retryable? (not (unrecoverable-codes code))}))))
-  (-> element
-      xml-utils/dom->str
-      clj-xml/parse-str
-      xml-utils/xml-event-tree->edn))
+                       :retryable? (not (unrecoverable-codes code))})))))
+
+(defn- extract-opleidingseenheid [el action]
+  (when (= action "aanleveren_opleidingseenheid")
+    {:opleidingscode (xml-utils/single-xml-unwrapper el "ns2:opleidingseenheidcode")}))
 
 (defn mutate! [{:keys [action sender-oin rio-sexp] :as mutation}
                {:keys [recipient-oin credentials update-url connection-timeout-millis]}]
@@ -94,19 +93,24 @@
          (s/valid? ::mutation/mutation-response mutation)
          (vector? (first rio-sexp))
          sender-oin]}
-  (-> {:url                update-url
-       :method             :post
-       :body               (soap/prepare-soap-call action
-                                                   rio-sexp
-                                                   (make-datamap sender-oin recipient-oin)
-                                                   credentials)
-       :headers            {"SOAPAction" (str contract "/" action)}
-       :connection-timeout connection-timeout-millis
-       :content-type       :xml}
-      (merge credentials)
-      (http-utils/send-http-request)
-      (get :body)
-      (xml-utils/str->dom)
-      (.getDocumentElement)
-      (xml-utils/get-in-dom ["SOAP-ENV:Body" (str "ns2:" action "_response")])
-      (guard-rio-mutate-response (str action))))
+  (let [el (-> {:url                update-url
+                :method             :post
+                :body               (soap/prepare-soap-call action
+                                                            rio-sexp
+                                                            (make-datamap sender-oin recipient-oin)
+                                                            credentials)
+                :headers            {"SOAPAction" (str contract "/" action)}
+                :connection-timeout connection-timeout-millis
+                :content-type       :xml}
+               (merge credentials)
+               (http-utils/send-http-request)
+               (get :body)
+               (xml-utils/str->dom)
+               (.getDocumentElement)
+               (xml-utils/get-in-dom ["SOAP-ENV:Body" (str "ns2:" action "_response")]))]
+    (guard-rio-mutate-response el (str action))
+    (merge (extract-opleidingseenheid el action)
+           {:goedgekeurd (case (xml-utils/single-xml-unwrapper el "ns2:requestGoedgekeurd")
+                           "true"  true
+                           "false" false
+                           nil     nil)})))

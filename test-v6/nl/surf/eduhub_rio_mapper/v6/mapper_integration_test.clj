@@ -97,24 +97,21 @@
                                          (slurp (io/resource "fixtures/rio/integration-prgspec-0.xml"))
                                          "programme"
                                          :oe))]
-    (is (nil? (:errors actual)))
-    (is (= "true" (-> actual :aanleveren_opleidingseenheid_response :requestGoedgekeurd)))))
+    (is (:goedgekeurd actual))))
 
 (deftest test-make-program-0
   (let [ooapi-loader (mock-ooapi-loader {:prgspec        "fixtures/ooapi/integration-prgspec-0.json"
                                          :program-course "fixtures/ooapi/integration-program-0.json"
                                          :offerings      "fixtures/ooapi/integration-program-offerings-0.json"})
-        {:keys [result _mutation]} (simulate-upsert ooapi-loader
-                                                   (slurp (io/resource "fixtures/rio/integratie-program-0.xml"))
-                                                   "programme"
-                                                    :ao)]
-    (is (nil? (:errors result)))
-    (is (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))))
+        actual (:result (simulate-upsert ooapi-loader
+                                         (slurp (io/resource "fixtures/rio/integratie-program-0.xml"))
+                                         "programme"
+                                         :ao))]
+    (is (:goedgekeurd actual))))
 
 (deftest test-joint-programme
   (let [ooapi-loader (mock-ooapi-loader program-req-0)
         upserter #(simulate-upsert % (slurp (io/resource "fixtures/rio/integratie-program-0.xml")) "programme" :ao)
-        goedgekeurd? (fn [result] (= "true" (-> result :aanleveren_aangebodenOpleiding_response :requestGoedgekeurd)))
         extract-opleidingseenheidsleutel (fn [mutation]
                                            (first
                                             (filter (fn [v] (and (vector? v) (= (first v) :duo:opleidingseenheidSleutel)))
@@ -132,30 +129,27 @@
       (let [ooapi-loader #(-> (ooapi-loader %)
                               (set-joint-programme-in-consumer nil))
             {:keys [result mutation]} (upserter ooapi-loader)]
-        (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O1234"]
                (extract-opleidingseenheidsleutel mutation)))
-        (is (goedgekeurd? result))))
+        (is (:goedgekeurd result))))
 
     (testing "normal joint programme"
       ;; after loading program, set jointProgramme to true
       (let [ooapi-loader #(-> (ooapi-loader %)
                               (set-joint-programme-in-consumer "1234O4323"))
             {:keys [result mutation]} (upserter ooapi-loader)]
-        (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O4323"]
                (extract-opleidingseenheidsleutel mutation)))
-        (is (goedgekeurd? result))))
+        (is (:goedgekeurd result))))
 
     (testing "joint-program-without-prgspec"
       (let [ooapi-loader #(-> (ooapi-loader %)
                               (set-joint-programme-in-consumer "1234O4323")
                               (dissoc :educationSpecification))
             {:keys [result mutation]} (upserter ooapi-loader)]
-        (is (nil? (:errors result)))
         (is (= [:duo:opleidingseenheidSleutel "1234O4323"]
                (extract-opleidingseenheidsleutel mutation)))
-        (is (goedgekeurd? result))))
+        (is (:goedgekeurd result))))
 
     (testing "joint-program-invalid-code"
       (let [ooapi-loader #(-> (ooapi-loader %)
@@ -166,11 +160,9 @@
 (deftest test-remove-prgspec-0
   (let [actual (simulate-delete "programme" :oe
                                 (slurp (io/resource "fixtures/rio/integration-deletion-prgspec-0.xml")))]
-    (is (nil? (:errors actual)))
-    (is (= "true" (-> actual :verwijderen_opleidingseenheid_response :requestGoedgekeurd)))))
+    (is (:goedgekeurd actual))))
 
 (deftest test-remove-program-0
   (let [actual (simulate-delete "programme" :ao
                                 (slurp (io/resource "fixtures/rio/integratie-deletion-program-0.xml")))]
-    (is (nil? (:errors actual)))
-    (is (= "true" (-> actual :verwijderen_aangebodenOpleiding_response :requestGoedgekeurd)))))
+    (is (:goedgekeurd actual))))
