@@ -277,9 +277,27 @@
           (str base "/" (str/replace loc k (str v))))
         (recur more)))))
 
+;; For all session keys X, there must not exist a session key Y such that X != Y and (str/starts-with? Y X)
+;; Otherwise the remote entities system will match X with both X and Y
+(defn- validated-session-entries
+  [session]
+  (let [skeys (sort-by count (keys session))]
+    (loop [[shorter-name & more] skeys]
+      (when shorter-name
+        (when-let [longer-name (some (fn [[name]]
+                                       (when (str/starts-with? name shorter-name)
+                                         name))
+                                     more)]
+          (throw (ex-info (str "Ambiguous remote entity names: '" shorter-name
+                               "' is a prefix of '" longer-name "'")
+                          {:name           shorter-name
+                           :ambiguous-name longer-name})))
+        (recur more)))))
+
 (defn remote-objects
   [session]
-  (let [i (input-files)]
+  (let [i               (input-files)]
+    (validated-session-entries session)
     ;; Sequence of strings like "/app/eduhub-mapper/test-v6/fixtures/remote-entities/courses/some.json"
     ;; location looks like: programmes/7f1567ac-a06b-47e7-9641-a9dc1451659a or programmes/8e54eca4-4096-48df-8735-6b41d114fd13/programme-offerings
     (map (fn [f]
