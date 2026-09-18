@@ -1,6 +1,6 @@
 {
   "level": "bachelor",
-  "parent": "6bbdff63-1cf9-4356-9030-198215a5b906",
+  "parent": "{{education-specifications/weekly-parent}}",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "educationSpecificationType": "program",
   "educationSpecificationId": "{{education-specifications/accredited-variant}}",
