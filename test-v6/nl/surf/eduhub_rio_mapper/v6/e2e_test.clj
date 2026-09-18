@@ -39,6 +39,15 @@
         body (json/write-str updated-entity)]
     (remote-helper/os-put-object info container-name {:path path, :body body})))
 
+(defn rio-object-exists?
+  "Return whether a RIO object still exists under its literal RIO code."
+  [rio-type code]
+  (when code
+    (= code
+       (case rio-type
+         :ao (get-in-xml (rio-aangebodenopleiding code) ["aangebodenOpleidingCode"])
+         :oe (get-in-xml (rio-opleidingseenheid code) ["opleidingseenheidcode"])))))
+
 (defn cleanup-entities!
   "Delete disposable entities in dependency order, even after partial failures.
   Restore their session key first if a test failed between unlink and relink."
@@ -46,8 +55,11 @@
   (doseq [[type fixture rio-type known-code] entities]
     (try
       (let [id (str (ooapi-id type fixture))
-            code (or (rio-resolve rio-type id) known-code)]
-        (when code
+            resolved-code (rio-resolve rio-type id)
+            code (or resolved-code known-code)]
+        ;; A failed resolve can mean either that the object was unlinked or that
+        ;; it was already deleted. Only use the remembered code in the former case.
+        (when (or resolved-code (rio-object-exists? rio-type code))
           (is (job-done? (post-job :link code type (ooapi-id type fixture))))
           (is (job-done? (post-job :delete type fixture)))
           (is (nil? (rio-resolve rio-type id)))))
@@ -341,7 +353,7 @@
       (update-in-remote-entity :programmes "specification-bonusparent-program" #(dissoc % :validTo))))))
 
 (deftest ^:v6-e2e test-insert-variant-eduspecs
-  (let [job (post-job :upsert :programmes "specification-missing-parent-variant")]
+  (let [job (post-job :upsert :programmes "variant-specification-missing-parent")]
     (is (job-error? job))
     (is (= (str "No 'opleidingseenheid' found in RIO for the parent of this variant with eigensleutel: "
                 (ooapi-id :programmes "specification-missing-parent"))
