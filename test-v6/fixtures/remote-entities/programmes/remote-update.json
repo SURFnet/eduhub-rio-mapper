@@ -51,7 +51,7 @@
   ],
   "duration": "P1DT30H4S",
   "qualificationAwarded": "Phd",
-  "link": "https://universiteit-van-morra.nl/programs/{{programmes/joint}}",
+  "link": "https://universiteit-van-morra.nl/programs/{{programmes/remote-update}}",
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -131,6 +131,6 @@
     "specificationId": "{{programmes/specification-parent-program}}",
     "sector": "secondary_vocational_education"
   },
-  "programmeId": "{{programmes/joint}}",
+  "programmeId": "{{programmes/remote-update}}",
   "programmeType": "programme"
 }

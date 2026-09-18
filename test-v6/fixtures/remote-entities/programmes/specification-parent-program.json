@@ -43,14 +43,11 @@
   "consumer": {
     "consumerKey": "rio",
     "category": [
-      "business_and_project_support",
-      "education",
       "cross_sectoral",
       "language_and_culture",
       "technology_and_ict"
     ],
-    "variantIds": [ "{{programmes/specification-child-program}}" ],
-    "specificationType": "programme",
+    "specificationType": "private",
     "sector": "higher_professional_education"
   }
 }
