@@ -214,6 +214,12 @@
                                                  ["particuliereOpleiding" "begindatum"])))
       (is (empty? (rio-relations parent-code)))
       (is (job-without-diffs? (post-job :dry-run/upsert :programmes "specification-parent-program")))
+      ;; Restore the parent period before creating the programme that starts in 2008.
+      (update-in-remote-entity :programmes "specification-parent-program"
+                               #(assoc % :validFrom "1950-09-20"))
+      (is (job-done? (post-job :upsert :programmes "specification-parent-program")))
+      (is (= "1950-09-20" (get-in-xml (rio-opleidingseenheid parent-code)
+                                      ["particuliereOpleiding" "begindatum"])))
       (is (job-done? (post-job :upsert :programmes "specification-bonusparent-program")))
       (let [code (rio-resolve :oe (str (ooapi-id :programmes "specification-bonusparent-program")))]
         (is (= "" (get-in-xml (rio-opleidingseenheid code) ["particuliereOpleiding" "einddatum"])))
