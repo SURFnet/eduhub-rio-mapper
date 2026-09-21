@@ -1,5 +1,4 @@
-.PHONY: all jar lint proof-specs test test-all-units test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean
-
+.PHONY: all jar lint proof-specs test test-rio test-all-units test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean
 
 all: lint proof-specs test watson clean jar
 
@@ -17,6 +16,9 @@ lint:
 
 proof-specs:
 	clojure -M:proof-specs
+
+test-rio:
+	clojure -M:mapper test-rio rio-mapper-dev.jomco.nl --no-capture-output
 
 test: test-v5 test-v6
 
