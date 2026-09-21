@@ -53,9 +53,20 @@
 ;; Like map {}.to_h in ruby. Easier to read than reduce/assoc
 (defn map-hash [func coll] (into {} (map func coll)))
 
-;; Resolve base for each entity in hash
+;; Resolve all bases, preserving base-before-extension order.
 (defn map-and-resolve-base [coll]
-  (map-hash (resolve-base coll) coll))
+  (loop [entities coll]
+    (let [unresolved (filter (fn [[_ [attrs]]] (:base attrs)) entities)]
+      (if (empty? unresolved)
+        entities
+        (do
+          (doseq [[type-name [{:keys [base]}]] unresolved]
+            (when-not (contains? entities base)
+              (throw (ex-info "Unknown XSD base type" {:type type-name :base base}))))
+          (let [resolved (map-hash (resolve-base entities) entities)]
+            (when (= entities resolved)
+              (throw (ex-info "Cyclic XSD inheritance" {:types (mapv first unresolved)})))
+            (recur resolved)))))))
 
 ;; Puts list of properties with 'kenmerken' type into properties list at 'kenmerkenlijst' position.
 (defn merge-kenmerken [props props-kenmerk]
@@ -70,7 +81,7 @@
                    attrs))
 
 (defn process-xsd []
-  (let [d (clj-xml/parse-str (subs (slurp "resources/DUO_RIO_Beheren_OnderwijsOrganisatie_V4.xsd") 1)) ; remove BOM with subs
+  (let [d (clj-xml/parse-str (str/replace-first (slurp "resources/DUO_RIO_Beheren_OnderwijsOrganisatie_V4.xsd") #"^\uFEFF" ""))
         name-to-type (reduce
                        (fn [h {:keys [attrs]}] (assoc h (:name attrs) (:type attrs)))
                        {}
@@ -105,10 +116,7 @@
                                          (empty? (first (rest (first cs)))))
                                   [k [a (last (first cs))]]
                                   all)))
-                    ;; Keep resolving base classes in tree until no type has a base. TODO Use recursion
-                    (map-and-resolve-base)
-                    (map-and-resolve-base)
-                    (map-and-resolve-base)
+                    ;; Resolve all inheritance before merging kenmerken.
                     (map-and-resolve-base)
                     ;; Remove empty children
                     (map-hash (fn [[k v]] [k (vec (filter seq (last v)))]))
