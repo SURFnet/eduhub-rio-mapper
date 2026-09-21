@@ -285,7 +285,7 @@
               program-code)
            "aangebodenopleidingcode is the same as the OOAPI id")
        (set! last-xml (rio-aangebodenopleiding program-code))
-       (is (= #{"FRA" "DEU"}
+       (is (= #{"FRA"}
               (set (kenmerken-values-aangeboden-opleiding last-xml "voertaal" :kenmerkwaardeEnumeratiewaarde))))
        (is (= "2008-10-18"
               (get-in-xml last-xml ["aangebodenParticuliereOpleiding" "aangebodenParticuliereOpleidingPeriode" "begindatum"])))

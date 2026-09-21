@@ -125,10 +125,7 @@
     "studyChoiceCheck": "no_study_choice_check",
     "consumerKey": "rio",
     "lastStartDate": "2022-08-24",
-    "teachingLanguages": [
-      "fra",
-      "deu"
-    ],
+    "teachingLanguages": ["fra"],
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
     "educationLocationCode": "107X215",
