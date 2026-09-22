@@ -32,9 +32,6 @@
   {:name "eigenOpleidingseenheidSleutel",
    :type "OpleidingExterneIdentificatie-v01",
    :kenmerk true}
-  {:name "categorie",
-   :type "NfoOpleidingscategorie-v01",
-   :kenmerk true}
   {:ref "opleidingseenheidPeriode", :type "OpleidingseenheidPeriode"}
   {:name "waardedocumentsoort", :type "SoortWaardedocument-v01"}
   {:name "niveau", :type "Niveaucode-v06"}
