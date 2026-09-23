@@ -51,7 +51,7 @@
   ],
   "duration": "P1DT30H4S",
   "qualificationAwarded": "Phd",
-  "link": "https://universiteit-van-morra.nl/programs/{{programmes/some}}",
+  "link": "https://universiteit-van-morra.nl/programs/{{programmes/remote-update}}",
   "otherCodes": [
     {
       "codeType": "crohoCreboCode",
@@ -124,14 +124,13 @@
     "deficiency": "deficiencies",
     "studyChoiceCheck": "no_study_choice_check",
     "consumerKey": "rio",
-    "lastStartDate": "2022-08-24",
-    "teachingLanguages": ["fra"],
     "requirementsActivities": "requirements",
     "propaedeuticPhase": "no_propaedeutic_phase",
+    "jointProgramme": true,
     "educationLocationCode": "107X215",
     "specificationId": "{{programmes/specification-parent-program}}",
     "sector": "secondary_vocational_education"
   },
-  "programmeId": "{{programmes/some}}",
+  "programmeId": "{{programmes/remote-update}}",
   "programmeType": "programme"
 }

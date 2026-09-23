@@ -1,8 +1,7 @@
 {
   "level": "bachelor",
-  "parent": "{{education-specifications/parent-program}}",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
-  "educationSpecificationType": "program",
+  "educationSpecificationType": "privateProgram",
   "educationSpecificationId": "{{education-specifications/child-program}}",
   "validFrom": "2016-12-15",
   "abbreviation": "OT",
@@ -51,7 +50,6 @@
   "consumers": [
     {
       "consumerKey": "rio",
-      "educationSpecificationSubType": "variant",
       "category": [
         "business_and_project_support",
         "hobby_and_leisure_time",

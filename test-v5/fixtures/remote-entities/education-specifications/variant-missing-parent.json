@@ -1,10 +1,12 @@
 {
   "level": "bachelor",
+  "parent": "{{education-specifications/missing-parent}}",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
-  "educationSpecificationType": "privateProgram",
-  "educationSpecificationId": "{{education-specifications/bonuschild-program}}",
+  "educationSpecificationType": "program",
+  "educationSpecificationId": "{{education-specifications/variant-missing-parent}}",
   "validFrom": "2016-12-15",
   "abbreviation": "OT",
+  "validTo": "2025-04-25",
   "learningOutcomes": [
     [
       {
@@ -22,18 +24,18 @@
   "name": [
     {
       "language": "en-GB",
-      "value": "bonuschild-program education specification"
+      "value": "child-program education specification"
     },
     {
       "language": "nl-NL",
-      "value": "bonuschild-program education specification"
+      "value": "child-program education specification"
     }
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{education-specifications/bonuschild-program}}"
+    "code": "{{education-specifications/variant-missing-parent}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/bonuschild-program}}",
+  "link": "https://universiteit-van-boxtel.nl/education-specifications/{{education-specifications/variant-missing-parent}}",
   "fieldsOfStudy": "0612",
   "description": [
     {
@@ -49,6 +51,7 @@
   "consumers": [
     {
       "consumerKey": "rio",
+      "educationSpecificationSubType": "variant",
       "category": [
         "business_and_project_support",
         "hobby_and_leisure_time",

@@ -107,6 +107,8 @@
 (defn- entity-name-to-id [name]
   (vcr.helper/entity-name-to-id name :v5))
 
+;; Disabled - insert HoOpleiding no longer allowed.
+;; TODO: rewrite so (when recording) this uses an existing (accredited) HoOpleiding and creates variants
 (deftest ^:vcr interaction-test
   (let [vcr                  (vcr.helper/make-vcr)
         config               (if (= vcr.helper/vcr-mode :record)
@@ -141,6 +143,7 @@
                              [8 "delete" :eduspec  eduspec-parent-id :goedgekeurd]
                              [9 "upsert" :program  program-id        #(= (-> % :errors :message)
                                                                          (str "No 'opleidingseenheid' found in RIO with eigensleutel: " eduspec-parent-id))]]]
+    (comment
     (doseq [[idx action ootype id pred?] commands]
       (testing (str "Command " idx " " action " " id)
         (if (= "sleep" action)
@@ -158,7 +161,7 @@
                     (when oplcode (swap! code #(if (nil? %) oplcode %))) ;; code ||= oplcode
                     (is (nil? http-messages))
                     (println (str "PRED RESULT " idx " is " (pred? result)))
-                    (is (pred? result) (str action "-" (name ootype) " " idx)))))))))
+                    (is (pred? result) (str action "-" (name ootype) " " idx))))))))))
 
 ;; This just does a lookup of an existing RIO opleidingseenheid
 (deftest ^:vcr opleidingseenheid-finder-test

@@ -95,6 +95,10 @@
   [{:keys [consumer] :as progspec}]
   (when (nil? (:specificationType consumer))
     (throw (ex-info "No specificationType in rio-consumer" {:rio-consumer consumer})))
+  (when (and (= "OPLEIDING" (soort-mapping progspec))
+             (str/blank? (:rioCode progspec)))
+    (throw (ex-info "Cannot create a hoOpleiding without an opleidingseenheidcode"
+                    {:programme-id (:programmeId progspec)})))
   (-> (programme-specification-adapter progspec consumer)
       rio-helper/wrapper-periodes-cohorten
       (rio-helper/->xml (programme-specification-type-mapping (:specificationType consumer)))))

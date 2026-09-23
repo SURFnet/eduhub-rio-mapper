@@ -48,8 +48,7 @@
       "language_and_culture",
       "technology_and_ict"
     ],
-    "variantIds": [ "{{programmes/specification-bonuschild-program}}" ],
-    "specificationType": "programme",
+    "specificationType": "private",
     "sector": "higher_professional_education"
   }
 }

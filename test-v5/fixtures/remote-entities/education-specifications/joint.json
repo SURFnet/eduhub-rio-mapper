@@ -1,6 +1,5 @@
 {
   "level": "bachelor",
-  "children": ["{{education-specifications/child-program}}"],
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "educationSpecificationType": "program",
   "educationSpecificationId": "{{education-specifications/joint}}",

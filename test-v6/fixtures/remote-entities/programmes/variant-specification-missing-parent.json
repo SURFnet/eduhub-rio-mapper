@@ -2,7 +2,7 @@
   "level": "bachelor",
   "organization": "cafecafe-cafe-cafe-cafe-cafecafecafe",
   "programmeType": "specification",
-  "programmeId": "{{programmes/specification-child-program}}",
+  "programmeId": "{{programmes/variant-specification-missing-parent}}",
   "validFrom": "2016-12-15",
   "abbreviation": "OT",
   "validTo": "2025-04-25",
@@ -19,9 +19,9 @@
   ],
   "primaryCode": {
     "codeType": "identifier",
-    "code": "{{programmes/specification-child-program}}"
+    "code": "{{programmes/variant-specification-missing-parent}}"
   },
-  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/specification-child-program}}",
+  "link": "https://universiteit-van-boxtel.nl/programmes/{{programmes/variant-specification-missing-parent}}",
   "fieldsOfStudy": "0612",
   "description": [
     {
@@ -42,6 +42,7 @@
   ],
   "consumer": {
     "consumerKey": "rio",
+    "variantOf": "{{programmes/specification-missing-parent}}",
     "category": [
       "business_and_project_support",
       "hobby_and_leisure_time",
@@ -52,7 +53,7 @@
       "healthcare_and_sport",
       "tourism_hospitality_and_recreation"
     ],
-    "specificationType": "private",
+    "specificationType": "variant",
     "sector": "higher_professional_education"
   }
 }
