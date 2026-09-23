@@ -127,6 +127,8 @@
     (is (= "application/vnd.oeapi+json;version=6.0;consumer=rio;consumer-version=6.0"
            (get-in @sent-request [:headers "Accept"])))))
 
+;; Disabled - insert HoOpleiding no longer allowed.
+;; TODO: rewrite so (when recording) this uses an existing (accredited) HoOpleiding and creates variants
 (deftest ^:vcr interaction-test
   (let [vcr                  (vcr.helper/make-vcr)
         config               (if (= vcr.helper/vcr-mode :record)
@@ -157,7 +159,8 @@
                              [7 "delete" :programme :ao program-id        :goedgekeurd]
                              [8 "delete" :programme :oe prgspec-parent-id :goedgekeurd]
                              [9 "upsert" :programme :ao program-id        #(= (-> % :errors :message)
-                                                                         (str "No 'opleidingseenheid' found in RIO with eigensleutel: " prgspec-parent-id))]]]
+                                                                              (str "No 'opleidingseenheid' found in RIO with eigensleutel: " prgspec-parent-id))]]]
+    (comment
     (doseq [[idx action ootype rio-type id pred?] commands]
       (testing (str "Command " idx " " action " " id)
         (if (= "sleep" action)
@@ -173,7 +176,7 @@
               (when oplcode (swap! code #(if (nil? %) oplcode %))) ;; code ||= oplcode
               (is (nil? http-messages))
               (println (str "PRED RESULT " idx " is " (pred? result)))
-              (is (pred? result) (str action "-" (name ootype) " " idx)))))))))
+              (is (pred? result) (str action "-" (name ootype) " " idx))))))))))
 
 ;; This just does a lookup of an existing RIO opleidingseenheid
 (deftest ^:vcr opleidingseenheid-finder-test
