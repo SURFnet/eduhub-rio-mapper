@@ -5,7 +5,7 @@
    "study_choice_check_mandatory" "STUDIEKEUZE_CHECK_VERPLICHT"},
   "categorie"
   {"agriculture_food_and_natural_environment"
-   "LANDBOUW_VOEDSEL_EN_NATUURLIJKE_OMGEVING",
+   "LANDBW_VOEDSEL_EN_NAT_OMGEVING",
    "law" "RECHT",
    "tourism_hospitality_and_recreation" "TOERISME_HORECA_EN_RECREATIE",
    "economy" "ECONOMIE",
@@ -13,7 +13,7 @@
    "healthcare_and_sport" "GEZONDHEID_ZORG_EN_SPORT",
    "cross_sectoral" "SECTOROVERSTIJGEND",
    "management_and_project_management"
-   "MANAGEMENT_EN_PROJECTMANAGEMENT",
+   "MANAGEMENT_EN_PROJECTMNGT",
    "nature" "NATUUR",
    "hobby_and_leisure_time" "HOBBY_EN_VRIJE_TIJD",
    "transport_and_logistics" "TRANSPORT_EN_LOGISTIEK",
