@@ -25,6 +25,7 @@
             [nl.surf.eduhub-rio-mapper.v5.ooapi.LanguageTypedString :as-alias LanguageTypedString]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.LanguageTypedStringEN :as-alias LanguageTypedStringEN]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.LanguageTypedStringNL :as-alias LanguageTypedStringNL]
+            [nl.surf.eduhub-rio-mapper.v5.ooapi.LearningOutcome :as-alias LearningOutcome]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.rio-consumer :as-alias rio-consumer]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.StudyLoadDescriptor :as-alias StudyLoadDescriptor]
             [nl.surf.eduhub-rio-mapper.v5.utils.ooapi :as ooapi-utils])
@@ -143,7 +144,18 @@
 ;; is 4 digits, so it accepts detailed fields. See also
 ;; `nl.surf.eduhub-rio-mapper.rio/narrow-isced`
 (s/def ::fieldsOfStudy (re-spec #"\d{1,4}"))
-(s/def ::learningOutcomes (s/coll-of ::LanguageTypedStrings))
+;; Learning outcomes have no maximum length, otherwise same rules as
+;; LanguageTypedString.
+(s/def ::LearningOutcome/value
+  (s/and string?
+         seq
+         #(not (looks-like-html? %))))
+
+(s/def ::LearningOutcome
+  (s/keys :req-un [::LanguageTypedString/language
+                   ::LearningOutcome/value]))
+
+(s/def ::learningOutcomes (s/coll-of (s/coll-of ::LearningOutcome)))
 (s/def ::level enums/levels)
 (s/def ::levelOfQualification #{"1" "2" "3" "4" "4+" "5" "6" "7" "8"})
 
