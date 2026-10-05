@@ -23,9 +23,9 @@
             [nl.surf.eduhub-rio-mapper.v5.ooapi.common.LongLanguageTypedString :as-alias LongLanguageTypedString]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.enums :as enums]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.LanguageTypedString :as-alias LanguageTypedString]
-            [nl.surf.eduhub-rio-mapper.v5.ooapi.LearningOutcome :as-alias LearningOutcome]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.LanguageTypedStringEN :as-alias LanguageTypedStringEN]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.LanguageTypedStringNL :as-alias LanguageTypedStringNL]
+            [nl.surf.eduhub-rio-mapper.v5.ooapi.LearningOutcome :as-alias LearningOutcome]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.rio-consumer :as-alias rio-consumer]
             [nl.surf.eduhub-rio-mapper.v5.ooapi.StudyLoadDescriptor :as-alias StudyLoadDescriptor]
             [nl.surf.eduhub-rio-mapper.v5.utils.ooapi :as ooapi-utils])
