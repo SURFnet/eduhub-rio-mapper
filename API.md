@@ -112,10 +112,15 @@ De `status` eigenschap kan één van de volgende waarden hebben:
 - `error`
 
   De job is mislukt omdat de gegevens niet compatibel zijn of
-  geaccepteerd worden door DUO.
+  geaccepteerd worden door DUO, of omdat er een verbinding niet
+  opgezet kon worden door een certificaatprobleem (bijvoorbeeld een
+  verlopen certificaat).
 
-Een *error* heeft als extra eigenschap `phase` welke aangeeft in welke
-fase de job mislukt en `message` met de foutmelding.
+Een *error* of *time-out* heeft als extra eigenschappen `phase`, dat
+aangeeft in welke fase de job is mislukt, `message`, met de daadwerkelijke
+foutmelding, en `error-id` waarmee de bijbehorende logregels teruggevonden
+kunnen worden.  Bij verbindingsproblemen noemt `message` de URL die niet
+bereikt kon worden.
 
 Als de in `X-Callback` een URL van een webhook meegegeven bij het aanmaken van de job, wordt hier een `POST` op uitgevoerd zodra de job status `done`, `error` of `time-out` heeft bereikt.  Hierbij wordt de *status* meegegeven.  Als de webhook niet met een HTTP succes status antwoordt, wordt het na 30 seconden nog een keer geprobeerd.  Er worden 3 pogingen gedaan per job.
 

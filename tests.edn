@@ -1,6 +1,10 @@
 #kaocha/v1
-{:tests [{:id         :common
-          :test-paths ["test-common"]}
+{:tests [{:id                      :common
+          :test-paths              ["test-common"]
+          :kaocha.filter/skip-meta [:network]}
+         {:id                       :common-network
+          :test-paths               ["test-common"]
+          :kaocha.filter/focus-meta [:network]}
 
          {:id                      :v5
           :test-paths              ["test-v5"]
