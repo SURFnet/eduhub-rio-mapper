@@ -94,7 +94,7 @@ De `status` eigenschap kan één van de volgende waarden hebben:
 - `pending`
 
   De job staat in de wachtrij.
-  
+
 - `in-progress`
 
   De job wordt uitgevoerd.
@@ -103,12 +103,12 @@ De `status` eigenschap kan één van de volgende waarden hebben:
 
   De job is uitgevoerd.  Eventueel bevat het antwoordt extra gegevens
   zoals `opleidingseenheidcode`, dit is afhankelijk van het type job.
-  
+
 - `time-out`
 
   De job is mislukt na herhaaldelijke poging op of het OOAPI of DUO
   endpoint dat hiermee gemoeid is.
-  
+
 - `error`
 
   De job is mislukt omdat de gegevens niet compatibel zijn of
@@ -172,8 +172,8 @@ opgenomen.
 
 ### Link
 
-Via de link-call wordt de eigen opleidingssleutel aangepast van het object 
-met het gegeven type en rio-code. 
+Via de link-call wordt de eigen opleidingssleutel aangepast van het object
+met het gegeven type en rio-code.
 
 ```
 POST /job/link/1234O4321/education-specifications/ffeeddcc-bbaa-0099-8877-665544332211
@@ -271,7 +271,7 @@ Als de server gestart is met `STORE_HTTP_REQUESTS` variabel gezet op
 OOAPI en RIO endpoint gelogd te krijgen.  Om deze gegevens te krijgen
 moet de query parameter `http-messages=true` doorgegeven worden bij
 het aanmaken van een job en wordt het status object uitgebreid met
-`http-messages`. De http-messages array bevat maps met "req" en "res" 
+`http-messages`. De http-messages array bevat maps met "req" en "res"
 keys. Wanneer het een json response betreft, dan bevat "res" naast "body"
 (de string-representatie van de json) ook een "json-body" met de json zelf.
 
