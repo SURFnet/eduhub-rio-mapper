@@ -24,9 +24,6 @@ scrape_configs:
       - targets: ["worker:9464"]
         labels:
           service: worker
-      - targets: ["api:3000"]
-        labels:
-          service: api
       - targets: ["api:9464"]
         labels:
           service: api

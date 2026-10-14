@@ -22,7 +22,8 @@ services:
       CLIENTS_INFO_PATH: /test/test-clients.json
       REDIS_URI: redis://redis
       OTEL_METRICS_EXPORTER: prometheus
-      OTEL_EXPORTER_PROMETHEUS_ENDPOINT: http://localhost:9464/metrics
+      OTEL_EXPORTER_PROMETHEUS_HOST: 0.0.0.0
+      OTEL_EXPORTER_PROMETHEUS_PORT: 9464
       OTEL_SERVICE_NAME: edumapper-worker
       OTEL_LOGS_EXPORTER: none
       OTEL_TRACES_EXPORTER: none
@@ -43,7 +44,8 @@ services:
       CLIENTS_INFO_PATH: /test/test-clients.json
       REDIS_URI: redis://redis
       OTEL_METRICS_EXPORTER: prometheus
-      OTEL_EXPORTER_PROMETHEUS_ENDPOINT: http://localhost:9464/metrics
+      OTEL_EXPORTER_PROMETHEUS_HOST: 0.0.0.0
+      OTEL_EXPORTER_PROMETHEUS_PORT: 9464
       OTEL_SERVICE_NAME: edumapper-api
       OTEL_LOGS_EXPORTER: none
       OTEL_TRACES_EXPORTER: none

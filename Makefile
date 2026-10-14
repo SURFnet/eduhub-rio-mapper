@@ -1,13 +1,22 @@
-.PHONY: all jar lint proof-specs test test-rio test-all-units test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean
+.PHONY: all jar lint proof-specs test test-rio test-all-units test-redis test-e2e test-v5 record-v5 record-v6 test-v6 test-common create-common-test watson antq clean otel-javaagent
 
 all: lint proof-specs test watson clean jar
 
 jar: target/eduhub-rio-mapper-v5.jar target/eduhub-rio-mapper-v6.jar
 
+otel-javaagent: target/opentelemetry-javaagent.jar
+
+# The OpenTelemetry javaagent is pinned in the :deps-to-scan alias in
+# deps.edn and fetched from maven (with checksum verification) by the
+# clojure CLI
+target/opentelemetry-javaagent.jar: deps.edn
+	mkdir -p target
+	cp "$$(clojure -Spath -A:deps-to-scan | tr ':' '\n' | grep '/opentelemetry-javaagent-[^/]*\.jar$$')" $@
+
 test-all-units:
 	clojure -M:test-v5 v5
 	clojure -M:test-v6 v6
-	clojure -M:test-common common
+	clojure -M:test-common:deps-to-scan common
 	clojure -M:test-v5 v5-redis
 	clojure -M:test-v6 v6-redis
 
@@ -55,7 +64,7 @@ record-v6:
 	OOAPI_VERSION=v6 VCR_RECORD=true clojure -M:test-v6 v6-vcr
 
 test-common:
-	clojure -M:test-common  common
+	clojure -M:test-common:deps-to-scan common
 
 export CLJ_WATSON_NVD_API_KEY=dummy # note: required but not used
 export CLJ_WATSON_NVD_API_DATAFEED_URL=https://dependency-check.github.io/DependencyCheck_Builder/nvd_cache/nvdcve-{0}.json.gz

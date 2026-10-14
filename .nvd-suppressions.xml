@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
-    <notes>False positive, applies to js version of opentelemetry.</notes>
+    <notes>False positive, applies to js version of opentelemetry. Matches io.opentelemetry/opentelemetry-api(-incubator) pulled in by clj-otel-api.</notes>
     <cve>CVE-2026-54285</cve>
   </suppress>
   <suppress>

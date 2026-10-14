@@ -263,12 +263,26 @@ The *worker* will add extra metrics:
 This agent is configured using the following environment variables:
 
  - `OTEL_METRICS_EXPORTER`
- - `OTEL_EXPORTER_PROMETHEUS_ENDPOINT`
+ - `OTEL_EXPORTER_PROMETHEUS_HOST` (defaults to `localhost` since agent
+   2.29; set it to `0.0.0.0` to expose the metrics outside the container)
+ - `OTEL_EXPORTER_PROMETHEUS_PORT` (defaults to `9464`)
  - `OTEL_SERVICE_NAME`
  - `OTEL_LOGS_EXPORTER`
  - `OTEL_TRACES_EXPORTER`
 
  For example values see [docker-compose.yml](./docker-compose.yml).
+
+The agent version is pinned in the `:deps-to-scan` alias in `deps.edn`
+(so `make antq` reports new releases and `make watson` scans it for
+CVEs); `make otel-javaagent` copies it to
+`target/opentelemetry-javaagent.jar` for the docker images.  The agent
+only bridges the OpenTelemetry API up to its own bundled version, so
+upgrade it when `clj-otel-api` pulls in a newer `opentelemetry-api`;
+`make test-common` fails when they are out of step.
+
+Since agent 2.29 the Prometheus exporter no longer adds a `_ratio`
+suffix to metrics with unit `1`, so `jvm_cpu_recent_utilization_ratio`
+is now exported as `jvm_cpu_recent_utilization`.
 
 # Reporting vulnerabilities
 
