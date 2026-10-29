@@ -94,7 +94,7 @@ De `status` eigenschap kan één van de volgende waarden hebben:
 - `pending`
 
   De job staat in de wachtrij.
-  
+
 - `in-progress`
 
   De job wordt uitgevoerd.
@@ -103,19 +103,24 @@ De `status` eigenschap kan één van de volgende waarden hebben:
 
   De job is uitgevoerd.  Eventueel bevat het antwoordt extra gegevens
   zoals `opleidingseenheidcode`, dit is afhankelijk van het type job.
-  
+
 - `time-out`
 
   De job is mislukt na herhaaldelijke poging op of het OOAPI of DUO
   endpoint dat hiermee gemoeid is.
-  
+
 - `error`
 
   De job is mislukt omdat de gegevens niet compatibel zijn of
-  geaccepteerd worden door DUO.
+  geaccepteerd worden door DUO, of omdat er een verbinding niet
+  opgezet kon worden door een certificaatprobleem (bijvoorbeeld een
+  verlopen certificaat).
 
-Een *error* heeft als extra eigenschap `phase` welke aangeeft in welke
-fase de job mislukt en `message` met de foutmelding.
+Een *error* of *time-out* heeft als extra eigenschappen `phase`, dat
+aangeeft in welke fase de job is mislukt, `message`, met de daadwerkelijke
+foutmelding, en `error-id` waarmee de bijbehorende logregels teruggevonden
+kunnen worden.  Bij verbindingsproblemen noemt `message` de URL die niet
+bereikt kon worden.
 
 Als de in `X-Callback` een URL van een webhook meegegeven bij het aanmaken van de job, wordt hier een `POST` op uitgevoerd zodra de job status `done`, `error` of `time-out` heeft bereikt.  Hierbij wordt de *status* meegegeven.  Als de webhook niet met een HTTP succes status antwoordt, wordt het na 30 seconden nog een keer geprobeerd.  Er worden 3 pogingen gedaan per job.
 
@@ -172,8 +177,8 @@ opgenomen.
 
 ### Link
 
-Via de link-call wordt de eigen opleidingssleutel aangepast van het object 
-met het gegeven type en rio-code. 
+Via de link-call wordt de eigen opleidingssleutel aangepast van het object
+met het gegeven type en rio-code.
 
 ```
 POST /job/link/1234O4321/education-specifications/ffeeddcc-bbaa-0099-8877-665544332211
@@ -271,7 +276,7 @@ Als de server gestart is met `STORE_HTTP_REQUESTS` variabel gezet op
 OOAPI en RIO endpoint gelogd te krijgen.  Om deze gegevens te krijgen
 moet de query parameter `http-messages=true` doorgegeven worden bij
 het aanmaken van een job en wordt het status object uitgebreid met
-`http-messages`. De http-messages array bevat maps met "req" en "res" 
+`http-messages`. De http-messages array bevat maps met "req" en "res"
 keys. Wanneer het een json response betreft, dan bevat "res" naast "body"
 (de string-representatie van de json) ook een "json-body" met de json zelf.
 

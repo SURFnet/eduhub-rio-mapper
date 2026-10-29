@@ -140,7 +140,9 @@
 
                                   (#{:error :time-out} status)
                                   (assoc :phase (-> data :errors :phase)
-                                         :message (-> data :errors :message)))]
+                                         :message (-> data :errors :message)
+                                         ;; lets support find the matching log entries
+                                         :error-id (some-> data :errors :error-id str)))]
 
       (logging/with-mdc value
         (case status
