@@ -21,7 +21,8 @@
             [clojure.tools.logging :as log]
             [nl.jomco.http-status-codes :as http-status]
             [nl.jomco.ring-trace-context :as trace-context])
-  (:import (clojure.lang ExceptionInfo)
+  (:import (java.io IOException)
+           (java.security GeneralSecurityException)
            (java.security.cert CertificateException CertificateExpiredException
                                CertificateNotYetValidException CertPathValidatorException)
            (javax.net.ssl SSLException)))
@@ -99,7 +100,7 @@
       response)))
 
 (defn- cause-chain
-  "Returns seq with exception, then all its causes."
+  "Returns seq with exception, then its cause, then the cause of the cause, until we encounter nil."
   [ex]
   (take-while some? (iterate ex-cause ex)))
 
@@ -132,30 +133,37 @@
       :else
       (str "Could not connect to " url ": " (.getName (class ex)) " (" (ex-message ex) ")"))))
 
-(defn- certificate-error? [ex]
-  (boolean (or (find-cause ex CertificateException)
-               (find-cause ex CertPathValidatorException)
-               (some #(and (instance? SSLException %)
-                           (some-> (ex-message %) (.contains "certificate")))
-                     (cause-chain ex)))))
+(defn- connection-error
+  [url ex]
+  (let [certificate-error? (or (find-cause ex CertificateException)
+                               (find-cause ex CertPathValidatorException)
+                               (some #(and (instance? SSLException %)
+                                           (some-> (ex-message %) (.contains "certificate")))
+                                     (cause-chain ex)))]
+    (ex-info (connection-error-message url ex)
+             (cond-> {:url url}
+               ;; certificate errors won't go away by retrying
+               certificate-error?
+               (assoc :retryable? false))
+             ex)))
 
 (defn- wrap-connection-errors
   "Rethrow low-level exceptions (I/O, TLS) with URL and readable message.
 
-  Certificate errors are marked as not retryable."
+  Certificate errors are marked as not retryable.  Exceptions not
+  related to networking are rethrown as is."
   [handler]
   (fn with-connection-errors
     [{:keys [url] :as request}]
     (try
       (handler request)
-      (catch ExceptionInfo ex
-        (throw ex))
-      (catch Exception ex
-        (throw (ex-info (connection-error-message url ex)
-                        (cond-> {:url url}
-                          (certificate-error? ex)
-                          (assoc :retryable? false))
-                        ex))))))
+      ;; Networking errors are IOExceptions (including SSLException);
+      ;; certificate errors are GeneralSecurityExceptions.  Anything
+      ;; else propagates untouched.
+      (catch IOException ex
+        (throw (connection-error url ex)))
+      (catch GeneralSecurityException ex
+        (throw (connection-error url ex))))))
 
 (def ^{:arglists '([{:keys [url method] :as request}])} ;; set argument documention
   send-http-request
