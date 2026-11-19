@@ -12,5 +12,7 @@ COPY --from=builder /app/target/eduhub-rio-mapper-v5.jar /eduhub-rio-mapper-v5.j
 COPY --from=builder /app/vendor/opentelemetry-javaagent-2.9.0.jar /opentelemetry-javaagent.jar
 
 WORKDIR /
-ENTRYPOINT ["java", "-jar", "/eduhub-rio-mapper-v5.jar"]
+
+# "-XX:-UseBASE64Intrinsics" mitigates CVE-2026-114938 "Java4Shell"
+ENTRYPOINT ["java", "-XX:-UseBASE64Intrinsics", "-jar", "/eduhub-rio-mapper-v5.jar"]
 
