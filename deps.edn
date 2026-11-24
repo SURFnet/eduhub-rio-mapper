@@ -59,7 +59,8 @@
             :jvm-opts    ["-Dclojure.main.report=stderr"]
             :extra-deps  {lambdaisland/kaocha {:mvn/version "RELEASE"}
                           ring/ring-mock      {:mvn/version "RELEASE"}}
-            :main-opts   ["-m" "kaocha.runner"]}
+            ;; Keep diagnostics visible when System/exit interrupts a test.
+            :main-opts   ["-m" "kaocha.runner" "--no-capture-output"]}
 
 
   :v6 {:extra-paths ["src-v6"]}

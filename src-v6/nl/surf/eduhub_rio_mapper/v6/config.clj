@@ -142,6 +142,7 @@
      (when errs
        (.println *err* "Configuration error")
        (.println *err* (prn-str (keys env)))
+       (.println *err* (prn-str env))
        (.println *err* (envopts/errs-description errs))
        (System/exit 1))
      (let [{:keys [clients-info-config
