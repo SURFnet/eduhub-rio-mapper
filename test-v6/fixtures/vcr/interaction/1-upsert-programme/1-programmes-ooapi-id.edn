@@ -1,7 +1,7 @@
 {:request
  {:method :get,
   :url
-  "https://gateway-v6-sandbox.dev.surfeduhub.nl/programmes/03da5ac9-ac99-4ce8-8bc8-e3bafae1ce4a?returnTimelineOverrides=true",
+  "https://gateway.test.surfeduhub.nl/programmes/03da5ac9-ac99-4ce8-8bc8-e3bafae1ce4a?returnTimelineOverrides=true",
   :headers {"X-Route" "endpoint=endpoint01.sandbox.jomco.nl"},
   :body nil},
  :response
