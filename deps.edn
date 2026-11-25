@@ -1,5 +1,5 @@
 {:paths ["src-common" "resources"]
- :deps  {org.clojure/clojure      {:mvn/version "1.12.6"}
+ :deps  {org.clojure/clojure      {:mvn/version "1.12.7"}
          org.clojure/core.async   {:mvn/version "1.9.865"}
          org.clojure/core.memoize {:mvn/version "1.2.281"}
 
@@ -28,16 +28,16 @@
          nl.jomco/envopts     {:mvn/version "0.0.7"}
          clj-time/clj-time        {:mvn/version "0.15.2"}
          clj-http/clj-http    {:mvn/version "3.13.1"}
-         com.taoensso/carmine {:mvn/version "3.6.0" :exclusions [org.clojure/tools.reader com.taoensso/nippy io.airlift/aircompressor]}
+         com.taoensso/carmine {:mvn/version "3.7.0" :exclusions [org.clojure/tools.reader com.taoensso/nippy io.airlift/aircompressor]}
          com.taoensso/nippy   {:mvn/version "3.9.0"}
          io.airlift/aircompressor {:mvn/version "2.0.3"}
 
 
          ;; logging
-         org.clojure/tools.logging                   {:mvn/version "1.3.1"}
+         org.clojure/tools.logging                   {:mvn/version "1.3.2"}
          ch.qos.logback.contrib/logback-jackson      {:mvn/version "0.1.5"}
          ch.qos.logback.contrib/logback-json-classic {:mvn/version "0.1.5"}
-         ch.qos.logback/logback-classic              {:mvn/version "1.6.6"}
+         ch.qos.logback/logback-classic              {:mvn/version "1.6.8"}
          com.fasterxml.jackson.core/jackson-core     {:mvn/version "2.23.0"}
          com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.23.0"}
          com.github.steffan-westcott/clj-otel-api    {:mvn/version "0.2.11"}}

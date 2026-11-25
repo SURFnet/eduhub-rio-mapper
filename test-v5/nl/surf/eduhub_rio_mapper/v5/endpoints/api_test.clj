@@ -208,6 +208,13 @@
       (is (= res (app res))
           "valid opleidingscode"))))
 
+(deftest invalid-code-not-enqueued
+  (reset! last-job nil)
+  (let [res (api-routes (authenticated-request :post "/job/link/foo/courses/12345678-1234-2345-3456-123456789abc"))]
+    (is (= http-status/bad-request (:status res)))
+    (is (nil? @last-job)
+        "job-enqueuer must not be called when the code is invalid")))
+
 (deftest wrap-job-queuer
   (let [queue-atom (atom [])
         app        (api/wrap-job-enqueuer identity #(swap! queue-atom conj %))]
